@@ -1,0 +1,175 @@
+% The birth--plague model --- plan \S3.3, "\S6".
+% Sources: 09/08 and 09/09.
+% C4: 09/08:5,8 and 09/09:13,16 print "Corruption" and "Infection" with
+%     identical left-hand sides.  Written here as one loss channel.
+% C5: 09/09:11 introduces dV/dt but never couples V into a rate.  See the
+%     NEEDS-AUTHOR marker in \cref{var:sec:vitality}.
+% C6: 09/09:6 and 09/09:8 are the same paragraph twice, once rough and once
+%     tidied.  The tidied one (:8) is kept.
+% Renames: birth \beta -> \lambda (\beta is the speciation rate and nothing
+% else; \lambda is the birth rate thesis-wide -- plan \S7.2 closing sentence);
+% contact coefficient \alpha -> \chi and consumption p -> c (plan \S7.1).
+% Cut: 09/09:25-76, "Plague in popular culture", parked.
+% The four orphan sub-labels fig:figure1--fig:figure4 at 09/08:22,28,36,42 are
+% replaced by one labelled float.
+
+\section{The birth--plague model}
+\label{var:sec:plague}
+
+\subsection{The model}
+\label{var:sec:plaguemodel}
+
+The scarcity mechanism of the previous section drove catastrophe by a
+potential $V$ carried alongside a single count. This model drives the loss
+rate by a second count instead, so that what accelerates
+the loss of one component is the size of the other. Let $X_t$ count
+uninfected individuals and $Y_t$ the infected, and let the transitions in a
+vanishing interval be
+\begin{align}
+\pr{\Delta X_t=1,\ \Delta Y_t=0\mid X_t,Y_t}
+  &=\lambda X_t\,\Delta t+o(\Delta t),
+  \label{var:eq:plague}\\
+\pr{\Delta X_t=-1,\ \Delta Y_t=1\mid X_t,Y_t}
+  &=\bigl(\delta+\chi Y_t\bigr)X_t\,\Delta t+o(\Delta t),\notag\\
+\pr{\Delta X_t=0,\ \Delta Y_t=-1\mid X_t,Y_t}
+  &=\mu Y_t\,\Delta t+o(\Delta t),\notag\\
+\pr{\Delta X_t=\Delta Y_t=0\mid X_t,Y_t}
+  &=1-\bigl[(\lambda+\delta+\chi Y_t)X_t+\mu Y_t\bigr]\Delta t+o(\Delta t).
+  \notag
+\end{align}
+
+The middle channel is written once and carries two mechanisms superposed. An
+uninfected individual is lost to \emph{corruption} spontaneously, at the
+constant per-capita rate $\delta$, and to infection by contact with an
+already infected individual, at rate $\chi$ per uninfected--infected pair.
+Both produce the same jump, $X$ down by one and $Y$ up by one, so the only
+thing that distinguishes them is how their rates scale: the first is linear
+in $X_t$, the second bilinear in $X_t Y_t$. Writing them as separate lines
+with the same left-hand side would state the same channel twice rather than
+two channels once.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  >={Stealth[length=1.9mm]},
+  st/.style={draw=ink,thick,rounded corners=1.5pt,minimum width=15mm,
+             minimum height=6.5mm,inner sep=1.5pt,font=\small,text=ink},
+  lb/.style={font=\footnotesize,inner sep=1.8pt},
+  every path/.style={thick}
+]
+\node[st,fill=type1!12] (c)  at (0,0)      {$(x,y)$};
+\node[st]            (r)  at (4.4,0)    {$(x{+}1,y)$};
+\node[st]            (dl) at (-4.4,-2.3) {$(x{-}1,y{+}1)$};
+\node[st]            (d)  at (0,-2.3)   {$(x,y{-}1)$};
+\draw[->] (c) -- node[above,lb]{$\lambda x$} (r);
+\draw[->] (c) -- node[above left=-1pt,lb]{$(\delta+\chi y)\,x$} (dl);
+\draw[->] (c) -- node[right,lb]{$\mu y$} (d);
+\node[lb,anchor=west,text width=4.4cm] at (1.6,-2.3)
+  {\itshape corruption and contact infection share one jump};
+\end{tikzpicture}
+\caption{Transitions out of the state $(x,y)$ in the birth--plague model,
+drawn in the convention of \cref{m:fig:ratediagram}. Three channels leave
+each interior state, and only the diagonal one carries a rate depending on
+the other component --- which makes it the single place where feedback enters
+the model: the more of the population is already infected, the faster the
+rest is lost. Setting $\chi=0$ removes that dependence and leaves a linear
+birth process for $X$ feeding an $\mathrm{M}/\mathrm{M}/\infty$-like queue,
+with no coupling at all.}
+\label{var:fig:plague-rates}
+\end{figure}
+
+Only one rate carries $Y_t$, but the coupling is genuinely two-way, because
+every infection removes one $X$ and adds one $Y$: a large $Y_t$ both
+accelerates the loss of $X$ and is replenished by that same loss. Running
+against it are $\mu Y_t$, which clears infected individuals, and $\lambda
+X_t$, which replaces uninfected ones. Whether the result settles or cycles is
+a question about the balance of those three terms, and it is not answered
+here.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{fig09_plague_paths/fig09}
+\caption{Two realisations of \cref{var:eq:plague} at
+$(\lambda,\delta,\chi,\mu)=(1,\,0.1,\,0.02,\,10)$: uninfected count $X_t$ in
+blue, infected count $Y_t$ in vermillion. The clearance rate is large
+relative to the contact rate, so infected individuals never accumulate and
+the epidemic acts as a brake on $X_t$ rather than as a collapse of it. Set
+beside \cref{var:fig:vbc-many}, the fluctuations never reset a phase.}
+\label{var:fig:bpplots}
+\end{figure}
+
+\subsection{The vitality-coupled variant}
+\label{var:sec:vitality}
+
+The variant combines this model with that of \cref{var:sec:rrrr}, taking from
+there the idea that catastrophe --- here the onset of plague rather than an
+extinction --- is driven by scarcity per replicating agency, the agencies
+being those thrown off by successive bifurcations. The shape is a loose one
+and it fits a good many phenomena, most obviously the collapse of a
+population that has outgrown what sustains it.
+
+Carry a vitality $V(t)$ alongside the pair, replenished at a constant rate
+and drawn down in proportion to the population:
+\begin{equation}
+\ddt{V}=\phi-c\,X_t .
+\label{var:eq:vitalityV}
+\end{equation}
+The transitions are then those of \cref{var:eq:plague} with the spontaneous
+part of the loss channel divided by the vitality:
+\begin{equation}
+\pr{\Delta X_t=-1,\ \Delta Y_t=1\mid X_t,Y_t}
+=\lrb{\frac{\delta}{V(t)}+\chi Y_t}X_t\,\Delta t+o(\Delta t),
+\label{var:eq:vitality}
+\end{equation}
+the other three channels being unchanged.
+
+% NEEDS-AUTHOR: the source (09/09:11) specifies dV/dt = \xi - p X_t and then
+% uses V in none of the transition rates below it, so the model as printed is
+% \cref{var:eq:plague} plus a decorative extra equation.  The intent is stated
+% in its prose: that plague instantiation is driven by relative per-capita
+% scarcity, as in the rise--run--ruin--rejuvenation model.
+% Written here as: corruption at rate \delta X_t / V(t), by consistency with
+% the catastrophe channel \delta X_t / V(t) of \cref{var:eq:rrrr}, which is
+% the model this variant says it is borrowing from.  The contact term \chi Y_t
+% is left uncoupled, since contact infection is not a scarcity mechanism.
+% Alternative reading: "per-capita scarcity" means scarcity per agency
+% multiplied by the number of agencies exposed to it, giving
+% \delta X_t^2 / V(t).  That is the reading under which the loss channel is
+% quadratic in X and the collapse is sharper.
+% A third possibility, that the whole loss channel including the contact term
+% should be divided by V, is not adopted here for the reason given above.
+% Author to confirm which was meant.  Nothing else in this chapter depends on
+% the answer.
+
+The reason for wanting the variant is that \cref{var:eq:plague} has no
+mechanism for a collapse: its infected count rises when $X_t$ is large and
+falls when it is small, which damps rather than amplifies. Dividing the
+corruption rate by a vitality the population itself depletes supplies the
+amplification that is missing, since a population which has grown large
+drives $V$ down and so raises its own loss rate --- exactly the ingredient
+\cref{var:sec:rrrr} used to close its cycle. Whether the combination gives a
+sustained cycle or a single collapse followed by a low-level steady state is
+the question the variant exists to ask, and it has not been simulated.
+
+\paragraph{Open questions.}\label{var:rem:open-plague}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em,topsep=0.2em]
+\item \textbf{Extinction of $X$.} What is $\pr{X_t=0\text{ eventually}}$?
+Not the standard birth--death calculation of \cref{m:sec:bd}: the loss rate
+$(\delta+\chi Y_t)X_t$ depends on the second component, and the pair
+$(X_t,Y_t)$ has no product-form generating function that closes. The obvious
+route is a first-step analysis on the two-dimensional lattice, in the manner
+of \cref{path:sec:rsfirststep}, and it has not been attempted.
+\item \textbf{Cycles or a single collapse.} Does the vitality coupling of
+\cref{var:eq:vitality} produce sustained cycles, and if so with what period?
+This is the question \cref{var:sec:vitality} was written to pose rather than
+to settle. Settling it wants simulation first and a first-passage analysis
+second, and the answer will turn on whether corruption is $\delta X_t/V(t)$ as written,
+or $\delta X_t^2/V(t)$.
+\item \textbf{The uncoupled contact term.} If contact infection is left
+outside the scarcity coupling, as it is in \cref{var:eq:vitality}, then at
+large $V$ the model reduces to \cref{var:eq:plague} and at small $V$ it is
+dominated by corruption. Whether that crossover is sharp enough to be
+visible in a realisation is not known.
+\end{enumerate}
+
+\FloatBarrier

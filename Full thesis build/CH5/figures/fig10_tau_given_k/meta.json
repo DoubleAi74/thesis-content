@@ -1,0 +1,15 @@
+{
+  "figure": "fig10",
+  "chapter_number": "5.10",
+  "label": "dist:fig:taugivenk",
+  "slug": "tau_given_k",
+  "included_from": "sections/07_burst_time.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig10.pdf",
+    "fig10.png"
+  ],
+  "simulation": false
+}

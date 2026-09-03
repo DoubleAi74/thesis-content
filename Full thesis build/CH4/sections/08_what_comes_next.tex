@@ -1,0 +1,70 @@
+\section{Conclusion}
+\label{bdc:sec:next}
+
+We have described the BDC process through its cell-fate probabilities and first
+two moments. The resulting formulae cover the intracellular load, the released
+count, and the first two conditional moments of the burst size, all through the
+single coordinate $I(t)$.
+
+The calculation closes because the non-catastrophe probability obeys an
+autonomous Riccati equation. The open moment hierarchy is still present, but it
+need not be truncated: it can be approached from $I$. The two roots of the
+characteristic quadratic then make the closed forms readable, and they retain
+their probabilistic meaning at the boundaries recorded in
+\cref{bdc:app:limits}.
+
+One reading takes rupture as the lysis of an infected macrophage. The formulae
+do not depend on that reading. They do depend on the four assumptions of
+\cref{bdc:sec:intro}: linear birth, catastrophe hazard $\delta n$,
+instantaneous complete release, and constant rates. Measurement of
+$(\lambda,\mu,\delta)$ and the full burst law lie outside this chapter.
+
+\subsection{Completing the single-cell theory}
+\label{bdc:sec:next-singlecell}
+
+\fwd{singlecell}{Chapter~5} solves the probability generating function of the
+process. This yields the state probabilities $p_n(t)$, rather than only their
+sums $I$, $D$ and $\Ifix$, and identifies the quasi-stationary distribution of
+the intracellular load conditioned on continued productivity. It also gives the
+full burst-time and burst-size laws, including the defective finite-time mass
+\[
+P_k=\pr{\Kb=k,\ \tau<\infty}
+=\frac{\delta}{\lambda}a^{-k},
+\qquad k\ge1,
+\]
+and the conditional laws of size given time and time given size. The several
+founder formulae of \cref{bdc:sec:multifounder} then describe cells infected by
+more than one particle. Finally, the immediate-transfer model chains successive
+cells together by allowing one burst to found the next infection without delay.
+
+What passes from the present chapter to that analysis is deliberately limited.
+We know the first two conditional burst moments, and they point towards a
+geometric distribution. The generating function supplies the distribution
+itself and explains why it agrees with the quasi-stationary load.
+
+\subsection{Embedding the cell in a population}
+\label{bdc:sec:next-population}
+
+\fwd{population}{Chapter~6} turns from one infected cell to many. A burst is no
+longer an endpoint: released particles may infect fresh cells, each of which
+begins its own BDC trajectory. The quantities derived here then become
+age-dependent kernels. The survival kernel $\Ifix(\alpha)$ gives the probability
+that a cell infected $\alpha$ time units ago remains productive, while
+\[
+g(\alpha)=\delta K(\alpha)
+\]
+gives its expected rate of release. Because these functions can be written in
+the $I$-coordinate, the resulting renewal equations retain much of the analytic
+structure of the single-cell model.
+
+The renewal formulation belongs to the classical theory of age-structured
+populations \cite{mckendrick1926applications,vonfoerster1959some}. It also makes
+clear what is hidden by the constant-release ordinary differential equations
+often used in viral dynamics
+\cite{perelson1996hiv,nowak1996population}: release from a
+lytic cell has an age profile and occurs in a single burst. In regimes where
+that timing matters, a constant-release approximation can be poor. The
+comparison with continuous budding release is developed in the population
+chapter \cite{pearson2011stochastic,gilchrist2006evolution,wang2006lysis}.
+
+\FloatBarrier

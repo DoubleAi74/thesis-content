@@ -22,10 +22,34 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{array}
+\usepackage{siunitx}
+\sisetup{detect-all,table-number-alignment=center,
+         table-format=1.3,group-digits=false}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{needspace}
 \usepackage{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
 
 \graphicspath{{figures/}}
+
+% --- Palette ----------------------------------------------------------------
+% One accent, shared with the figures: the #0072B2 of the house matplotlib
+% style, so that a coloured rule on the page and a blue curve in a panel are
+% the same blue.  \accentpale is the wash used behind highlighted results.
+\definecolor{accent}{HTML}{0072B2}
+\definecolor{accentpale}{HTML}{EFF6FB}
+\definecolor{accentedge}{HTML}{BBD6E9}
+\definecolor{ink}{HTML}{1A1C1F}
+\definecolor{soft}{HTML}{565B62}
+
+% --- Vertical justification and page breaking -------------------------------
+% Never break a paragraph leaving one line stranded at the foot or head of a
+% page; prefer a slightly short page to a widow.
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\brokenpenalty=10000
+\raggedbottom
 
 % --- Equation cross-references as bare parenthesised numbers -----------------
 \crefformat{equation}{(#2#1#3)}
@@ -86,14 +110,64 @@
 \newcommand{\fwd}[2]{#2}
 
 % --- Theorem environments ---------------------------------------------------
-\theoremstyle{plain}
+% Two visual weights.  The chapter turns on four results -- the projection,
+% the invariance of R_0, the flooding advantage and the coincidence at L=1 --
+% and a reader flipping through should be able to find them.  `theorem` is
+% therefore set apart with a tinted panel and an accent rule; the supporting
+% propositions, definitions and remarks stay in the ordinary run of text so
+% that the distinction means something.
+\newtheoremstyle{ch6plain}
+  {0.9\baselineskip}{0.9\baselineskip}   % space above / below
+  {\itshape}{}                            % body font, indent
+  {\bfseries\color{accent}}{.}            % head font, punctuation
+  {0.5em}{}                               % head/body sep, head spec
+\newtheoremstyle{ch6definition}
+  {0.9\baselineskip}{0.9\baselineskip}
+  {\normalfont}{}
+  {\bfseries}{.}
+  {0.5em}{}
+
+\theoremstyle{ch6plain}
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
-\theoremstyle{definition}
+\theoremstyle{ch6definition}
 \newtheorem{definition}[theorem]{Definition}
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
+
+% The tinted panel around `theorem` only.
+\mdfdefinestyle{ch6thm}{
+  linewidth=0pt,
+  leftline=true,linecolor=accent,linewidth=1.6pt,
+  topline=false,bottomline=false,rightline=false,
+  backgroundcolor=accentpale,
+  innerleftmargin=0.85em,innerrightmargin=0.85em,
+  innertopmargin=0.7em,innerbottommargin=0.7em,
+  skipabove=0.9\baselineskip,skipbelow=0.9\baselineskip,
+  nobreak=false,
+}
+\surroundwithmdframed[style=ch6thm]{theorem}
+
+% Proofs: a shade quieter than the surrounding prose, so a statement stands
+% out from its own argument.
+\renewenvironment{proof}[1][\proofname]{%
+  \par\vspace{0.25\baselineskip}\noindent
+  \small\color{soft}%
+  \textit{#1.}\ \ignorespaces}{%
+  \unskip\nobreak\hfill$\square$\par\vspace{0.35\baselineskip}}
+
+% --- A highlighted standalone result ----------------------------------------
+% For the one equation the chapter is built around.  Used once, in the
+% flooding section; using it twice would spend the emphasis.
+\newmdenv[
+  linewidth=0.9pt,linecolor=accentedge,
+  backgroundcolor=accentpale,
+  roundcorner=2.5pt,
+  innerleftmargin=1em,innerrightmargin=1em,
+  innertopmargin=0.55em,innerbottommargin=0.55em,
+  skipabove=1.0\baselineskip,skipbelow=1.0\baselineskip,
+]{keyresult}
 
 \allowdisplaybreaks

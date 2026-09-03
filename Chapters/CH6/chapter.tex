@@ -1,27 +1,1959 @@
 % ===========================================================================
-%  chapter.tex --- thesis-ready fragment.
+%  chapter.tex --- thesis-ready fragment, journal-article form.
 %  Requires the macros of preamble.tex.
+%
+%  This is a rewritten, condensed version of the population chapter,
+%  organised as a research article: one construction, three consequences,
+%  and a scope section.  The birth--death--catastrophe process and the
+%  comparison with budding are the spine; the flooding parameter L carries
+%  the central biological result.
 % ===========================================================================
 
-\chapter{From one cell to a population: burst-aware renewal dynamics and the bursting--budding comparison}
+\chapter[Burst-aware within-host dynamics]{A birth--death--catastrophe
+extension of the standard within-host model, and what it says about
+bursting}
 \label{p:ch:one-cell-to-population}
 
-\input{sections/01_introduction}
-\input{sections/02_comparator_and_obstruction}
-\input{sections/03_renewal_construction}
-\input{sections/04_classical_as_projection}
-\input{sections/05_bursting_vs_budding}
-\input{sections/06_reach_of_the_construction}
-\input{sections/07_discussion}
+\section{Introduction}
+\label{p:sec:introduction}
 
+The standard model of within-host virus dynamics describes an infected cell
+with two numbers: it releases virions at a constant rate $p$ and is removed
+at a constant rate $d_{\Icell}$
+\cite{mclean1993balance,nowak1996population,perelson1996hiv}. Both are
+fitted to viral load data and then reported as though they characterised the
+pathogen. They are, however, phenomenological. Nothing in the standard model
+says what the cell is doing between infection and release, and the constants
+absorb whatever it is.
+
+For one class of pathogen this costs nothing. A budding virus really does
+experience release and death as separate, independent events, and
+\cref{p:sec:budding} shows that the standard model is then an exact
+description of the cell, not an approximation to it. For a lytic pathogen it
+is wrong in mechanism. Such a pathogen releases nothing while it replicates
+inside the cell and then releases everything at once, in the event that ends
+the cell's productive life. Release and death are not independent; they are
+the same event. \yp{} in the macrophage, \ft{} in the macrophage and the
+lytic phage in its bacterium are all of that kind, and none is a constant
+drip.
+
+That the standard model needs intracellular structure is not a new
+observation, and the modelling programme built on it is reviewed by Ciupe and
+Conway \cite{ciupe2024incorporating}. Two routes are established. The first
+inserts a delay between infection and production, either as a distributed
+kernel or as one or more explicit eclipse compartments, an approach going
+back to Herz et al.\ \cite{herz1996viral} and now standard
+\cite{mittler1998influence,dixit2004complex,kakizoe2015method}. The second,
+multiscale, route couples an age-structured population equation to an
+explicit intracellular pool: in the hepatitis~C models of Guedj et al.\ and
+Rong and Perelson \cite{guedj2013modeling,rong2013mathematical} an
+intracellular viral RNA level $R(t,a)$ is tracked alongside infected cells
+$I(t,a)$ of infection age $a$, and free virus is fed by
+$\rho\int_0^\infty R(t,a)I(t,a)\,\dd a$. Both routes have paid off. The
+review's two headline returns are sharper parameter estimates --- neglecting
+the pre-productive period biases $R_0$
+\cite{lloyd2001dependence} --- and the ability to
+locate a drug's mode of action at a named step of the viral life cycle.
+
+What neither route supplies is a \emph{stochastic} intracellular mechanism.
+The delay literature assumes a distributional family for the age structure
+and fits it; the multiscale literature derives the age structure, but from a
+deterministic pool, so it yields a release schedule and nothing more. Yet
+for a lytic pathogen the questions that matter early in infection are
+distributional. Whether a founder cell establishes an infection at all
+depends on how many particles it releases, not on how many it releases on
+average, and a cell whose internal population dies out before rupture
+releases none.
+
+This chapter closes that gap for one mechanism. \ChCorecap{} and \ChDist{}
+developed a birth--death--catastrophe process for the intracellular
+replicative units --- birth at rate $\lambda$ per unit, death at rate $\mu$
+per unit, and catastrophe at rate $\delta$ per unit, at which the cell
+ruptures and releases its entire contents --- and obtained its survival,
+release and burst-size laws in closed form. Both stop at the cell boundary.
+Here that theory is carried across the boundary into a population.
+
+\subsection*{Contributions}
+
+\begin{enumerate}[leftmargin=1.9em]
+\item \textbf{A renewal model forced by the intracellular process}
+(\cref{p:sec:renewal}). The population equations need exactly two functions
+of cell age: the survival kernel $S$ and the release kernel $g$. Both are
+already in closed form, so the population model has no free age structure to
+fit. The equations are the first moments of the underlying stochastic
+process exactly, not an approximation to them
+(\cref{p:prop:first-moment}).
+
+\item \textbf{The standard model is a projection}
+(\cref{p:sec:projection}). For each epidemic growth rate $r$ there is a
+unique constant pair $\bigl(p_{\rm eff}(r),d_{\Icell,{\rm eff}}(r)\bigr)$
+reproducing the renewal system's exponential solution exactly
+(\cref{p:thm:projection}). A fitted release rate is therefore a property of
+the infection's phase, not of the pathogen: over the whole map it moves by
+the factor $\mean{X^2}_{\rm QS}$, a pure number fixed by the intracellular
+rates, which is $231$ at $(\lambda,\mu,\delta)=(1,0,0.1)$. No constant pair
+serves a transient, and no fit of $(p,d_{\Icell})$ recovers the three
+intracellular rates (\cref{p:sec:identifiability}).
+
+\item \textbf{A closed-form answer to whether bursting pays}
+(\cref{p:sec:flooding}). This is the result the stochastic treatment exists
+to deliver, since it turns on the offspring \emph{distribution} rather than
+its mean. Write $L=a(1-b)$ for the flooding parameter
+(\cref{p:def:L}). At fixed total output per cell, bursting leaves $R_0$
+exactly unchanged (\cref{p:thm:R0inv}); lowers the extinction probability at
+establishment if and only if $L>1$, equivalently
+\begin{equation*}
+\frac{1}{\delta}<\frac{1}{\lambda}+\frac{1}{\mu},
+\end{equation*}
+by the exact amount $(L-1)(1/m-1)$ (\cref{p:thm:flood}); and slows
+deterministic invasion in every regime examined. Threshold, establishment
+risk and invasion speed are three questions with three different answers.
+
+\item \textbf{Commensurability} (\cref{p:sec:reach}). Because only the pair
+$(S,g)$ enters, budding, bursting, recurrent partial release, multiply
+infected cells and the multiscale hepatitis~C model of
+\cite{guedj2013modeling,rong2013mathematical} are all instances of one
+skeleton, differing only in the kernels they supply
+(\cref{p:tab:sg}).
+\end{enumerate}
+
+\Cref{p:tab:formulae} collects every population-level formula of the
+chapter in one place, for use as a reference card.
+Throughout, $\lambda$, $\mu$ and $\delta$ are the intracellular birth, death
+and catastrophe rates per replicative unit; the roots $a,b$, the derived
+constants $A,B,\theta,\kappa$ and the single-cell functions
+$I,D,\Ifix,J,K,V$ are those of \ChCore{}, collected in
+\cref{p:app:quoted}. \Cref{p:tab:notation} fixes the population symbols. Two
+naming decisions are made once and kept: the burst-time density written
+$\varphi$ in \ChDist{} is written $\delta J$ here, because $\varphi$ is
+reserved for the partial-release fraction of \cref{p:sec:partial}; and the
+survival kernel $S$ is the non-fixation probability $\Ifix$, written $S$
+where it acts as a kernel and $\Ifix$ where the closed form is meant.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.12}
+\small
+\begin{tabular}{@{}lp{0.42\textwidth}p{0.30\textwidth}@{}}
+\toprule
+Symbol & Meaning & Notes \\
+\midrule
+$\alpha$ & cell age & argument of every kernel \\
+$T$, $\gamma$, $c$ & target cells, infection rate, virion clearance & $T$ held fixed \\
+$\Icell,\Vfree$ & infected cells, free particles & population counts \\
+$i(t)$ & incidence, $\gamma T\Vfree$ & \\
+$d_{\Icell}$ & infected-cell removal rate & phenomenological \\
+$p$, $p_{\rm eff}(r)$ & constant, effective release rate & \\
+$S(\alpha)$, $g(\alpha)$ & survival kernel $\Ifix(\alpha)$, release kernel $\delta K(\alpha)$ & \\
+$\mathcal A(\alpha)$ & generation kernel & \cref{p:eq:genkernel} \\
+$r$ & epidemic growth rate & \\
+$q$, $m$ & infection success $\gamma T/(\gamma T+c)$, branching mean $qV_\infty$ & \\
+$L$ & flooding parameter $a(1-b)$ & \cref{p:eq:Ldef} \\
+$\varphi$ & partial-release fraction & \cref{p:sec:partial} \\
+\bottomrule
+\end{tabular}
+\caption{Population notation. Single-cell symbols are those of
+\cref{p:app:quoted}.}
+\label{p:tab:notation}
+\end{table}
+
+\subsection{Standing assumptions}
+\label{p:sec:assumptions}
+
+These hold throughout unless stated otherwise.
+
+\begin{description}[leftmargin=2.2em,style=sameline]
+\item[(A1)] Target cells $T$ are held constant: no depletion, no
+saturation, no immune response.
+\item[(A2)] Virions are not consumed on infection --- the \emph{continuum}
+convention. This is why the deterministic threshold is
+$R_0=\gamma TV_\infty/c$ while the discrete branching mean of
+\cref{p:sec:flooding} is $m=qV_\infty$ with $q=\gamma T/(\gamma T+c)$; the
+two agree when $\gamma T\ll c$.
+\item[(A3)] The $\Icell_0$ cells present at $t=0$ all have age exactly
+zero.
+\item[(A4)] Infected cells are independent, and the population layer
+assumes single infection: kernels for founding multiplicity $k$ are
+available (\cref{p:app:quoted}) but are not used.
+\item[(A5)] There is no spatial structure.
+\end{description}
+
+\FloatBarrier
+
+\section{The standard model and the cell it describes exactly}
+\label{p:sec:comparator}
+
+\subsection{The standard model}
+\label{p:sec:classical}
+
+In the target-cell-constant Basic Model of Viral Replication (BMVR),
+infected cells $\Icell$ and free particles $\Vfree$ obey
+\begin{equation}
+\ddt{\Icell} = \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\qquad
+\ddt{\Vfree} = p\,\Icell - c\,\Vfree,
+\label{p:eq:bmvr-classical}
+\end{equation}
+with target cells $T$ fixed, infection rate $\gamma$ and virion clearance
+$c$. The basic reproduction number is
+\begin{equation}
+R_0=\frac{\gamma T\,p}{c\,d_{\Icell}}.
+\label{p:eq:R0classical}
+\end{equation}
+Every cell, whatever its age or contents, releases at rate $p$ and dies at
+rate $d_{\Icell}$.
+
+\subsection{The budding cell is described exactly}
+\label{p:sec:budding}
+
+This is not an arbitrary caricature. It is one kind of cell described
+exactly, and since that cell is the comparator for everything below it is
+worth setting out in full. A budding infected cell experiences two
+\emph{independent} event streams: release of one particle, as a Poisson
+process of rate $p$, and death, as a Poisson process of rate $d_{\Icell}$.
+Its survival and cumulative release are
+\begin{equation}
+S_{\rm bud}(\alpha)=\ee^{-d_{\Icell}\alpha},\qquad
+V_{\rm bud}(\alpha)=\frac{p}{d_{\Icell}}\lrb{1-\ee^{-d_{\Icell}\alpha}},
+\label{p:eq:bud-cell}
+\end{equation}
+so the mean productive lifetime is $1/d_{\Icell}$ and the lifetime release
+$p/d_{\Icell}$. The total number released is geometric on
+$\{0,1,2,\ldots\}$,
+\begin{equation}
+\pr{\Kb_{\rm bud}=k}=\frac{d_{\Icell}}{d_{\Icell}+p}
+\Bigl(\frac{p}{d_{\Icell}+p}\Bigr)^{\!k},
+\label{p:eq:bud-geom}
+\end{equation}
+the successes before the terminating death in a sequence of events each of
+which is a release with probability $p/(d_{\Icell}+p)$. All of the cell sits
+in the pair $(p,d_{\Icell})$. That is why \cref{p:eq:bmvr-classical} is a
+faithful one-cell limit for a budding pathogen, and it is this cell that
+\cref{p:sec:flooding} matches against a bursting one.
+
+\subsection{Bursting, and why no constant repairs it}
+\label{p:sec:obstruction}
+
+In bursting, release and death are the same event: whatever has accumulated
+leaves at once and the cell's productive life ends in that instant. Take the
+cleanest consequence. Let $N_0$ cells be infected at the same moment, each
+running an independent copy of the single-cell process. The number still
+productively infected at time $t$ is $N_0\Ifix(t)$ exactly in expectation,
+and the expected cumulative release is $N_0V(t)$, so the release
+\emph{rate} is $N_0\delta K(t)$. It depends on the age of the cohort and it
+is not constant. A cohort releases on a schedule, not at a rate
+(\cref{p:fig:constant-fails}).
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{N4b_1_constant_release_fails.pdf}
+\caption{A synchronous cohort releases on a schedule, not at a rate. Both
+schedules have lifetime yield $V_\infty=11$ and mean productive lifetime
+$\mean{T_{\rm prod}}=2.398$, with $d_{\Icell}=1/\mean{T_{\rm prod}}$,
+$p=V_\infty d_{\Icell}$, $(\lambda,\mu,\delta)=(1,0,0.1)$ and $c=1$: as
+fairly matched as two constants allow. (a) At matched yield the release
+kernel $g(\alpha)=\delta K(\alpha)$ still lags the budding cell's
+$p\ee^{-d_{\Icell}\alpha}$, because a bursting cell must first accumulate
+load. (b) Linear clearance preserves that lag, carrying it into the
+free-particle response.}
+\label{p:fig:constant-fails}
+\end{figure}
+
+The natural repair is to keep \cref{p:eq:bmvr-classical} and rebuild $p$
+from the intracellular theory --- to set $p$ equal to the quasi-stationary
+mean load $\mean{X}_{\rm QS}=a/(a-1)$, on the reasoning that a long-lived
+cell hovers at that level. The obstruction is dimensional. Here $p$ is a
+number of particles per unit time and $\mean{X}_{\rm QS}$ is a pure count,
+so the substitution introduces a spurious factor of time; when $\mu=0$ one
+has $\mean{X}_{\rm QS}=V_\infty$ exactly, and the proposal replaces a cell's
+output \emph{rate} by its total lifetime \emph{output}. Averaging the burst
+size over the burst-time density fails the same way, returning
+$\delta\int_0^\infty K=V_\infty$, a count again. Weighting the
+load-dependent flux by the burst-time density has the right dimensions but
+the wrong measure: that density says when a \emph{single} cell bursts,
+whereas a population release rate needs an average over the ages of the
+cells \emph{currently infected}, and in an asynchronous infection those are
+not the same.
+
+What survives is two facts rather than a substitute constant. The expected
+release flux of a cell of age $\alpha$ is $\delta K(\alpha)$; and at any
+host time the infected population is a mixture of ages, one cohort per past
+moment of infection. The population model must therefore track cell age.
+
+\section{The intracellular process and its two kernels}
+\label{p:sec:kernels}
+
+\subsection{The process}
+
+Inside a cell, replicative units follow a linear birth--death process with
+an added catastrophe. Each unit gives birth at rate $\lambda$, dies at rate
+$\mu$, and at rate $\delta$ per unit triggers rupture, at which the cell
+releases its entire load and enters an absorbing state. Writing $X_\alpha$
+for the load at cell age $\alpha$, the process is absorbed either by
+rupture --- a burst --- or by internal extinction, in which the last unit
+dies and the cell never bursts at all. \ChCorecap{} solves it. The roots
+\begin{equation}
+a=\eta+\sqrt{\eta^2-\tfrac{\mu}{\lambda}},\qquad
+b=\eta-\sqrt{\eta^2-\tfrac{\mu}{\lambda}},\qquad
+\eta=\frac{\lambda+\mu+\delta}{2\lambda},
+\label{p:eq:roots}
+\end{equation}
+satisfy $b<1<a$ and carry everything: $b$ is the probability that a cell
+clears internally without ever bursting, and $1/a$ is the ratio of the
+geometric burst-size law. \Cref{p:app:quoted} collects the closed forms used
+below; the two that matter most are the lifetime yield and the mean
+productive lifetime,
+\begin{equation}
+V_\infty=\frac{a(1-b)}{a-1},
+\qquad
+\mean{T_{\rm prod}}=\frac{1}{\lambda}\log\frac{a}{a-1}.
+\label{p:eq:Vinf-Tprod}
+\end{equation}
+
+\subsection{The two kernels}
+
+Age-structured population dynamics needs exactly two single-cell
+ingredients. The \emph{survival kernel} is the probability that a cell
+infected $\alpha$ time units ago is still productively infected,
+\begin{equation}
+S(\alpha):=\Ifix(\alpha)=\frac{(a-b)^2\,\ee^{\theta\alpha}}
+{\lrb{B+A\ee^{\theta\alpha}}\lrb{a\ee^{\theta\alpha}-b}},
+\label{p:eq:Skernel}
+\end{equation}
+and the \emph{release kernel} is the expected release flux at cell age
+$\alpha$,
+\begin{equation}
+g(\alpha):=\delta K(\alpha)=V'(\alpha).
+\label{p:eq:gkernel}
+\end{equation}
+The reasoning behind \cref{p:eq:gkernel} is the one the failed proposal of
+\cref{p:sec:obstruction} stated and then did not use: a cell bursts at rate
+$\delta X_\alpha$ and releases $X_\alpha$ particles when it does, so the
+expected number released in $[\alpha,\alpha+\dd\alpha]$ is
+$\delta\mean{X_\alpha^2}\dd\alpha=\delta K(\alpha)\dd\alpha$. With $K$ from
+\cref{p:eq:K} both kernels are explicit functions of age
+(\cref{p:fig:kernels}). This is what it will mean for the population model
+to be \emph{forced by} the intracellular process: the kernels are computed,
+not fitted.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.98\textwidth]{N4b_7_kernels_three_regimes.pdf}
+\caption{Survival $\Ifix$ (a)--(c) and release $g=\delta K$ (d)--(f) across
+the flooding boundary of \cref{p:tab:trio}. Release rises then falls --- a
+cell must accumulate before it bursts --- while survival decays; shaded
+areas check $\int_0^\infty\Ifix=\mean{T_{\rm prod}}$ and
+$\int_0^\infty g=V_\infty$. Parameters, left to right:
+$(\lambda,\mu,\delta)=(1,0,0.1)$, $(1,0.5,1/3)$, $(1,0.9,0.1)$, with
+$L=1.10$, $1.00$, $0.42$ and $V_\infty=11.00$, $2.00$, $1.32$. Independent
+$g$-scales keep the timing shift visible.}
+\label{p:fig:kernels}
+\end{figure}
+
+\subsection{Three regimes, used throughout}
+\label{p:sec:trio}
+
+Three intracellular parameter triples recur below, chosen to straddle the
+flooding boundary $L=1$ of \cref{p:sec:flooding}: one on each side, one
+exactly on it. They are named here and used by name thereafter.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.12}
+\small
+\begin{tabular}{@{}l
+    S[table-format=1.3]S[table-format=1.3]S[table-format=1.2]
+    S[table-format=2.2]S[table-format=1.3]S[table-format=1.3]
+    S[table-format=1.2]@{}}
+\toprule
+{$(\lambda,\mu,\delta)$} & {$a$} & {$b$} & {$L$} & {$V_\infty$}
+ & {$\mean{T_{\rm prod}}$} & {$d_{\Icell,{\rm eff}}(0)$} & {$p_{\rm eff}(0)$} \\
+\midrule
+$(1,0,0.1)$    & 1.100 & 0     & 1.10 & 11.00 & 2.398 & 0.417 & 4.59 \\
+$(1,0.5,1/3)$  & 1.500 & {$1/3$} & 1.00 & 2.00  & 1.099 & 0.910 & 1.82 \\
+$(1,0.9,0.1)$  & 1.316 & 0.684 & 0.42 & 1.32  & 1.426 & 0.701 & 0.92 \\
+\bottomrule
+\end{tabular}
+\caption{The three regimes used throughout. The first has $L>1$, the second
+sits on the boundary $L=1$, the third has $L<1$. The last two columns are
+the $r=0$ endpoints of the effective-parameter map of
+\cref{p:sec:projection}.}
+\label{p:tab:trio}
+\end{table}
+
+\FloatBarrier
+
+\section{Burst-aware renewal dynamics}
+\label{p:sec:renewal}
+
+\subsection{The renewal system}
+
+Hold target cells $T$ fixed, let infection occur at rate $\gamma$ per
+virion, clear virions at rate $c$, and define the incidence
+$i(t)=\gamma T\Vfree(t)$. Each infection event at time $t-\alpha$ starts a
+cell of age $\alpha$, still productive with probability $S(\alpha)$ and
+releasing at expected rate $g(\alpha)$. Summing over infection times and
+adding the $\Icell_0$ cells already infected at $t=0$ gives the system,
+whose bookkeeping is drawn in \cref{p:fig:renewal-schematic}.
+
+\begin{definition}[The burst-aware renewal system]
+\label{p:def:renewal-system}
+\begin{equation}
+\Icell(t)=\Icell_0\,\Ifix(t)+\int_0^t i(t-\alpha)\,\Ifix(\alpha)\,\dd\alpha
+=\Icell_0\,\Ifix+(i*\Ifix)(t),
+\label{p:eq:Icell}
+\end{equation}
+\begin{equation}
+\ddt{\Vfree}(t)
+=\Icell_0\,g(t)+\int_0^t i(t-\alpha)\,g(\alpha)\,\dd\alpha-c\,\Vfree(t)
+=\Icell_0\,g+(i*g)(t)-c\,\Vfree(t).
+\label{p:eq:Vfree}
+\end{equation}
+\end{definition}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{F4b_1_renewal_schematic.pdf}
+\caption{Bookkeeping of \cref{p:def:renewal-system}: infection events start
+cohorts; the kernels $\Ifix$ and $g=\delta K$ weight them by age; the
+feedback $i=\gamma T\Vfree$ closes the loop.}
+\label{p:fig:renewal-schematic}
+\end{figure}
+
+\Cref{p:tab:correspondence} sets the two systems side by side. Both
+constants are replaced, not only the release: memoryless removal
+$d_{\Icell}\Icell$ becomes the age structure implicit in \cref{p:eq:Icell},
+and constant release $p\Icell$ becomes the convolution with $g$. A
+replacement touching only the release term --- the first thought of
+\cref{p:sec:obstruction} --- would leave the removal side memoryless, and
+still wrong. The removal side is not merely a formal concern: analysing
+stage-resolved HIV decay under drugs acting at different points in the life
+cycle, Gilmore et al.\ \cite{gilmore2013explaining} found infected-cell
+half-lives close to those of uninfected cells before integration and much
+shorter after it, which is an age-dependent $d_{\Icell}$ measured directly.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{tabular}{@{}p{0.46\textwidth}p{0.48\textwidth}@{}}
+\toprule
+Standard BMVR \cref{p:eq:bmvr-classical}
+& Renewal system \crefrange{p:eq:Icell}{p:eq:Vfree} \\
+\midrule
+$\Icell'=i-d_{\Icell}\Icell$
+& $\Icell=\Icell_0\Ifix+i*\Ifix$ \\
+constant removal rate $d_{\Icell}$
+& age-structured survival via $\Ifix$ \\[0.5em]
+$\Vfree'=p\Icell-c\Vfree$
+& $\Vfree'=\Icell_0 g+i*g-c\Vfree$ \\
+constant release rate $p$
+& age-structured release via $g=\delta K$ \\
+\bottomrule
+\end{tabular}
+\caption{What the renewal system replaces. Both constants go, not only the
+release rate.}
+\label{p:tab:correspondence}
+\end{table}
+
+Differentiating \cref{p:eq:Icell} makes the structure visible:
+\begin{equation*}
+\ddt{\Icell}
+= i(t)+\Icell_0\,\Ifix'(t)+\int_0^t i(t-\alpha)\,\Ifix'(\alpha)\,\dd\alpha,
+\end{equation*}
+in which incidence appears as a source exactly as in the standard model,
+while the remaining terms encode age-dependent loss of productivity. There
+is in general no constant $d_{\Icell}$ reducing this to
+$\Icell'=i-d_{\Icell}\Icell$ for every history of $i$; that holds only when
+everything grows exponentially, and the exception is what
+\cref{p:sec:projection} exploits.
+
+\subsection{The equations are exact in the mean}
+
+Equations \cref{p:eq:Icell,p:eq:Vfree} are not an approximation to the
+underlying stochastic process. They are its first moments exactly, and the reason is
+that every rate in sight is linear.
+
+\begin{proposition}[First-moment exactness]
+\label{p:prop:first-moment}
+Consider the stochastic process in which each infection event starts an
+independent birth--death--catastrophe cell, each released particle
+independently infects at rate $\gamma T$ or clears at rate $c$, and the
+$\Icell_0$ cells present at $t=0$ have age zero. Write $\Icell(t)$ and
+$\Vfree(t)$ for the expected numbers of productive cells and free particles.
+Then $\Icell$ and $\Vfree$ satisfy \cref{p:eq:Icell,p:eq:Vfree} exactly.
+\end{proposition}
+
+\begin{proof}
+Let $N$ be the point process of infection events. Since each free particle
+infects at rate $\gamma T$ and particles are independent, $N$ has
+compensator $\gamma T\,\Vfree^{\omega}(t)\,\dd t$, where $\Vfree^\omega$ is
+the realised particle count; taking expectations, its mean intensity is
+$i(t)=\gamma T\Vfree(t)$. A cell founded at time $t-\alpha$ evolves
+independently of $N$ and of every other cell, so it is still productive at
+$t$ with probability $\Ifix(\alpha)$ and its expected release flux at $t$ is
+$g(\alpha)$, both by definition of the kernels. Conditioning on $N$ and
+applying Campbell's formula --- legitimate because $\Ifix$ and $g$ are
+bounded and non-negative, so Fubini applies --- gives
+$\Icell(t)=\Icell_0\Ifix(t)+(i*\Ifix)(t)$ and an expected release flux of
+$\Icell_0g(t)+(i*g)(t)$. Clearance removes particles at rate $c$ per
+particle, contributing $-c\Vfree(t)$ to the mean. Collecting terms gives
+\cref{p:eq:Vfree}.
+\end{proof}
+
+\noindent
+The step that would fail for a nonlinear incidence is the identification of
+the mean intensity with $\gamma T\Vfree$: for $f(\Vfree,T)$ nonlinear,
+$\mean{f(\Vfree^\omega)}\neq f(\mean{\Vfree^\omega})$ and the moment
+hierarchy does not close. Assumption~(A1) is what keeps the incidence
+linear. This is one reason to prefer mass action where the data permit it,
+and the review of \cite{ciupe2024incorporating} reports that they generally
+do, the saturating alternatives --- Holling type~2, Beddington--DeAngelis,
+Crowley--Martin --- being well explored theoretically but not validated
+against data.
+
+\subsection{One skeleton, many mechanisms}
+\label{p:sec:generality}
+
+Nothing in \cref{p:eq:Icell,p:eq:Vfree} used the birth--death--catastrophe
+process beyond the two kernels it supplied. With incidence
+$i(t)=\gamma T\Vfree(t)$, or a nonlinear $f(\Vfree,T)$, \emph{any} pair
+$(S,g)$ gives
+\begin{equation}
+\Icell(t)=\Icell_0\,S(t)+(i*S)(t),
+\qquad
+\ddt{\Vfree}=\Icell_0\,g(t)+(i*g)(t)-c\,\Vfree(t),
+\label{p:eq:skeleton}
+\end{equation}
+with effective parameters $p_{\rm eff}(r)=\Lap{g}(r)/\Lap{S}(r)$ and, for
+linear incidence, $R_0=(\gamma T/c)\int_0^\infty g$. This is the chapter's
+most general statement, and it is what makes release mechanisms
+commensurable: they differ only in $(S,g)$ (\cref{p:tab:sg}). The first row
+is a structural check on the whole construction: exponential kernels reduce
+\cref{p:eq:skeleton} exactly to standard BMVR
+(\cref{p:sec:verification}).
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{@{}p{0.26\textwidth}p{0.19\textwidth}p{0.41\textwidth}@{}}
+\toprule
+Model & $S(\alpha)$ & $g(\alpha)$ \\
+\midrule
+Standard BMVR \cite{perelson1996hiv} & $\ee^{-d_{\Icell}\alpha}$ & $p\,\ee^{-d_{\Icell}\alpha}$ \\
+Eclipse $+$ standard \cite{ciupe2024incorporating} & $\ee^{-d_{\Icell}\alpha}$ & $p\ee^{-d_{\Icell}\alpha}\ind\{\alpha>\tau_e\}$ \\
+HCV multiscale \cite{guedj2013modeling,rong2013mathematical} & $\ee^{-\delta\alpha}$ & $\rho R(\alpha)\ee^{-\delta\alpha}$, with $R$ from an intracellular ODE \\
+Absorbing BDC (this chapter) & $\Ifix(\alpha)$ & $\delta K(\alpha)$ \\
+MOI-$k$ BDC (\ChDist) & $I(\alpha)^k-D(\alpha)^k$ & $\delta K_k(\alpha)$ \\
+Reset catastrophe (\cref{p:sec:reset}) & $\ee^{-d_{\Icell}\alpha}$ & $\delta\ee^{-d_{\Icell}\alpha}\mean{X_\alpha^2}$ \\
+Two-type / GATE (\ChTwoType) & two-type $\Ifix$ & two-type second-moment flux \\
+\bottomrule
+\end{tabular}
+\caption{One skeleton, many mechanisms. Each row is a different single-cell
+story; all induce \cref{p:eq:skeleton}, and differ only in the pair of
+kernels they supply.}
+\label{p:tab:sg}
+\end{table}
+
+\subsection{Relation to existing multiscale models}
+\label{p:sec:relation}
+
+The renewal framework itself is standard: it is the McKendrick--von Foerster
+machinery of mathematical demography
+\cite{mckendrick1926applications,vonfoerster1959some,metz1986dynamics}. So
+are age-structured within-host models. Nelson et al.\
+\cite{nelson2004agestructured} write down a within-host system with
+age-dependent production and death rates that is structurally
+\cref{p:eq:skeleton}, and take the age dependence as given. The multiscale
+hepatitis~C models \cite{guedj2013modeling,rong2013mathematical} go further
+and derive it, coupling infected cells of age $a$ to an intracellular viral
+RNA level $R(t,a)$ obeying a transport equation with production, degradation
+and export; free virus is then fed by
+$\rho\int_0^\infty R(t,a)I(t,a)\,\dd a$, which is
+\cref{p:eq:skeleton} with $g(\alpha)=\rho R(\alpha)\ee^{-\delta\alpha}$.
+That model is the third row of \cref{p:tab:sg} and a direct ancestor of what
+is done here.
+
+The difference is what the intracellular layer is. In
+\cite{guedj2013modeling,rong2013mathematical} it is a deterministic pool, so
+it supplies a mean release schedule and nothing else. Here it is a stochastic
+process solved in closed form, so it supplies the schedule \emph{and} the
+distributions built on it: the burst-size law, the probability $b$ that a
+cell clears internally and releases nothing, the offspring generating
+function, and hence extinction probabilities. Everything in
+\cref{p:sec:projection} could in principle be asked of a deterministic
+intracellular model; nothing in \cref{p:sec:flooding} could, because
+establishment is a question about the offspring distribution rather than its
+mean. That is the sense in which the stochastic mechanism earns its place.
+
+\subsection{Numerical verification}
+\label{p:sec:verification}
+
+The renewal system was checked end to end at four levels: kernel integrity,
+the reduction at $\gamma T=0$, the structural limits available in closed
+form, and stochastic ground truth. All 62 checks pass. Exponential kernels
+reproduce standard BMVR to relative error below $5\times10^{-5}$; the late
+growth rate equals the characteristic root of \cref{p:sec:projection} to
+about $10^{-7}$; the $R_0$ threshold is sharp; and an independent Gillespie
+ensemble reproduces the renewal means for $\Icell$ and $\Vfree$ to within
+$1$--$2\%$ (\cref{p:fig:gillespie}). The suite runs over the three regimes
+of \cref{p:tab:trio} together with $(1,0.2,0.05)$ and $(1,0,0.5)$, chosen to
+spread the kernel shapes; it is the script
+\texttt{verify\_result\_20\_1.py} distributed with the chapter source, and
+tests~M and~N of it are the two numerical sweeps cited in
+\cref{p:sec:span,p:sec:tradeoff}.
+% AUTHOR-ACTION: replace with a repository URL or archived DOI when one
+% exists.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.98\textwidth]{H_gillespie.pdf}
+\caption{Stochastic ground truth. Ensemble means of an independent Gillespie
+simulation --- birth--death--catastrophe cells with impulse releases at
+burst times, exponential clearance, no reinfection --- against
+\crefrange{p:eq:Icell}{p:eq:Vfree}. Left column $\mu=0$, right column
+$\mu>0$; (a)--(b) infected cells, (c)--(d) free particles. The curves are
+indistinguishable at plotting resolution and the relative $L^2$ discrepancy
+of $1$--$2\%$ is sampling error: the renewal equations are not an
+approximation to the simulation, and this is the check that says so.}
+\label{p:fig:gillespie}
+\end{figure}
+
+\FloatBarrier
+
+\section{The standard model is a projection}
+\label{p:sec:projection}
+
+The renewal system does not merely disagree with standard BMVR in
+transients. It contains standard BMVR as an exact special case, and the
+relationship is precise enough to be turned into predictions.
+
+\subsection{Exponential-phase equivalence}
+
+Suppose the incidence grows exponentially, $i(t)=i_0\ee^{rt}$, at times late
+enough that the lower limits of the convolutions are irrelevant. Then
+\begin{equation}
+\Icell(t)=i_0\ee^{rt}\Lap{\Ifix}(r),
+\qquad
+\Vfree'(t)=i_0\ee^{rt}\,\delta\Lap{K}(r)-c\,\Vfree(t),
+\label{p:eq:expphase}
+\end{equation}
+where $\Lap{f}(r)=\int_0^\infty\ee^{-r\alpha}f(\alpha)\dd\alpha$. A standard
+model driven by the same incidence has $\Icell(t)=i_0\ee^{rt}/(r+d_{\Icell})$
+and the eigenvalue relation $(r+d_{\Icell})(r+c)=\gamma Tp$; matching the two
+exponential solutions fixes
+\begin{equation}
+p_{\rm eff}(r)=\frac{\delta\,\Lap{K}(r)}{\Lap{\Ifix}(r)},
+\qquad
+d_{\Icell,{\rm eff}}(r)=\frac{1}{\Lap{\Ifix}(r)}-r.
+\label{p:eq:peff}
+\end{equation}
+
+\begin{theorem}[Exponential-phase equivalence]
+\label{p:thm:projection}
+Fix a growth rate $r>-\theta$. The constant pair
+$\bigl(p_{\rm eff}(r),d_{\Icell,{\rm eff}}(r)\bigr)$ of \cref{p:eq:peff} is
+the unique one for which standard BMVR reproduces the renewal system's
+$\ee^{rt}$ solution exactly, in both $\Icell$ and $\Vfree$; and substituting
+it into the standard eigenvalue relation returns
+\begin{equation}
+r+c=\gamma T\,\delta\Lap{K}(r),
+\label{p:eq:char}
+\end{equation}
+precisely the characteristic equation of the renewal system. What no
+constant pair reproduces is a transient, which samples a continuum of growth
+rates at once.
+\end{theorem}
+
+\begin{proof}
+Uniqueness and existence are \cref{p:eq:expphase} read as two equations in
+two unknowns: matching $\Icell$ forces $1/(r+d_{\Icell})=\Lap{\Ifix}(r)$,
+which is $d_{\Icell,{\rm eff}}$, and matching the release term then forces
+$p\Lap{\Ifix}(r)=\delta\Lap{K}(r)$, which is $p_{\rm eff}$. Both transforms
+are finite and strictly positive for $r>-\theta$, so the pair is well
+defined. Substituting into $(r+d_{\Icell})(r+c)=\gamma Tp$ gives
+$(r+c)/\Lap{\Ifix}(r)=\gamma T\delta\Lap{K}(r)/\Lap{\Ifix}(r)$, that is
+\cref{p:eq:char}. That no single pair serves a transient follows from
+\cref{p:prop:peff-monotone}: $p_{\rm eff}$ is not constant in $r$.
+\end{proof}
+
+\noindent
+So the standard model is not a rival to the renewal system but a projection
+of it, exact on one exponential phase at a time. Everything else in this
+section reads \cref{p:eq:peff} as a map.
+
+\subsection{The ends of the map}
+
+Using $\int_0^\infty\delta K=V_\infty$ and
+$\int_0^\infty\Ifix=\mean{T_{\rm prod}}$,
+\begin{equation}
+r=0:\quad
+p_{\rm eff}(0)=\frac{V_\infty}{\mean{T_{\rm prod}}}
+=\frac{\lambda\,V_\infty}{\log\bigl(a/(a-1)\bigr)},
+\quad
+d_{\Icell,{\rm eff}}(0)=\frac{\lambda}{\log\bigl(a/(a-1)\bigr)},
+\label{p:eq:peff0}
+\end{equation}
+lifetime output divided by lifetime --- a consistency check against naive
+moment-matching, and the matching used in the overlays below. At the other
+end,
+\begin{equation}
+r\to\infty:\qquad
+p_{\rm eff}(r)\to\delta,
+\qquad
+d_{\Icell,{\rm eff}}(r)\to\mu+\delta,
+\label{p:eq:peffinf}
+\end{equation}
+the \emph{young-cell} limit: in a fast-growing epidemic almost every
+infected cell was infected moments ago, holds one particle, bursts at rate
+$\delta$ and releases one.
+
+Calling these the two ends understates the map, because $r=0$ is not an end.
+Both transforms converge for every $r>-\theta$, and negative $r$ is not a
+fiction --- it is a decaying infection, the case of a treated patient. The
+genuine left-hand endpoint mirrors the young-cell limit.
+
+\begin{proposition}[The old-cell limit]
+\label{p:prop:oldcell}
+The release flux per surviving cell tends to a finite limit,
+\begin{equation}
+\lim_{\alpha\to\infty}\frac{g(\alpha)}{S(\alpha)}
+=\frac{a\lrbs{2\lambda(1-b)+\delta}}{a-1}
+=\frac{\delta\,a(a+1)}{(a-1)^2}
+=\delta\,\mean{X^2}_{\rm QS},
+\label{p:eq:oldcell}
+\end{equation}
+the burst rate times the second moment of the quasi-stationary load, and
+consequently $p_{\rm eff}(r)\to\delta\mean{X^2}_{\rm QS}$ as
+$r\downarrow-\theta$.
+\end{proposition}
+
+\begin{proof}
+Write $v=\ee^{-\theta\alpha}$. As $\alpha\to\infty$, $v\to0$ and
+\cref{p:eq:IDIhat,p:eq:J} give $\Ifix\sim(a-b)^2v/(Aa)$ and $I\to b$, so by
+\cref{p:eq:K} $g=2\lambda(\kappa-I)J\sim2\lambda(\kappa-b)(a-b)^2v/A^2$. The
+ratio of the two is $2\lambda(\kappa-b)a/A$, which is the first equality
+after $2\lambda(\kappa-b)=2\lambda(1-b)+\delta$. For the second, the
+identity $AB=\delta/\lambda$ reads $\lambda(1-b)=\delta/(a-1)$, whence
+$a[2\delta/(a-1)+\delta]/(a-1)=\delta a(a+1)/(a-1)^2$. That last expression
+is $\delta\mean{X^2}_{\rm QS}$ because the quasi-stationary load is
+geometric on $\{1,2,\ldots\}$ with ratio $1/a$ (\cref{p:eq:burstlaw}), whose
+second moment is $a(a+1)/(a-1)^2$. Finally, both $\Lap{\Ifix}$ and
+$\delta\Lap K$ diverge like $1/(r+\theta)$ as $r\downarrow-\theta$, with
+coefficients in the ratio just computed, so their quotient tends to it.
+\end{proof}
+
+\noindent
+The limit \cref{p:eq:oldcell} also repairs the failed proposal of
+\cref{p:sec:obstruction}, which offered the quasi-stationary \emph{mean} as
+a release rate and was wrong twice over: a count where a rate was needed,
+and the first moment where the second is called for. Both corrections appear
+together --- $\delta$ supplies the missing inverse time, and the
+load-proportional burst hazard weights by $X$ a second time.
+
+\subsection{Monotonicity, and the size of the effect}
+\label{p:sec:span}
+
+\begin{proposition}[Monotonicity of the effective release rate]
+\label{p:prop:peff-monotone}
+Write $\rho(\alpha)=g(\alpha)/S(\alpha)$ for the expected release flux per
+still-productive cell, so that $\rho(0)=\delta$ and
+$\rho(\infty)=\delta\mean{X^2}_{\rm QS}$. If $\rho$ is non-decreasing then
+$p_{\rm eff}$ is non-increasing on $(-\theta,\infty)$, strictly so if $\rho$
+is strictly increasing.
+\end{proposition}
+
+\begin{proof}
+For $r>-\theta$ let $\pi_{f,r}$ be the probability density
+$\alpha\mapsto\ee^{-r\alpha}f(\alpha)/\Lap f(r)$. Differentiating under the
+integral, $\dd\log\Lap f(r)/\dd r=-\mean{\alpha}_{\pi_{f,r}}$, so
+\begin{equation}
+\frac{\dd}{\dd r}\log p_{\rm eff}(r)
+=\mean{\alpha}_{\pi_{S,r}}-\mean{\alpha}_{\pi_{g,r}}.
+\label{p:eq:peff-deriv}
+\end{equation}
+The two densities have ratio
+$\pi_{g,r}(\alpha)/\pi_{S,r}(\alpha)\propto\rho(\alpha)$, independently of
+$r$. If $\rho$ is non-decreasing, $\pi_{g,r}$ dominates $\pi_{S,r}$ in the
+monotone likelihood ratio order, hence in the usual stochastic order, hence
+in mean; so \cref{p:eq:peff-deriv} is non-positive.
+\end{proof}
+
+\noindent
+The hypothesis is a statement about one closed-form function of one
+variable: substituting $v=\ee^{-\theta\alpha}$ gives
+\begin{equation}
+\rho=\frac{2\lambda\lrbs{B(\kappa-a)v+A(\kappa-b)}(a-bv)}{(Bv+A)^2},
+\label{p:eq:rho-closed}
+\end{equation}
+which must be shown decreasing in $v\in(0,1]$. That reduces the question to
+a finite algebraic one. It is not settled here, but $\rho$ was found
+increasing at every one of $4000$ triples sampled over
+$(\mu,\delta)\in[10^{-3},20]^2$ at $\lambda=1$, and $p_{\rm eff}$ decreasing
+at every one (test~M of the verification suite).
+
+The size of the effect is what matters. At $(\lambda,\mu,\delta)=(1,0,0.1)$,
+$p_{\rm eff}(0)\approx4.59$ against $p_{\rm eff}(\infty)=0.1$: the same
+cell, two orders of magnitude apart, with nothing separating the two figures
+but how fast the epidemic around it is growing. Over the whole map the span
+is larger, and exact --- by \cref{p:eq:peffinf,p:eq:oldcell} the ratio of
+the endpoints is
+\begin{equation}
+\frac{\delta\,\mean{X^2}_{\rm QS}}{\delta}=\mean{X^2}_{\rm QS}
+=\frac{a(a+1)}{(a-1)^2},
+\label{p:eq:peff-span}
+\end{equation}
+a pure number fixed by the intracellular rates alone. It is $231$ at
+$(1,0,0.1)$ and $30.5$ at $(1,0.9,0.1)$: \emph{the full dynamic range of a
+fitted release rate is the second moment of the quasi-stationary load.}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{peff_dr_curves.pdf}
+\caption{The effective release rate (a) and removal rate (b) of
+\cref{p:eq:peff} against the epidemic growth rate $r$, for three parameter
+sets, over the whole domain $r>-\theta$ on which the map is defined. Open
+circles mark the $r=0$ values \cref{p:eq:peff0}; dotted segments mark the
+limits each curve runs toward. Note that $r=0$ is an interior point: the
+left-hand endpoint is the old-cell limit $\delta\mathbb{E}_{\rm QS}[X^2]$
+and the right-hand one the young-cell limit $\delta$. Read the vertical
+extent of each curve as the size of the error made by treating $p$ as a
+constant of the pathogen rather than of the epidemic's phase.}
+\label{p:fig:peff}
+\end{figure}
+
+\subsection{Threshold and growth rate as functionals of one kernel}
+\label{p:sec:generation-kernel}
+
+One object lies behind both \cref{p:eq:peff} and the comparison of
+\cref{p:sec:flooding}. Define the cell-to-cell \emph{generation kernel}
+\begin{equation}
+\mathcal A(\alpha)
+=\gamma T\,\bigl(g*\ee^{-c\,\cdot}\bigr)(\alpha)
+=\gamma T\!\int_0^\alpha g(u)\,\ee^{-c(\alpha-u)}\,\dd u,
+\label{p:eq:genkernel}
+\end{equation}
+the rate at which a cell of age $\alpha$ generates new infected cells: it
+releases at rate $g(u)$ at age $u$, a particle released then is still free a
+time $\alpha-u$ later with probability $\ee^{-c(\alpha-u)}$, and infects at
+rate $\gamma T$. Its transform is
+$\Lap{\mathcal A}(r)=\gamma T\Lap{g}(r)/(r+c)$, so the characteristic
+equation \cref{p:eq:char} is exactly $\Lap{\mathcal A}(r)=1$: the
+Euler--Lotka equation of a one-type age-structured population, with the
+infected cell as the individual and $\mathcal A$ as its mean reproduction
+measure \cite{diekmann1990definition,metz1986dynamics}.
+
+Three things follow. First, the total mass of $\mathcal A$ is the basic
+reproduction number,
+\begin{equation}
+R_0=\int_0^\infty\mathcal A(\alpha)\,\dd\alpha
+=\gamma T\int_0^\infty g\;\cdot\;\int_0^\infty\ee^{-cu}\,\dd u
+=\frac{\gamma T\,V_\infty}{c},
+\label{p:eq:R0gen}
+\end{equation}
+which depends on $g$ only through its integral. Second, the normalised
+kernel $\mathcal A/R_0$ is the \emph{generation-time density}, the law of
+the age at which a cell produces a randomly chosen one of its offspring
+cells. Third, since $r$ solves $\Lap{\mathcal A}(r)=1$ while
+$R_0=\Lap{\mathcal A}(0)$, threshold and growth rate are different
+functionals of one kernel --- the standard $R_0$-versus-$r$ distinction
+\cite{wallinga2007generation}, here with both sides in closed form. The
+first two of these deliver the invariance that makes
+\cref{p:sec:flooding} a fair comparison.
+
+\begin{theorem}[$R_0$ is unchanged by bursting]
+\label{p:thm:R0inv}
+At fixed total per-cell output $V_\infty$, replacing constant budding by
+bursting leaves $R_0$ exactly unchanged. Bursting alters the generation-time
+distribution --- hence the growth rate $r$, hence the extinction
+probability, hence the stochastic early phase --- but not the threshold
+itself.
+\end{theorem}
+
+\begin{proof}
+By \cref{p:eq:R0gen}, $R_0=\int_0^\infty\mathcal A$ depends on the release
+kernel only through $\int_0^\infty g=V_\infty$. Replacing bursting by
+budding at matched yield replaces $g$ by another kernel with the same
+integral, and leaves $R_0$ where it was. The generation-time density
+$\mathcal A/R_0$, by contrast, depends on the whole of $g$, and it is
+through that density that $r$ is determined by $\Lap{\mathcal A}(r)=1$.
+\end{proof}
+
+\noindent
+A caution attaches about assumption (A2): \cref{p:eq:R0gen} is the
+\emph{continuum} reproduction number, in which one virion contributes mean
+$\gamma T/c$ new infections, whereas a discrete branching process absorbing
+virions on infection carries the mean $m=qV_\infty$ with
+$q=\gamma T/(\gamma T+c)$. The two agree when $\gamma T\ll c$, and it is $m$
+that governs \cref{p:sec:flooding}.
+
+\subsection{What the projection loses}
+\label{p:sec:overlays}
+
+To see what age structure does to an epidemic, integrate both systems side
+by side. In \cref{p:fig:overlay-V,p:fig:growth-phase} the solid curve is the
+renewal system and the dashed one standard BMVR with the fairest constant
+match, the $r=0$ end of \cref{p:eq:peff}, so that total lifetime output and
+mean productive lifetime agree.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{overlay_V.pdf}
+\caption{Both state variables, both sides of the threshold. Free particles
+$\Vfree(t)$ (top row) and infected cells $\Icell(t)$ (bottom) under the
+renewal system (solid) and under standard BMVR matched at $r=0$ (dashed),
+for a supercritical infection (left, $R_0=1.76$) and a subcritical one
+(right, $R_0=0.28$). The matched model gets the order of magnitude and not
+the shape; and the discrepancy is not confined to the release equation ---
+age structure moves the cell trajectory too, which is why matching $p$ alone
+cannot repair it. Parameters: $(\lambda,\mu,\delta)=(1,0,0.1)$ throughout,
+with $\gamma T=0.04$, $c=0.25$ on the left and $\gamma T=0.01$, $c=0.4$ on
+the right.}
+\label{p:fig:overlay-V}
+\end{figure}
+
+The reading is consistent across panels. The matched model misses three
+things: the early lag, because young cells dominate and release is nearer
+the young-cell limit $\delta$ than $p_{\rm eff}(0)$; the timing of the peak;
+and the late growth rate, since generation-time structure moves the
+operative release rate away from its $r=0$ value as the epidemic grows. The
+relative free-particle discrepancy is often order one or larger by the end of
+the plotted window in supercritical regimes, and worst when intracellular
+death is high, where $V_\infty$ is small while the age structure of release
+stays strongly non-exponential.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{overlay_growth_phase.pdf}
+\caption{Why no single constant pair will do. One renewal trajectory (solid)
+against two standard parameter choices: the $r=0$ match (dashed) and the
+young-cell limit $p=\delta$, $d_{\Icell}=\mu+\delta$ (dash-dot). (a) The
+first six time units, where the $r=0$ match overshoots by more than an order
+of magnitude while the young-cell parameters are the closer of the two.
+(b) The full window, where the ordering has reversed and the young-cell
+model has collapsed. Each choice is correct at one growth rate and the
+trajectory passes through many, exactly as \cref{p:eq:peff} predicts. Both
+panels logarithmic in $\Vfree$. Parameters:
+$(\lambda,\mu,\delta)=(1,0,0.1)$, $\gamma T=0.025$, $c=0.2$, $R_0=1.38$.}
+\label{p:fig:growth-phase}
+\end{figure}
+
+Note that the early lag is an eclipse phase that nobody put in. Within-host
+models routinely insert one by hand, as a fitted delay distribution or as
+explicit eclipse compartments \cite{ciupe2024incorporating,herz1996viral};
+here it emerges from the intracellular dynamics with no extra parameter, its
+scale set by $\mean{T_{\rm prod}}$. The caution that goes with the
+observation is Herz et al.'s \cite{herz1996viral}: the shoulder in
+post-treatment viral load is a compound of pharmacological delay,
+intracellular delay, infected-cell decay and viral clearance, so the honest
+claim is not that this lag \emph{is} the eclipse but that a lag of this
+shape arises without being fitted.
+
+\subsection{Identifiability: a negative result}
+\label{p:sec:identifiability}
+
+How much of the intracellular process can a population-level fit recover? At
+any fixed growth rate $r$, the map
+\begin{equation*}
+(\lambda,\mu,\delta)\ \longmapsto\ \lrb{p_{\rm eff}(r),\,d_{\Icell,{\rm eff}}(r)}
+\end{equation*}
+sends three rates to two numbers, and is therefore not invertible
+(\cref{p:fig:identifiability}). This is a structural identifiability
+statement of the kind Miao et al.\ \cite{miao2011identifiability} treat for
+viral dynamics generally, and it is negative for the same reason: the
+observable is a projection, and the projection has a kernel.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{N4b_2_identifiability_levels.pdf}
+\caption{Population observables leave level sets rather than identifying the
+intracellular rates. With $c=1$ and $\gamma T=1$, the interior flooding
+point $(\lambda,\mu,\delta)=(1,0.5,1/3)$ has $R_0=2$ and $r_\star=0.294$.
+(a) One population observable leaves a level curve: in the slice $\lambda=1$
+the contours $R_0=2$ and $r=r_\star$ are distinct; alternatives A and C
+share $R_0$ with the reference but not its growth rate. (b) With $\lambda$
+free, a continuous family of triples shares both. Joint knowledge of
+threshold and exponential growth therefore does not identify
+$(\lambda,\mu,\delta)$.}
+\label{p:fig:identifiability}
+\end{figure}
+
+It is worth seeing that this result is corroborated from the fitting side.
+Mittler et al.\ \cite{mittler1998influence} compared a range of
+intracellular delay distributions against HIV RNA data after protease
+inhibitor initiation and found the resulting parameter estimates largely
+insensitive to which distribution was assumed --- a finding influential
+enough that the review of \cite{ciupe2024incorporating} cites it to justify
+preferring the simplest eclipse compartment. Read through
+\cref{p:thm:projection}, that insensitivity is not a rival claim but the
+same one: on a single exponential phase a constant pair reproduces the
+kernel exactly, so the shape of the kernel is invisible in exactly the
+regime where those fits were performed. Consistently, when Kakizoe et al.\
+\cite{kakizoe2015method} fitted in vitro SHIV data resolving the early
+transient, an Erlang delay did improve the fit.
+
+A third observable is therefore required; in order of experimental
+accessibility:
+\begin{enumerate}[leftmargin=1.9em]
+\item the burst-size dispersion --- the geometric ratio $1/a$ fixes one
+combination of the rates directly;
+\item the fraction of cells that clear without bursting, which is $b$;
+\item the shape --- not merely the mean --- of the release-time density
+$\delta J$.
+\end{enumerate}
+Any one of these, together with $(p,d_{\Icell})$, over-determines
+$(\lambda,\mu,\delta)$ and converts the fit into a consistency test of the
+intracellular model. The limitation is not one of fitting procedure but of
+the information content of standard BMVR itself, and the remedy is the one
+\cite{ciupe2024incorporating} calls for in general terms: data at a finer
+scale of resolution, chosen to match the model's structure.
+
+\FloatBarrier
+
+\section{Bursting versus budding: the flooding parameter~\texorpdfstring{$L$}{L}}
+\label{p:sec:flooding}
+
+Does bursting help a pathogen get established? The question belongs to the
+stochastic early phase, where counts are small and extinction is a live
+possibility \cite{pearson2011stochastic}, and it is the question the
+stochastic intracellular model was built to answer: both versions of the
+early infection are branching processes whose offspring distributions are in
+closed form.
+
+The mechanism at issue is worth naming before it is analysed. A bursting
+cell delivers its whole output in one instant, so a founder that survives to
+rupture presents the target population with many simultaneous infection
+attempts rather than a trickle spread over its lifetime. Whether that
+concentration helps or hurts is not obvious: many attempts at once buy
+insurance against the loss of any one particle, but they are all forfeited
+if the intracellular population dies out before the burst, which happens
+with probability $b$. We call the concentration \emph{flooding}, and the
+question is when it pays.
+
+\subsection{The offspring of one infected cell}
+
+In the branching approximation each released particle independently either
+infects a target cell, at rate $\gamma T$, or is cleared, at rate $c$, and so
+infects with probability
+\begin{equation}
+q=\frac{\gamma T}{\gamma T+c}.
+\label{p:eq:q}
+\end{equation}
+The offspring of one infected cell is the burst size $\Kb$ thinned by $q$.
+Summing \cref{p:eq:burstlaw}, the unconditional burst-size \pgf{} is
+$G_{\Kb}(z)=b+(\delta/\lambda)z/(a-z)$ --- including the mass $b$ of cells
+that never burst --- and thinning replaces $z$ by $y:=1-q+qz$:
+\begin{equation}
+G_{\rm off}(z)=b+\frac{\delta}{\lambda}\,\frac{y}{a-y},
+\qquad y=1-q+qz.
+\label{p:eq:Goff}
+\end{equation}
+One checks $G_{\rm off}(1)=b+(\delta/\lambda)/(a-1)=b+B=1$. The mean and
+variance of the offspring number are
+\begin{equation}
+m=G_{\rm off}'(1)=q\,V_\infty,
+\qquad
+\mathrm{Var}_{\rm burst}
+=\frac{2q^2V_\infty}{a-1}+qV_\infty-q^2V_\infty^2.
+\label{p:eq:offmoments}
+\end{equation}
+When $\gamma T\ll c$, $q\approx\gamma T/c$ and $m\approx R_0$.
+
+The comparator is the budding cell of \cref{p:sec:budding}, whose output is
+geometric with mean $p/d_{\Icell}$. Match it to the bursting cell's total
+output, $p/d_{\Icell}=V_\infty$. That matching is what makes the comparison
+fair, and by \cref{p:thm:R0inv} it costs nothing: at equal total output the
+two mechanisms have exactly the same $R_0$, so everything that follows
+compares two pathogens at one threshold, and any difference between them is
+a difference in how the output is \emph{scheduled} rather than in how much of
+it there is. Thinning a geometric law leaves a geometric law, so the budding
+offspring number is geometric with the same mean $m=qV_\infty$.
+
+\subsection{Extinction, and the flooding advantage}
+
+The extinction probability of a branching process is the smallest root of
+$G_{\rm off}(z)=z$ in $[0,1]$. With $y=1-q+qz$ the fixed-point equation is
+quadratic, $z=1$ is always a root, and the other root gives, for $m>1$,
+\begin{equation}
+z_{\rm ext}^{\rm burst}
+=\frac{a(1-q+qb)-1+q}{q},
+\qquad
+z_{\rm ext}^{\rm bud}=\frac{1}{m}.
+\label{p:eq:zext}
+\end{equation}
+Everything now turns on a single combination of the intracellular rates.
+
+\begin{definition}[The flooding parameter]
+\label{p:def:L}
+\begin{equation}
+L:=a(1-b)=a-\frac{\mu}{\lambda},
+\qquad\text{so that}\qquad
+V_\infty=\frac{L}{a-1}.
+\label{p:eq:Ldef}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[The flooding advantage]
+\label{p:thm:flood}
+For $m>1$,
+\begin{equation}
+z_{\rm ext}^{\rm burst}-z_{\rm ext}^{\rm bud}
+=\bigl(L-1\bigr)\Bigl(\frac{1}{m}-1\Bigr).
+\label{p:eq:flood}
+\end{equation}
+Hence bursting strictly lowers the establishment extinction probability,
+relative to matched-mean budding, if and only if $L>1$, that is
+\begin{keyresult}
+\begin{equation}
+\delta(\lambda+\mu)>\lambda\mu
+\qquad\Longleftrightarrow\qquad
+\frac{1}{\delta}<\frac{1}{\lambda}+\frac{1}{\mu},
+\label{p:eq:floodcrit}
+\end{equation}
+\end{keyresult}
+with the convention that the condition holds for all $\delta>0$ when
+$\mu=0$. When $L=1$ the two extinction probabilities are identical for every
+$q$.
+\end{theorem}
+
+\begin{proof}
+The identity \cref{p:eq:flood} is algebra: substitute \cref{p:eq:zext},
+$m=qV_\infty=qL/(a-1)$ and simplify. Since $m>1$ makes the second factor
+negative, the sign of the difference is the sign of $1-L$. For the
+criterion, $L>1$ is $a(1-b)>1$, i.e.\ $a>1+\mu/\lambda$; inserting the
+definition of $a$ from \cref{p:eq:roots} and squaring --- legitimate since
+both sides are positive, or the right-hand side is not --- yields
+$(\lambda+\mu+\delta)^2-4\lambda\mu>4\lambda^2(1+\mu/\lambda-\eta)^2$, which
+reduces to $\delta(\lambda+\mu)>\lambda\mu$.
+\end{proof}
+
+The criterion \cref{p:eq:floodcrit} is the chapter's central biological
+statement, and it reads cleanly as a comparison of timescales. The burst clock $1/\delta$ must
+be shorter than the harmonic-type combination
+$\bigl(1/\lambda+1/\mu\bigr)$ of the birth and death timescales. A cell that
+takes too long to rupture is a cell whose internal population has time to
+die out first, and the all-or-nothing hazard $b$ then outweighs the
+insurance that a simultaneous batch buys. When $\mu=0$ that hazard vanishes
+and bursting wins at every $\delta$. \Cref{p:fig:L-landscape} shows where
+the boundary lies in the rate plane; \cref{p:tab:flooding} confirms the
+identity in each regime, and \cref{p:fig:flooding-regimes} traces both
+extinction probabilities across the whole range of $q$.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.64\textwidth]{N4b_4_L_landscape.pdf}
+\caption{Where a pathogen sits relative to the flooding boundary. The
+flooding parameter $L(\mu,\delta)$ at $\lambda=1$; the exact curve $L=1$,
+equivalently $\delta_*=\lambda\mu/(\lambda+\mu)$, partitions the rate plane
+into a region where bursting lowers extinction risk and one where it raises
+it. The three marked points are the regimes of \cref{p:tab:trio},
+$(\mu,\delta)=(0,0.1)$, $(0.5,1/3)$ and $(0.9,0.1)$, with $L=1.10$, $1.00$
+and $0.42$.}
+\label{p:fig:L-landscape}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}l S[table-format=1.1]
+    S[table-format=1.3]S[table-format=1.3] l@{}}
+\toprule
+{$(\lambda,\mu,\delta)$} & {$q$} & {$z_{\rm ext}^{\rm burst}$}
+ & {$z_{\rm ext}^{\rm bud}$} & {verdict} \\
+\midrule
+$(1,0,0.1)$   & 0.2 & 0.400 & 0.455 & bursting wins ($L=1.10$) \\
+$(1,0.9,0.1)$ & 0.9 & 0.935 & 0.844 & budding wins ($L=0.42$) \\
+$(1,0.5,1/3)$ & 0.6 & 0.833 & 0.833 & tie ($L=1$) \\
+$(1,0.5,1/3)$ & 0.9 & 0.556 & 0.556 & tie ($L=1$) \\
+\bottomrule
+\end{tabular}
+\caption{Extinction probabilities from \cref{p:eq:zext} and the sign of
+their difference. The gap is $(L-1)(1/m-1)$ in every row.}
+\label{p:tab:flooding}
+\end{table}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{F4b_2_flooding_regimes.pdf}
+\caption{Extinction probabilities for bursting and matched-mean budding
+across the three regimes of \cref{p:tab:trio}. Each pair of curves begins at
+$m=1$; the signed gap follows \cref{p:eq:flood}. The $q$-windows differ
+because $m=1$ sits at different $q$ in each regime.}
+\label{p:fig:flooding-regimes}
+\end{figure}
+
+For $m\le1$ both processes die out almost surely and the comparison is
+empty; \cref{p:eq:flood} changes sign there, an artefact of both formulae
+running outside their domain $[0,1)$, not a reversal of the biology.
+
+\subsection{The boundary \texorpdfstring{$L=1$}{L=1}: a coincidence of laws}
+
+The boundary case is more than a tie of extinction probabilities.
+
+\begin{proposition}
+\label{p:prop:L1}
+The following are equivalent:
+\begin{equation}
+L=1
+\;\Longleftrightarrow\;
+a=1+\frac{\mu}{\lambda}
+\;\Longleftrightarrow\;
+\delta(\lambda+\mu)=\lambda\mu
+\;\Longleftrightarrow\;
+\frac{1}{\delta}=\frac{1}{\lambda}+\frac{1}{\mu}.
+\label{p:eq:L1equiv}
+\end{equation}
+When they hold, the bursting offspring law \cref{p:eq:Goff} is
+\emph{exactly geometric} with mean $m$ --- not merely equal in extinction
+probability to the budding comparator. In particular the offspring variances
+coincide, and in general
+\begin{equation}
+\mathrm{Var}_{\rm bud}-\mathrm{Var}_{\rm burst}
+=\frac{2q^2V_\infty(L-1)}{a-1},
+\label{p:eq:varorder}
+\end{equation}
+so that at matched mean the bursting offspring variance is smaller than the
+budding one when $L>1$, equal when $L=1$, and larger when $L<1$.
+\end{proposition}
+
+\begin{proof}
+$L=1$ is $a(1-b)=1$, i.e.\ $a-1=ab=\mu/\lambda$, giving the chain of
+equivalences. Under it $b=\delta/\lambda$, and \cref{p:eq:Goff} collapses:
+\[
+G_{\rm off}(z)=b\Bigl(1+\frac{y}{a-y}\Bigr)=\frac{ab}{a-y}
+=\frac{a-1}{a-y}
+=\frac{(a-1)/a}{1-y/a},
+\]
+using $ab=a-1$. With $y=1-q+qz$,
+$1-y/a=\frac{a-1+q}{a}\bigl(1-\frac{q}{a-1+q}z\bigr)$, so
+\[
+G_{\rm off}(z)=\frac{1-\varrho}{1-\varrho z},
+\qquad
+\varrho=\frac{q}{a-1+q}=\frac{m}{1+m},
+\qquad m=\frac{q}{a-1}=qV_\infty,
+\]
+the \pgf{} of a geometric law on $\{0,1,2,\ldots\}$ with mean $m$ --- the
+same law as the matched budding comparator. The variance identity
+\cref{p:eq:varorder} is the difference between the geometric variance
+$m(1+m)$ and \cref{p:eq:offmoments}, with $V_\infty=L/(a-1)$.
+\end{proof}
+
+\noindent
+So $L$ does more than fix a sign. At the boundary, bursting and budding are
+the same branching process in different clothes; away from it,
+\cref{p:eq:varorder} says precisely how the two offspring laws differ, and
+the extinction ordering of \cref{p:thm:flood} is the ordering of their
+variances at fixed mean. That is the mechanism behind the criterion:
+concentrating output into one batch reduces offspring variance --- which
+helps at establishment --- but only if the batch is delivered often enough
+to offset the mass $b$ at zero.
+
+\subsection{The price: invasion speed}
+\label{p:sec:tradeoff}
+
+Establishment is half the story; the other half is how fast an established
+infection grows. Match the models a second time, at $R_0$ and at mean
+productive lifetime: take the budding cell with
+$d_{\Icell}=1/\mean{T_{\rm prod}}$ and $p=V_\infty d_{\Icell}$ --- exactly
+$p_{\rm eff}(0)$, the fairest constant match available --- and choose
+$\gamma T$, or $c$, so that both share $R_0=2$. Solving for the growth rates,
+$r_{\rm bud}$ from $(r+d_{\Icell})(r+c)=\gamma Tp$ and $r_{\rm burst}$ from
+\cref{p:eq:char}, gives the same ordering in all three regimes:
+\begin{equation}
+r_{\rm bud}>r_{\rm burst}.
+\label{p:eq:rorder}
+\end{equation}
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}l S[table-format=1.2]
+    S[table-format=1.3]S[table-format=1.3]S[table-format=1.3]@{}}
+\toprule
+{$(\lambda,\mu,\delta)$} & {$L$} & {$d_{\Icell}$}
+ & {$r_{\rm bud}$} & {$r_{\rm burst}$} \\
+\midrule
+$(1,0,0.1)$   & 1.10 & 0.417 & 0.250 & 0.180 \\
+$(1,0.5,1/3)$ & 1.00 & 0.910 & 0.395 & 0.294 \\
+$(1,0.9,0.1)$ & 0.42 & 0.701 & 0.343 & 0.198 \\
+\bottomrule
+\end{tabular}
+\caption{Deterministic growth rates at matched $R_0=2$, matched total yield
+and matched mean productive lifetime, with $c=1$. Budding invades faster on
+both sides of the flooding boundary and on it, so the ordering is not the
+same effect as \cref{p:thm:flood}.}
+\label{p:tab:tradeoff}
+\end{table}
+
+Whether \cref{p:eq:rorder} holds in general is not settled here, but it
+reduces to a single inequality in which the coupling constants do not appear.
+
+\begin{proposition}[The ordering is a Laplace-transform comparison]
+\label{p:prop:rorder}
+Match the comparator as above, so that
+$\int_0^\infty g_{\rm bud}=\int_0^\infty g_{\rm burst}=V_\infty$. Then
+$r_{\rm bud}>r_{\rm burst}$ for \emph{every} pair $(\gamma T,c)$ with
+$R_0>1$ if and only if
+\begin{equation}
+\Lap{g}_{\rm burst}(r)\ \le\ \Lap{g}_{\rm bud}(r)=\frac{p}{r+d_{\Icell}}
+\qquad\text{for all }r>0,
+\label{p:eq:laplace-order}
+\end{equation}
+that is, if and only if the release age under bursting dominates the matched
+exponential release age in the Laplace-transform order.
+\end{proposition}
+
+\begin{proof}
+Each model's growth rate is the unique root of
+$\phi(r):=\gamma T\Lap g(r)-(r+c)$; $\phi$ is strictly decreasing, and
+$\phi(0)=\gamma TV_\infty-c=c(R_0-1)>0$, so the root is positive and unique.
+If \cref{p:eq:laplace-order} holds then $\phi_{\rm burst}\le\phi_{\rm bud}$
+pointwise, so the root of the former is no larger. Conversely, suppose
+$\Lap g_{\rm burst}(r_0)>\Lap g_{\rm bud}(r_0)$ for some $r_0>0$. Choose any
+$c>0$ and set $\gamma T=(r_0+c)/\Lap g_{\rm burst}(r_0)$, so that
+$r_{\rm burst}=r_0$; then $\phi_{\rm bud}(r_0)<0$ and $r_{\rm bud}<r_0$.
+Taking $c$ small makes $R_0=\gamma TV_\infty/c$ exceed one, so the ordering
+fails for an admissible coupling.
+\end{proof}
+
+\noindent
+Both sides of \cref{p:eq:laplace-order} agree at $r=0$, by the matching, so
+its content is entirely in how the two release schedules are spread over
+age. The inequality was checked at $1500$ triples over
+$(\mu,\delta)\in[10^{-3},10]\times[10^{-3},16]$ at $\lambda=1$, at $60$
+values of $r$ across four decades, without a violation
+(test~N of the verification suite). The \emph{usual} stochastic order does
+not hold --- the burst release-age survival function dips below the matched
+exponential --- so \cref{p:eq:laplace-order} is not a weaker way of saying
+something stronger. It is the order the problem actually has.
+
+The mechanism is generation time in the exact sense of
+\cref{p:sec:generation-kernel}. The budding cell starts releasing at once
+while the bursting cell must first accumulate load, so budding's
+generation-time density $\mathcal A/R_0$ sits earlier, and by
+$\Lap{\mathcal A}(r)=1$ an earlier density gives a larger root. At
+$(\lambda,\mu,\delta)=(1,0,0.1)$ with $c=1$ the mean generation time is
+$2.398+1=3.398$ for budding against $3.089+1=4.089$ for bursting, which is
+what puts $r_{\rm bud}=0.250$ above $r_{\rm burst}=0.180$
+(\cref{p:fig:generation-times}). This is the same delay that appeared as the
+eclipse-like lag of \cref{p:sec:overlays}, and it is the phage lysis-timing
+problem in another notation: holding on longer makes more particles per cell
+but takes longer to make them \cite{wang2006lysis,wallinga2007generation}.
+That an infectious-period distribution shifts the growth rate at fixed
+threshold is a general fact about renewal epidemics rather than anything
+peculiar to bursting \cite{lloyd2001realistic,champredon2015intrinsic}; what
+is particular here is that the distribution is derived rather than assumed.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{N4b_6_generation_times.pdf}
+\caption{The generation-time structure behind the first row of
+\cref{p:tab:tradeoff}. At $(\lambda,\mu,\delta)=(1,0,0.1)$, budding and
+bursting are matched at $R_0=2$, $c=1$, total yield and mean productive
+lifetime. The main curves are the normalised infection-generation laws
+$\mathcal A(\alpha)/R_0$, including the common extracellular waiting-time
+component; panel (b) isolates release age and shows why the budding law
+leads.}
+\label{p:fig:generation-times}
+\end{figure}
+
+\subsection{The trade-off}
+
+Put together, the two comparisons say what bursting buys and what it costs.
+At fixed total output per cell, bursting leaves $R_0$ untouched, lowers the
+probability of early extinction when $L>1$, and slows deterministic
+invasion. A pathogen tuning $\delta$ therefore faces a genuine trade-off
+(\cref{p:fig:pareto}): $z_{\rm ext}$ and $r$ move in opposite directions,
+and no setting of $\delta$ improves both. For $\mu>0$, budding beats
+bursting on extinction until $\delta$ crosses
+$\delta_*=\lambda\mu/(\lambda+\mu)$, beyond which bursting takes over; for
+$\mu=0$ bursting wins at every $\delta$, at the continuing cost of a slower
+$r$.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.62\textwidth]{N4b_5_pareto_extinction_growth.pdf}
+\caption{Tuning $\delta$ traces a strict extinction--growth trade-off, drawn
+parametrically as $\delta$ varies from $0.03$ to $0.8$ with $\lambda=1$,
+$\mu=0$, $c=1$ and $R_0=2$. The coupling is reset along the curve to hold
+$R_0=2$, and the budding comparator is matched in lifetime yield $V_\infty$
+and in mean productive lifetime. There is no setting of $\delta$ that
+improves both coordinates: faster growth is bought with a higher extinction
+probability.}
+\label{p:fig:pareto}
+\end{figure}
+
+Two remarks place the result. First, its scope: both comparisons hold the
+offspring \emph{mean} fixed and are branching-process statements, so they
+say nothing about nonlinear effects, where other advantages of flooding may
+live (\cref{p:sec:limitations}). Second, its company. Lord and Bonsall
+\cite{lord2021evolutionary} reach a qualitatively parallel conclusion for
+within-host virus evolution by a different route, using fixed-delay models
+to compare virion release strategies and finding that lysis-like strategies
+are favoured when the terminal event comes quickly and budding when it is
+slow. The criterion \cref{p:eq:floodcrit} is a sharp version of
+``quickly'', written in intracellular rates, and it comes with the exact size of the advantage from
+\cref{p:eq:flood}. The evolutionary framing belongs to \ChPath{}, which
+inherits from this comparison the awkward fact that one mechanism can be
+favoured on establishment and disfavoured on invasion speed at once --- the
+nested-model problem in its usual form \cite{gilchrist2006evolution}.
+
+\FloatBarrier
+
+\section{The reach of the construction}
+\label{p:sec:reach}
+
+\Cref{p:sec:generality} showed that any pair of kernels induces the same
+population equations. Bursting and constant budding are the ends of a
+spectrum; between them lie mechanisms that release many times per cell or
+release part of the load, and beyond it lie models that are not
+birth--death--catastrophe processes at all. All supply a pair $(S,g)$, and
+none changes \cref{p:eq:skeleton}. This section works through the two
+intermediates that matter and then says where the generality stops.
+
+\subsection{Recurrent release: the reset process}
+\label{p:sec:reset}
+
+The absorbing process releases at most once per cell. The intermediate worth
+isolating lets a cell release \emph{many} times: while the cell is alive the
+load undergoes birth $\lambda n$, death $\mu n$, optional immigration $\nu$,
+and a \emph{dump that resets} --- at rate $\delta n$ the whole pool is
+released and the load returns to zero, after which it may re-accumulate ---
+with the cell dying at a separate, load-independent rate $d_{\Icell}$.
+Reading the load as a local assembled pool rather than the whole-cell
+contents makes this a tractable multi-pulse caricature between full dumping
+and continuous export.
+
+Because dumps do not absorb, the kernels change but the skeleton does not:
+\begin{equation}
+S(\alpha)=\ee^{-d_{\Icell}\alpha},
+\qquad
+g(\alpha)=\delta\,\ee^{-d_{\Icell}\alpha}\,\mean{X_\alpha^2},
+\label{p:eq:reset-kernels}
+\end{equation}
+with $\mean{X_\alpha^2}$ computed for the non-absorbing reset process. Linear
+rates keep its moments tractable, so $g$ is explicit once they are solved,
+and structurally $g\propto\mean{X^2}$ exactly as for the absorbing process.
+The effective parameters become
+\begin{equation}
+p_{\rm eff}(r)=\lrb{r+d_{\Icell}}\Lap{g}(r),
+\qquad
+d_{\Icell,{\rm eff}}\equiv d_{\Icell},
+\label{p:eq:reset-peff}
+\end{equation}
+and $R_0=(\gamma T/c)\int_0^\infty g$, finite only for $d_{\Icell}>0$ since
+otherwise recurrent dumps could continue forever. If the reset process
+admits a stationary law $\pi$ and $d_{\Icell}$ is small, the mature-cell
+limit is
+\begin{equation}
+p_\infty=\lim_{\alpha\to\infty}\frac{g(\alpha)}{S(\alpha)}
+=\delta\,\mathbb{E}_\pi[X^2],
+\label{p:eq:reset-mature}
+\end{equation}
+the same form as the old-cell limit \cref{p:eq:oldcell} of the absorbing
+process. A long-lived infected cell therefore behaves as constant-$p$ BMVR
+with that $p$, while transients --- first dumps, young cells --- still need
+the full kernel. This is what makes the spectrum claim concrete rather than
+gestural: an intermediate with kernels, an effective release rate, a mature
+limit, and a definite answer as to which standard model it converges on.
+
+\subsection{Partial release, and antiviral mode of action}
+\label{p:sec:partial}
+
+The remaining axis is \emph{how much} leaves the cell when a release event
+fires. The natural intermediate removes a random part of the load; the
+default is boolean thinning, each unit released independently with
+probability $\varphi$. At the mean-field level with event clock $\delta X$,
+writing $Q$ for the total intracellular stock across productive cells, the
+population equations are
+\begin{equation}
+\ddt{\Icell}=\gamma T\,\Vfree-d_{\Icell}\Icell,
+\qquad
+\ddt{Q}=\nu\Icell-\delta\varphi\,\frac{Q^2}{\Icell}-d_{\Icell}Q,
+\qquad
+\ddt{\Vfree}=\delta\varphi\,\frac{Q^2}{\Icell}-c\,\Vfree.
+\label{p:eq:partial}
+\end{equation}
+With a load-independent clock $\lambda(X)=\delta$ instead, the mean export is
+$\delta\varphi Q$ and the equations collapse to stock-and-export dynamics
+with $\varepsilon_{\rm eff}=\delta\varphi$. So partial release is invisible
+in the mean-field equations whenever the event clock is load-independent,
+and visible when it is load-dependent; in single-cell release-count
+distributions it is always visible.
+
+This axis is where the construction meets the second of the two payoffs that
+\cite{ciupe2024incorporating} identifies for intracellular modelling: the
+ability to locate a drug's mode of action at a named step of the viral life
+cycle. In the multiscale hepatitis~C models
+\cite{guedj2013modeling,rong2013mathematical} a direct-acting antiviral is
+represented by three separate factors --- blocking intracellular RNA
+production by $(1-\epsilon_a)$, blocking packaging and secretion by
+$(1-\epsilon_s)$, and enhancing intracellular degradation by a factor at
+least one. Each has a counterpart here. Blocking production lowers
+$\lambda$; enhancing degradation raises $\mu$; blocking entry lowers
+$\gamma T$; and blocking secretion is exactly a reduction in $\varphi$,
+since $\varphi=1-\epsilon_s$. Every one of these is a transformation of
+$(S,g)$, so a drug in this framework does not add parameters to the
+population layer but moves the kernels, and its population signature is
+whatever \cref{p:eq:peff} makes of the new pair.
+
+Two consequences follow, both in principle testable. The first is that a
+drug moves the pathogen relative to the flooding boundary, and the direction
+is read off \cref{p:eq:floodcrit} without further calculation. Enhancing
+intracellular degradation raises $\mu$ and so lowers
+$1/\lambda+1/\mu$, moving the pathogen toward the $L<1$ side on which its
+burst schedule is a liability rather than an asset at establishment;
+blocking intracellular production raises $1/\lambda$ and moves it the other
+way. Neither move need cross the boundary --- \cref{p:eq:floodcrit} is an
+inequality, not a monotone score --- but the sign of the shift is fixed, and
+\cref{p:eq:flood} gives the size of what is gained or lost at each end. The
+second is that because $p_{\rm eff}$ depends on $r$, an efficacy inferred
+from a decay slope inherits the same phase dependence that
+\cref{p:sec:span} finds in $p$ itself, which is one reading of why the
+hepatitis~C clearance estimates of \cref{p:sec:fitting-consequences}
+disagreed across therapies. Whether the flooding advantage survives at
+intermediate $\varphi$, and whether the closed forms persist there at all,
+is open.
+
+\subsection{Beyond birth--death--catastrophe: HIV}
+\label{p:sec:hiv}
+
+The results above are written for pathogens whose intracellular life ends in
+load-proportional catastrophe. HIV is not one: it buds from the plasma
+membrane, and an infected cell need not rupture in a single event. After
+integration the template count is one or a few proviruses and structural
+products do not self-replicate, so the mean load follows an
+immigration-like $\bar x'\approx\nu-\mu\bar x$ rather than the multiplicative
+growth that produces $\delta K$. Yet limiting-dilution data show something
+surge-like --- long quiet periods, then a concentrated bout of release ---
+which is the phenomenon the catastrophe process exists to explain. Hataye
+et al.\ \cite{hataye2019principles} report first detection around day~3 with
+bulk production over days~3--5, an Erlang eclipse with $n\approx5$ stages,
+many silent lineages, and a sigmoid rather than linear dependence of
+establishment on the number of virus-releasing cells, with a threshold near
+$2.3$ cells.
+
+The position taken here is neither to force HIV into the catastrophe process
+nor to retreat to constant-$p$ BMVR. The skeleton \cref{p:eq:skeleton}
+carries HIV on a different pair of kernels: $S_{\rm HIV}$ the probability of
+still being in a productive lineage and $g_{\rm HIV}$ the density of
+productive sojourn times, with a multi-stage eclipse supplying the delay ---
+near zero for small $\alpha$, then rising and falling. The effective
+parameters carry over verbatim under
+$(\Ifix,g)\mapsto(S_{\rm HIV},g_{\rm HIV})$. What does not carry over is
+independent branching near the observed threshold: the data favour a sigmoid
+incidence such as
+\begin{equation}
+f(\Vfree,T)=\gamma T\,\Vfree\cdot\frac{\Vfree}{K_A+\Vfree},
+\label{p:eq:allee}
+\end{equation}
+inefficient at very low $\Vfree$ and saturating to mass action for
+$\Vfree\gg K_A$. It is worth noting that this is the opposite curvature at
+low $\Vfree$ from the saturating alternatives catalogued in
+\cite{ciupe2024incorporating} --- Holling type~2, Beddington--DeAngelis,
+Crowley--Martin --- which depress infection at \emph{high} viral load; the
+departure from mass action wanted here is an Allee effect at establishment,
+not saturation at saturation. Under \cref{p:eq:allee}, $R_0$ remains the
+large-population threshold while early establishment is governed in addition
+by the scale $K_A$, and \cref{p:prop:first-moment} no longer holds exactly,
+since a nonlinear incidence breaks the moment closure.
+
+\subsection{Where the reach stops}
+
+What carries over to any single-cell mechanism is \cref{p:eq:skeleton}, the
+map $p_{\rm eff}=\Lap g/\Lap S$, the reading of constant $p$ as an
+exponential-phase projection, and the generation-kernel formulation of $R_0$
+and $r$. What does not is everything resting on the closed forms of the
+birth--death--catastrophe process: the flooding criterion
+$1/\delta<1/\lambda+1/\mu$, the geometric burst law and its identification
+with the quasi-stationary distribution, and one-shot cumulative release as
+the only single-cell trajectory. For HIV in particular, independent
+branching is not the full establishment story near the observed threshold;
+the flooding comparison survives as a \emph{linear} baseline, at matched
+mean yield with offspring variances compared, but synergy can dominate
+variance effects there and the two mechanisms must be separated before
+either is invoked.
+
+\section{Discussion}
+\label{p:sec:discussion}
+
+This chapter took a completed stochastic single-cell theory and embedded it
+in a population. What came out is a renewal model of within-host infection
+forced by the intracellular process and exact in its kernels; the
+demonstration that the standard model is a projection of it, valid one
+exponential phase at a time; an effective-parameter map whose two ends
+differ by the factor $\mean{X^2}_{\rm QS}$; and a closed-form answer to
+whether bursting pays, in which the flooding parameter $L=a(1-b)$ decides
+the sign and $(L-1)(1/m-1)$ gives the size.
+
+\subsection{Consequences for fitting practice}
+\label{p:sec:fitting-consequences}
+
+Three results bear on how within-host models are fitted, and each says what
+to do rather than only what is true.
+
+\paragraph{A fitted $p$ is a property of the phase.} Acute-phase and
+set-point estimates should therefore differ systematically, in a direction
+and by an amount \cref{p:eq:peff} specifies. Two published estimates of $p$
+for the same organism at different phases are not in conflict, and the ratio
+between them is itself an observable: by \cref{p:eq:peff-span} it cannot
+exceed $\mean{X^2}_{\rm QS}$, so a reported spread larger than that is
+evidence against the intracellular model rather than against either fit.
+There is precedent for the general shape of this argument. Hepatitis~C
+clearance was estimated at $c=6.2$/day from interferon-$\alpha$ trials
+\cite{neumann1998hepatitis} and at $c=23.3$/day from direct-acting antiviral
+data \cite{guedj2013modeling} --- close to a fourfold spread in a rate that
+cannot depend on the therapy used to measure it. The resolution was not to
+adjudicate between the fits but to add intracellular structure, after which
+the two biphasic declines turn out to be reporting different pairs of
+underlying rates: under interferon-$\alpha$ the slopes are the intracellular
+loss rate and the infected-cell death rate, and neither is $c$, whereas
+under direct-acting antivirals the fast slope is $c$ after all
+\cite{rong2013mathematical}. The earlier figure was not a bad measurement of
+clearance; it was a good measurement of something else. That is the same
+error \cref{p:sec:projection} identifies for $p$, and it is the general
+lesson: a slope read off a transient is not a rate of the organism until a
+model says which rate it is.
+
+\paragraph{The eclipse may be being fitted twice.} The lag that within-host
+models insert by hand emerges here from the intracellular dynamics with no
+extra parameter, its scale set by $\mean{T_{\rm prod}}$. A model already
+carrying a fitted eclipse and a bursting pathogen is therefore fitting the
+same delay twice, and the two estimates should be checked against each other
+before either is trusted.
+
+\paragraph{A population fit needs a single-cell companion.} No fit of
+$(p,d_{\Icell})$ recovers the three intracellular rates
+(\cref{p:sec:identifiability}), so a population fit is worth doing only
+alongside one of the three single-cell observables named there. With any one
+of them the system is over-determined and the fit becomes a test of the
+intracellular model rather than a description of it. This is a concrete
+instance of the general call in \cite{ciupe2024incorporating} for data
+collected at a finer scale of resolution to validate complex models: the
+chapter names which three measurements would do it, and in what order of
+experimental accessibility.
+
+\subsection{Limitations}
+\label{p:sec:limitations}
+
+The assumptions of \cref{p:sec:assumptions} are load-bearing. Holding target
+cells constant (A1) makes the model linear, so supercritical solutions grow
+without bound and peak times exist only in subcritical cases; depletion
+would cap them, but the linear analysis remains the right object for
+establishment and early growth, where the chapter's claims live. The
+continuum convention (A2) is why $R_0=\gamma TV_\infty/c$ sits alongside the
+branching mean $m=qV_\infty$: they agree when $\gamma T\ll c$ and are
+otherwise different quantities, and confusing them would misread
+\cref{p:thm:flood}. The synchronous initial condition (A3) is not innocuous,
+since a non-trivial initial age distribution adds a term to
+\cref{p:eq:Icell}.
+
+Single infection (A4) is the most substantive restriction. Multiply infected
+cells release superlinearly more --- \cref{p:eq:Vk} gives $V_\infty^{(k)}$
+--- and multiplicity is not rare: as many as a tenth of HIV-infected cells
+are thought to be multiply infected, and coinfection shapes estimates of
+infected-cell death and production, drug-resistance evolution and immune
+escape \cite{ciupe2024incorporating}. The standard remedy adds compartments
+for doubly and triply infected cells, which the same review notes is
+difficult to validate against plasma titres because of the parameter count.
+The MOI-$k$ row of \cref{p:tab:sg} suggests a cheaper route: multiplicity
+enters through the kernels
+$\bigl(I^k-D^k,\ \delta K_k\bigr)$ while the skeleton stays
+one-dimensional, adding no compartments and no fitted parameters. Carrying
+those kernels through the population layer has not been done here, and it is
+the most obvious extension. It would also connect to the alternative
+low-dimensional treatment of coinfection due to Koelle et al.\
+\cite{koelle2019within}, whose macroparasite-style bookkeeping tracks the
+total internalised virus across all cells --- the quantity written $Q$ in
+\cref{p:eq:partial} --- and which likewise abandons the standard assumption
+that burst size is independent of the extent of coinfection. Absence of
+spatial structure (A5) is the most consequential omission for a pathogen
+that spreads cell to cell.
+
+Finally, the chapter is written in dimensionless rates with $\lambda=1$ and
+does not say where a real pathogen sits on \cref{p:fig:L-landscape}. For
+\yp{} in the macrophage the intracellular interval is short and the biology
+resists a clean measurement: the bacterium enters a permissive vacuole and
+replicates there while the temperature shift from the flea to the host
+induces the capsule, the pH~6 antigen and the type~III secretion system, and
+then leaves by a route the primary literature still treats as unresolved,
+with apoptosis, pyroptosis and necroptosis all reported. Placing that
+organism relative to $L=1$ needs $\lambda$, $\mu$ and $\delta$ for the
+intracellular phase --- and the exit mechanism is exactly what fixes
+$\delta$.
+
+\subsection{Open problems}
+\label{p:sec:open-problems}
+
+\begin{enumerate}[leftmargin=1.9em]
+\item \textbf{Two-type killed second moments.} The release kernel of a
+two-type renewal model needs
+\begin{equation*}
+\mean{X_\alpha^2\ind\{\tau_c>\alpha\}},\quad
+\mean{X_\alpha Y_\alpha\ind\{\tau_c>\alpha\}},\quad
+\mean{Y_\alpha^2\ind\{\tau_c>\alpha\}},
+\end{equation*}
+together with the two-type analogue of $D$. The moment hierarchy does not close upward, exactly as in
+one type; the one-type escape was to differentiate the Riccati equation, and
+the two-type route should be to differentiate the backward system of
+\ChTwoType{}. This is the main technical obstacle between this chapter and
+an eclipse-aware renewal model, and it should not be assumed easy.
+\item \textbf{The flooding boundary against real parameters.} Locate \yp{}
+in the macrophage relative to $\delta(\lambda+\mu)>\lambda\mu$ and compute
+the size of the advantage from \cref{p:eq:flood}. The estimates discussed in
+\ChDist{} --- the near-certain bursting of \ft{}
+\cite{carruthers2020stochastic}, the clearance-dominated anthrax case ---
+suggest real pathogens sit on both sides of the boundary, which is what
+makes the question worth asking.
+\item \textbf{Population-level variance.} Propagate $\mathrm{Var}(W)$
+through the branching structure to a whole-host prediction. For single-cell
+assays the first moments suffice; for whole-host data the variance is the
+main stochastic signal that standard BMVR cannot reproduce, and the
+integer-valued nature of the offspring count enters through the same
+quantity \cite{williams2024reproduction}.
+\item \textbf{Multiplicity through the population layer}, and
+\textbf{partial release}: where in $\varphi$ the flooding advantage
+survives.
+\end{enumerate}
+
+Two smaller questions are single definite statements rather than open
+directions. The hypothesis of \cref{p:prop:peff-monotone} --- that
+$\rho=g/S$ increases with cell age --- is a claim about the one closed-form
+function \cref{p:eq:rho-closed} of one variable, so proving it is finite
+algebra; and the ordering $r_{\rm bud}>r_{\rm burst}$ is by
+\cref{p:prop:rorder} equivalent to the single Laplace inequality
+\cref{p:eq:laplace-order}, with the coupling constants eliminated. Both are
+supported by wide numerical sweeps and neither is proved.
+
+\subsection{Connections forward}
+
+The two-type process of \ChTwoType{} supplies the most immediate
+continuation, and it is where the principal technical obstacle lives. In the
+regime $\delta_1=0<\delta_2$ --- no burst before conversion --- the
+no-catastrophe probability has zero initial hazard and then rises: precisely
+the eclipse-phase signature that within-host models insert by hand, emerging
+mechanistically, with the eclipse duration set by the conversion rate.
+Nothing in \cref{p:eq:skeleton} need change to accept those kernels when
+they exist. The bursting--budding comparison finds its evolutionary home in
+\ChPath{}, where the intermediate mechanisms of \cref{p:sec:reach} supply
+the phenotypes a selection argument needs. The nonlinear effects that
+\fwd{nonlinear}{the later modelling chapters} treat --- immune saturation,
+local depletion, the all-run-out-at-once intuition --- are exactly what the
+branching comparison deliberately excludes, and should be named wherever the
+flooding advantage is invoked.
+
+\FloatBarrier
+
+% ===========================================================================
+%  Appendices
+% ===========================================================================
 \begingroup
 \renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
 \renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
-\renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
-\input{sections/A_quoted_results}
-\input{sections/B_formula_tables}
-\input{sections/C_verification_records}
-\input{sections/D_technical_derivations}
-\input{sections/E_release_catalogue}
-\input{sections/F_hiv_stage_model}
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+\section{Single-cell results quoted from earlier chapters}
+\label{p:app:quoted}
+
+Write $w=\ee^{\theta t}$. The roots of $\lambda f^2-(\lambda+\mu+\delta)f+\mu$
+are $a,b$ of \cref{p:eq:roots}, with $b<1<a$, and the derived constants are
+\begin{equation}
+A=a-1,\qquad B=1-b,\qquad \theta=\lambda(a-b),\qquad
+\kappa=1+\frac{\delta}{2\lambda}.
+\label{p:eq:derived}
+\end{equation}
+The identities that simplify everything downstream are
+\begin{equation}
+ab=\frac{\mu}{\lambda},\quad a+b=\frac{\lambda+\mu+\delta}{\lambda},\quad
+AB=\frac{\delta}{\lambda},\quad A+B=a-b.
+\label{p:eq:AB}
+\end{equation}
+The no-burst probability, the internal-extinction probability and the
+non-fixation probability are
+\begin{equation}
+\begin{gathered}
+I(t)=\frac{aB+bAw}{B+Aw},\qquad
+D(t)=\frac{ab\,(w-1)}{aw-b},\\[0.35em]
+\Ifix(t)=I(t)-D(t)=\frac{(a-b)^2\,w}{(B+Aw)(aw-b)}.
+\end{gathered}
+\label{p:eq:IDIhat}
+\end{equation}
+Here $I(\infty)=D(\infty)=b$, the probability that the cell clears
+internally without ever bursting, while $\Ifix(0)=1$,
+$\Ifix'(0)=-(\mu+\delta)$ and $\Ifix(\infty)=0$. With $I'=-\delta J$ and
+$V'=\delta K$,
+\begin{equation}
+J(t)=\frac{(a-b)^2\,w}{(B+Aw)^2}=-\frac{\lambda}{\delta}(I-a)(I-b),
+\label{p:eq:J}
+\end{equation}
+\begin{equation}
+K(t)=\Bigl[1+\frac{2\lambda}{\delta}(1-I)\Bigr]J
+=\frac{2\lambda}{\delta}(\kappa-I)J,
+\label{p:eq:K}
+\end{equation}
+and the cumulative mean release is a quadratic in $1-I$ alone,
+\begin{equation}
+\begin{gathered}
+V(t)=(1-I)\Bigl[1+\frac{\lambda}{\delta}(1-I)\Bigr],\\[0.35em]
+V_\infty=\frac{a(1-b)}{a-1}=\frac{aB}{A},
+\qquad
+\mean{\Kb\mid\text{burst}}=\frac{a}{a-1},
+\end{gathered}
+\label{p:eq:V}
+\end{equation}
+in which $V_\infty$ counts the internally cleared cells with their release
+of zero and the conditional mean removes them. The integral of the survival
+kernel, which anchors \cref{p:sec:projection}, is
+\begin{equation}
+\mean{T_{\rm prod}}=\int_0^\infty\Ifix(\alpha)\,\dd\alpha
+=\frac{1}{\lambda}\log\frac{a}{a-1}.
+\label{p:eq:lifetime}
+\end{equation}
+
+\paragraph{Distribution-level facts.} The burst-time density is
+$-I'(t)=\delta J(t)$, defective with total mass $1-b$. The burst size,
+unconditional, obeys
+\begin{equation}
+\pr{\Kb=k}=\frac{\delta}{\lambda}\,a^{-k},\qquad k\ge1,
+\label{p:eq:burstlaw}
+\end{equation}
+with the mass $b$ at ``no burst''; conditioned on bursting this becomes
+$(a-1)a^{-k}$, exactly the quasi-stationary distribution of the load
+\cite{van2011quasi} --- both geometric on $\{1,2,\ldots\}$ with ratio $1/a$.
+Given that the burst occurs at time $t$, its size is a size-biased draw from
+the state probabilities, $\mean{\Kb\mid\tau=t}=K(t)/J(t)$. The second moment
+of the release, used for the offspring variance \cref{p:eq:offmoments}, is
+\begin{equation}
+\mean{W_t^2}
+=\frac{2(\lambda-\mu)}{\delta}V-\frac{\lambda+\mu}{\delta}I-K
++\frac{\lambda+\mu}{\delta}+1.
+\label{p:eq:EW2}
+\end{equation}
+
+\paragraph{Multiplicity of infection.} A cell founded by $k$ particles
+releases superlinearly more:
+\begin{equation}
+g_k(t)=\delta K_k(t)
+=\delta\lrb{kK I^{k-1}+k(k-1)J^2I^{k-2}},
+\label{p:eq:gk}
+\end{equation}
+with lifetime yield, for $k\ge2$,
+\begin{equation}
+V_\infty^{(k)}
+=(1-b^k)
++\frac{2\lambda}{\delta}\Biggl[\frac{1}{k+1}-b^k+\frac{k\,b^{k+1}}{k+1}\Biggr]
++k(k-1)\frac{\lambda}{\delta}\int_1^b (x-a)(x-b)\,x^{k-2}\,\dd x,
+\label{p:eq:Vk}
+\end{equation}
+simplifying to $V_\infty^{(k)}=k+\lambda/\delta$ when $\mu=0$. The
+conditional mean burst $V_\infty^{(k)}/(1-b^k)$ increases with $k$: multiply
+infected cells burst more often, and bigger. The pair
+$\bigl(I(\alpha)^k-D(\alpha)^k,\ \delta K_k(\alpha)\bigr)$ is the MOI-$k$
+row of \cref{p:tab:sg}; assumption~(A4) sets it aside for the population
+layer.
+
+\section{Laplace transforms of the kernels}
+\label{p:app:transforms}
+
+Write $s:=r/\theta$. Both transforms reduce, under $v=\ee^{-\theta t}$, to
+integrals of the form $\int_0^1 v^{s-1}(1-v)^n(A+Bv)^{-m}\dd v$, which are
+hypergeometric. For the survival kernel, the partial-fraction decomposition
+$(a-b)/[(A+Bv)(a-bv)]=B/(A+Bv)+b/(a-bv)$ and the standard integral
+$\int_0^1 v^s/(1-zv)\dd v=(s+1)^{-1}\Fhyp(1,s+1;s+2;z)$ give
+\begin{equation}
+\Lap{\Ifix}(r)=\frac{1}{\lambda(s+1)}
+\Biggl[
+\Psi(A,B,s)
++\frac{b}{a}\,\Fhyp\Bigl(1,s+1;s+2;\frac{b}{a}\Bigr)
+\Biggr],
+\label{p:eq:LIhat}
+\end{equation}
+where, so that the hypergeometric series always converges,
+\begin{equation}
+\Psi(A,B,s)=
+\begin{cases}
+\Fhyp\bigl(1,s+1;s+2;-\frac{A}{B}\bigr), & B\ge A,\\[0.4em]
+\frac{B}{A}\,\Fhyp\bigl(1,s+1;s+2;-\frac{B}{A}\bigr), & A>B,
+\end{cases}
+\label{p:eq:Psi}
+\end{equation}
+the two branches being equal because both sides equal
+$(s+1)B\int_0^1 v^s/(A+Bv)\dd v$. For the release kernel the same
+substitution and termwise integration give
+\begin{equation}
+\delta\Lap{K}(r)=\frac{\delta}{\lambda}
+\Biggl[
+\frac{\Fhyp(1,s;s+2;z)}{A(s+1)}
++\frac{2\,\Fhyp(2,s;s+3;z)}{A^2(s+1)(s+2)}
+\Biggr],
+\qquad z=-\frac{B}{A},
+\label{p:eq:dLK}
+\end{equation}
+again with the understanding that for $B>A$ the right-hand side is evaluated
+through its analytic continuation, or through the integral representation
+from which it came. Both reduce correctly at $s=0$: with
+$\Fhyp(1,1;2;z)=-\log(1-z)/z$, \cref{p:eq:LIhat} gives
+$\Lap{\Ifix}(0)=\lambda^{-1}\log(a/(a-1))=\mean{T_{\rm prod}}$, and
+\cref{p:eq:dLK} gives $\delta\Lap{K}(0)=(\delta/\lambda)(1/A+1/A^2)=aB/A
+=V_\infty$, using $AB=\delta/\lambda$. Both reductions were verified against
+direct quadrature to relative error $\sim10^{-8}$. Where the transforms are
+needed as functions of time, standard numerical inversions apply
+\cite{stehfest1970algorithm,gaver1965observations}. The curves of
+\cref{p:fig:peff} are computed by direct quadrature.
+
+\section{Master formula table}
+\label{p:app:formulae}
+
+Throughout: $w=\ee^{\theta t}$, $\theta=\lambda(a-b)$, $A=a-1$, $B=1-b$,
+$L=a(1-b)$, $\kappa=1+\delta/(2\lambda)$.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{@{}p{0.24\textwidth}p{0.62\textwidth}@{}}
+\toprule
+Quantity & Formula \\
+\midrule
+Renewal system & $\Icell=\Icell_0\Ifix+i*\Ifix$, \ $\Vfree'=\Icell_0 g+i*g-c\Vfree$, \ $i=\gamma T\Vfree$ \\
+Survival kernel & $S(\alpha)=\Ifix(\alpha)$ \\
+Release kernel & $g(\alpha)=\delta K(\alpha)=V'(\alpha)$ \\
+Generation kernel & $\mathcal A(\alpha)=\gamma T(g*\ee^{-c\,\cdot})(\alpha)$, \ $\Lap{\mathcal A}(r)=\gamma T\Lap{g}(r)/(r+c)$ \\
+$p_{\rm eff}(r)$ & $\delta\Lap{K}(r)/\Lap{\Ifix}(r)$ \\
+$d_{\Icell,{\rm eff}}(r)$ & $1/\Lap{\Ifix}(r)-r$ \\
+Limits $r=0$ & $p_{\rm eff}=\lambda V_\infty/\log(a/(a-1))$, \ $d_{\rm eff}=\lambda/\log(a/(a-1))$ \\
+Limits $r\to\infty$ & $p_{\rm eff}\to\delta$, \ $d_{\rm eff}\to\mu+\delta$ \\
+Limit $r\downarrow-\theta$ & $p_{\rm eff}\to\delta\mean{X^2}_{\rm QS}=\delta a(a+1)/(a-1)^2$ \\
+Span of the map & $p_{\rm eff}(-\theta)/p_{\rm eff}(\infty)=\mean{X^2}_{\rm QS}$ \\
+Characteristic eq. & $r+c=\gamma T\,\delta\Lap{K}(r)$, \ equivalently $\Lap{\mathcal A}(r)=1$ \\
+$R_0$ & $\gamma T V_\infty/c=\int_0^\infty\mathcal A$ \\
+Branching mean & $m=qV_\infty$, \ $q=\gamma T/(\gamma T+c)$ \\
+$G_{\rm off}(z)$ & $b+(\delta/\lambda)\,y/(a-y)$, \ $y=1-q+qz$ \\
+$z_{\rm ext}^{\rm burst}$ & $[a(1-q+qb)-1+q]/q$ \\
+$z_{\rm ext}^{\rm bud}$ & $1/m$ (geometric output, matched mean) \\
+Flooding parameter & $L=a(1-b)=a-\mu/\lambda$, \ $V_\infty=L/(a-1)$ \\
+Flooding criterion & $1/\delta<1/\lambda+1/\mu$ \ ($L>1$) \\
+$\Delta z_{\rm ext}$ & $(L-1)(1/m-1)$ \\
+$\mathrm{Var}_{\rm bud}-\mathrm{Var}_{\rm burst}$ & $2q^2V_\infty(L-1)/(a-1)$ \\
+$L=1$ & offspring law exactly geometric; variances equal \\
+Growth trade-off & $r_{\rm bud}>r_{\rm burst}$ at matched $R_0$, $\mean{T_{\rm prod}}$ \\
+\bottomrule
+\end{tabular}
+\caption{Population-level quantities, in one place.}
+\label{p:tab:formulae}
+\end{table}
+
+\paragraph{Specialisation $\mu=0$.} $b=0$, $a=1+\delta/\lambda$, $D\equiv0$,
+$\Ifix=I$, $V_\infty=1+\lambda/\delta=\mean{X}_{\rm QS}$,
+$\mean{T_{\rm prod}}=\lambda^{-1}\log(1+\lambda/\delta)$,
+$\pr{\Kb=k}=s\rho^{k-1}$ with $s=\delta/(\lambda+\delta)$, $\rho=1-s$;
+flooding favours bursting for establishment at every $\delta>0$.
+
+\paragraph{The boundary $L=1$.} $\delta=\lambda\mu/(\lambda+\mu)$,
+$b=\delta/\lambda$; the offspring law is geometric with mean $m$;
+$z_{\rm ext}^{\rm burst}=z_{\rm ext}^{\rm bud}$ for every $q$; offspring
+variances equal.
+
 \endgroup

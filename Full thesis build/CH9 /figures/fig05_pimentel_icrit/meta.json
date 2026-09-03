@@ -1,0 +1,12 @@
+{
+  "id": "fig05_pimentel_icrit",
+  "simulation": true,
+  "parameters": {
+    "N": 10000,
+    "alpha": 3.0,
+    "epsilon": 1.0,
+    "steps_cap": 400000
+  },
+  "seed": 3,
+  "length": 224551
+}

@@ -1,0 +1,68 @@
+\documentclass[11pt,tikz,border=4pt]{standalone}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\input{../../_style/tikz_style.tex}
+
+\begin{document}
+\begin{tikzpicture}
+  % A single representative realisation.  The ordinate values are
+  % schematic; the equality of the pre-rupture X level and post-rupture W
+  % level is encoded explicitly by the common label X_{\tau^-}.
+
+  % Intracellular process X_t.
+  \begin{scope}[x=1cm,y=0.60cm,shift={(0,4.25cm)}]
+    \draw[bdc arrow] (0,0) -- (10.65,0)
+      node[below=3pt,font=\small] {$t$};
+    \draw[bdc arrow] (0,0) -- (0,6.65)
+      node[above=2pt,font=\small] {$X_t$};
+
+    \foreach \level in {1,2,3,4}{
+      \draw[line width=0.6pt] (-0.09,\level) -- (0.09,\level);
+      \node[anchor=east,font=\scriptsize] at (-0.16,\level) {$\level$};
+    }
+
+    \draw[line width=1.0pt,black]
+      (0,1) -- (1.00,1) -- (1.00,2) -- (2.10,2)
+      -- (2.10,3) -- (3.15,3) -- (3.15,2) -- (4.10,2)
+      -- (4.10,3) -- (5.10,3) -- (5.10,4) -- (6.10,4)
+      -- (6.10,3) -- (6.95,3) -- (6.95,4) -- (7.70,4);
+
+    \node[anchor=south west,font=\small] at (0.12,1.05) {$X_0=1$};
+    \node[bdc ratelabel,anchor=south east] at (7.55,4.12)
+      {$X_{\tau^-}$};
+
+    \draw[bdc arrow] (7.70,4.02) -- (7.70,5.42);
+    \node[bdc catastrophe] (rupture) at (7.70,6.02) {$H$};
+    \node[bdc annotation,anchor=west] at (8.25,6.02)
+      {rupture};
+  \end{scope}
+
+  % Released-count process W_t.
+  \begin{scope}[x=1cm,y=0.60cm,shift={(0,0.35cm)}]
+    \draw[bdc arrow] (0,-0.48) -- (10.65,-0.48)
+      node[below=3pt,font=\small] {$t$};
+    \draw[bdc arrow] (0,-0.48) -- (0,4.85)
+      node[above=2pt,font=\small] {$W_t$};
+
+    \draw[line width=0.6pt] (-0.09,0) -- (0.09,0);
+    \node[anchor=east,font=\scriptsize] at (-0.16,0) {$0$};
+    \draw[line width=0.6pt] (-0.09,4) -- (0.09,4);
+    \node[anchor=east,font=\small] at (-0.16,4) {$X_{\tau^-}$};
+
+    \draw[line width=1.0pt,black]
+      (0,0) -- (7.70,0);
+    \draw[bdc arrow] (7.70,0) -- (7.70,4);
+    \draw[line width=1.0pt,black]
+      (7.70,4) -- (10.35,4);
+  \end{scope}
+
+  % The same event time governs both components of the joint process.
+  \draw[densely dashed,black!45,line width=0.7pt]
+    (7.70,0.02) -- (7.70,4.23);
+  \node[font=\small,fill=white,inner sep=1pt] at (7.70,0.02) {$\tau$};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,69 @@
+% Appendix B --- regeneration record.
+
+\section{Figure and simulation record}
+\label{var:app:figures}
+
+Line plots in this chapter are vector PDFs, drawn in the house palette of
+\cref{var:sec:introduction}'s sibling chapters, from either a closed form or
+a recorded-seed simulation of the equations as printed. Two schematics remain
+inline TikZ; two more are standalone TikZ packages. The spatial automaton is
+the one remaining raster, cropped from the original frames.
+The rise--run--ruin--rejuvenation panels
+\cref{var:fig:vbc-two,var:fig:vbc-many} were re-simulated at the invented
+tuple $(\phi,c,\lambda,\delta,\omega)=(4,0.8,0.5,0.25,0.15)$, because the
+parameters of the original rasters were never recorded: the cycle is the
+same, the amplitudes are not.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.28\textwidth}l@{}}
+\toprule
+Figure & File & Parameters / seed & Code \\
+\midrule
+\cref{var:fig:taxonomy} & \texttt{fig01\_taxonomy/fig01.pdf}
+  & schematic & TikZ \\
+\cref{var:fig:lsmean} & \texttt{fig02\_logspec\_mean/fig02.pdf}
+  & $K=10$, $\varrho=1$, $\sigma=0.08$; $N_0=1,2,5$ & closed form \\
+\cref{var:fig:logspec-limit} & \texttt{fig02b\_logspec\_\newline limit/fig02b.pdf}
+  & $K/N_0\in\{10,50\}$, $\sigma K/\varrho\in\{1,2\}$;
+    \cref{var:eq:limitmean} & closed form \\
+\cref{var:fig:pim-two-runs} & \texttt{fig03\_pimentel\_runs/fig03.pdf}
+  & $\alpha=1$, $N=100$, $\varepsilon=10$; seeds $19,3$ & discrete chain \\
+\cref{var:fig:pim-runs} & \texttt{fig04\_pimentel\_ic/fig04.pdf}
+  & $\alpha=10$, $N=10^{5}$, $\varepsilon=1$, $2\times10^{6}$ steps;
+    seeds $4,7$ & discrete chain \\
+\cref{var:fig:pim-critical} & \texttt{fig05\_pimentel\_icrit/fig05.pdf}
+  & $\alpha=3$, $N=10^{4}$, $\varepsilon=1$; seed $3$ & discrete chain \\
+\cref{var:fig:automaton} & \texttt{fig06\_automaton/fig06.jpg}
+  & six cropped frames of the C++/SFML automaton & raster \\
+\cref{var:fig:vbc-two} & \texttt{fig07\_rrrr\_cycles/fig07a.pdf}
+  & $\phi=4$, $c=0.8$, $\lambda=0.5$, $\delta=0.25$, $\omega=0.15$;
+    seeds $3,11$ & Gillespie \\
+\cref{var:fig:vbc-many} & \texttt{fig07\_rrrr\_cycles/fig07b.pdf}
+  & as above; seeds $3,5,8,11,17$ & Gillespie \\
+\cref{var:fig:plague-rates} & inline TikZ
+  & schematic & in source \\
+\cref{var:fig:bpplots} & \texttt{fig09\_plague\_paths/fig09.pdf}
+  & $(\lambda,\delta,\chi,\mu)=(1,0.1,0.02,10)$; seeds $2,8$ & Gillespie \\
+\cref{var:fig:board} & \texttt{fig10\_public\_good/fig10.pdf}
+  & schematic & TikZ \\
+\cref{var:fig:kstar} & \texttt{fig14\_kstar/fig14.pdf}
+  & $(\lambda_0,\alpha,g,c)=(0.6,0.25,0.15,0.45)$; $600$ paths & Gillespie \\
+\cref{var:fig:phase-schematic} & inline TikZ
+  & schematic & in source \\
+\cref{var:fig:rough1} & \texttt{fig12\_EZ/fig12.pdf}
+  & $(\lambda_1,\mu_1)=(1,0.2)$, $(\lambda_2,\mu_2)=(1,0.9)$ & \cref{var:eq:EZ} \\
+\cref{var:fig:rough23} & \texttt{fig13\_EZ\_decomp/fig13.pdf}
+  & as above & \cref{var:eq:EZ} \\
+\bottomrule
+\end{tabular}
+\caption{Provenance of every figure. Scripts live in
+\texttt{figures/figXX\_*/src/}; the shared palette is
+\texttt{figures/\_style/style\_rc.py}. Seeds are those that produced the
+shipped files.}
+\label{var:tab:figrecord}
+\end{table}
+
+\FloatBarrier

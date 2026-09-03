@@ -1,0 +1,184 @@
+\section{Chained immediate transfer}
+\label{dist:sec:chained}
+
+The second probe couples cells together in the most austere way available.
+Take $M$ host cells, all empty but one, which holds a single particle. Each
+runs the $\mu=0$ birth--catastrophe process of the previous sections, and on
+rupture the released load does not enter an extracellular pool: it passes
+immediately and wholesale into a fresh cell, which begins the process again
+with that load as its founding census, and so on until every cell has
+ruptured. There is no extracellular phase, no clearance and no re-infection,
+only a chain of bursts; and since $\mu=0$, all $M$ ruptures occur almost
+surely.
+
+Serial rupture of this kind is not a fiction:
+\fwd{path}{\ChPath} gives the
+biological account, with its Brownian-drift and macrophage-motility caveats.
+Here it is a tractable laboratory for multi-cell burst statistics,
+interpolating between the single-cell theory above and the populations of \ChPop.
+
+Let $r_i$ be the load at the $i$th rupture, $t_i$ its time, and
+$T_i=t_i-t_{i-1}$ the $i$th inter-rupture interval, with $t_0=0$. Write
+\begin{equation}
+s=\frac{\delta}{\lambda+\delta},
+\qquad
+\rho=\frac{\lambda}{\lambda+\delta}=1-s.
+\label{dist:eq:srho}
+\end{equation}
+
+\subsection{The key observation: event types ignore the load}
+\label{dist:sec:key-observation}
+
+When the load is $n$, the next event is a birth with probability
+$\lambda n/(\lambda n+\delta n)=\rho$ and a catastrophe with probability $s$,
+independent of $n$; only the holding time depends on the load, being
+$\mathrm{Exp}\lrb{(\lambda+\delta)n}$. The sequence of event \emph{types} is
+therefore independent coin flips, and the number of births $G$ before the
+catastrophe in a cell founded with any load is
+\begin{equation}
+G\sim\mathrm{Geom}_0(s),
+\qquad
+\pr{G=g}=s\,\rho^g,\qquad g=0,1,2,\ldots,
+\label{dist:eq:geomevents}
+\end{equation}
+the number of failures before the first success. Each cell in the chain
+contributes an \emph{independent} copy $G_i$, since the process restarts
+afresh at every transfer, and the rupture size of cell $i$ is its founding
+load plus its own births. The first cell being founded by a single particle,
+\begin{equation}
+r_k = 1 + G_1 + \cdots + G_k,
+\label{dist:eq:rkdecomp}
+\end{equation}
+with $G_1,\ldots,G_k$ independent and identically distributed. Everything
+about the rupture sizes follows from this decomposition, and something has
+quietly happened in reaching it: the load, the whole subject of
+\cref{dist:sec:geometric}, has dropped out of the argument.
+
+\subsection{Rupture-size laws}
+\label{dist:sec:rupture-sizes}
+
+A sum of $k$ independent geometric variables is negative binomial, so
+\cref{dist:eq:rkdecomp} gives immediately
+\begin{equation}
+\pr{r_k=n}=\mathcal{A}^{(n)}_{k}\,s^{k}\,\rho^{\,n-1},
+\qquad
+\mathcal{A}^{(n)}_{k}=\binom{n+k-2}{k-1},
+\quad n\ge1.
+\label{dist:eq:rklaw}
+\end{equation}
+The first few cases show the pattern:
+\begin{equation}
+\pr{r_1=n}=s\rho^{n-1},
+\label{dist:eq:r1}
+\end{equation}
+geometric, matching the one-cell law of \cref{dist:eq:burstlaw} at $\mu=0$,
+and then
+\begin{equation}
+\pr{r_2=n}=n\,s^2\rho^{n-1},
+\qquad
+\pr{r_3=n}=\tfrac{n(n+1)}{2}s^3\rho^{n-1},
+\qquad
+\pr{r_4=n}=\tfrac{n(n+1)(n+2)}{6}s^4\rho^{n-1}.
+\label{dist:eq:r234}
+\end{equation}
+Equivalently the coefficients satisfy
+\begin{equation}
+\mathcal{A}^{(n)}_{k}=\sum_{i=1}^{n}\mathcal{A}^{(i)}_{k-1},
+\qquad
+\mathcal{A}^{(i)}_{1}=1,
+\label{dist:eq:arec}
+\end{equation}
+which is \cref{dist:eq:rklaw} conditioned on the value of $r_{k-1}$:
+$\pr{r_k=n}=\sum_i\pr{r_{k-1}=i}\pr{G_k=n-i}$. The closed form then follows
+by induction from the hockey-stick identity.
+
+\begin{remark}[The coefficient]
+\label{dist:rem:coefficient}
+The coefficient in \cref{dist:eq:rklaw} is easy to miscount. The superficially
+similar expression $\frac{1}{k!}\frac{(n+k-1)!}{(n-1)!}=\binom{n+k-1}{k}$ is
+off by one shift, and is already contradicted by the $r_2$ and $r_3$ cases
+displayed above, which \cref{dist:eq:rklaw} reproduces exactly. The correct
+coefficient is $\binom{n+k-2}{k-1}$, and it has a direct reading: it counts
+the ways of distributing the $n-1$ births accumulated along the chain among
+its $k$ cells, each cell receiving any non-negative number --- the
+stars-and-bars count for \cref{dist:eq:rkdecomp}.
+\end{remark}
+
+Further consequences, all verified numerically in
+\cref{dist:app:verification}:
+\begin{align}
+\E{r_k}&=1+k\,\frac{\rho}{s}=1+k\,\frac{\lambda}{\delta},
+&
+\var{r_k}&=k\,\frac{\rho}{s^2},
+\label{dist:eq:rkmoments}\\[0.3em]
+\E{z^{r_k}}&=z\Bigl(\frac{s}{1-\rho z}\Bigr)^k,
+&
+\sum_{n\ge1}\pr{r_k=n}&=1 .
+\label{dist:eq:rkgf}
+\end{align}
+The mean rupture size grows linearly along the chain: each cell adds one
+expected burst's worth of births, $\lambda/\delta$, to what it inherited.
+\Cref{dist:fig:chained} shows the laws against exact simulation, with the
+inter-rupture intervals, which shorten as the inherited load grows.
+
+\subsection{Rupture times}
+\label{dist:sec:rupture-times}
+
+The first rupture time inherits the single-cell flux. With $m$ founders the
+no-rupture probability is $I(t)^m$ by \cref{dist:eq:ihatk}, since $D\equiv0$
+at $\mu=0$, so
+\begin{equation}
+\pr{t_1>t}=I(t)^m,
+\qquad
+f_{t_1}^{(m)}(t)=-m\,I(t)^{m-1}I'(t)=m\,I(t)^{m-1}\delta J(t).
+\label{dist:eq:t1m}
+\end{equation}
+For $m=1$ this is the burst-time density $\varphi=\delta J$ of
+\cref{dist:eq:phi}, proper here because $b=0$. When $\mu>0$ the same
+reasoning must distinguish the two fixation routes: the \emph{burst-only}
+time has distribution function $(1-I(t))/(1-b)$ and density
+$\delta J(t)/(1-b)$, while the \emph{general-fixation} time --- rupture or
+internal extinction --- has density
+\begin{equation}
+\delta J(t)+\mu\,p_1(t),
+\label{dist:eq:genfix}
+\end{equation}
+the extra term being the flux through $1\to0$: only a population of size
+exactly one can die out in a single death event.
+
+The intervals, their Laplace transforms and the joint structure of the second
+rupture time are collected in \cref{dist:app:chained-transforms}, beside the
+hypergeometric machinery they need.
+
+\subsection{Where the structure breaks}
+\label{dist:sec:chained-scope}
+
+That extra term in \cref{dist:eq:genfix} is the whole difficulty. The
+$\mu=0$ chain rests on \cref{dist:eq:geomevents}, and the event-type
+decomposition works precisely because a cell then has one way to stop: it
+ruptures. Once $\mu>0$ a lineage can vanish internally, event types stop being
+independent of the load, and \cref{dist:eq:rkdecomp} has no analogue. The
+joint laws of $(t_k,r_k)$ for general $\mu>0$ therefore remain open;
+\cref{dist:app:extract} sets out the available route and
+\cref{dist:sec:open-problems} states what is missing. For $\mu=0$, by
+contrast, \cref{dist:eq:rkdecomp} extends the size laws to all $M$ cells at
+once, nothing in it depending on where a cell sits in the chain.
+
+This contrast is why both probes were run. $G_k=G^k$ needs only independence
+between lineages, and multiplicity supplies it; the chain's decomposition
+needs the stopping mechanism to be unique, and internal extinction destroys
+that.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.92\textwidth]{fig14_chained_transfer/fig14}
+\caption{Chained immediate transfer with $(\lambda,\delta)=(1,1)$ and
+$s=\rho=1/2$. (a) Simulated rupture-size probabilities (bars) from $10^6$
+chain realisations with seed 42, with the exact negative-binomial laws
+\cref{dist:eq:rklaw} (curves) for $k=1,\ldots,4$. (b) The analytic mean
+interval $\E{T(k)}$ of \cref{dist:eq:meant} at fixed founding load $k$, and
+the simulated mean interval at chain position $k$; both decrease over
+$k=1,\ldots,6$, the latter faster because its founding loads are random and
+growing.}
+\label{dist:fig:chained}
+\end{figure}

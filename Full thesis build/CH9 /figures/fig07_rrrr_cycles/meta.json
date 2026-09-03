@@ -1,0 +1,25 @@
+{
+  "id": "fig07_rrrr_cycles",
+  "simulation": true,
+  "parameters": {
+    "phi": 4.0,
+    "c": 0.8,
+    "lambda": 0.5,
+    "delta": 0.25,
+    "omega": 0.15,
+    "t_max": 80.0,
+    "X0": 1,
+    "V0": 20.0
+  },
+  "seeds_single": [
+    3,
+    11
+  ],
+  "seeds_ensemble": [
+    3,
+    5,
+    8,
+    11,
+    17
+  ]
+}

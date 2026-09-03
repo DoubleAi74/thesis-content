@@ -1,0 +1,15 @@
+{
+  "figure": "fig13",
+  "chapter_number": "5.13",
+  "label": "dist:fig:moi",
+  "slug": "moi",
+  "included_from": "sections/09_several_founders.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig13.pdf",
+    "fig13.png"
+  ],
+  "simulation": false
+}

@@ -1,0 +1,2 @@
+start=type1 M=24 T=28.0 leak=4.6089e-03 p00=0.344323
+rates={'lambda1': 1.0, 'mu1': 0.5, 'nu': 0.3, 'delta1': 0.25, 'lambda2': 1.2, 'mu2': 0.4, 'delta2': 0.15}

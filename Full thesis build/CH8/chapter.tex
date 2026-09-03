@@ -1,0 +1,22 @@
+% ===========================================================================
+%  chapter.tex --- thesis-ready fragment.
+%  Requires the macros of preamble.tex.
+% ===========================================================================
+
+\chapter{Bursting and budding pathogenesis}
+\label{path:ch:pathogenesis}
+
+\input{sections/01_introduction}
+\input{sections/02_schedule_alone}
+\input{sections/03_intracellular_depletion}
+\input{sections/04_extracellular_depletion}
+\input{sections/05_selection}
+\input{sections/06_discussion}
+
+\begingroup
+\renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
+\renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
+\renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
+\input{sections/A_verification}
+\input{sections/B_computational}
+\endgroup

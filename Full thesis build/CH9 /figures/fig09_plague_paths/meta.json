@@ -1,0 +1,17 @@
+{
+  "id": "fig09_plague_paths",
+  "simulation": true,
+  "parameters": {
+    "lambda": 1.0,
+    "delta": 0.1,
+    "chi": 0.02,
+    "mu": 10.0,
+    "t_max": 20.0,
+    "X0": 80,
+    "Y0": 4
+  },
+  "seeds": [
+    2,
+    8
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "fig15",
+  "slug": "ak_contrast",
+  "title": "Antal–Krapivsky observable contrast: shared skeleton, different readouts",
+  "tool": "TikZ/PGF via pdflatex; Ghostscript PNG export",
+  "kind": "explanatory schematic",
+  "parameters": "symbolic only: lambda1, mu1, nu, delta1, lambda2, mu2, delta2; AK map alpha_i=lambda_i, beta_i=mu_i, nu=nu",
+  "seed": null,
+  "width_px": 3168,
+  "height_px": 856,
+  "dpi_export": 450,
+  "ai_image_generation": false,
+  "palette": {
+    "type1": "#0072B2",
+    "type2": "#D55E00",
+    "catastrophe": "#9a2820",
+    "ink": "#1a1c1f"
+  },
+  "paper_refs": [
+    "sections/01_introduction.tex (trap paragraph)",
+    "sections/05_limits.tex sec:AK-recovery",
+    "eq:AK-initial-data",
+    "eq:AK-system",
+    "eq:AK-rate-map",
+    "eq:no-hazard-trivial"
+  ]
+}

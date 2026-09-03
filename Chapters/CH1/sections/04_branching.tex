@@ -1,0 +1,24 @@
+\section{Branching}
+
+Branching is one of the most fundamental patterns of behaviour observable in living systems. It is a basic means for the ordered structures of living entities to expand indefinitely in response to resource supply. Dividing one individual into two allows biomass and hence dissipative potential to increase without paying the cost required to increase agent complexity.\par
+
+At the most basic level, replication of DNA molecules makes up the foundational component of all biological life. It is the maintenance and development of information, held up and carried forward against all odds of decay.\par
+
+Understanding branching from a mathematical perspective has been a topic of probability theory since the end of the 19th century. Darwin's cousin, Francis Galton sought to understand the persistence of family names over generations. For this, with Henry Watson, he employed what would come to be known as the Galton Watson process  \cite{watson1875probability}. It's a discrete time stochastic process in which individuals either die or leave some number of offspring at each generation, fate being dictated by defined probabilities.\par 
+
+It wasn't until the 1920s that continuous time models of branching were developed. In 1924, George Undy Yule published a paper in response to a book on evolution. The book was called ``Age and area'' and sought to understand the relationship between the number of species in a living genus and the area over which it spans. The paper  \cite{yule1925ii}, introduced what would become known as the Yule process. This was the first continuous time model of branching. Individuals only replicate, and do so with some probability during an interval of time:
+$$\pr{\xx_{\Delta t + t}  = \xt + 1 \;\; | \;\; \xt} = \beta \xt \Delta t + o(\Delta t).$$
+As the interval is taken in the limit, $\Delta t\to 0$, the probability that more than one replication takes place becomes infinitesimal. The fact that any of the $\xt$ present individuals can reproduce is encoded by the proportionality of the birth rate $\beta \xt$.\par This model, applied equally well to bacterial replication as to the emergence of species is also known as the standard birth process. Introducing death events, we get the standard birth-death process:
+
+$$\pr{\xx_{\Delta t + t}  = \xt + 1 \;\; | \;\; \xt} = \beta \xt \Delta t + o(\Delta t)$$
+$$\pr{\xx_{\Delta t + t}  = \xt - 1 \;\; | \;\; \xt} = \mu \xt \Delta t + o(\Delta t),$$
+
+\noindent
+which now has a universally accessible absorbing state at 0 representing extinction. Much of the work presented in this thesis surrounds our analysis of a further modification to this birth-death process. An additional ``catastrophe event'' is introduced whereby a sudden transition can take place from any non-zero count either to 0 or a separate ``rupture state'' (as per choice of definition).
+
+$$\pr{\xx_{\Delta t + t}  = \xt + 1 \;\; | \;\; \xt} = \beta \xt \Delta t + o(\Delta t)$$
+$$\pr{\xx_{\Delta t + t}  = \xt - 1 \;\; | \;\; \xt} = \mu \xt \Delta t + o(\Delta t)$$
+$$\pr{\xx_{\Delta t + t}  = R \;\; | \;\; \xt} = \delta \xt \Delta t + o(\Delta t).$$
+
+\noindent
+In our case this is to represent the possibility of any resident bacteria within a white blood cell to trigger a bursting event in which the walls of the macrophage disintegrate and the pathogenic contents are simultaneously released.

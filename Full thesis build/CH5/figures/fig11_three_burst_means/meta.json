@@ -1,0 +1,15 @@
+{
+  "figure": "fig11",
+  "chapter_number": "5.11",
+  "label": "dist:fig:threemeans",
+  "slug": "three_burst_means",
+  "included_from": "sections/08_conditional_means.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig11.pdf",
+    "fig11.png"
+  ],
+  "simulation": false
+}

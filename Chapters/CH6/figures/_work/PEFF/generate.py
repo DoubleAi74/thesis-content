@@ -37,8 +37,12 @@ import matplotlib.pyplot as plt  # noqa: E402
 PDF_PATH = WORKDIR.parents[1] / "peff_dr_curves.pdf"
 PNG_PATH = WORKDIR / "preview.png"
 
+# The canonical trio of the chapter's regime table, in the chapter's fixed
+# colour order: blue for L>1, purple for the boundary L=1, vermillion for
+# L<1.  The middle entry was previously (1, 0.2, 0.05), which meant purple
+# denoted one parameter set here and a different one in every other figure.
 SETS = [((1.0, 0.0, 0.1), style_rc.BLUE, "-"),
-        ((1.0, 0.2, 0.05), style_rc.PURPLE, "--"),
+        ((1.0, 0.5, 1.0 / 3.0), style_rc.PURPLE, "--"),
         ((1.0, 0.9, 0.1), style_rc.VERMILLION, "-.")]
 
 R_MAX = 3.0
@@ -77,7 +81,12 @@ def make_figure(checked):
         rs = np.concatenate([left[:-1], right])
         pe = np.array([RN.p_eff(R, r) for r in rs])
         de = np.array([RN.d_eff(R, r) for r in rs])
-        lab = rf"$({l:g},{m:g},{d:g})$"
+        # 1/3 is written as a fraction, as it is everywhere else in the
+        # chapter, rather than as 0.333333.
+        def _fmt(x):
+            return "1/3" if abs(x - 1.0 / 3.0) < 1e-9 else f"{x:g}"
+
+        lab = rf"$({_fmt(l)},{_fmt(m)},{_fmt(d)})$"
 
         ax_p.plot(rs, pe, color=colour, linestyle=ls, linewidth=1.9, label=lab)
         ax_d.plot(rs, de, color=colour, linestyle=ls, linewidth=1.9, label=lab)

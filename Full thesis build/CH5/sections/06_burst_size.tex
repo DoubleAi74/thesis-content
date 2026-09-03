@@ -1,0 +1,239 @@
+\section{Burst size, and why it is the quasi-stationary law}
+\label{dist:sec:burst-size}
+
+A cell presents two quantities to the outside world: when it ruptures, and how
+much it releases. The second is settled first, because it is the law the
+previous section has just computed.
+
+\subsection{The burst-size law}
+\label{dist:sec:burst-law}
+
+The burst size $\Kb$ is the load immediately before rupture. For a burst in
+state $k$ the process must be at $k$ and then rupture from there, which
+happens at rate $\delta k$, so
+\begin{equation}
+\pr{\Kb = k} = \delta k \int_0^\infty p_k(t)\,\dd t.
+\label{dist:eq:burstintegral}
+\end{equation}
+A discretisation makes this plain: over an interval of width $\Delta t$ in
+which the process is at $k$, the probability that the burst occurs there is
+$\pr{\Xt=k}\,\delta k\,\Delta t$, and summing over intervals as
+$\Delta t\to0$ gives \cref{dist:eq:burstintegral}.
+
+The integral is elementary once the sliding ratio is in view. With $P$ as in
+\cref{dist:eq:pdef},
+\begin{equation}
+\dda{}{t}\Bigl[\frac{P(t)^k}{k\lambda}\Bigr]
+=\frac{1}{\lambda}P(t)^{k-1}P'(t)
+=\lrb{\frac{a-b}{b-aw}}^2 w\,P(t)^{k-1}
+=p_k(t),
+\label{dist:eq:antideriv}
+\end{equation}
+as one verifies from $P'(t)=\lambda(a-b)^2w/(b-aw)^2$. Since $P(0)=0$ and
+$P(\infty)=1/a$,
+\begin{equation}
+\int_0^\infty p_k(t)\,\dd t=\frac{1}{k\lambda}\Bigl(\frac{1}{a}\Bigr)^{k},
+\label{dist:eq:pkintegral}
+\end{equation}
+and \cref{dist:eq:burstintegral} gives the law.
+
+\begin{theorem}[Burst-size distribution]
+\label{dist:thm:burst}
+Unconditionally, including the mass $b$ of realisations that never burst,
+\begin{equation}
+\pr{\Kb=k}=\frac{\delta}{\lambda}\,a^{-k},\qquad k\ge1;
+\label{dist:eq:burstlaw}
+\end{equation}
+conditioned on the burst occurring,
+\begin{equation}
+\pr{\Kb=k\mid\text{burst}}=(a-1)\,a^{-k},\qquad k\ge1.
+\label{dist:eq:burstlawcond}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The unconditional form is the computation above. For the conditional form,
+divide \cref{dist:eq:burstlaw} by the eventual-burst probability $1-b$:
+\[
+\pr{\Kb=k\mid\text{burst}}
+=\frac{(\delta/\lambda)\,a^{-k}}{1-b}
+=\frac{AB}{B}\,a^{-k}
+=(a-1)\,a^{-k},
+\]
+using $\delta/\lambda=AB$ from \cref{dist:eq:ab}.
+\end{proof}
+
+Two consistency checks close the loop. Normalisation:
+\[
+\sum_{k\ge1}\frac{\delta}{\lambda}a^{-k}
+=\frac{\delta}{\lambda}\,\frac{1}{a-1}
+=\frac{AB}{A}=B=1-b,
+\]
+matching the eventual-burst probability. And the first moment:
+\[
+\sum_{k\ge1}k\,\frac{\delta}{\lambda}a^{-k}
+=\frac{\delta}{\lambda}\,\frac{a}{(a-1)^2}
+=\frac{aB}{A}=V_\infty,
+\]
+recovering \cref{dist:eq:vinf} --- which validates the burst-size law, the
+formula for $V_\infty$ and the identity \cref{dist:eq:ab} at once.
+
+\subsection{Why the two laws agree}
+\label{dist:sec:identity}
+
+Set \cref{dist:eq:burstlawcond} beside \cref{dist:eq:qsd}. They are the same
+law.
+
+\begin{theorem}[The burst size is the quasi-stationary law]
+\label{dist:thm:identity}
+The burst-size distribution conditioned on bursting is exactly the
+quasi-stationary distribution of the load: both are geometric on
+$\{1,2,\ldots\}$ with ratio $1/a$.
+\end{theorem}
+
+That the algebra agrees is not by itself an explanation, because the two
+constructions share no step. On one side, condition the load on having avoided
+both absorbing states and let $t\to\infty$: a limit along a single trajectory,
+in which nothing is averaged and no rupture occurs. On the other, weight each
+state by its rupture hazard $\delta k$ and integrate over all rupture times:
+an average across trajectories, in which every realisation contributes at the
+instant it dies and never afterwards. Nothing forces a conditional limit and
+an occupation integral to agree, and for a killed process whose hazard was not
+linear in the load they would not.
+\Cref{dist:fig:two-mechanisms} sets the two side by side.
+
+\begin{proof}
+Read \cref{dist:eq:antideriv} as a change of clock rather than as an
+antiderivative. Its $k=1$ case is
+\begin{equation}
+p_1(t)=\frac{P'(t)}{\lambda},
+\label{dist:eq:ponelaw}
+\end{equation}
+and with $\sigma=P(t)$, which runs monotonically from $0$ to $1/a$ by
+\cref{dist:thm:geometric}, the occupation density of state $k$ becomes a
+perfect differential:
+\begin{equation}
+p_k(t)\,\dd t=\frac{1}{\lambda}\,\sigma^{k-1}\,\dd\sigma .
+\label{dist:eq:clockchange}
+\end{equation}
+Hence
+\begin{equation}
+\pr{\Kb=k}=\delta k\!\int_0^\infty\! p_k\,\dd t
+=\frac{\delta}{\lambda}\int_0^{1/a}\! k\sigma^{k-1}\,\dd\sigma
+=\frac{\delta}{\lambda}\Bigl[\sigma^k\Bigr]_0^{1/a}
+=\frac{\delta}{\lambda}\,a^{-k},
+\label{dist:eq:telescope}
+\end{equation}
+which normalised on the bursting event is $(a-1)a^{-k}$, the law of
+\cref{dist:eq:qsd}.
+\end{proof}
+
+The proof says more than the statement. The size-bias weight $k$ is exactly
+the Jacobian that turns the occupation density of state $k$ into a perfect
+differential, and integrating a perfect differential returns only its
+endpoints. The burst-size law therefore depends on the whole trajectory
+\emph{only} through the endpoint $\sigma_\infty=1/a$ that $P$ reaches, which
+is by definition the quasi-stationary ratio. That is why the two laws
+coincide: not a coincidence, and not a Yaglom limit, but size-biasing
+telescoping the time integral onto the terminal value of $P$, the process's
+own geometric ratio.
+
+\begin{remark}[What the argument needs]
+\label{dist:rem:criterion}
+Nothing in the proof used the birth--death structure. The identity holds for
+any killed process whose transient conditional law is geometric in a single
+sliding ratio $P(t)$ satisfying $p_1=P'/\lambda$, with a killing hazard
+linear in the load. Whether that criterion \emph{characterises} the class of
+processes for which burst size equals the quasi-stationary law is not settled
+here; see \cref{dist:sec:open-problems}.
+\end{remark}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.87\textwidth]{fig06_two_mechanisms/fig06}
+\caption{Two mechanisms, one law. (a) The load conditioned on being neither
+ruptured nor extinct, $p_n(t)/\Ifix(t)$, at $t=1,5,20$ from
+\cref{dist:eq:stateprob,dist:eq:idihat}, with the quasi-stationary law
+$(a-1)a^{-n}$ dashed; on the logarithmic scale each transient law is a
+straight line whose slope rotates onto the limiting slope as $P(t)$ slides up
+to $1/a$. (b) The burst-size law $(\delta/\lambda)a^{-k}$ of
+\cref{dist:eq:burstlaw} (markers) and the same law conditioned on the burst
+occurring (dashed) --- the identical line, reached without taking a limit at
+all; the two series differ by the constant factor $1-b=0.812$. The first
+panel arrives by conditioning on survival along a single trajectory, the
+second by weighting each state by its rupture hazard and integrating across
+trajectories. (c) The two routes on one axis, each computed on its own terms:
+the conditional law of (a) evaluated at $t=60$, against the occupation
+integral of (b) evaluated by numerical quadrature rather than in closed form.
+They agree to $10^{-8}$, which is the accuracy of the quadrature grid and not
+of the identity --- \cref{dist:thm:identity} makes the two exactly equal.
+Parameters $(\lambda,\mu,\delta)=(1,0.2,0.05)$, so $a=1.0616$ and
+$b=0.1884$; closed forms throughout except where panel (c) integrates
+numerically, and no simulation anywhere.}
+\label{dist:fig:two-mechanisms}
+\end{figure}
+
+\subsection{Size-biasing and the size of a late burst}
+\label{dist:sec:size-bias}
+
+The size-biasing that drives the telescoping has a reading of its own: it is
+what an experiment sees when it times its observations.
+A cell bursts at rate $\delta\Xt$, so given a burst at time $t$ its size is a
+size-biased draw from $p_\cdot(t)$:
+\begin{equation}
+\pr{\Kb=k\mid\tau=t}=\frac{k\,p_k(t)}{J(t)},
+\qquad
+\E{\Kb\mid\tau=t}=\frac{K(t)}{J(t)}
+=1+\frac{2\lambda}{\delta}\lrb{1-I(t)}.
+\label{dist:eq:sizebias}
+\end{equation}
+Letting $t\to\infty$,
+\begin{equation}
+\E{\Kb\mid\tau=t}\xrightarrow[t\to\infty]{}
+1+\frac{2\lambda}{\delta}(1-b)
+=\frac{\langle X^2\rangle_{\rm QS}}{\langle X\rangle_{\rm QS}}
+=\frac{a+1}{a-1},
+\label{dist:eq:latelimit}
+\end{equation}
+the second equality from \cref{dist:eq:qsmoments}. A late burst is therefore
+larger than an average one by the factor
+\[
+\frac{(a+1)/(a-1)}{a/(a-1)}=\frac{a+1}{a},
+\]
+which is $1.94$ at the working parameters but only $1.38$ at the
+\textit{B.~anthracis} parameters of \cref{dist:sec:two-extremes}: the
+often-quoted factor of two is the $a\to1$ limit, not a general fact.
+\Cref{dist:fig:latemean} shows the rise.
+
+The mechanism is a selection effect on the geometric law, not on individual
+cells. Conditioning on a late rupture makes no cell grow; it discards the
+cells that ruptured early, and early ruptures come disproportionately from
+small loads, the hazard $\delta k$ being proportional to the load. What
+survives is a sample already weighted towards large loads, which
+\cref{dist:eq:sizebias} then weights once more at the moment of rupture.
+\Cref{dist:fig:jointtauk} makes the tilt visible.
+
+The size of a burst is now fully described. Its timing is not, and the two are
+not independent --- which is what makes the remaining conditioning worth
+doing.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.62\textwidth]{fig07_late_burst_mean/fig07}
+\caption{The size of a late burst at $(\lambda,\mu,\delta)=(1,0.2,0.05)$. The
+conditional mean $\E{\Kb\mid\tau=t}=K(t)/J(t)$ of \cref{dist:eq:sizebias}
+rises from $1$ at founding to $(a+1)/(a-1)=33.46$; the quasi-stationary mean
+$a/(a-1)=17.23$ is marked for contrast, their ratio being $(a+1)/a=1.94$.}
+\label{dist:fig:latemean}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.72\textwidth]{fig08_joint_tau_K/fig08}
+\caption{Joint density, with respect to time and counting measure, of burst
+time $\tau$ and burst size $\Kb$ for $(\lambda,\mu,\delta)=(1,0,0.1)$. The
+overlay is the conditional mean $\E{\Kb\mid\tau=t}=K(t)/J(t)$, rising from
+$1$ towards $1+2\lambda/\delta=21$; the upward tilt of the mass is
+size-biasing made visible.}
+\label{dist:fig:jointtauk}
+\end{figure}

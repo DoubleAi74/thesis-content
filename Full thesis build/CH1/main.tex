@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+% Top-align content on float-only pages (avoids large centred white space above tall figures).
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{8pt plus 2fil}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\allowdisplaybreaks
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+% Thesis-compatible macros (from AA_Thesis / Thesis.tex)
+\newcommand{\pr}[1]{{\text{Pr}\left\{#1\right\}}}
+\newcommand{\mean}[1]{{\rm I}\!{\rm E}(#1)}
+\newcommand{\rr}{{\bf R}}
+\newcommand{\xx}{{\bf X}}
+\newcommand{\xt}{{\xx_t}}
+\newcommand{\yy}{{\bf Y}}
+\newcommand{\yt}{{\yy_t}}
+\newcommand{\ww}{{\bf W}}
+\newcommand{\ddt}[1]{\frac{\mathrm{d}#1}{\mathrm{d}t}}
+\newcommand{\pdx}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={Introduction (Chapter 1)},
+  pdfauthor={Adam Aldridge}
+}
+
+\title{Introduction}
+\author{Adam Aldridge}
+\date{Extracted from AA Thesis (Chapter~1)\\University of Leeds, November 2024}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.5em}
+
+\begin{abstract}
+\noindent
+This chapter introduces the biological and mathematical setting of the thesis.
+It motivates a stochastic treatment of early \textit{Yersinia pestis} infection,
+reviews branching-process ideas used throughout, sketches the biphasic
+pathogenesis of plague, and situates the basic model of viral replication (BMVR)
+and bursting-versus-budding release strategies. Research questions and a roadmap
+of the remaining chapters are given at the end.
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+\input{sections/01_opening}
+\input{sections/02_bubonic_plague}
+\input{sections/03_stochastic_modelling}
+\input{sections/04_branching}
+\input{sections/05_early_phase_yersinia_pestis_infection}
+\input{sections/06_hiv_and_the_basic_model_of_viral_replication}
+\input{sections/07_pathogenic_release_strategies}
+\input{sections/08_research_questions}
+\input{sections/09_how_the_content_is_divided_amongst_the_chapters}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

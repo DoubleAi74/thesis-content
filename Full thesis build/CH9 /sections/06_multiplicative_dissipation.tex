@@ -1,0 +1,438 @@
+% Speciation as catastrophe --- the multiplicative-dissipation automaton.
+% Source: multiplicative-dissipation-ca-v2.tex, reduced to the model and its
+% consequences.  Cut entirely: the colour rules and the hue thermostat SDE,
+% the interface, the options-at-a-glance table, the numerical notes beyond two
+% clauses, the fixed-constants table, and the display machinery (tags, ghosts,
+% species perimeter).  Four of the source's six figures are kept.
+% Renames, all forced by \S7.1's rule against contradicting a thesis-wide
+% symbol, and all chosen to expose the identity with \cref{var:sec:rrrr}:
+% energy \alpha -> V_i (it is that section's potential; \alpha already carries
+% two sanctioned meanings), seed energy \alpha_0 -> V_0, per-cell supply
+% E -> \varphi (it is that section's inflow, charged per cell), cost per
+% sub-species \beta -> c (it is that section's consumption, charged per type;
+% \beta is the speciation rate and nothing else), rare-type advantage
+% \lambda -> \nu (\lambda is the birth rate thesis-wide), lattice side N -> L
+% (N already serves as an abundance and as an integer capacity).
+% Retained without change: \delta, X_i, N_i, S_t, \theta, \kappa, m, d.
+
+\section{Speciation as catastrophe}
+\label{var:sec:ca}
+
+\subsection{The same hazard, with the inflow made endogenous}
+\label{var:sec:camotivation}
+
+\Cref{var:sec:rrrr} drove catastrophe by a potential replenished from outside
+the population. This section keeps that hazard exactly and changes where the
+potential comes from: it is now produced by the population itself, in
+proportion to the ground it holds. Three consequences follow, and they are
+the reason the model is worth the space.
+
+The first is that the cycle stops being a cycle. When inflow rises with area
+and cost rises with internal diversity, and nothing ever lowers the
+diversity but competition, a population is driven onto the locus where the
+two cancel and parks there. It does not oscillate; it sits at a marginal
+state and waits for the hazard.
+
+The second is that the catastrophe divides rather than destroys. The units
+whose multiplicity drives the hazard are not individuals but \emph{types},
+and when the hazard fires they are not lost --- they are promoted, all at
+once, to independence. Nothing dies. What changes is the law by which the
+survivors interact.
+
+The third follows from the second. Because each catastrophe leaves behind
+products that obey the same law, the cycle branches instead of repeating,
+and no revival term is needed: at the settings used here a single founder
+gives rise to some $125{,}000$ species by $t=3000$, of which about fifty are
+then alive. \Cref{var:sec:rrrr} needed $\omega$ to keep
+$0$ from absorbing; here the catastrophe restarts the process itself.
+
+Set against \cref{var:sec:speciation}, the model is the other answer to the
+same question. There, speciation is an elementary birth at rate $\beta(t)$,
+the integrated rate converges, and $S_\infty$ has a proper limit law. Here it
+is a catastrophe at rate $\delta X_i/V_i$, nothing converges, and the species
+count is the statistics of a branching cascade. The two are not rival
+descriptions of one phenomenon so much as the two ends of what a speciation
+rate can be made to mean.
+
+The mechanism that charges the cost per type is what
+\cref{var:sec:pimentelplus} proposed and never ran. There, fitness carries a
+penalty $-\gamma S^{(a)}_t$ proportional to the species a population has
+accumulated \cref{var:eq:fitpenalty}; here the potential carries a penalty
+$-c X_i$ proportional to the sub-species, and the model has been simulated.
+What is missing here is the competitive reversal, and what is missing there
+is a run.
+
+\subsection{State}
+\label{var:sec:castate}
+
+The lattice is $L\times L$, with $L=256$ throughout, so $L^2$ cells; the
+neighbourhood is Moore and the boundary periodic, so the lattice is a torus
+with no edge and no corner. Each cell is empty or occupied.
+
+Every occupied cell carries two nested labels, a \textbf{species} and, within
+it, a \textbf{sub-species}. Only the sub-species is stored, the species being
+recovered from it, so that when a species fragments its sub-species are
+re-pointed at their new parents and every cell follows without being touched.
+For each extant species $i$ the model carries
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+$V_i$ & accumulated potential, a real variable obeying \cref{var:eq:caode} \\
+$N_i$ & cells occupied by species $i$ \\
+$X_i$ & number of \emph{extant} sub-species of species $i$ \\
+\end{tabular}
+\end{center}
+with $X_i\le N_i$, equality holding when every cell is its own sub-species.
+Both $N_i$ and $X_i$ are read off the lattice.
+
+That $X_i$ counts what is alive rather than what has ever existed is not a
+bookkeeping detail. A sub-species driven extinct by competition inside its
+parent stops costing that parent anything, so the coarsening of
+\cref{var:sec:cacompetition} is a genuine regulator of dissipation and a
+species can hold its diversity, and hence its potential, in balance. Under a
+cumulative count the cost could only ever rise, and fragmentation would
+become certain from the moment a species began to diversify.
+
+The run starts from one occupied cell at the centre, of one species with one
+sub-species, at potential $V_0$. Time is counted in \textbf{sweeps}: one
+elementary contest advances the clock by $L^{-2}$, so a sweep is one attempt
+per site on average. Competition is a discrete sequence of events while
+mutation and the potential are continuous, and the two are separated by
+advancing in chunks of a few hundred to a few thousand contests and applying
+the continuous updates once over each. That splitting is the model's only
+approximation in time, and its error is bounded by the movement of $V_i$
+within one chunk --- a few parts in a thousand at the settings used here.
+
+\subsection{Competition}
+\label{var:sec:cacompetition}
+
+At each iteration a cell is drawn uniformly from all $L^2$ and one of its
+eight neighbours uniformly from the eight. If the two carry the same label,
+or both are empty, nothing happens. Otherwise they compete, and the winner's
+label is copied into the loser's cell.
+
+Contests between occupied cells are one rule. Give each occupied cell $\zeta$,
+carrying sub-species $u$ of species $i$, the strength
+\begin{equation}
+w(\zeta)=\underbrace{\vphantom{(n_\zeta+1)^\theta}V_i}_{\text{potential}}
+\times\underbrace{(n_\zeta+1)^{\theta}}_{\text{local support}}
+\times\underbrace{\ee^{-\nu|u|/\kappa_i}}_{\text{rare-type discount}},
+\qquad
+\kappa_i=\frac{N_i}{X_i},
+\label{var:eq:castrength}
+\end{equation}
+where $n_\zeta\in\{0,\dots,8\}$ counts the neighbours matching $\zeta$ at the
+level of the contest, $|u|$ is the number of cells sub-species $u$ occupies,
+and $\kappa_i$ is the mean sub-species area within the parent. Let the
+contest go to $\zeta$ with probability $w(\zeta)/(w(\zeta)+w(\zeta'))$. Two
+readings follow.
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.3em,topsep=0.3em]
+\item \textbf{Against a sub-species of the same species.} The parent's
+potential cancels from numerator and denominator, as it must, since two
+sub-species share one store. What survives is support and rarity, and
+$n_\zeta$ counts neighbours matching at the sub-species level.
+\item \textbf{Against a distinct species.} The rarity factor is omitted and
+$n_\zeta$ counts neighbours of the same \emph{species}, so that for species
+$A$ and $B$
+\begin{equation}
+\pr{A\text{ wins}}=\frac{V_A(n_A+1)^{\theta}}
+{V_A(n_A+1)^{\theta}+V_B(n_B+1)^{\theta}} .
+\label{var:eq:catypeIII}
+\end{equation}
+This is the sense in which $V_i$ is a potential: it buys territory, and it
+buys it only against other species.
+\end{itemize}
+
+Rarity is withheld between species deliberately. Inside a species it
+preserves the diversity that drives the model; between species it would
+merely blunt $V_i$, which is the quantity the model is about.
+
+Contests against empty ground stand outside \cref{var:eq:castrength}
+entirely. Empty ground is a rival of fixed strength $d$, so an occupied cell
+takes a contested empty neighbour with probability $1-d$ and otherwise
+nothing happens --- the occupied cell is never replaced, and empty ground
+never invades. Colonisation carries no dependence on $V_i$, which is a
+deliberate restriction: a species cannot widen its frontier by being rich,
+only take ground already held.
+
+The support exponent $\theta$ buys surface tension. The factor
+$(n_\zeta+1)^\theta$ ranges over $[1,9^\theta]$, so at $\theta=3$ a cell with
+all eight neighbours of its own kind beats an isolated intruder better than
+$998$ times in $1000$: a domain pays along its perimeter and nothing in its
+interior, so it rounds up and can be eaten only from the edge. Without it
+boundaries wander and domains dissolve into filigree
+(\cref{var:fig:ca-support}).
+
+The rarity exponent $\nu$ decides whether a burst is a catastrophe or a
+renaming, which is a sharper role than it looks. Since $|u|$ enters
+negatively, the \emph{larger} sub-species is penalised, and at $\nu=1.14$ one
+exceeding its rival by a mean sub-species area wins only about a quarter of
+their contests. What this changes is not how many sub-species a species
+carries but how large any one may grow. Set $\nu=0$ and coarsening inside a
+species does what a voter model does --- one sub-species engulfs the domain,
+and of the $7262$ fragments the largest species would yield at $t=2000$
+exactly one is big enough to survive. At $\nu=1.14$ the domain is instead a
+mosaic of comparable patches, and about half of $1534$ fragments clear the
+threshold. Diversity in the bare sense survives either way: $X_i$ climbs to
+the balance point under both. Only under the advantage does fragmentation
+actually multiply the species.
+
+\begin{figure}[!htbp]
+\centering
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/support-on}\\[3pt]
+{\small support on, $\theta=3$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/support-off}\\[3pt]
+{\small support off, $\theta=0$}
+\end{minipage}
+\caption{The same seed at the same time ($t=2000$), with neighbour support on
+and off. With it, domains are compact and their boundaries short: seven per
+cent of occupied cells lie on a species boundary. Without it, boundaries
+wander, domains interpenetrate, and the boundary fraction rises to thirty-six
+per cent. The ragged state also carries far more species at once --- $1335$
+against $26$ --- because nothing gathers a domain together and small holdings
+are never squeezed out. Hue labels the taxonomy and nothing else: it is
+carried along by species the competition rules have already made, and no cell
+ever changes hands because of a colour.}
+\label{var:fig:ca-support}
+\end{figure}
+
+\subsection{Mutation and the potential}
+\label{var:sec:camutation}
+
+A sub-species arises when one cell mutates inside its species' domain,
+keeping its species label and taking a new sub-species label, so that
+$X_i\mapsto X_i+1$; thereafter it spreads by the within-species contest. The
+rate is $m V_i$ per cell, giving a species-wide rate
+\begin{equation}
+R^{\text{mut}}_i=m\,V_i N_i ,
+\label{var:eq:camut}
+\end{equation}
+which couples novelty to prosperity: rich species diversify faster and
+thereby hasten their own dissipation, which is the feedback the model exists
+to display. The uncoupled alternative $mN_i$ is available and changes the
+model's character, not merely its rate. One consequence deserves note: if the
+mutating cell was the last of its sub-species, that sub-species dies as the
+new one is born and $X_i$ is unchanged. Mutation adds diversity only where
+there is something to mutate away from.
+
+Each occupied cell supplies potential at rate $\varphi$ and each extant
+sub-species costs $c$ --- the cost of multiplicity, charged per type rather
+than per head. Hence
+\begin{equation}
+\ddt{V_i}=\varphi N_i-c\,X_i ,
+\label{var:eq:caode}
+\end{equation}
+floored at zero, against \cref{var:sec:rrrr}'s
+$\dd V/\dd t=\phi-cX_t$. The two differences are the whole model: the inflow
+is charged per cell rather than supplied from outside, and the outflow is
+charged per type rather than per individual.
+
+Three readings of \cref{var:eq:caode} are worth recording.
+\begin{enumerate}[label=(\roman*),leftmargin=2.1em,itemsep=0.25em,topsep=0.25em]
+\item $V_i$ does not appear on the right. It is a pure accumulator with no
+fixed point of its own, growing while $X_i<\varphi N_i/c$ and falling once
+diversity passes that threshold.
+\item Since $X_i\le N_i$, the most negative attainable drift is
+$N_i(\varphi-c)$, attained at $X_i=N_i$. A species can therefore lose
+potential at all only if $c>\varphi$, and that is the condition under which
+the catastrophe of \cref{var:sec:cafragment} is reachable. Below it there is
+no model: nothing ever bursts, and the run reduces to the lattice filling and
+then relabelling indefinitely.
+\item A species carrying a single sub-species needs at least $c/\varphi$
+cells to break even --- about nine at the settings used here. Below that area
+its potential drains away whatever it does, which is what governs the fate of
+the smallest fragments of a burst.
+\end{enumerate}
+
+A species at $V_i=0$ is not dead. It loses every between-species contest it
+enters against anyone with potential to spend, and stops mutating, but it
+still takes empty ground, and if its area exceeds $cX_i/\varphi$ its
+potential recovers. It is merely defenceless until it does.
+
+\subsection{Fragmentation}
+\label{var:sec:cafragment}
+
+When a species has come to carry too many sub-species it \textbf{fragments}:
+every sub-species breaks away at once and becomes an independent species. The
+domains do not move. What changes is the law by which they interact, which
+switches from the within-species contest to \cref{var:eq:catypeIII}:
+neighbouring patches that a moment earlier were contesting a shared
+inheritance now contest each other in proportion to their separate
+potentials.
+
+Two triggers are live at once and tested in order. A species fragments
+deterministically if the update to \cref{var:eq:caode} would take $V_i$ to
+zero or below; failing that it fragments with hazard
+\begin{equation}
+R^{\text{frag}}_i=\delta\,\frac{X_i}{V_i},
+\label{var:eq:cafrag}
+\end{equation}
+which is \cref{var:eq:rrrr}'s catastrophe rate $\delta X_t/V(t)$ with the
+count of individuals replaced by the count of types. Because
+\cref{var:eq:cafrag} diverges as $V_i\downarrow0$ it anticipates the
+deterministic trigger rather than competing with it, while also permitting
+early bursts in a species that is merely strained. At the settings used here
+the hazard does essentially all the work: a species in the regime of
+\cref{var:sec:caconsequences} holds a potential of several hundred and never
+approaches zero, so it bursts because \cref{var:eq:cafrag} fires and not
+because it is bankrupt. A species carrying one sub-species cannot fragment,
+there being nothing for a division to mean; it sits at $V_i=0$ until its area
+recovers or it is overrun.
+
+Each new species takes exactly the cells its sub-species held and begins with
+$X=1$, its own only sub-species. Its potential is the one thing the burst
+does not settle by itself, the parent's store being wound up rather than
+divided by any natural rule, and it is reset to $V_0$. Two splitting rules
+were also implemented --- equal shares, and shares proportional to area ---
+but both interact awkwardly with the deterministic trigger, which fires
+precisely when there is nothing left to divide and so hands every fragment a
+potential of zero. Resetting is the only rule that behaves identically under
+both triggers.
+
+\begin{figure}[!htbp]
+\centering
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/burst-before}\\[3pt]
+{\small before}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/burst-after}\\[3pt]
+{\small after}
+\end{minipage}
+\caption{A burst, across the single frame in which it happens, at
+$t\approx1239$. The species held $12{,}826$ cells --- a fifth of the lattice
+--- and still had $V_i=755$ in hand when \cref{var:eq:cafrag} fired; all
+$1444$ of its sub-species became species at once, and it was the only species
+to fragment in that frame. Nothing has moved: the outline of the parent is
+exactly preserved and its neighbours are untouched. What has changed is the
+law inside that outline. Each fragment is drawn in a fresh hue here so that
+the division is unmistakable.}
+\label{var:fig:ca-burst}
+\end{figure}
+
+\subsection{What the simulations show}
+\label{var:sec:caconsequences}
+
+\Cref{var:fig:ca-sequence,var:fig:ca-founder} are exact realisations at the
+settings above. Four consequences follow from the rules as stated.
+
+\paragraph*{The occupied region never retreats.} No rule vacates a cell:
+contests against empty ground cannot, by construction, and contests between
+occupied cells only relabel. The occupied set is monotonically
+non-decreasing, and the lattice fills --- here by about $t=1100$. After that
+the dynamics reduce to relabelling, a biased voter model on a full lattice
+punctuated by mutation and fragmentation.
+
+\paragraph*{The population sits at the balance point.} The cycle does not run
+away. Because mutation raises $X_i$ while nothing lowers $\varphi N_i$, a
+species is driven towards
+\begin{equation}
+X_i\approx\frac{\varphi N_i}{c},
+\label{var:eq:cabalance}
+\end{equation}
+at which production and dissipation cancel and $V_i$ goes flat.
+\Cref{var:fig:ca-founder} is that statement in one picture: the founder's
+potential climbs steeply while diversity is still cheap, flattens near $730$
+once $X_i$ reaches \cref{var:eq:cabalance} at about $t=175$, and stays there.
+Every substantial species in a mature run is found on that locus to within a
+few per cent, with its potential parked at a few hundred and its drift near
+zero. The system settles into a marginal state rather than an oscillation,
+and what ends a species is not bankruptcy but the accumulating hazard of
+\cref{var:eq:cafrag}, which grows with the diversity the balance point
+obliges it to carry.
+
+\paragraph*{Fragments are filtered by area.} A burst is not a fair division.
+Each fragment inherits its sub-species' cells, and those areas are broadly
+distributed; but by reading (iii) of \cref{var:sec:camutation} a fragment of
+fewer than $c/\varphi$ cells cannot pay for even its own single sub-species.
+Its potential drains within a fraction of a sweep, after which it loses every
+contest it enters and is overrun. Immediately after a large burst, hundreds
+of species may sit at $V_i=0$ at once. The great majority of what a burst
+creates is gone almost immediately, and only the larger fragments survive to
+grow, diversify and burst in their turn --- which is why a run that has
+produced tens of thousands of species holds only tens alive.
+
+\paragraph*{Growth and fragmentation overlap.} At this colonisation rate the
+first turn of the cycle completes long before the lattice is full: the
+founder of \cref{var:fig:ca-founder} bursts on $8689$ cells, a seventh of the
+ground, with open country still ahead of it. A species reaches the diversity
+that destroys it before it reaches the walls, so the run is never a sequence
+of clean generations.
+
+\begin{figure}[!htbp]
+\centering
+\begin{minipage}[t]{0.235\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/seq-250}\\[3pt]{\small $t=250$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/seq-600}\\[3pt]{\small $t=600$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/seq-1100}\\[3pt]{\small $t=1100$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\textwidth}\centering
+\includegraphics[width=\linewidth]{fig08_ca/seq-3000}\\[3pt]{\small $t=3000$}
+\end{minipage}
+\caption{One run on a $256^2$ lattice. At $t=250$ a single species holds six
+per cent of the ground and already carries $443$ sub-species, visible as
+mottling within one narrow band of hue. By $t=600$ it has burst six times and
+the fragments are still spreading into open ground. The lattice closes at
+about $t=1100$; by $t=3000$ the run holds some fifty living species out of
+$125{,}000$ ever created.}
+\label{var:fig:ca-sequence}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{fig08_ca/fig08}
+\caption{The founder species, followed from its first cell to the burst that
+ends it at $t=354$. Potential $V_i$ above, sub-species count $X_i$ below
+against the balance point $\varphi N_i/c$ of \cref{var:eq:cabalance}; the
+dotted line marks the burst. The lower panel is the argument of
+\cref{var:sec:caconsequences} in one picture --- the dashed curve is area,
+rescaled, and diversity tracks it. The species is not bankrupt when it
+bursts: it still holds $V_i\approx730$ on $8689$ cells, but by then it
+carries $964$ sub-species and the hazard \cref{var:eq:cafrag} has grown large
+enough to fire.}
+\label{var:fig:ca-founder}
+\end{figure}
+
+\paragraph{Open questions.}\label{var:rem:open-ca}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em,topsep=0.2em]
+\item \textbf{Whether the balance point restores tractability.} This is the
+sharpest question the model raises. On \cref{var:eq:cabalance} the potential
+is flat, so $V_i$ is slowly varying at some $\bar V$, and the hazard
+\cref{var:eq:cafrag} becomes
+$\delta X_i/V_i\approx(\delta\varphi/c\bar V)N_i$ --- proportional to the
+species' \emph{area}. But a catastrophe rate proportional to size is exactly
+\ChCore{}'s $\delta X_t$. Whether the species count can therefore be read as
+a birth--death--catastrophe process with burst size $X_i$, with an effective
+$\delta$ of $\delta\varphi/c\bar V$, is the question to go after: it would
+put the chapter's least tractable model back onto the chapter's own
+machinery, and it is a conjecture supported by
+\cref{var:fig:ca-founder} rather than anything derived.
+\item \textbf{The statistics of the cascade.} \Cref{var:sec:rrrr}'s open
+question was the distribution of the interval between catastrophes. Here the
+catastrophes branch, so the analogous object is the distribution of the
+number of \emph{viable} fragments per burst --- those clearing the
+$c/\varphi$ threshold --- and whether its mean sits above or below one
+decides whether the species count grows or collapses. The run holds tens
+alive out of $125{,}000$ created, which suggests a mean near one and a
+process near criticality, but that has not been measured.
+\item \textbf{A continuous species concept.} The model could be defined by
+intervals of hue rather than by discrete labels, with species identity a
+matter of proximity on the colour circle and speciation a matter of a
+lineage drifting far enough from its relatives to fall outside the interval.
+That would remove the taxonomy as a primitive and make it an observable, and
+it is not obvious whether the balance point survives the change.
+\item \textbf{What it could be fitted to.} As with \cref{var:sec:rrrr}, the
+model has never been fitted, and $\varphi$, $c$ and $\delta$ enter the hazard
+only through the combination $\delta\varphi/c$ once the balance point is
+reached. A time series of the species count would not separate them; what
+second observable would is not known.
+\end{enumerate}
+
+\FloatBarrier

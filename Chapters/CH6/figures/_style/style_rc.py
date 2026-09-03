@@ -19,12 +19,61 @@ two rebuilt figures carry the conventions palette rather than matplotlib's
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+
+# --- Register Latin Modern with matplotlib -------------------------------
+# The document body is set in Latin Modern via `lmodern`.  Latin Modern is
+# not a system font on this machine, but TeX Live ships the OTF originals,
+# so we register those directly.  Without this the figures fall back to
+# DejaVu Serif and every axis label is in a different family from the text
+# around it.
+def _register_latin_modern() -> bool:
+    import glob
+    import matplotlib.font_manager as fm
+
+    # Latin Modern carries optical masters at several design sizes.  Only
+    # the 10pt series is registered: matplotlib has no notion of optical
+    # sizing and would otherwise pick whichever master sorted first (the
+    # 6pt one, which is far too heavy at a 9.5pt label size).
+    pats = [
+        "lmroman10-regular.otf", "lmroman10-italic.otf",
+        "lmroman10-bold.otf", "lmroman10-bolditalic.otf",
+    ]
+    roots = []
+    for base in ("/usr/local/texlive/*/texmf-dist/fonts/opentype/public/lm/",
+                 "/usr/share/texlive/texmf-dist/fonts/opentype/public/lm/",
+                 "/usr/local/texlive/texmf-local/fonts/opentype/public/lm/"):
+        for pat in pats:
+            roots += glob.glob(base + pat)
+    for path in roots:
+        try:
+            fm.fontManager.addfont(path)
+        except Exception:
+            pass
+    return any(f.name == "Latin Modern Roman" for f in fm.fontManager.ttflist)
+
+
+LATIN_MODERN = _register_latin_modern()
+
+
+def _latex_available() -> bool:
+    """True when matplotlib can shell out to a working LaTeX + dvipng."""
+    import shutil
+
+    if not (shutil.which("latex") and shutil.which("dvipng")):
+        return False
+    if os.environ.get("CH6_NO_USETEX"):
+        return False
+    return True
+
+
+USETEX = _latex_available()
 
 BLUE = "#0072B2"
 VERMILLION = "#D55E00"
@@ -44,9 +93,26 @@ def apply() -> None:
         {
             "figure.dpi": 120,
             "savefig.dpi": 400,
+            # Typography must match the document, which is set in Latin
+            # Modern via `lmodern`.  Where a LaTeX installation is present
+            # the figures are typeset by LaTeX itself, so figure text and
+            # body text are the same fonts rendered by the same engine, and
+            # every symbol the chapter uses -- \star, \mathbb{E} -- is
+            # available.  Otherwise we fall back to the registered Latin
+            # Modern OTFs with Computer Modern mathtext, which is the same
+            # design.  The previous value here was DejaVu Serif, which put
+            # figure labels in a different family from both the body text
+            # and the figures' own mathtext.
+            "text.usetex": USETEX,
+            "text.latex.preamble": (
+                r"\usepackage{lmodern}\usepackage{amsmath,amssymb}"
+            ),
             "font.family": "serif",
-            "font.serif": ["DejaVu Serif"],
+            "font.serif": [
+                "Latin Modern Roman", "CMU Serif", "DejaVu Serif",
+            ],
             "mathtext.fontset": "cm",
+            "axes.unicode_minus": False,
             "font.size": 9.5,
             "axes.titlesize": 10,
             "axes.labelsize": 9.5,

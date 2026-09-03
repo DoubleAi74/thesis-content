@@ -1,0 +1,1055 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\dt}{\Delta t}
+% A lattice snapshot, framed so that empty ground is distinguishable from paper.
+\newcommand{\lattice}[1]{%
+  \setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.4pt}%
+  \fbox{\includegraphics[width=\dimexpr\linewidth-0.8pt\relax]{figures/#1}}}
+\newcommand{\panelcap}[1]{\\[3pt]{\small #1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\title{The Multiplicative Dissipation Cellular Automaton}
+\author{A specification of the model as implemented}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+A stochastic cellular automaton on a square lattice in which occupied cells belong to
+a two-level taxonomy of \emph{species} and \emph{sub-species}. Cells compete pairwise for
+territory, and the outcome of a contest is biased by a species-level energy variable
+$\alpha$. Energy is produced in proportion to a species' area and dissipated in proportion
+to its internal diversity, so that a species which accumulates too many sub-species
+exhausts its energy and \emph{fragments}: its sub-species are promoted, all at once, to
+independent species. Speciation is therefore not an elementary move but a catastrophe
+that follows a slow build-up of internal multiplicity --- the ``multiplicative
+dissipation'' of the title. Three further mechanisms shape the texture of the result:
+neighbour support, which gives domains surface tension; a rare-type advantage within a
+species, which keeps its sub-species comparable in size and so makes fragmentation a real
+division; and a colour thermostat, which makes hue dynamical and heritable. Five of the model's rules are not fixed but switchable, and each
+alternative is set out here beside the default.
+\end{abstract}
+
+\section{Overview}
+
+The lattice starts with a single occupied cell of a single species at its centre.
+Occupied cells spread into empty ground and contest each other's territory. Two
+mechanisms generate novelty. \emph{Mutation} converts one cell into a new sub-species of
+its own species, adding to that species' internal diversity. \emph{Fragmentation}
+converts an entire species' worth of accumulated diversity into new species at a
+stroke, when the species runs out of energy. Between these two mechanisms the single
+initial species can, in principle, give rise to indefinitely many; in practice it gives
+rise to tens of thousands in a few hundred sweeps.
+
+Three further mechanisms shape what happens between those events. \emph{Neighbour
+support} rewards a cell for being surrounded by its own kind, which gives domains
+surface tension and keeps them compact. An \emph{occupancy bias} within a species
+favours whichever sub-species is locally rarer, which keeps internal diversity alive
+long enough to matter. And a \emph{colour thermostat} governs how the hues of new
+species separate after a burst, so that the picture on screen reports the genealogy
+rather than merely labelling it.
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{seq-250.png}\panelcap{$t = 250$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{seq-600.png}\panelcap{$t = 600$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{seq-1100.png}\panelcap{$t = 1100$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{seq-3000.png}\panelcap{$t = 3000$}
+\end{minipage}
+\caption{A run at the default settings on a $256^2$ lattice. At $t = 250$ a single species
+holds six per cent of the ground and already carries $443$ sub-species, visible as mottling
+within one narrow band of hue. By $t = 600$ it has burst six times and the fragments are
+still spreading into open ground --- at this colonisation rate a species reaches the
+diversity that destroys it long before it reaches the walls. The lattice closes at about
+$t = 1100$; by $t = 3000$ the run holds some fifty living species out of $125{,}000$ ever
+created.}
+\label{fig:sequence}
+\end{figure}
+
+\section{State}
+
+\subsection{Lattice}
+
+A square lattice of dimension $N \times N$, comprising $N^2$ cells, with $N$ a power of
+two drawn from $\{64, 128, 256, 512\}$; the default is $N = 256$. The neighbourhood is
+\textbf{Moore} --- the eight cells that touch, edges and corners alike --- and the
+boundary is \textbf{periodic}: the lattice is a torus, with no edge and no corner. Each
+cell is either \textbf{empty} or \textbf{occupied}.
+
+\subsection{Taxonomy}
+
+Every occupied cell carries two labels: a \textbf{species} and, within that species, a
+\textbf{sub-species}. The two levels are nested --- a mutation changes a cell's
+sub-species label while leaving its species label intact --- and they differ only in how
+they interact (Section~\ref{sec:competition}). Sub-species spread through the domain of
+their parent species by much the same mechanism by which the species spreads into empty
+ground.
+
+In the lattice itself only the sub-species label is stored; the species is recovered
+from it, since each sub-species belongs to exactly one species at a time. When a species
+fragments, its sub-species are re-pointed at their new parents, and every cell follows
+without being touched.
+
+\subsection{Species-level bookkeeping}
+
+For each extant species $i$ the model tracks
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+$\alpha_i$ & \emph{energy} of species $i$: a real variable, evolving in time \\
+$N_i$      & number of lattice cells occupied by species $i$ \\
+$X_i$      & number of \emph{extant} sub-species of species $i$ \\
+$\varphi_i$ & the species' hue, in degrees on the colour circle \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+and, for display only, a serial \textbf{tag} that is never reused, and a count of the
+sub-species it has ever carried. Each sub-species in turn knows its own hue and the
+number of cells it occupies.
+
+Note that $X_i \le N_i$, with equality when every cell of the species is its own
+sub-species. The variables $N_i$ and $X_i$ are read off the lattice; $\alpha_i$ obeys its
+own equation of motion (Section~\ref{sec:energy}).
+
+\medskip
+\noindent
+\textbf{$X_i$ counts what is alive.} There are two things ``number of sub-species'' could
+mean: those currently extant, or every one the species has ever produced. $X_i$ is the
+extant count, and the difference is not cosmetic. A sub-species driven to extinction by
+internal competition stops costing its parent anything, so the coarsening of
+Section~\ref{sec:typeII} is a genuine regulator of dissipation, and a species can hold its
+diversity --- and hence its energy --- in balance. Were the cumulative count used instead,
+the cost could only ever rise, and fragmentation would become certain from the moment a
+species began to diversify. The cumulative count is tracked, but only to be displayed.
+
+\subsection{Initial condition}
+
+One occupied cell at the centre of the grid, belonging to a single species with a single
+sub-species; all other cells empty. The founder's hue is drawn uniformly from the circle,
+and its energy is set to $\alpha_0$.
+
+\section{Time}
+\label{sec:time}
+
+The time increment associated with one elementary competition event is
+\begin{equation}
+  \dt = \frac{1}{N^2},
+  \label{eq:dt}
+\end{equation}
+so that one unit of model time --- one \textbf{sweep} --- corresponds to $N^2$ elementary
+events, i.e. on average one attempt per lattice site.
+
+Competition is a discrete sequence of events; mutation, energy and colour are continuous
+processes running alongside it. Rather than interleave them event by event, the model
+advances in \textbf{chunks}. A chunk resolves $K$ elementary contests, then advances the
+clock by $K\dt$ and applies the mutation, energy and colour updates once each over that
+whole interval. The chunk size is
+\begin{equation}
+  K = \min\bigl(\max(256,\; 4 S),\; 4096\bigr),
+\end{equation}
+where $S$ is the current number of living species: the passes that cost $O(S)$ are run
+less often when there are more species to pay for. The splitting is the only
+approximation in the model's time-stepping, and its error is bounded by the amount
+$\alpha$ can move within one chunk --- at the default settings, a few parts in a
+thousand.
+
+\section{Parameters}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Symbol & Meaning & Default & Range \\
+\midrule
+$N$          & linear grid dimension                     & $256$      & $64$--$512$ \\
+$d$          & resistance of empty ground; $P_{\text{expand}} = 1-d$ & $0.90$ & $0$--$1$ \\
+$E$          & energy supplied per occupied cell per sweep & $0.0316$ & $10^{-3}$--$10^{-0.5}$ \\
+$\beta$      & cost per sub-species per sweep            & $0.288$    & $10^{-1}$--$10^{1.5}$ \\
+$m$          & mutation-rate constant                    & $8.9\times10^{-5}$ & $10^{-5}$--$10^{-1}$ \\
+$\delta$     & fragmentation-rate constant               & $7.1\times10^{-3}$ & $10^{-3}$--$10^{1}$ \\
+$\alpha_0$   & seed and reset energy                     & $0.01$     & $10^{-2}$--$10^{2}$ \\
+$\lambda$    & rare-sub-species advantage                & $1.14$     & $0$--$2$ \\
+$\theta$     & neighbour-support exponent                & $3$        & $0$--$3$ \\
+\midrule
+\multicolumn{4}{l}{\emph{Colour, thermostat rule}} \\
+$D$          & burst hue dispersal, degrees              & $90$       & $0$--$360$ \\
+$T$          & colour settle time, sweeps                & $2$        & $0.32$--$200$ \\
+$a$          & settle pull \ (labelled $\alpha$ in the panel) & $2$        & $0$--$12$ \\
+$k$          & number of settled hues                    & $12$       & $2$--$36$ \\
+\midrule
+\multicolumn{4}{l}{\emph{Colour, other rules}} \\
+$g$          & burst hue spread                          & $2$        & $0$--$5$ \\
+$\sigma$     & burst hue jitter, degrees                 & $47$       & $0$--$180$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+All rates are per unit of model time, i.e. per sweep. The sliders for $E$, $\beta$, $m$,
+$\delta$, $\alpha_0$ and $T$ travel on a logarithmic scale, since each matters across
+decades rather than across an interval.
+
+\section{Competition: the elementary update}
+\label{sec:competition}
+
+At each iteration a cell is chosen uniformly at random from all $N^2$, and one of its
+eight neighbours is chosen uniformly at random. If the two carry the same label, or both
+are empty, nothing happens. Otherwise the two cells \textbf{compete}, and the label of
+the winner is copied into the cell of the loser. Which of the two wins is probabilistic.
+There are three cases.
+
+\paragraph{Type I: empty--occupied.} The occupied cell takes the empty one with a fixed
+probability, independent of everything else. Empty ground behaves as a rival of fixed
+strength $d$ --- its \emph{resistance} --- so that
+\begin{equation}
+  P_{\text{expand}} = 1 - d,
+  \qquad
+  P_{\text{no expand}} = d.
+  \label{eq:typeI}
+\end{equation}
+At the default $d = 0.90$ a contested empty cell is taken one time in ten, which makes
+colonisation slow: the lattice takes some eleven hundred sweeps to fill.
+Colonisation carries no dependence on energy. This is a deliberate restriction: $\alpha$
+governs conflict between species and nothing else, so growth into open ground proceeds at a
+uniform rate and a species cannot widen its frontier by being rich. It can only take ground
+that is already held.
+
+The asymmetry of this case must be stated explicitly: if the occupied cell loses, the
+outcome is simply that \emph{no expansion occurs}. The occupied cell is not replaced by an
+empty one; empty ground never invades. Note also that either of the two cells may be the
+focal one --- an empty cell chosen first is colonised by an occupied neighbour just as
+readily --- so the rule is symmetric in the pair even though its outcome is not.
+
+\paragraph{Type II: two sub-species of the same species.}
+\label{sec:typeII}
+Two sub-species of a common species share their parent's energy, so $\alpha$ cannot
+separate them. Stripped of everything else the contest is therefore a fair coin,
+\begin{equation}
+  P_{u \text{ wins}} = P_{v \text{ wins}} = \tfrac12,
+  \label{eq:typeIItie}
+\end{equation}
+under which competition within a species is unbiased and sub-species boundaries perform a
+neutral, voter-model coarsening inside the species' domain.
+
+Two factors may be layered on top of that coin, each with its own control: how well each
+cell is supported by its immediate neighbours, and how rare each sub-species is within the
+parent. With both in force --- the default --- and writing $u$ and $v$ for the two
+sub-species, $n_u$ and $n_v$ for the number of Moore neighbours matching each at its own
+cell, and $|u|$, $|v|$ for the number of cells each occupies,
+\begin{equation}
+  P_{u \text{ wins}}
+  = \frac{(n_u+1)^{\theta}\, e^{-\lambda |u| / \kappa_i}}
+         {(n_u+1)^{\theta}\, e^{-\lambda |u| / \kappa_i}
+        + (n_v+1)^{\theta}\, e^{-\lambda |v| / \kappa_i}},
+  \qquad
+  \kappa_i = \frac{N_i}{X_i}.
+  \label{eq:typeII}
+\end{equation}
+The parent's energy has cancelled from numerator and denominator, as it must. The two
+factors are independent and are switched separately: the \emph{neighbour support} control
+removes the first, which is equivalent to setting $\theta = 0$, and the
+\emph{within-species} control's \emph{tie} setting removes the second, which is equivalent
+to $\lambda = 0$. Only when both are removed is \eqref{eq:typeIItie} recovered exactly ---
+support alone still favours the better-embedded cell, even under the tie setting.
+
+The exponential factor is a \textbf{rare-type advantage}. Because $|u|$ appears with a
+negative sign, the \emph{larger} sub-species is the one penalised: at the default
+$\lambda = 1.14$, a sub-species that exceeds its rival by one mean sub-species area wins
+only about a quarter of their contests. The normalisation $\kappa_i$ is the mean sub-species area
+within the parent, so the bias reads differences in size relative to the species' own
+internal scale rather than in absolute cells.
+
+What the advantage changes is not how many sub-species a species carries but how large any
+one of them is allowed to grow. Under the tie setting, coarsening within a species does what
+a voter model does: one sub-species engulfs the domain, and most of the rest are recent
+mutations that have not yet been swallowed. At $t = 2000$ and the default parameters a single
+species has then taken the whole lattice, $88$ per cent of it is one sub-species, and $96$
+per cent of its sub-species are lone cells. Under the advantage the largest species is
+instead a mosaic of comparable patches --- median area ten cells, largest twenty-nine ---
+because nothing can grow large without being penalised for it. Section~\ref{sec:consequences} draws out why this matters:
+a burst divides a species along its sub-species, so it is their size distribution, and not
+their number, that decides how much of the parent survives the catastrophe.
+
+Whichever settings are in force, this is the sole channel by which a sub-species can be
+driven extinct without the whole species being involved.
+
+\paragraph{Type III: two distinct species.}
+For species $A$ and $B$,
+\begin{equation}
+  P_{A \text{ wins}} = \frac{\alpha_A (n_A+1)^{\theta}}
+                            {\alpha_A (n_A+1)^{\theta} + \alpha_B (n_B+1)^{\theta}},
+  \label{eq:typeIII}
+\end{equation}
+where $n_A$ and $n_B$ now count Moore neighbours of the \emph{same species} at each of
+the two cells. A species with larger $\alpha$ is more ``powerful'': it conquers its
+neighbours with greater likelihood. This is the sense in which $\alpha$ behaves like an
+energy. Should both strengths vanish, the contest is decided by a fair coin.
+
+The occupancy bias does \emph{not} reach this case. Rarity is an advantage inside a
+species, where it preserves the diversity that drives the model; between species it would
+merely blunt the effect of $\alpha$, which is the quantity the model is about.
+
+\subsection{Neighbour support}
+
+Both Types II and III carry the factor $(n+1)^{\theta}$, where $n \in \{0,\dots,8\}$
+counts the neighbours of the contesting cell that match it at the level of that contest
+--- sub-species for Type II, species for Type III. Empty neighbours are not counted, so a
+cell on the frontier is weaker than one in the interior. The support factor therefore
+ranges over $[1, 9^{\theta}]$, and at the default $\theta = 3$ it spans nearly three orders of
+magnitude: a cell with all eight neighbours of its own kind beats an isolated intruder
+in better than 998 contests out of 1000.
+
+The effect is surface tension. Without it, boundaries wander freely and domains dissolve
+into filigree; with it, a domain pays a price along its perimeter and none in its
+interior, so it rounds up, holds its shape, and can only be eaten from the edge. Setting
+$\theta = 0$ switches it off, and Types II and III revert to their unadorned forms.
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[t]{0.47\linewidth}\centering
+  \lattice{support-on.png}\panelcap{support on, $\theta = 3$}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.47\linewidth}\centering
+  \lattice{support-off.png}\panelcap{support off, $\theta = 0$}
+\end{minipage}
+\caption{The same seed and the same time ($t = 2000$), with neighbour support on and off.
+With it, domains are compact and their boundaries short: seven per cent of occupied cells
+lie on a species boundary. Without it, boundaries wander, domains interpenetrate, and the
+boundary fraction rises to thirty-six per cent. The ragged state also carries far more
+species at once --- $1335$ against $26$ --- because nothing gathers a domain together and
+small holdings are never squeezed out.}
+\label{fig:support}
+\end{figure}
+
+\subsection{A unified reading of the three rules}
+
+Types II and III are one rule. Give every occupied cell $c$, carrying sub-species $u$ of
+species $i$, a strength
+\begin{equation}
+  w(c) = \underbrace{\alpha_i}_{\text{species energy}}
+       \times \underbrace{(n_c+1)^{\theta}}_{\text{local support}}
+       \times \underbrace{e^{-\lambda |u| / \kappa_i}}_{\text{rare-type discount}},
+\end{equation}
+and let the contest go to $c$ with probability $w(c) / (w(c) + w(c'))$. Then:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Opponent & What survives in $w$ & Recovers \\
+\midrule
+a sub-species of the same species & support and rarity; $\alpha_i$ cancels & \eqref{eq:typeII} \\
+a distinct species $B$            & energy and support; rarity omitted     & \eqref{eq:typeIII} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Type I stands outside this scheme. It is not a contest between strengths but a fixed
+coin of bias $d$, and the loser of it forfeits nothing, because empty ground has nothing
+to lose.
+
+\section{Mutation: the origin of sub-species}
+\label{sec:mutation}
+
+A sub-species arises when a single cell mutates within the occupied domain of a species.
+The mutation changes that cell to a new sub-species type while it retains its primary
+species classification, and $X_i \mapsto X_i + 1$. The new sub-species is given a hue one
+small step from its parent's --- uniformly within $\pm 7^{\circ}$ --- and thereafter
+spreads by Type II competition.
+
+The rate may be set in either of two ways, chosen by the \emph{mutation rate} control:
+\begin{enumerate}[label=(\alph*),itemsep=2pt]
+  \item a \textbf{constant rate per cell}, giving a species-wide rate $m N_i$;
+  \item a \textbf{rate per cell proportional to energy}, $m\,\alpha_i$ per cell, giving a
+        species-wide rate
+        \begin{equation}
+          R^{\text{mut}}_i = m\,\alpha_i N_i .
+        \end{equation}
+\end{enumerate}
+Option (b) is the default. It couples novelty to prosperity, so that rich species
+diversify faster and thereby hasten their own dissipation, which is the feedback the
+model exists to display.
+
+\paragraph{Implementation.} Rather than tracking a mutation clock for every cell,
+mutation events are drawn against the population-wide rate and then assigned. An
+exponential clock accumulates: each chunk subtracts $R\,\dt$ from a running debt, and
+whenever the debt falls to zero an event fires and a fresh $\mathrm{Exp}(1)$ draw is added
+back. This is exact for a rate held constant across the chunk.
+
+When an event fires, a cell is chosen uniformly at random from all occupied cells. Under
+option (a) this alone gives each species its share, since a species is selected in
+proportion to its area. Under option (b) the global rate is run at the envelope
+$m\,\alpha_{\max} N_{\text{occ}}$, where $\alpha_{\max}$ is the largest energy currently
+held by any species, and the drawn event is accepted with probability
+$\alpha_i / \alpha_{\max}$. This \emph{thinning} recovers the per-cell rate $m\alpha_i$
+exactly, at the cost of some rejected draws.
+
+One consequence deserves note: if the mutating cell was the last of its sub-species, that
+sub-species dies as the new one is born, and $X_i$ is unchanged. Mutation adds diversity
+only where there is something to mutate away from.
+
+\section{Energy}
+\label{sec:energy}
+
+Each occupied cell supplies energy at rate $E$, so a species of area $N_i$ has a total
+energy capacity per unit time of $N_i E$. Each extant sub-species costs $\beta$ per unit
+time --- the \emph{cost of multiplicity}. Hence
+\begin{equation}
+  \frac{d\alpha_i}{dt} = N_i E - \beta X_i .
+  \label{eq:ode}
+\end{equation}
+Discretising \eqref{eq:ode} over a chunk of duration $\dt_K = K/N^2$,
+\begin{equation}
+  \alpha_i(t + \dt_K) \;=\; \max\Bigl(0,\;
+    \alpha_i(t) + \dt_K \bigl( N_i E - \beta X_i(t) \bigr)\Bigr).
+  \label{eq:euler}
+\end{equation}
+
+\paragraph{Remarks on the energy equation.}
+\begin{enumerate}[label=(\roman*),itemsep=3pt]
+  \item $\alpha_i$ does not appear on the right-hand side of \eqref{eq:ode}. It is a pure
+        accumulator --- a running store of energy --- not a self-regulating quantity, and
+        it has no fixed point of its own. It grows while $X_i < N_i E / \beta$ and falls
+        once diversity passes that threshold.
+  \item Since $X_i \le N_i$, the most negative attainable drift is
+        \begin{equation}
+          \left.\frac{d\alpha_i}{dt}\right|_{\text{extreme}} = N_i\,(E - \beta),
+          \qquad \text{attained at } X_i = N_i .
+        \end{equation}
+        It follows that a species can lose energy only if $\beta > E$. This is the
+        condition under which the catastrophe of Section~\ref{sec:fragment} is reachable
+        at all, and the interface warns when it is violated.
+  \item A species carrying a single sub-species needs at least $\beta/E$ cells to break
+        even. Below that area its energy drains away whatever it does. At the default
+        settings the figure is about nine cells, and it governs the fate of the smallest
+        fragments of a burst (Section~\ref{sec:consequences}).
+  \item Energy is floored at zero rather than allowed to go negative. A species at
+        $\alpha_i = 0$ loses every Type III contest it enters against any species with
+        energy to spend, and under the $\alpha$-coupled mutation rule it stops mutating
+        altogether. It is not dead --- it still takes empty ground, and if its area
+        exceeds $\beta X_i / E$ its energy will recover --- but it is defenceless until
+        it does.
+  \item Area helps and diversity hurts, and both linearly. A species survives by being
+        large and internally uniform.
+\end{enumerate}
+
+\section{Fragmentation}
+\label{sec:fragment}
+
+When a species runs out of energy --- because it has come to carry too many sub-species ---
+it \textbf{fragments} in a catastrophe event. Every sub-species immediately breaks away and
+becomes a new, independent species. The domains do not move: what changes is the law by
+which they interact, which switches from Type II to Type III. Neighbouring patches that
+a moment earlier were contesting a shared inheritance now contest each other in
+proportion to their separate energies.
+
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[t]{0.47\linewidth}\centering
+  \lattice{burst-before.png}\panelcap{before}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.47\linewidth}\centering
+  \lattice{burst-after.png}\panelcap{after}
+\end{minipage}
+\caption{A burst, across the single animation frame in which it happens, at
+$t \approx 1239$. The species held $12{,}826$ cells --- a fifth of the lattice --- and still
+had $\alpha = 755$ in hand when the hazard \eqref{eq:fragrate} fired; all $1444$ of its
+sub-species became species at once, and it was the only species to fragment in that frame.
+Nothing has moved: the outline of the parent is exactly preserved, and its neighbours are
+untouched. What has changed is the law inside that outline, which a moment earlier was
+Type II and is now Type III. This panel is drawn under the redraw colour rule rather than the
+default, so that each fragment takes a fresh hue and the division is unmistakable; under the
+default the fragments would scatter about their parent's own hue instead.}
+\label{fig:burst}
+\end{figure}
+
+\subsection{The triggers}
+
+There are two triggers. They are not alternatives: both are live at once, and they are
+tested in the order given.
+
+\begin{enumerate}[label=(\alph*),itemsep=3pt]
+  \item \textbf{Deterministic.} Fragment as soon as the update \eqref{eq:euler} would
+        take the energy to zero or below:
+        \begin{equation}
+          \alpha_i(t) + \dt_K \bigl( N_i E - \beta X_i \bigr) \le 0
+          \;\Longrightarrow\; \text{burst.}
+        \end{equation}
+  \item \textbf{Stochastic.} Otherwise fragment with probability
+        \begin{equation}
+          1 - e^{-R^{\text{frag}}_i \dt_K},
+          \qquad
+          R^{\text{frag}}_i \;=\; \delta\,\frac{X_i}{\alpha_i(t+\dt_K)},
+          \label{eq:fragrate}
+        \end{equation}
+        a rate increasing in diversity and decreasing in energy, evaluated at the newly
+        updated energy.
+\end{enumerate}
+
+\noindent
+Rule (b) diverges as $\alpha_i \to 0^{+}$, so it anticipates rule (a) rather than
+competing with it, while also permitting early bursts in a species that is merely
+strained. At the default settings rule (b) does essentially all the work: a species in
+the steady regime of Section~\ref{sec:consequences} holds an energy of several hundred
+and never approaches zero, so it bursts because \eqref{eq:fragrate} eventually fires, not
+because it is bankrupt. Rule (a) is the floor beneath that, and matters chiefly for
+species too small to pay for the diversity they carry.
+
+\paragraph{A species with one sub-species cannot fragment.} There must be at least two
+sub-species for a burst to mean anything, and the trigger is suppressed below that. A
+monomorphic species that exhausts its energy simply sits at $\alpha_i = 0$ until its area
+grows enough to recover, or until it is overrun.
+
+\subsection{What the fragments inherit}
+
+Each new species takes exactly the cells its sub-species held, is given a fresh serial
+tag, and begins life with $X = 1$: it is its own only sub-species. Its hue is set by the
+colour rule of Section~\ref{sec:colour}. Its energy is the one thing the burst does not
+settle by itself, since the parent's store is being wound up rather than divided by any
+natural rule; three readings are offered, chosen by the \emph{energy of the fragments}
+control:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Rule & Each fragment receives & \\
+\midrule
+reset      & $\alpha_0$                                     & (default) \\
+equal split& $\alpha_{\text{parent}} / X_{\text{parent}}$    & \\
+by area    & $\alpha_{\text{parent}} \cdot |u| / N_{\text{parent}}$ & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The two splitting rules interact with the choice of trigger in a way worth noticing.
+A deterministic burst happens precisely when the parent's energy has reached zero, so
+there is nothing left to divide and both splitting rules hand every fragment an energy of
+zero. Only a stochastic burst, which fires while the parent is still solvent, leaves an
+inheritance. The reset rule is therefore the only one that behaves identically under both
+triggers, which is why it is the default.
+
+Once every sub-species has been promoted, the parent is emptied of cells and sub-species
+and removed from the population. The time of the burst is logged, so that it can be
+drawn on the graph.
+
+\section{Colour}
+\label{sec:colour}
+
+Cells are coloured in HSB with saturation fixed at $0.72$ and brightness at $0.95$, and
+hue free, so that the entire taxonomy is carried on the hue circle: red at $0^\circ$,
+through orange, yellow, green, blue and indigo, to violet and back to red at $360^\circ$.
+Empty ground is drawn near-black.
+
+Within a species the arrangement is fixed. The colour of a new
+sub-species is a small step in hue from the antecedent in which the mutation occurred ---
+uniformly within $\pm 7^{\circ}$ --- so hue measures genealogical distance from the
+founder and the species reads on screen as a band of closely related shades.
+
+What happens \emph{at} a burst is a matter of choice, and four rules are offered, selected
+by the \emph{colour after a burst} control. Under each of them, the sub-species that is
+about to become a species holds the hue it has until the moment it is promoted.
+
+\begin{description}[itemsep=4pt,leftmargin=1.4em]
+\item[Redraw.] Each fragment draws a fresh hue uniformly from the circle and keeps it.
+  The taxonomy is legible at a glance --- no two fragments will be confused --- but the
+  genealogy is discarded at every burst.
+
+\item[Jitter.] Each fragment steps off its own hue by a normal draw of standard deviation
+  $\sigma$. The family stays recognisable; the siblings separate. This is the default, and
+  the cost of it is that neighbouring species are often close in hue --- which is what the
+  perimeter of Section~\ref{sec:interface} is for.
+
+\item[Spread.] Each fragment is pushed $g$ times its own offset from the family's mean
+  hue, in the direction it already lay:
+  \begin{equation}
+    \varphi \;\mapsto\; \bar\varphi + g\,\bigl(\varphi - \bar\varphi\bigr),
+  \end{equation}
+  with the difference taken as the signed separation in $(-180^{\circ}, 180^{\circ}]$ and
+  $\bar\varphi$ the \emph{circular} mean --- the direction of the resultant of the unit
+  vectors, since $350^{\circ}$ and $10^{\circ}$ average to $0^{\circ}$ and not to
+  $180^{\circ}$. The siblings fan apart along the lines their mutations had already
+  started, so the branching structure survives the catastrophe that produced it.
+
+\item[Thermostat.] The fragment keeps its hue and inherits, instead, a quantity of
+  \emph{heat} that its parent's multiplicity paid for. It then walks away from its
+  siblings as that heat decays. Alone among the four it makes hue a dynamical variable in
+  its own right, obeying a stochastic differential equation on the colour circle; it is
+  described below.
+\end{description}
+
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{hue-redraw.png}\panelcap{redraw}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{hue-thermo.png}\panelcap{thermostat}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{hue-spread.png}\panelcap{spread}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.235\linewidth}\centering
+  \lattice{hue-jitter.png}\panelcap{jitter}
+\end{minipage}
+\caption{The four colour rules, same seed, same time ($t = 2000$). The patterns are not
+merely similar but identical --- the lattices agree cell for cell, as the two-stream
+construction of Section~\ref{sec:numerics} requires --- so the panels differ in hue alone.
+Redraw scatters fragments across the whole circle. The thermostat holds each species on one
+of $k = 12$ settled hues, giving a quantised palette in which relatives share a colour.
+Spread fans siblings apart from their family mean, and jitter --- the default --- steps each
+off its own hue, so both keep some memory of descent.}
+\label{fig:colour}
+\end{figure}
+
+\subsection{The thermostat}
+
+Under this rule each species' hue $\varphi$ obeys, in degrees and with time in sweeps,
+\begin{equation}
+  d\varphi \;=\; -\,a \sin\!\left(k \varphi \frac{\pi}{180}\right) dt
+              \;+\; \sqrt{r(t)}\;dW .
+  \label{eq:huesde}
+\end{equation}
+The two terms do different jobs.
+
+\paragraph{The noise, and the heat that drives it.} A fragment of a parent that carried
+$X$ sub-species is given a total variance budget
+\begin{equation}
+  V(X) = D^2 \frac{X}{8},
+\end{equation}
+so that its total r.m.s. displacement in hue is $D\sqrt{X/8}$ degrees. The reference
+multiplicity of $8$ makes $D$ the plain design dial: a species that bursts into eight
+fragments disperses them by $D$ degrees, one that bursts into thirty-two disperses them
+by twice that. Multiplicity therefore buys colour separation in exactly the way it buys
+catastrophe.
+
+That budget is spent over a settling window of $T$ sweeps, at a variance rate falling
+linearly to nothing:
+\begin{equation}
+  r(t) = \frac{2V}{T}\left(1 - \frac{t}{T}\right), \qquad 0 \le t \le T,
+\end{equation}
+whose integral over the window is exactly $V$. When the window closes the motion has
+eased to a stop rather than being cut off, and the heat is set to exactly zero: a settled
+species holds its colour precisely until it fragments in turn.
+
+\paragraph{The drift, and the wells.} Left to itself the noise would stop wherever it
+happened to be. The drift term gathers it instead. The function $-a\sin(k\varphi)$ has
+stable zeros at the $k$ hues evenly spaced around the circle, at multiples of
+$360^{\circ}/k$, and pulls the walk towards whichever is nearest with a strength set by
+$a$. A fragment does not merely stop diffusing; it is drawn into a definite colour and
+held there. When the settling window closes the hue is placed exactly on its well, so the
+palette stays crisp rather than merely approximate. Setting $a = 0$ removes the drift and
+leaves the walk to stop where it lies.
+
+\paragraph{The band moves as a body.} The walk is integrated once per species, and the
+resulting increment is added to the species' hue \emph{and} to each of its sub-species'
+hues alike. The $\pm 7^{\circ}$ fine structure that mutation builds inside a species
+therefore survives the walk intact: the band drifts and settles as a unit, and its
+internal genealogy is not smeared away.
+
+\medskip
+\noindent
+\textbf{A road not taken.} One could go further and dispense with discrete labels
+altogether, defining the model \emph{by intervals of hue}: species identity would then be a
+matter of proximity on the colour circle, and speciation a matter of a lineage's hue
+drifting far enough from its relatives to fall outside the interval. The model does not do
+this, and the distinction is worth stating plainly. Even under the thermostat, hue is a
+consequence of the taxonomy and never a cause: it is carried along by species that the
+competition rules have already made, and no cell ever changes hands because of a
+colour.
+
+\section{The algorithm}
+\label{sec:algorithm}
+
+The run is a sequence of chunks. For each chunk, with $K$ as in Section~\ref{sec:time}:
+
+\begin{enumerate}[itemsep=4pt]
+  \item \textbf{Competition.} Repeat $K$ times: choose a cell uniformly at random, and
+        one of its eight neighbours uniformly at random. If the labels agree, or both are
+        empty, do nothing. Otherwise classify the pair as Type I, II or III, resolve the
+        contest with the appropriate probability, and copy the winner's labels into the
+        loser's cell. Update the affected $N_i$, and $X_i$ if a sub-species has just been
+        driven extinct; retire any species that has lost its last cell.
+  \item \textbf{Advance the clock} by $\dt_K = K/N^2$.
+  \item \textbf{Mutation.} Draw events against the population-wide rate over $\dt_K$. For
+        each, pick a uniformly random occupied cell, apply the thinning test if the rate
+        is $\alpha$-coupled, and on acceptance give the cell a fresh sub-species label and
+        a hue one small step from its parent's.
+  \item \textbf{Energy.} Update every $\alpha_i$ by \eqref{eq:euler}, and record the
+        largest for the next chunk's thinning envelope. Test each species for
+        fragmentation by the two triggers of Section~\ref{sec:fragment}, collecting those
+        that fire; then fragment them, promoting each sub-species to an independent
+        species.
+  \item \textbf{Colour.} Integrate \eqref{eq:huesde} over $\dt_K$ for every species that
+        still has heat left, subdividing the step if the drift demands it.
+  \item \textbf{Sample.} Whenever the clock passes a multiple of two sweeps, record a
+        snapshot for the graph.
+\end{enumerate}
+
+\noindent
+The visible image is repainted cell by cell as labels change, and in full once per frame
+whenever a burst or a hue movement has altered colours that were already on screen.
+
+\section{Structural consequences}
+\label{sec:consequences}
+
+Four consequences follow from the rules as stated, and are worth keeping in view when
+reading simulation output.
+
+\paragraph{The occupied region never retreats.} No rule ever vacates a cell. Type I
+cannot, by construction; Types II and III only relabel. The occupied set is therefore
+monotonically non-decreasing, and the lattice fills --- at the default settings, by about
+$t = 1100$. Once it is full, Type I events cease and the dynamics reduce to relabelling
+under Types II and III --- a biased voter model on a full lattice, punctuated by mutation
+and fragmentation.
+
+\paragraph{The characteristic cycle.} A species grows, its area drives $\alpha$ up,
+mutation accumulates sub-species, the cost $\beta X_i$ overtakes the supply $N_i E$, and
+the species bursts into as many new species as it had sub-species. Those fragments, now
+mutually hostile and individually small, contest the territory their parent held. The
+model's macroscopic behaviour is the statistics of this cycle repeated across a lattice.
+A single burst is a large event: the species of Figure~\ref{fig:burst} holds a fifth of the
+lattice and promotes $1444$ sub-species at one stroke. At the default colonisation rate the
+first turn of the cycle is also complete long before the lattice is full, so growth and
+fragmentation overlap: the founder of Figure~\ref{fig:cycle} bursts holding a seventh of the
+ground, with open country still ahead of it.
+
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+    group style={group size=1 by 2, vertical sep=7mm, x descriptions at=edge bottom},
+    width=0.95\linewidth, height=48mm,
+    xmin=0, xmax=360,
+    tick align=outside, tick pos=left,
+    every axis plot/.append style={line width=0.9pt},
+    label style={font=\small}, tick label style={font=\footnotesize},
+    axis line style={black!55},
+]
+\nextgroupplot[ylabel={energy $\alpha_i$}, ymin=0, ymax=850,
+               ytick={0,200,400,600,800}]
+  \addplot[color=blue!55!black] table[x=t, y=alpha] {figures/founder.dat};
+\nextgroupplot[xlabel={time $t$ \ (sweeps)}, ylabel={sub-species}, ymin=0, ymax=1150,
+               ytick={0,250,500,750,1000},
+               legend style={font=\footnotesize, draw=none, fill=none,
+                             at={(0.03,0.95)}, anchor=north west, legend columns=1}]
+  \addplot[color=black!45, dashed] table[x=t, y=balance] {figures/founder.dat};
+  \addlegendentry{$N_i E / \beta$}
+  \addplot[color=red!65!black] table[x=t, y=X] {figures/founder.dat};
+  \addlegendentry{$X_i$}
+\end{groupplot}
+\end{tikzpicture}
+\caption{The founder species, followed from the first cell to its burst at $t = 356$. Its
+energy climbs steeply while diversity is still cheap, peaking near $754$ at $t \approx 290$;
+thereafter mutation has brought $X_i$ up to the balance point $N_i E/\beta$, the two curves
+in the lower panel lock together, and $\alpha_i$ goes flat. The species is not bankrupt when
+it bursts --- it still holds $\alpha = 717$ --- but by then it carries $1034$ sub-species,
+and the hazard \eqref{eq:fragrate} has become large enough to fire. It is also still
+growing, on only $8763$ cells --- a seventh of the lattice. The lower panel is the whole
+argument of this section in one picture: the dashed line is area, rescaled, and diversity
+tracks it.}
+\label{fig:cycle}
+\end{figure}
+
+\paragraph{The population sits at the balance point.} The cycle does not run away. Because
+mutation raises $X_i$ while nothing lowers $N_i E$, a species is driven towards the
+locus
+\begin{equation}
+  X_i \;\approx\; \frac{N_i E}{\beta},
+\end{equation}
+at which production and dissipation cancel and $\alpha_i$ goes flat. Every substantial
+species in a mature run is found there, to within a few per cent, with its energy parked
+at a few hundred and its drift near zero. The system settles into a marginal state rather
+than an oscillation, and what ends a species is not bankruptcy but the accumulating
+hazard of \eqref{eq:fragrate}, which grows with the diversity the balance point obliges
+it to carry.
+
+\paragraph{Fragments are filtered by area.} A burst is not a fair division. Each fragment
+inherits its sub-species' cells, and those areas are broadly distributed; but by remark
+(iii) of Section~\ref{sec:energy}, a fragment of fewer than $\beta/E$ cells cannot pay for
+even its own single sub-species. Its energy drains to zero within a fraction of a sweep,
+after which it loses every contest it enters and is overrun. Immediately after a large
+burst, hundreds of species may sit at $\alpha = 0$ simultaneously. The great majority of
+the species a burst creates are gone almost at once, and only the larger fragments
+survive to grow, accumulate diversity, and burst in their turn --- which is why a run
+that has produced tens of thousands of species may hold only a few hundred alive.
+
+\section{Numerical and implementation notes}
+\label{sec:numerics}
+
+\paragraph{Random numbers, and two streams.} The generator is the Park--Miller minimal
+standard, $x \mapsto 16807\,x \bmod (2^{31}-1)$, evaluated by Schrage's trick to stay
+within 32-bit arithmetic. It is run as \emph{two} independent streams, seeded from a
+common value: one drives the dynamics, the other drives hue noise alone. The separation
+is deliberate. Switching the colour rule, or the thermostat's parameters, cannot move a
+single cell: for a given seed the spatial trajectory is identical under all four colour
+rules. To keep that guarantee, the uniform hue draw used by the redraw rule is taken from
+the dynamics stream at every burst whether or not the rule is in force, so the stream
+stays aligned.
+
+\paragraph{Exact integrals where they are available.} Three quantities that could have
+been linearised are not. The mutation clock uses exponential inter-arrival times rather
+than a per-step Bernoulli trial. The fragmentation test uses $1 - e^{-R\dt}$ rather than
+$R\dt$, which matters when $R\dt$ is not small. And the thermostat's variance, whose rate
+is linear in time, is integrated in closed form over each step as
+$r_0 \tau - \tfrac12 c\,\tau^2$, clipped at the moment the settling window closes. The
+total dispersal is therefore exactly $D\sqrt{X/8}$ whatever the chunk size happens to be.
+
+\paragraph{Sub-stepping the colour drift.} The drift in \eqref{eq:huesde} stiffens as
+$ak$ grows, and Euler--Maruyama is only conditionally stable. Each chunk is therefore
+subdivided into steps no longer than $0.24/(a k \pi/180 + 1)$, to a maximum of $64$
+sub-steps, before the walk is integrated. The bound is inactive when $a = 0$.
+
+\paragraph{Thinning against a lagged envelope.} The mutation pass runs before the energy
+pass within a chunk, so the envelope $\alpha_{\max}$ it thins against is the value from
+the previous chunk. The lag is bounded by the change in $\alpha$ across one chunk,
+which at the default settings is a fraction of a per cent of $\alpha_{\max}$.
+
+\paragraph{Recycled records and stable identities.} Species and sub-species records are
+pooled: a dead record is returned to a free list and reused, so memory tracks the
+high-water mark of concurrent species rather than the number ever created. Because slots
+are reused, every species also carries a \textbf{tag} --- a serial number that is never
+reused --- and it is the tag that labels a species on screen and keys its trace on the
+graph. A graph line can therefore never jump from a dead species to the live one that
+inherited its storage. For the same reason each sample carries the colours of the species it
+recorded rather than a reference to them: by the time a ghost trace is drawn its owner may be
+long dead and its record reissued, so the palette held in the sample is the only surviving
+record of what that line looked like.
+
+\paragraph{Fixed constants.}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Quantity & Value & Where \\
+\midrule
+hue step at mutation            & $\pm 7^{\circ}$, uniform & \S\ref{sec:mutation} \\
+chunk size                      & $256$ to $4096$ events   & \S\ref{sec:time} \\
+reference multiplicity          & $8$ sub-species          & \S\ref{sec:colour} \\
+Euler--Maruyama safety factor   & $0.24$                   & \S\ref{sec:numerics} \\
+maximum sub-steps per chunk     & $64$                     & \S\ref{sec:numerics} \\
+graph sampling interval         & $2$ sweeps               & \S\ref{sec:interface} \\
+species retained per sample     & $128$ largest            & \S\ref{sec:interface} \\
+graph history                   & $300$ samples            & \S\ref{sec:interface} \\
+burst log                       & $512$ most recent        & \S\ref{sec:interface} \\
+saturation, brightness          & $0.72$, $0.95$           & \S\ref{sec:colour} \\
+perimeter suppressed below       & $2$ device pixels a cell & \S\ref{sec:interface} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The figures.} Every figure in this document was produced by the page's own
+simulation core, driven headless rather than screen-captured, so the runs shown are the runs
+the model performs. All use seed $20260903$ on a $256^2$ lattice at the default settings,
+varying only the rule under discussion, and all are stepped in whole frames of $80{,}000$
+events --- the page's own default speed --- so that the caveat of
+Section~\ref{sec:interface} is satisfied and the page at \code{?seed=20260903} follows the
+same trajectory. The lattice images are the model's own pixel buffer, enlarged without
+interpolation, and the perimeter in Figure~\ref{fig:outline} is stroked by the page's own
+code rather than a reconstruction of it.
+
+One departure from the defaults should be declared. Figures~\ref{fig:sequence}
+to~\ref{fig:cycle} are coloured under the \emph{redraw} rule rather than the default jitter,
+because redraw gives every species a hue of its own and so makes the mechanism under
+discussion legible; jitter keeps relatives close together, which is a virtue on screen and a
+nuisance in a diagram. Figure~\ref{fig:colour} shows all four rules side by side, and
+Figure~\ref{fig:outline} uses the defaults untouched.
+
+\section{The interface}
+\label{sec:interface}
+
+\paragraph{Running.} \textsc{Start} and \textsc{Reset}, or the space bar and \code{r}. A
+speed slider sets the number of elementary events attempted per animation frame, from
+$10^3$ to $5\times10^5$, defaulting to $80{,}000$ --- something over seventy sweeps a
+second on a $256^2$ lattice.
+
+\paragraph{Choosing rules.} Five segmented controls select the model's switchable rules,
+gathered for reference in Section~\ref{sec:options}:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Control & Options & Default \\
+\midrule
+Mutation rate                 & $mN$ \textbar{} $m\alpha N$ & $m\alpha N$ \\
+Within-species contests       & tie $\tfrac12$ \textbar{} occupancy $\lambda$ & occupancy $\lambda$ \\
+Neighbour support, Types II and III & off \textbar{} on, $\theta$ & on \\
+Colour after a burst          & redraw \textbar{} thermostat \textbar{} spread \textbar{} jitter & redraw \\
+Energy of the fragments       & reset to $\alpha_0$ \textbar{} equal split \textbar{} by area & reset \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The parameters belonging to a rule appear directly beneath it and only while that rule is
+selected, so the panel shows what is currently in force and nothing else.
+
+\paragraph{Reading the run.} The graph plots one point every two sweeps for the eight
+largest living species, coloured as they are on the lattice, with vertical marks at every
+burst. Beneath those, and much fainter, run the \emph{ghosts}: every other species in the
+window, ranked by the largest value it ever reached on the metric being shown and capped at
+the best thirty-two. A ghost that stops in mid-graph is a species that died there --- by
+fragmenting, or by being overrun --- and one that reaches the right-hand edge is alive but
+too small to have earned a full trace. Without them the graph would say only that a line had
+ceased, never whether its owner had burst or merely slipped out of the leading eight. Three quantities may be shown --- area, energy $\alpha$, or sub-species per
+species --- cycled with \code{g}. In area mode the scale is fixed to the whole lattice and
+the count of empty cells is drawn as a dashed line; in the other two the ceiling
+auto-scales, easing downwards after a burst so the trace does not jump. Beneath, a table
+lists the six largest species by tag, with area, energy and $X$; below that, running
+totals of events, occupancy, species and sub-species alive and ever created, contests by
+type, mutations, bursts, and the frame and event rates. A warning line appears if
+$\beta \le E$, since no species can then ever lose energy and nothing will ever burst.
+
+\paragraph{The species perimeter.} A separate control, on by default, draws the boundary
+between species over the grid (Figure~\ref{fig:outline}). It is a display option and not one
+of the rules: the layer sits on its own canvas above the lattice, reads it, and changes
+nothing in it.
+
+The boundary is drawn a side at a time. Wherever two adjacent cells differ at the
+\emph{species} level, each of the two species strokes that face on its own side of it, one
+device pixel inside its own territory, in its own colour darkened to two-fifths. A contact
+between species therefore carries two hairlines rather than one, and each domain is outlined
+in a shade of itself, so the perimeter follows the thermostat for nothing extra --- the cast
+is taken from the colour the species is already painted in, not recomputed from its hue.
+Empty ground has no species and strokes nothing, so a lone species in open country draws its
+own outline unanswered. Faces between two sub-species of one species carry nothing at all,
+which is the point of the option: the hue structure inside a domain is left to speak for
+itself.
+
+Because each side belongs to a different species, faces cannot be merged into runs, and the
+strokes are collected into one path per species and stroked in that species' colour. The
+layer is keyed on the event count, so it is rebuilt only on frames that actually advanced the
+lattice and a paused grid costs nothing. Below two device pixels to a cell the option is
+suppressed --- a line on every face would cover the grid rather than describe it.
+
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[t]{0.315\linewidth}\centering
+  \lattice{outline-off.png}\panelcap{off}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.315\linewidth}\centering
+  \lattice{outline-on.png}\panelcap{on}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.315\linewidth}\centering
+  \lattice{outline-detail.png}\panelcap{on, $44$ cells across}
+\end{minipage}
+\caption{The species perimeter, over the same lattice at $t = 2000$, drawn at the default
+settings, with a magnified window at the right. Every species draws the boundary of its own
+territory, one device pixel inside its own cells, in a cast of its own colour darkened to
+two-fifths. Where two species meet you therefore see two hairlines side by side, each in its
+owner's hue, and against empty ground you would see only one. The left pair shows why the
+option earns its place under the default colour rule: sibling species sit close on the hue
+circle, and several of the apparently single domains are two or three.
+Faces between two sub-species of a single species carry nothing, which is why the mottling
+inside each domain is left undisturbed: the layer reads the lattice through the same species
+label a Type III contest reads, and changes nothing in it.}
+\label{fig:outline}
+\end{figure}
+
+\paragraph{Typing values.} Every slider's readout is editable in place. A typed value is
+mapped back onto the slider's own scale --- logarithmic for the decade parameters,
+$\log_2$ for the grid size, the identity otherwise --- and is then taken exactly: neither
+rounded to the slider's step nor clamped to its range, so a value can be set that the handle
+could not reach. A value outside the range leaves the handle resting at the nearer end of the
+track, and dragging brings it back.
+
+\paragraph{Reproducing a run.} The whole configuration can be given in the URL:
+\code{seed} fixes the random seed, which otherwise comes from the clock;
+\code{size} selects the lattice ($64$, $128$, $256$ or $512$);
+\code{d}, \code{E}, \code{beta}, \code{m}, \code{delta}, \code{a0}, \code{lam} and
+\code{theta} set the model parameters;
+\code{disp}, \code{tset}, \code{pull}, \code{wells}, \code{mult} and \code{sig} set
+$D$, $T$, $a$, $k$, $g$ and $\sigma$;
+and \code{rules} takes a string of digits selecting, in order, the fragment-energy rule,
+the mutation rate, the within-species rule, neighbour support, and the colour rule. The
+defaults correspond to \code{rules=01113}.
+
+One caveat on reproducing a run. The seed fixes the random streams, but not the order in
+which they are drawn from: the fragmentation test of Section~\ref{sec:fragment} spends one
+draw per living species per chunk, and the chunk boundaries depend on how many events each
+frame resolves. Two runs from one seed therefore agree exactly only if the speed slider is
+left where it was. Move it and the run is still the same model, statistically, but no longer
+the same trajectory.
+
+\section{Options at a glance}
+\label{sec:options}
+
+Five of the model's rules are switchable rather than fixed. Each is described where it
+belongs; this section gathers them for reference. Every figure in this document uses
+these defaults except where its caption says otherwise.
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Rule & Settings & Default & Section \\
+\midrule
+Mutation rate & $m N_i$ \textbar{} $m \alpha_i N_i$
+  & $m \alpha_i N_i$ & \S\ref{sec:mutation} \\
+Within-species contests & tie ($\lambda = 0$) \textbar{} rare-type advantage $\lambda$
+  & advantage & \S\ref{sec:competition} \\
+Neighbour support & off ($\theta = 0$) \textbar{} on, exponent $\theta$
+  & on & \S\ref{sec:competition} \\
+Colour after a burst & redraw \textbar{} thermostat \textbar{} spread \textbar{} jitter
+  & jitter & \S\ref{sec:colour} \\
+Energy of the fragments & reset to $\alpha_0$ \textbar{} equal split \textbar{} by area
+  & reset & \S\ref{sec:fragment} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Two remarks on the first three. Neighbour support applies to Types II and III alike, while
+the within-species control reaches Type II only; the two are independent, and a Type II
+contest is a fair coin only when both are off. And the choice of fragment energy interacts
+with the fragmentation triggers: a deterministic burst leaves nothing to divide, so the two
+splitting rules then hand every fragment an energy of zero, and only the reset rule behaves
+identically under both triggers.
+
+\paragraph{One condition is not optional.} Since $X_i \le N_i$, the steepest decline a
+species can suffer is $N_i(E - \beta)$, so energy can fall at all only if $\beta > E$. If
+$\beta \le E$, production exceeds dissipation whatever the diversity: no species ever
+exhausts its store, nothing fragments, and the run reduces to the lattice filling and then
+relabelling indefinitely under Types II and III. The defaults satisfy $\beta > E$ by an
+order of magnitude, and the interface warns when the condition is violated. Beyond it the
+model is not delicate --- the balance point of Section~\ref{sec:consequences} is an
+attractor, not a tuning --- but below it there is no model at all.
+
+\paragraph{Why the less obvious mechanisms are there.} Three of the rules above are not
+forced by the model's premise, and each earns its place by what goes wrong without it. Neighbour
+support gives domains surface tension; without it boundaries wander freely and the lattice
+dissolves into filigree (Figure~\ref{fig:support}). The rare-type advantage $\lambda$ decides
+whether a burst is a catastrophe or merely a renaming: without it one sub-species engulfs
+its species, so that of the $7262$ fragments the largest species would yield at $t = 2000$
+exactly one is large enough to survive, while with it about half of $1534$ fragments clear
+the threshold. Diversity in the bare sense survives either way --- $X_i$ climbs to the balance
+point under both settings --- but only under the advantage does fragmentation actually
+multiply the species. And the colour thermostat makes hue dynamical and
+heritable, so that the picture reports genealogy rather than merely labelling it --- the one
+mechanism of the three that changes nothing about where a cell goes, only about what it
+looks like when it gets there.
+
+\end{document}

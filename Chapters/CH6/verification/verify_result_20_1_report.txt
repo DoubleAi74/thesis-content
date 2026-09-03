@@ -245,5 +245,5 @@ SUMMARY: 62/62 checks passed
   PASS  M.peff_decreasing
   PASS  N.laplace_order
 
-Wall time: 31.7s
-Figures written to: /Users/adamaldridge/Desktop/Current best/CH6/verification/verify_figures
+Wall time: 45.8s
+Figures written to: /Users/adamaldridge/Desktop/CH6 additional/CH6_v2/verification/verify_figures

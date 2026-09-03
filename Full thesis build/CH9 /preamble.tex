@@ -1,0 +1,141 @@
+% ===========================================================================
+%  preamble.tex --- packages and macros for the chapter on models with
+%  non-constant rates.
+%  When this chapter is dropped into the thesis, merge the contents of this
+%  file into the thesis preamble; duplicates may simply be deleted.
+%
+%  Derived from CH2/preamble.tex, the house preamble, and from
+%  CH8_REWRITE/preamble.tex, its closest structural sibling.  Where the
+%  source chapter's own main.tex disagreed with Chapter 2, Chapter 2 wins.
+% ===========================================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\graphicspath{{figures/}}
+
+% --- Equation cross-references as bare parenthesised numbers -----------------
+\crefformat{equation}{(#2#1#3)}
+\Crefformat{equation}{(#2#1#3)}
+\crefrangeformat{equation}{(#3#1#4)--(#5#2#6)}
+\crefmultiformat{equation}{(#2#1#3)}{ and (#2#1#3)}{, (#2#1#3)}{ and (#2#1#3)}
+
+% --- Notation ---------------------------------------------------------------
+% Scalars are set in italic; bold is reserved for vector-valued states, which
+% do not occur in this chapter.
+%
+% This chapter collects seven models written at different times, so its
+% governing rule is that one letter may carry two meanings in two different
+% models provided the notation table separates them, may never carry two
+% within one section, and may never contradict a symbol frozen elsewhere in
+% the thesis.  The renames that rule forced, and the reason for each, are
+% recorded in PHASE_A_REPORT.md section 9.1.  The ones worth stating here:
+%
+%   S_t        species count.  Y_t is the infected count of the birth--plague
+%              model, in this same chapter.
+%   \varrho    logistic growth rate.  r is the burst size thesis-wide.
+%   \mathcal{B}(t)  integrated speciation rate.  This is Chapter 2's own
+%              symbol for the same object (m:eq:lambdaint); plain B(t) is
+%              taken twice over, by Kendall's extinction integral in
+%              m:eq:inhomextforward and by the Pimentel population count B_t.
+%   \varepsilon  evolution rate of the Pimentel model.  \mu is the death rate
+%              thesis-wide.
+%   \zeta      speciation exponent of the Pimentel+ model.  \lambda is the
+%              birth rate thesis-wide.
+%   \phi       potential inflow rate.  \xi is K/N_0-1 in the speciation model.
+%   \omega     revival rate of the rise--run--ruin--rejuvenation model.
+%   \chi       contact-infection coefficient of the birth--plague model.
+%   c          consumption (or clearance) of an accumulating quantity.
+%   \lambda_i,\mu_i,\delta_i  phase-indexed rates of the two-phase model.
+% \lambda, \mu, \delta, a, b and \mathcal{K} carry their frozen thesis-wide
+% meanings throughout and are never redefined here.
+\newcommand{\pgf}{probability generating function}
+\newcommand{\rv}{random variable}
+\newcommand{\pr}[1]{\mathbb{P}\!\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\!\left(#1\right)}
+\newcommand{\var}[1]{\operatorname{Var}\!\left(#1\right)}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\lrb}[1]{\left(#1\right)}
+\newcommand{\lrbs}[1]{\left[#1\right]}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\ft}{\textit{F.~tularensis}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+\newcommand{\Kb}{\mathcal{K}}
+\newcommand{\Bint}{\mathcal{B}}
+
+% --- Cross-chapter references -----------------------------------------------
+% Redefining these macros is all that thesis integration requires: they become
+% "Chapter~\ref{...}" once the chapter order is fixed.  No chapter number
+% appears in body prose.  Wording copied byte for byte from
+% CH8_REWRITE/preamble.tex and CH6_REWRITE/preamble.tex.
+\newcommand{\ChM}{the mathematical introduction}
+\newcommand{\ChMcap}{The mathematical introduction}
+\newcommand{\ChCore}{the chapter on the birth--death--cata\-strophe process}
+\newcommand{\ChCorecap}{The chapter on the birth--death--cata\-strophe process}
+\newcommand{\ChDist}{the chapter on its distribution theory}
+\newcommand{\ChDistcap}{The chapter on its distribution theory}
+\newcommand{\ChPop}{the chapter on population dynamics}
+\newcommand{\ChPopcap}{The chapter on population dynamics}
+\newcommand{\ChTwoType}{the two-type chapter}
+\newcommand{\ChPath}{the chapter on bursting and budding pathogenesis}
+\newcommand{\ChPathcap}{The chapter on bursting and budding pathogenesis}
+
+% --- Forward references to later chapters -----------------------------------
+% Every forward reference is routed through \fwd, whose first argument is a
+% stable key and whose second is the prose actually typeset.
+\newcommand{\fwd}[2]{#2}
+
+% --- Theorem environments ---------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% End-of-section open questions. Not on the theorem/remark counter.
+\newcommand{\openqs}[1]{%
+\paragraph{Open questions.}%
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em,topsep=0.2em]
+#1
+\end{enumerate}}
+
+\allowdisplaybreaks
+
+% --- Figure colours (CH7 / SHARED_CONVENTIONS palette) ----------------------
+\definecolor{gray1}{HTML}{d9d9d9}
+\definecolor{type1}{HTML}{0072B2}
+\definecolor{type2}{HTML}{D55E00}
+\definecolor{ink}{HTML}{1A1C1F}
+\definecolor{inksoft}{HTML}{565B62}
+\definecolor{cata}{HTML}{9A2820}
+\definecolor{na1}{HTML}{0072B2}
+\definecolor{nb1}{HTML}{D55E00}
+\definecolor{Rup2}{HTML}{9A2820}
+\definecolor{blu}{HTML}{0072B2}

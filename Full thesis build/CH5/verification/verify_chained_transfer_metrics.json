@@ -1,0 +1,119 @@
+{
+  "A.coefficients": {
+    "ok": true,
+    "detail": "A_k^{(n)} = C(n+k-2,k-1) obeys the recurrence for k=2..8, n=1..11 (exact integers); A_1^{(n)} = 1"
+  },
+  "B.pmf[symmetric]": {
+    "ok": true,
+    "detail": "max deviation of empirical pmf from C(n+k-2,k-1) s^k rho^(n-1), k=1..4, in SE units: 2.15 (n=1000000)"
+  },
+  "C.moments[symmetric]": {
+    "ok": true,
+    "detail": "E[r_k] rel err 4.4e-04; Var(r_k) rel err 2.7e-03 vs 1+k*rho/s and k*rho/s^2, k=1..4"
+  },
+  "D.pgf[symmetric]": {
+    "ok": true,
+    "detail": "max deviation of E[z^r_k] from z(s/(1-rho z))^k, in SE units: 0.51 (z in {0.3,0.6,0.9}, k=1..4)"
+  },
+  "E.t1_density[symmetric]": {
+    "ok": true,
+    "detail": "histogram of t_1 vs delta*J(t): rel L2 = 2.1e-02 (n=250000)"
+  },
+  "F.interval_laplace[symmetric]": {
+    "ok": true,
+    "detail": "fixed founders k in {1,2,3,5}: empirical vs series max rel err 7.0e-04; series vs 2F1 closed form: scipy unavailable"
+  },
+  "F2.interval_mixture[symmetric]": {
+    "ok": true,
+    "detail": "chain intervals T_2, T_3 (random founders): empirical vs pmf-weighted L_T mixture, max rel err 7.0e-04"
+  },
+  "G.t2_laplace[symmetric]": {
+    "ok": true,
+    "detail": "max rel err of empirical E[e^-u t2] vs sum_g s rho^g P1(1+g,u) L_T(1+g,u): 1.5e-03"
+  },
+  "H.t2_density[symmetric]": {
+    "ok": true,
+    "detail": "histogram of t_2 vs exact hypoexponential-mixture density: rel L2 = 3.1e-02"
+  },
+  "I.intervals[symmetric]": {
+    "ok": true,
+    "detail": "fixed-founder means strictly decreasing (E[T(1)]=0.693, E[T(2)]=0.386, E[T(3)]=0.273, E[T(4)]=0.212, ...); sim vs exact series max rel err 1.3e-03; chain means (random founders) also decreasing: 0.691, 0.500, 0.377, 0.292"
+  },
+  "B.pmf[slow_burst]": {
+    "ok": true,
+    "detail": "max deviation of empirical pmf from C(n+k-2,k-1) s^k rho^(n-1), k=1..4, in SE units: 3.35 (n=1000000)"
+  },
+  "C.moments[slow_burst]": {
+    "ok": true,
+    "detail": "E[r_k] rel err 1.5e-03; Var(r_k) rel err 2.8e-03 vs 1+k*rho/s and k*rho/s^2, k=1..4"
+  },
+  "D.pgf[slow_burst]": {
+    "ok": true,
+    "detail": "max deviation of E[z^r_k] from z(s/(1-rho z))^k, in SE units: 2.29 (z in {0.3,0.6,0.9}, k=1..4)"
+  },
+  "E.t1_density[slow_burst]": {
+    "ok": true,
+    "detail": "histogram of t_1 vs delta*J(t): rel L2 = 1.9e-02 (n=250000)"
+  },
+  "F.interval_laplace[slow_burst]": {
+    "ok": true,
+    "detail": "fixed founders k in {1,2,3,5}: empirical vs series max rel err 2.5e-03; series vs 2F1 closed form: scipy unavailable"
+  },
+  "F2.interval_mixture[slow_burst]": {
+    "ok": true,
+    "detail": "chain intervals T_2, T_3 (random founders): empirical vs pmf-weighted L_T mixture, max rel err 2.6e-04"
+  },
+  "G.t2_laplace[slow_burst]": {
+    "ok": true,
+    "detail": "max rel err of empirical E[e^-u t2] vs sum_g s rho^g P1(1+g,u) L_T(1+g,u): 4.0e-03"
+  },
+  "H2.t2_mean[slow_burst]": {
+    "ok": true,
+    "detail": "E[t_2]: empirical 3.3032 vs exact E[t_1] + E[T(r_1)] 3.3070 (rel err 1.1e-03)"
+  },
+  "I.intervals[slow_burst]": {
+    "ok": true,
+    "detail": "fixed-founder means strictly decreasing (E[T(1)]=2.398, E[T(2)]=1.638, E[T(3)]=1.301, E[T(4)]=1.098, ...); sim vs exact series max rel err 1.4e-03; chain means (random founders) also decreasing: 2.394, 0.909, 0.497, 0.333"
+  },
+  "B.pmf[fast_burst]": {
+    "ok": true,
+    "detail": "max deviation of empirical pmf from C(n+k-2,k-1) s^k rho^(n-1), k=1..4, in SE units: 3.27 (n=1000000)"
+  },
+  "C.moments[fast_burst]": {
+    "ok": true,
+    "detail": "E[r_k] rel err 3.9e-04; Var(r_k) rel err 3.3e-03 vs 1+k*rho/s and k*rho/s^2, k=1..4"
+  },
+  "D.pgf[fast_burst]": {
+    "ok": true,
+    "detail": "max deviation of E[z^r_k] from z(s/(1-rho z))^k, in SE units: 1.44 (z in {0.3,0.6,0.9}, k=1..4)"
+  },
+  "E.t1_density[fast_burst]": {
+    "ok": true,
+    "detail": "histogram of t_1 vs delta*J(t): rel L2 = 2.2e-02 (n=250000)"
+  },
+  "F.interval_laplace[fast_burst]": {
+    "ok": true,
+    "detail": "fixed founders k in {1,2,3,5}: empirical vs series max rel err 5.6e-04; series vs 2F1 closed form: scipy unavailable"
+  },
+  "F2.interval_mixture[fast_burst]": {
+    "ok": true,
+    "detail": "chain intervals T_2, T_3 (random founders): empirical vs pmf-weighted L_T mixture, max rel err 3.9e-04"
+  },
+  "G.t2_laplace[fast_burst]": {
+    "ok": true,
+    "detail": "max rel err of empirical E[e^-u t2] vs sum_g s rho^g P1(1+g,u) L_T(1+g,u): 3.4e-04"
+  },
+  "H.t2_density[fast_burst]": {
+    "ok": true,
+    "detail": "histogram of t_2 vs exact hypoexponential-mixture density: rel L2 = 3.3e-02"
+  },
+  "I.intervals[fast_burst]": {
+    "ok": true,
+    "detail": "fixed-founder means strictly decreasing (E[T(1)]=0.805, E[T(2)]=0.506, E[T(3)]=0.382, E[T(4)]=0.311, ...); sim vs exact series max rel err 7.4e-04; chain means (random founders) also decreasing: 0.804, 0.401, 0.240, 0.165"
+  },
+  "total": {
+    "pass": 28,
+    "fail": 0,
+    "wall_s": 20.8
+  }
+}

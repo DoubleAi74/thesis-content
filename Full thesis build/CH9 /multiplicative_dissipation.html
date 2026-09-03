@@ -1,0 +1,2822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Multiplicative dissipation cellular automaton</title>
+<meta name="description" content="A stochastic cellular automaton in which species accumulate energy in proportion to area, dissipate it in proportion to internal diversity, and fragment when the store runs out.">
+
+<style>
+:root {
+    --bg:            rgb(16, 18, 22);
+    --panel:         rgb(27, 30, 37);
+    --panel-edge:    rgb(50, 55, 66);
+    --surface:       rgb(36, 40, 49);
+    --surface-hi:    rgb(47, 52, 63);
+    --text:          rgb(228, 232, 240);
+    --text-dim:      rgb(136, 144, 160);
+    --accent:        rgb(70, 124, 212);
+    --accent-hover:  rgb(94, 148, 232);
+    --accent-down:   rgb(54, 100, 176);
+    --warn:          rgb(226, 170, 92);
+    --burst:         rgb(214, 128, 96);
+    --track:         rgb(44, 48, 59);
+    --disabled-bg:   rgb(32, 35, 42);
+    --disabled-text: rgb(86, 92, 104);
+    --empty-cell:    rgb(11, 13, 17);
+    --empty-line:    rgb(104, 112, 128);
+    --fs:            13px;
+    --fs-small:      11px;
+    --rail:          356px;
+    --gap:           16px;
+    --pad:           16px;
+}
+
+* { box-sizing: border-box; }
+
+:where(button, input, a):focus-visible {
+    outline: 2px solid var(--accent-hover);
+    outline-offset: 2px;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    scrollbar-width: none;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-size: var(--fs);
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    padding: var(--pad);
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* The one exception: the readouts are edited in place, which needs a caret. */
+.slider-value {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.app {
+    margin: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap);
+}
+
+.board {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#grid {
+    display: block;
+    background: var(--empty-cell);
+    image-rendering: pixelated;
+    outline: 1px solid var(--panel-edge);
+    outline-offset: -1px;
+    touch-action: none;
+}
+
+/* The species perimeter rides on its own layer, pinned over the grid. Strokes
+   land on the faces between cells rather than on the cells themselves, so the
+   pixel buffer keeps every sub-species hue underneath. */
+#outline {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    pointer-events: none;
+}
+
+.graph-block { width: 100%; }
+
+.graph-head {
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.graph-title {
+    flex: 0 0 auto;
+    overflow: hidden;
+    color: var(--text-dim);
+    font-size: var(--fs-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.legend {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--text-dim);
+    font-size: var(--fs-small);
+}
+
+.legend span {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend i,
+.type-swatch {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    flex: 0 0 auto;
+    background: currentColor;
+}
+
+.legend .more { color: var(--disabled-text); }
+
+.legend .empty-dot i {
+    background: var(--empty-cell);
+    outline: 1px solid var(--empty-line);
+}
+
+#graph {
+    display: block;
+    width: 100%;
+    height: 72px;
+}
+
+.panel {
+    width: var(--rail);
+    flex: 0 0 var(--rail);
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+}
+
+/* Every block keeps its natural height; the rail scrolls instead of squashing
+   its children into each other. */
+.panel > * { flex: 0 0 auto; }
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+button.btn {
+    height: 30px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--accent);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+}
+
+button.btn:hover:not(:disabled) { background: var(--accent-hover); }
+button.btn:active:not(:disabled) { background: var(--accent-down); }
+
+button.btn:disabled {
+    background: var(--disabled-bg);
+    color: var(--disabled-text);
+    box-shadow: inset 0 0 0 1px var(--panel-edge);
+    cursor: default;
+}
+
+.seg-label,
+.slider-label,
+.stats-label {
+    display: block;
+    margin-bottom: 6px;
+    overflow: hidden;
+    color: var(--text-dim);
+    font-size: var(--fs-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.seg-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.seg {
+    height: 26px;
+    display: flex;
+    padding: 2px;
+    background: var(--track);
+    border-radius: 5px;
+}
+
+.seg button {
+    min-width: 0;
+    flex: 1 1 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: var(--fs-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.seg button[aria-checked="true"] {
+    background: var(--surface-hi);
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.group {
+    padding-top: 12px;
+    border-top: 1px solid var(--panel-edge);
+}
+
+.group-title {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--disabled-text);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.sliders,
+.segs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sliders + .segs { margin-top: 12px; }
+
+[hidden] { display: none !important; }
+
+/* The rail still scrolls by wheel and trackpad; only the bar is hidden. */
+.panel::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar { width: 0; height: 0; }
+
+/* Parameters that hang off the segment directly above them. */
+.follow-sliders {
+    margin-top: 12px;
+    padding-left: 10px;
+    border-left: 1px solid var(--panel-edge);
+}
+
+.slider-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 5px;
+}
+
+.slider-head .slider-label { margin: 0; }
+
+.slider-value {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text);
+    font-size: var(--fs-small);
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+}
+
+.slider-value:focus {
+    outline: none;
+    border-radius: 3px;
+    background: var(--track);
+    box-shadow: 0 0 0 3px var(--track);
+}
+
+input[type="range"] {
+    --fill: 0%;
+    width: 100%;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(to right, var(--accent) 0 var(--fill), var(--track) var(--fill) 100%);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    margin-top: -4.5px;
+    appearance: none;
+    border: 0;
+    border-radius: 50%;
+    background: var(--text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+input[type="range"]::-moz-range-track {
+    height: 5px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--track);
+}
+
+input[type="range"]::-moz-range-progress {
+    height: 5px;
+    border-radius: 3px;
+    background: var(--accent);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.stats { min-width: 0; }
+
+.type-head,
+.stat-row {
+    display: grid;
+    grid-template-columns: minmax(60px, 1fr) 58px 60px 42px;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.type-head {
+    padding: 0 7px 4px;
+    color: var(--disabled-text);
+    font-size: 10px;
+}
+
+.type-head span:not(:first-child) { text-align: right; }
+
+.stat-row {
+    min-height: 25px;
+    padding: 3px 7px;
+    border-top: 1px solid rgba(50, 55, 66, 0.65);
+}
+
+.stat-name {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stat-count,
+.stat-alpha,
+.stat-subs {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.empty-row { color: var(--text-dim); }
+
+.counters {
+    margin-top: 10px;
+    color: var(--text-dim);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10px;
+    line-height: 1.55;
+    white-space: pre-line;
+}
+
+.warn-line {
+    margin-top: 8px;
+    color: var(--warn);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10px;
+    line-height: 1.55;
+    white-space: pre-line;
+}
+
+.warn-line:empty { display: none; }
+
+@media (max-width: 899px) {
+    :root { --pad: 10px; }
+
+    .app {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .panel {
+        width: 100%;
+        flex: 1 1 auto;
+        align-self: stretch;
+    }
+
+    button.btn { height: 38px; }
+    .seg { height: 32px; }
+    input[type="range"] { height: 22px; }
+    input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; margin-top: -7px; }
+    input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+  <section class="board" aria-label="Simulation">
+    <canvas id="grid" width="256" height="256" aria-label="Multiplicative dissipation cellular automaton grid"></canvas>
+    <canvas id="outline" width="256" height="256" aria-hidden="true"></canvas>
+    <div class="graph-block">
+      <div class="graph-head">
+        <span class="graph-title" id="graphTitle">Species area</span>
+        <span class="legend" id="legend" aria-label="Largest living species"></span>
+      </div>
+      <canvas id="graph" aria-label="Per-species time series"></canvas>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="buttons">
+      <button type="button" class="btn" id="runBtn">Start</button>
+      <button type="button" class="btn" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="sliders" id="speedSlider"></div>
+
+    <div class="group">
+      <span class="group-title">Parameters</span>
+      <div class="sliders" id="paramSliders"></div>
+    </div>
+
+    <div class="group">
+      <span class="group-title">Rules left open by the notes</span>
+      <div class="segs" id="segHost"></div>
+    </div>
+
+    <div class="group">
+      <span class="group-title">Lattice &amp; display</span>
+      <div class="sliders" id="latticeSliders"></div>
+      <div class="segs" id="segHost2"></div>
+    </div>
+
+    <div class="group stats">
+      <span class="stats-label">Largest living species</span>
+      <div class="type-head" aria-hidden="true">
+        <span>species</span><span>cells</span><span>&alpha;</span><span>X</span>
+      </div>
+      <div id="typeRows"></div>
+      <div class="stat-row empty-row">
+        <span class="stat-name"><i class="type-swatch"></i>Empty</span>
+        <span class="stat-count" id="countEmpty">0</span>
+        <span class="stat-alpha">&mdash;</span>
+        <span class="stat-subs">&mdash;</span>
+      </div>
+      <div class="counters" id="counters"></div>
+      <div class="warn-line" id="warnLine"></div>
+    </div>
+  </aside>
+</main>
+
+<script id="sim">
+const Sim = (function () {
+'use strict';
+
+let GRID_N = 256;
+let CELLS_N = GRID_N * GRID_N;
+let SHIFT = 8;
+let MASK = GRID_N - 1;
+
+const EMPTY = 0xffffffff;
+const CHUNK = 256;
+const CHUNK_MAX = 4096;
+const SAMPLE_CAP = 128;
+const HUE_STEP = 7;
+const GRAPH_TIME_PER_SAMPLE = 2;
+const BURST_LOG = 512;
+
+// A Moore neighbourhood on a torus, throughout.
+const DI = [1, 1, 1, 0, -1, -1, -1, 0];
+const DJ = [1, 0, -1, -1, -1, 0, 1, 1];
+
+const MUT_CONST = 0;
+const MUT_ALPHA = 1;
+const CHILD_RESET = 0;
+const CHILD_EQUAL = 1;
+const CHILD_AREA = 2;
+const HUE_REDRAW = 0;
+const HUE_THERMO = 1;
+const HUE_SPREAD = 2;
+const HUE_JITTER = 3;
+const HEAT_X_REF = 8;
+const DEG2RAD = Math.PI / 180;
+const SUBSTEP_MAX = 64;
+const EM_SAFETY = 0.24;
+const TII_TIE = 0;
+const TII_BIAS = 1;
+const SUP_OFF = 0;
+const SUP_ON = 1;
+
+const EMPTY_RGB = [11, 13, 17];
+
+let mutMode = MUT_ALPHA;
+let childMode = CHILD_RESET;
+let typeIIMode = TII_BIAS;
+let supportMode = SUP_ON;
+let hueMode = HUE_JITTER;
+
+let dRaw = 0.9;
+let paramE = Math.pow(10, -1.5);      // 0.0316
+let paramBeta = Math.pow(10, -0.54);  // 0.288
+let paramM = Math.pow(10, -4.05);     // 8.9e-5
+let paramDelta = Math.pow(10, -2.15); // 7.1e-3
+let alpha0 = 0.01;
+let paramLambda = 1.14;
+let paramTheta = 3;
+
+// A burst gives its fragments a finite morph: the noise ramps linearly down to
+// nothing over paramSettle sweeps and then stops dead, so a settled species
+// holds its colour exactly until it fragments in turn. D is the design dial —
+// the total displacement delivered inside that window.
+let paramDispersal = 90;
+let paramSettle = 2;
+
+// Settling proper: a drift -alpha*sin(k*theta) toward k stable hues, so a
+// fragment does not merely stop diffusing but is gathered into a definite
+// colour and held there. alpha = 0 leaves the walk to stop where it lies.
+let paramDrift = 2;
+let paramWells = 12;
+let paramSpread = 2;
+let paramJitter = 47;
+
+// (n+1)^theta for the nine possible Moore counts, rebuilt when theta moves.
+const supportW = new Float64Array(9);
+
+let cells;
+let pixels;
+let occupied;
+let occupiedN = 0;
+
+let subs = [];
+let deadSubs = [];
+let aliveSubs = [];
+let speciesList = [];
+let deadSpecies = [];
+let aliveSpecies = [];
+
+// A species record is recycled once it is dead, so speciesList stops at the
+// high-water mark of concurrent species instead of growing for the life of the
+// run. The slot is what sub.sp indexes; the tag is a serial number that is
+// never reused, so a graph trace or a label cannot jump from a dead species to
+// the live one that inherited its slot.
+let speciesTag = 0;
+
+let simTime = 0;
+let totalEvents = 0;
+let expansions = 0;
+let innerContests = 0;
+let contests = 0;
+let mutations = 0;
+let bursts = 0;
+let subsEver = 0;
+let alphaMax = 1;
+let mutDebt = 1;
+let paintDirty = false;
+
+let nextGraphTime = GRAPH_TIME_PER_SAMPLE;
+const graphSamples = [];
+const burstTimes = [];
+
+let rngCtx = 0;
+let hueRngCtx = 0;
+
+function allocate() {
+    cells = new Uint32Array(CELLS_N);
+    pixels = new Uint8ClampedArray(CELLS_N * 4);
+    occupied = new Uint32Array(CELLS_N);
+}
+
+function srand(seed) {
+    rngCtx = seed >>> 0;
+    // Hue noise runs on its own stream, so switching the thermostat on leaves
+    // the spatial trajectory for a given seed untouched, cell for cell.
+    hueRngCtx = ((seed ^ 0x9e3779b9) >>> 0) || 1;
+}
+
+function rand() {
+    if (rngCtx === 0) rngCtx = 123459876;
+    const hi = (rngCtx / 127773) | 0;
+    const lo = rngCtx % 127773;
+    let value = 16807 * lo - 2836 * hi;
+    if (value < 0) value += 0x7fffffff;
+    rngCtx = value;
+    return value;
+}
+
+function randomUnit() {
+    return rand() / 0x7fffffff;
+}
+
+function hueRand() {
+    if (hueRngCtx === 0) hueRngCtx = 123459876;
+    const hi = (hueRngCtx / 127773) | 0;
+    const lo = hueRngCtx % 127773;
+    let value = 16807 * lo - 2836 * hi;
+    if (value < 0) value += 0x7fffffff;
+    hueRngCtx = value;
+    return value;
+}
+
+// Box-Muller, uncached: two draws in, one normal out, no state to carry.
+function hueNormal() {
+    const u = (hueRand() / 0x7fffffff) || 1e-12;
+    const v = hueRand() / 0x7fffffff;
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+// Total variance a fragment of multiplicity X should accumulate, in deg^2.
+function morphVariance(count) {
+    return paramDispersal * paramDispersal * count / HEAT_X_REF;
+}
+
+function exponential() {
+    return -Math.log(randomUnit() || 1e-12);
+}
+
+// Hue is the whole of the taxonomy: saturation and brightness are held fixed.
+function hsbToRgb(hue, saturation, brightness) {
+    const hp = ((hue % 360) + 360) % 360 / 60;
+    const c = brightness * saturation;
+    const x = c * (1 - Math.abs(hp % 2 - 1));
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    if (hp < 1) { r = c; g = x; }
+    else if (hp < 2) { r = x; g = c; }
+    else if (hp < 3) { g = c; b = x; }
+    else if (hp < 4) { g = x; b = c; }
+    else if (hp < 5) { r = x; b = c; }
+    else { r = c; b = x; }
+
+    const m = brightness - c;
+    return [
+        Math.round((r + m) * 255),
+        Math.round((g + m) * 255),
+        Math.round((b + m) * 255)
+    ];
+}
+
+function paintRgb(record, hue) {
+    const rgb = hsbToRgb(hue, 0.72, 0.95);
+    record.r = rgb[0];
+    record.g = rgb[1];
+    record.b = rgb[2];
+}
+
+function paintRecord(record, hue) {
+    paintRgb(record, hue);
+    record.css = 'rgb(' + record.r + ', ' + record.g + ', ' + record.b + ')';
+}
+
+function makeSpecies(hue) {
+    let sp;
+
+    if (deadSpecies.length > 0) {
+        sp = speciesList[deadSpecies.pop()];
+        sp.alpha = 0;
+        sp.cells = 0;
+        sp.subsAlive = 0;
+        sp.subsEver = 0;
+        sp.heat = 0;
+        sp.cool = 0;
+        sp.hue = hue;
+        sp.alive = true;
+        sp.subList.length = 0;
+    } else {
+        sp = {
+            id: speciesList.length,
+            tag: 0,
+            alpha: 0,
+            cells: 0,
+            subsAlive: 0,
+            subsEver: 0,
+            heat: 0,
+            cool: 0,
+            hue: hue,
+            alive: true,
+            slot: -1,
+            subList: [],
+            r: 0,
+            g: 0,
+            b: 0,
+            css: ''
+        };
+        speciesList.push(sp);
+    }
+
+    sp.tag = speciesTag++;
+    paintRecord(sp, hue);
+    sp.slot = aliveSpecies.length;
+    aliveSpecies.push(sp);
+    return sp;
+}
+
+function killSpecies(sp) {
+    if (!sp.alive) return;
+    sp.alive = false;
+    const last = aliveSpecies.pop();
+    if (last !== sp) {
+        aliveSpecies[sp.slot] = last;
+        last.slot = sp.slot;
+    }
+    sp.slot = -1;
+    // Its sub-species were killed first, so nothing indexes this slot now.
+    deadSpecies.push(sp.id);
+}
+
+function makeSub(sp, hue) {
+    let sub;
+    if (deadSubs.length > 0) {
+        sub = subs[deadSubs.pop()];
+    } else {
+        sub = {
+            id: subs.length,
+            sp: 0,
+            hue: 0,
+            count: 0,
+            slot: -1,
+            aliveSlot: -1,
+            r: 0,
+            g: 0,
+            b: 0
+        };
+        subs.push(sub);
+    }
+    sub.sp = sp.id;
+    sub.hue = hue;
+    sub.count = 0;
+    sub.slot = sp.subList.length;
+    sp.subList.push(sub.id);
+    sub.aliveSlot = aliveSubs.length;
+    aliveSubs.push(sub.id);
+    sp.subsAlive++;
+    sp.subsEver++;
+    subsEver++;
+    paintRgb(sub, hue);
+    return sub;
+}
+
+function killSub(sub, sp) {
+    const list = sp.subList;
+    const last = list.pop();
+    if (last !== sub.id) {
+        list[sub.slot] = last;
+        subs[last].slot = sub.slot;
+    }
+    sub.slot = -1;
+
+    const aliveLast = aliveSubs.pop();
+    if (aliveLast !== sub.id) {
+        aliveSubs[sub.aliveSlot] = aliveLast;
+        subs[aliveLast].aliveSlot = sub.aliveSlot;
+    }
+    sub.aliveSlot = -1;
+
+    sp.subsAlive--;
+    deadSubs.push(sub.id);
+}
+
+function updatePixel(index) {
+    const sub = cells[index];
+    const offset = index * 4;
+    if (sub === EMPTY) {
+        pixels[offset] = EMPTY_RGB[0];
+        pixels[offset + 1] = EMPTY_RGB[1];
+        pixels[offset + 2] = EMPTY_RGB[2];
+    } else {
+        const record = subs[sub];
+        pixels[offset] = record.r;
+        pixels[offset + 1] = record.g;
+        pixels[offset + 2] = record.b;
+    }
+    pixels[offset + 3] = 255;
+}
+
+function repaintAll() {
+    for (let index = 0; index < CELLS_N; index++) updatePixel(index);
+}
+
+// Increment before decrement, so a species never looks momentarily extinct.
+function changeCell(index, subId) {
+    const previous = cells[index];
+    if (previous === subId) return;
+
+    const next = subs[subId];
+    next.count++;
+    speciesList[next.sp].cells++;
+
+    if (previous === EMPTY) {
+        occupied[occupiedN++] = index;
+    } else {
+        const old = subs[previous];
+        const oldSp = speciesList[old.sp];
+        old.count--;
+        oldSp.cells--;
+        if (old.count === 0) killSub(old, oldSp);
+        if (oldSp.cells === 0) killSpecies(oldSp);
+    }
+
+    cells[index] = subId;
+    updatePixel(index);
+}
+
+function chooseNeighbour(index) {
+    const direction = rand() % 8;
+    const row = ((index >> SHIFT) + DI[direction]) & MASK;
+    const column = ((index & MASK) + DJ[direction]) & MASK;
+    return (row << SHIFT) | column;
+}
+
+function rebuildSupport() {
+    for (let n = 0; n <= 8; n++) supportW[n] = Math.pow(n + 1, paramTheta);
+}
+
+// Identity is read at the level of the contest: the sub-species label in a
+// Type II event, the species label in a Type III one.
+function sameNeighbours(index, identity, speciesLevel) {
+    const row = index >> SHIFT;
+    const column = index & MASK;
+    let count = 0;
+
+    for (let direction = 0; direction < 8; direction++) {
+        const r = (row + DI[direction]) & MASK;
+        const c = (column + DJ[direction]) & MASK;
+
+        const occupant = cells[(r << SHIFT) | c];
+        if (occupant === EMPTY) continue;
+        if (speciesLevel ? subs[occupant].sp === identity : occupant === identity) count++;
+    }
+
+    return count;
+}
+
+// Type I: empty ground is a rival of fixed strength d, and never invades. A
+// cell takes empty ground with probability 1 - d, whatever its energy.
+function expandProbability() {
+    return 1 - dRaw;
+}
+
+function xOf(sp) {
+    return sp.subsAlive;
+}
+
+function competition(events) {
+    for (let event = 0; event < events; event++) {
+        const index = rand() % CELLS_N;
+        const other = chooseNeighbour(index);
+        if (other < 0) continue;
+
+        const here = cells[index];
+        const there = cells[other];
+        if (here === there) continue;
+
+        if (here === EMPTY || there === EMPTY) {
+            const occupier = here === EMPTY ? there : here;
+            const target = here === EMPTY ? index : other;
+            if (randomUnit() < expandProbability()) {
+                changeCell(target, occupier);
+                expansions++;
+            }
+            continue;
+        }
+
+        const spHere = subs[here].sp;
+        const spThere = subs[there].sp;
+
+        let pHere;
+        if (spHere === spThere) {
+            innerContests++;
+            const biased = typeIIMode === TII_BIAS && paramLambda > 0;
+
+            if (supportMode === SUP_ON || biased) {
+                // Two Bradley-Terry factors on a shared parent alpha, which
+                // cancels: local support (n+1)^theta, and a global rare
+                // advantage e^(-lambda K/kappa). Either factor is 1 when its
+                // toggle is off. Written against sub-species a's strength so
+                // only the area difference is exponentiated, which cannot
+                // overflow harmfully: e^z -> inf gives P = 0, e^z -> 0 gives 1.
+                const hHere = supportMode === SUP_ON
+                    ? supportW[sameNeighbours(index, here, false)] : 1;
+                const hThere = supportMode === SUP_ON
+                    ? supportW[sameNeighbours(other, there, false)] : 1;
+                let bias = 1;
+
+                if (biased) {
+                    const sp = speciesList[spHere];
+                    const kappa = sp.cells / sp.subsAlive;
+                    bias = Math.exp(paramLambda * (subs[here].count - subs[there].count) / kappa);
+                }
+
+                pHere = hHere / (hHere + hThere * bias);
+            } else {
+                pHere = 0.5;
+            }
+        } else {
+            contests++;
+            let alphaHere = speciesList[spHere].alpha;
+            let alphaThere = speciesList[spThere].alpha;
+
+            // Energy stays the species-level bias; support modulates it by
+            // local compactness. Occupancy does not reach this contest.
+            if (supportMode === SUP_ON) {
+                alphaHere *= supportW[sameNeighbours(index, spHere, true)];
+                alphaThere *= supportW[sameNeighbours(other, spThere, true)];
+            }
+
+            const total = alphaHere + alphaThere;
+            pHere = total > 0 ? alphaHere / total : 0.5;
+        }
+
+        if (randomUnit() < pHere) changeCell(other, here);
+        else changeCell(index, there);
+    }
+}
+
+function fireMutation() {
+    const index = occupied[rand() % occupiedN];
+    const parent = subs[cells[index]];
+    const sp = speciesList[parent.sp];
+
+    // Thinning: the per-cell rate m*alpha is sampled against the largest alpha.
+    if (mutMode === MUT_ALPHA) {
+        if (alphaMax <= 0 || randomUnit() >= sp.alpha / alphaMax) return;
+    }
+
+    const child = makeSub(sp, parent.hue + HUE_STEP * (randomUnit() * 2 - 1));
+    changeCell(index, child.id);
+    mutations++;
+}
+
+function mutationPass(dtChunk) {
+    if (paramM <= 0 || occupiedN === 0) return;
+    const rate = mutMode === MUT_ALPHA
+        ? paramM * alphaMax * occupiedN
+        : paramM * occupiedN;
+    if (!(rate > 0)) return;
+
+    mutDebt -= rate * dtChunk;
+    while (mutDebt <= 0) {
+        fireMutation();
+        mutDebt += exponential();
+    }
+}
+
+// Every sub-species breaks away at once; the domains do not move, only the law
+// by which they interact, which switches from Type II to Type III.
+function fragment(sp) {
+    // energyPass collects the bursting species before it fragments any of
+    // them; refuse a record that has since died, so a recycled slot can never
+    // be fragmented a second time.
+    if (!sp.alive) return;
+
+    const children = sp.subList.slice();
+    if (children.length < 2) return;
+
+    const parentAlpha = Math.max(0, sp.alpha);
+    const parentCells = sp.cells;
+
+    // Read the family's centre hue before anything is reassigned, so every
+    // fragment is measured against the same parent average.
+    const meanHue = hueMode === HUE_SPREAD ? circularMean(children, sp.hue) : 0;
+
+    for (let i = 0; i < children.length; i++) {
+        const sub = subs[children[i]];
+
+        // A sub-species holds its hue for as long as it is one. Under the
+        // redraw rule it then draws a fresh hue from the circle and fixes
+        // there; under the thermostat it keeps the hue it has and inherits the
+        // heat that the parent's multiplicity paid for, walking away from its
+        // siblings as that heat decays.
+        // The draw happens either way, used only under the redraw rule, so the
+        // contest stream stays aligned and switching the thermostat on cannot
+        // move a single cell.
+        const fresh = randomUnit() * 360;
+        if (hueMode === HUE_REDRAW) {
+            sub.hue = fresh;
+            paintRgb(sub, sub.hue);
+        } else if (hueMode === HUE_JITTER) {
+            // Each fragment steps off its own hue by a normal draw: the family
+            // stays recognisable, the siblings separate. Drawn on the hue
+            // stream, so the contest stream is undisturbed.
+            sub.hue = ((sub.hue + paramJitter * hueNormal()) % 360 + 360) % 360;
+            paintRgb(sub, sub.hue);
+        } else if (hueMode === HUE_SPREAD) {
+            // Push each fragment g times its own offset from the family mean,
+            // in the direction it already lay: the siblings fan apart along the
+            // lines their mutations had started.
+            const offset = hueDelta(sub.hue, meanHue);
+            sub.hue = ((meanHue + paramSpread * offset) % 360 + 360) % 360;
+            paintRgb(sub, sub.hue);
+        }
+
+        const child = makeSpecies(sub.hue);
+
+        if (hueMode === HUE_THERMO && paramSettle > 0) {
+            // Variance rate falls linearly from peak to zero across the window,
+            // so the integral over it is exactly the variance we want and the
+            // motion eases to a stop rather than being cut off.
+            const peak = 2 * morphVariance(children.length) / paramSettle;
+            child.heat = peak;
+            child.cool = peak / paramSettle;
+        }
+
+        if (childMode === CHILD_RESET) {
+            child.alpha = alpha0;
+        } else if (childMode === CHILD_EQUAL) {
+            child.alpha = parentAlpha / children.length;
+        } else {
+            child.alpha = parentCells > 0 ? parentAlpha * sub.count / parentCells : 0;
+        }
+
+        child.cells = sub.count;
+        child.subsAlive = 1;
+        child.subsEver = 1;
+        // Mutate the list rather than replacing it: a recycled record keeps its
+        // array, so a burst allocates nothing per child.
+        child.subList.length = 0;
+        child.subList.push(sub.id);
+        sub.sp = child.id;
+        sub.slot = 0;
+    }
+
+    sp.subList.length = 0;
+    sp.subsAlive = 0;
+    sp.cells = 0;
+    killSpecies(sp);
+
+    paintDirty = true;
+    bursts++;
+    burstTimes.push(simTime);
+    if (burstTimes.length > BURST_LOG) burstTimes.shift();
+}
+
+// The variance rate is linear in time, so its integral over a chunk is exact:
+// heat*dt - cool*dt^2/2, clipped at the moment the window closes. Total
+// dispersal is therefore D*sqrt(X/8) whatever the chunk size, and a species
+// whose window has closed is frozen — heat is exactly zero, not merely small.
+// Hue is a circle, so the centre of a set of hues is the direction of their
+// resultant, not their arithmetic mean: 350 and 10 average to 0, not to 180.
+function circularMean(ids, fallback) {
+    let x = 0;
+    let y = 0;
+
+    for (let i = 0; i < ids.length; i++) {
+        const radians = subs[ids[i]].hue * DEG2RAD;
+        x += Math.cos(radians);
+        y += Math.sin(radians);
+    }
+
+    // A perfectly balanced ring has no mean direction; keep the parent's hue.
+    if (Math.abs(x) < 1e-12 && Math.abs(y) < 1e-12) return fallback;
+    return ((Math.atan2(y, x) / DEG2RAD) % 360 + 360) % 360;
+}
+
+// Signed separation of two hues, in (-180, 180].
+function hueDelta(hue, from) {
+    return ((hue - from + 540) % 360) - 180;
+}
+
+function nearestWell(hue) {
+    const spacing = 360 / paramWells;
+    return Math.round(hue / spacing) * spacing;
+}
+
+// Euler-Maruyama on the hue circle: a noise pulse that ramps to nothing across
+// the settling window, against a drift that gathers the hue into one of the
+// wells. The variance rate is linear in time so its integral over a substep is
+// exact; the substep itself is bounded by the solver's stability limit, since
+// the drift stiffens with alpha*k. When the window closes the hue is placed on
+// its well and frozen: heat is exactly zero, and a settled species holds its
+// colour until it fragments in turn.
+function huePass(dtChunk) {
+    if (hueMode !== HUE_THERMO) return;
+
+    const stiffness = paramDrift * paramWells * DEG2RAD;
+    const limit = EM_SAFETY / (stiffness + 1);
+    let steps = 1;
+
+    if (paramDrift > 0 && dtChunk > limit) {
+        steps = Math.ceil(dtChunk / limit);
+        if (steps > SUBSTEP_MAX) steps = SUBSTEP_MAX;
+    }
+
+    const ds = dtChunk / steps;
+    let touched = false;
+
+    for (let i = 0; i < aliveSpecies.length; i++) {
+        const sp = aliveSpecies[i];
+
+        if (sp.heat <= 0) continue;
+
+        let hue = sp.hue;
+        let closed = false;
+
+        for (let n = 0; n < steps; n++) {
+            let variance = 0;
+
+            if (sp.heat > 0) {
+                const left = sp.cool > 0 ? sp.heat / sp.cool : ds;
+                const span = ds < left ? ds : left;
+
+                variance += sp.heat * span - 0.5 * sp.cool * span * span;
+                sp.heat -= sp.cool * span;
+
+                if (sp.heat <= 0 || span >= left) {
+                    sp.heat = 0;
+                    sp.cool = 0;
+                    closed = true;
+                }
+            }
+
+            if (paramDrift > 0) {
+                hue -= paramDrift * Math.sin(paramWells * hue * DEG2RAD) * ds;
+            }
+            if (variance > 0) hue += Math.sqrt(variance) * hueNormal();
+        }
+
+        if (closed && paramDrift > 0) hue = nearestWell(hue);
+
+        // One increment for the whole species: the band moves as a body, so the
+        // +/-HUE_STEP structure mutation builds inside it survives the walk.
+        const move = hue - sp.hue;
+        sp.hue = ((hue % 360) + 360) % 360;
+        paintRecord(sp, sp.hue);
+
+        for (let k = 0; k < sp.subList.length; k++) {
+            const sub = subs[sp.subList[k]];
+            sub.hue = ((sub.hue + move) % 360 + 360) % 360;
+            paintRgb(sub, sub.hue);
+        }
+
+        touched = true;
+    }
+
+    if (touched) paintDirty = true;
+}
+
+function energyPass(dtChunk) {
+    let pending = null;
+    let maxAlpha = 0;
+
+    for (let i = 0; i < aliveSpecies.length; i++) {
+        const sp = aliveSpecies[i];
+        const x = xOf(sp);
+        const next = sp.alpha + dtChunk * (sp.cells * paramE - paramBeta * x);
+        let burst = false;
+
+        if (next <= 0) {
+            burst = true;
+        } else if (x > 0) {
+            const rate = paramDelta * x / next;
+            if (randomUnit() < -Math.expm1(-rate * dtChunk)) burst = true;
+        }
+
+        sp.alpha = next > 0 ? next : 0;
+        if (sp.alpha > maxAlpha) maxAlpha = sp.alpha;
+
+        if (burst && sp.subList.length >= 2) {
+            if (pending === null) pending = [];
+            pending.push(sp);
+        }
+    }
+
+    alphaMax = maxAlpha > 0 ? maxAlpha : alpha0;
+    if (pending === null) return;
+
+    for (let i = 0; i < pending.length; i++) fragment(pending[i]);
+}
+
+// A sample keeps only the largest species, which is all the graph ever draws.
+function sampleState() {
+    // Always copy before sorting: aliveSpecies carries the slot index of every
+    // live record, and reordering it in place would invalidate every slot.
+    let chosen = aliveSpecies.slice();
+    if (chosen.length > SAMPLE_CAP) {
+        chosen.sort(function (a, b) { return b.cells - a.cells; });
+        chosen = chosen.slice(0, SAMPLE_CAP);
+    }
+
+    // A sample is keyed by tag, not by slot: slots are recycled, so a trace
+    // keyed by slot could jump from a dead species to the live one that took
+    // its place. Held in tag order for the graph's binary search.
+    chosen.sort(function (a, b) { return a.tag - b.tag; });
+
+    const count = chosen.length;
+    const ids = new Int32Array(count);
+    const area = new Float32Array(count);
+    const energy = new Float32Array(count);
+    const diversity = new Float32Array(count);
+    // The colour travels with the sample. A dead species' record is recycled, so
+    // by the time its trace is drawn the slot may hold another species entirely,
+    // and speciesList can no longer say what colour the line was.
+    const rgb = new Uint8Array(count * 3);
+    for (let i = 0; i < count; i++) {
+        const sp = chosen[i];
+        ids[i] = sp.tag;
+        area[i] = sp.cells;
+        energy[i] = sp.alpha;
+        diversity[i] = xOf(sp);
+        rgb[i * 3] = sp.r;
+        rgb[i * 3 + 1] = sp.g;
+        rgb[i * 3 + 2] = sp.b;
+    }
+
+    return {
+        time: simTime,
+        empty: CELLS_N - occupiedN,
+        ids: ids,
+        area: area,
+        energy: energy,
+        diversity: diversity,
+        rgb: rgb
+    };
+}
+
+function captureGraphSample() {
+    graphSamples.push(sampleState());
+}
+
+function resetSimulation() {
+    cells.fill(EMPTY);
+    occupiedN = 0;
+    subs = [];
+    deadSubs = [];
+    aliveSubs = [];
+    speciesList = [];
+    deadSpecies = [];
+    aliveSpecies = [];
+    speciesTag = 0;
+
+    simTime = 0;
+    totalEvents = 0;
+    expansions = 0;
+    innerContests = 0;
+    contests = 0;
+    mutations = 0;
+    bursts = 0;
+    subsEver = 0;
+    alphaMax = alpha0;
+    mutDebt = exponential();
+    nextGraphTime = GRAPH_TIME_PER_SAMPLE;
+    graphSamples.length = 0;
+    burstTimes.length = 0;
+    paintDirty = false;
+
+    const founder = makeSpecies(randomUnit() * 360);
+    founder.alpha = alpha0;
+    const seed = makeSub(founder, founder.hue);
+    repaintAll();
+    changeCell((GRID_N >> 1) * GRID_N + (GRID_N >> 1), seed.id);
+}
+
+function chunkFor() {
+    const wanted = aliveSpecies.length * 4;
+    if (wanted <= CHUNK) return CHUNK;
+    return wanted > CHUNK_MAX ? CHUNK_MAX : wanted;
+}
+
+function step(events) {
+    let left = events;
+    while (left > 0) {
+        const chunk = chunkFor();
+        const size = left < chunk ? left : chunk;
+        const dtChunk = size / CELLS_N;
+
+        competition(size);
+        simTime += dtChunk;
+        totalEvents += size;
+        mutationPass(dtChunk);
+        energyPass(dtChunk);
+        huePass(dtChunk);
+        left -= size;
+
+        while (simTime >= nextGraphTime) {
+            captureGraphSample();
+            nextGraphTime += GRAPH_TIME_PER_SAMPLE;
+        }
+    }
+
+    // Once per call rather than once per chunk: hues move continuously under
+    // the thermostat, and a full repaint per chunk would be a hundred passes
+    // over the buffer per frame.
+    if (paintDirty) {
+        repaintAll();
+        paintDirty = false;
+    }
+}
+
+function drainGraphSamples() {
+    if (graphSamples.length === 0) return [];
+    return graphSamples.splice(0);
+}
+
+function setGridSize(size) {
+    if (size < 2 || (size & (size - 1)) !== 0) return;
+    GRID_N = size;
+    CELLS_N = size * size;
+    SHIFT = Math.round(Math.log2(size));
+    MASK = size - 1;
+    allocate();
+    resetSimulation();
+}
+
+function clampPositive(value, fallback) {
+    return Number.isFinite(value) && value >= 0 ? value : fallback;
+}
+
+allocate();
+rebuildSupport();
+
+return {
+    EMPTY: EMPTY,
+    HUE_STEP: HUE_STEP,
+    GRAPH_TIME_PER_SAMPLE: GRAPH_TIME_PER_SAMPLE,
+    MUT_CONST: MUT_CONST,
+    MUT_ALPHA: MUT_ALPHA,
+    HUE_REDRAW: HUE_REDRAW,
+    HUE_THERMO: HUE_THERMO,
+    HUE_SPREAD: HUE_SPREAD,
+    HUE_JITTER: HUE_JITTER,
+    HEAT_X_REF: HEAT_X_REF,
+    TII_TIE: TII_TIE,
+    TII_BIAS: TII_BIAS,
+    SUP_OFF: SUP_OFF,
+    SUP_ON: SUP_ON,
+    CHILD_RESET: CHILD_RESET,
+    CHILD_EQUAL: CHILD_EQUAL,
+    CHILD_AREA: CHILD_AREA,
+
+    get GRID_N() { return GRID_N; },
+    get CELLS_N() { return CELLS_N; },
+    get pixels() { return pixels; },
+    get cells() { return cells; },
+    get species() { return speciesList; },
+    // speciesList is now a recycled pool, so its length is the high-water mark
+    // of concurrent species, not the number ever created. The tag counter is.
+    get speciesEver() { return speciesTag; },
+    get speciesPool() { return speciesList.length; },
+    get aliveSpecies() { return aliveSpecies; },
+    get subs() { return subs; },
+    get aliveSubs() { return aliveSubs; },
+    get occupiedN() { return occupiedN; },
+    get emptyN() { return CELLS_N - occupiedN; },
+    get simTime() { return simTime; },
+    get totalEvents() { return totalEvents; },
+    get expansions() { return expansions; },
+    get contests() { return contests; },
+    get innerContests() { return innerContests; },
+    get mutations() { return mutations; },
+    get bursts() { return bursts; },
+    get subsEver() { return subsEver; },
+    get burstTimes() { return burstTimes; },
+
+    get mutMode() { return mutMode; },
+    get childMode() { return childMode; },
+    get typeIIMode() { return typeIIMode; },
+    get supportMode() { return supportMode; },
+    get hueMode() { return hueMode; },
+    get dRaw() { return dRaw; },
+    get dValue() { return expandProbability(); },
+    get E() { return paramE; },
+    get beta() { return paramBeta; },
+    get m() { return paramM; },
+    get delta() { return paramDelta; },
+    get alpha0() { return alpha0; },
+    get lambda() { return paramLambda; },
+    get theta() { return paramTheta; },
+    get dispersal() { return paramDispersal; },
+    get settle() { return paramSettle; },
+    get drift() { return paramDrift; },
+    get wells() { return paramWells; },
+    get spread() { return paramSpread; },
+    get jitter() { return paramJitter; },
+
+    setMutMode: function (mode) { mutMode = mode === MUT_CONST ? MUT_CONST : MUT_ALPHA; },
+    setChildMode: function (mode) {
+        childMode = mode === CHILD_EQUAL || mode === CHILD_AREA ? mode : CHILD_RESET;
+    },
+    setTypeIIMode: function (mode) { typeIIMode = mode === TII_BIAS ? TII_BIAS : TII_TIE; },
+    setSupportMode: function (mode) { supportMode = mode === SUP_ON ? SUP_ON : SUP_OFF; },
+    setHueMode: function (mode) {
+        hueMode = mode === HUE_THERMO || mode === HUE_SPREAD || mode === HUE_JITTER
+            ? mode
+            : HUE_REDRAW;
+    },
+    setDispersal: function (value) { paramDispersal = clampPositive(value, paramDispersal); },
+    setSettle: function (value) { paramSettle = clampPositive(value, paramSettle) || paramSettle; },
+    setDrift: function (value) { paramDrift = clampPositive(value, paramDrift); },
+    setSpread: function (value) { paramSpread = clampPositive(value, paramSpread); },
+    setJitter: function (value) { paramJitter = clampPositive(value, paramJitter); },
+    setWells: function (value) {
+        const k = Math.round(clampPositive(value, paramWells));
+        paramWells = k >= 2 ? k : 2;
+    },
+    setLambda: function (value) { paramLambda = clampPositive(value, paramLambda); },
+    setTheta: function (value) {
+        paramTheta = clampPositive(value, paramTheta);
+        rebuildSupport();
+    },
+    setD: function (value) { dRaw = Math.min(1, Math.max(0, clampPositive(value, dRaw))); },
+    setE: function (value) { paramE = clampPositive(value, paramE); },
+    setBeta: function (value) { paramBeta = clampPositive(value, paramBeta); },
+    setM: function (value) { paramM = clampPositive(value, paramM); },
+    setDelta: function (value) { paramDelta = clampPositive(value, paramDelta); },
+    setAlpha0: function (value) { alpha0 = clampPositive(value, alpha0); },
+
+    srand: srand,
+    reset: resetSimulation,
+    step: step,
+    setGridSize: setGridSize,
+    xOf: xOf,
+    expandProbability: expandProbability,
+    circularMean: circularMean,
+    hueDelta: hueDelta,
+    sameNeighbours: sameNeighbours,
+    repaintAll: repaintAll,
+    snapshot: sampleState,
+    drainGraphSamples: drainGraphSamples,
+    _state: function () {
+        return { cells: cells, occupied: occupied, occupiedN: occupiedN };
+    }
+};
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = Sim;
+</script>
+
+<script id="ui">
+(function () {
+'use strict';
+
+const $ = function (selector) {
+    return document.querySelector(selector);
+};
+
+function groupDigits(value) {
+    return Math.trunc(value).toLocaleString('en-US');
+}
+
+function percentOf(count) {
+    return (100 * count / Sim.CELLS_N).toFixed(1) + '%';
+}
+
+function compactNumber(value) {
+    if (!Number.isFinite(value)) return '—';
+    if (value >= 1e9) return (value / 1e9).toFixed(1) + 'g';
+    if (value >= 1e6) return (value / 1e6).toFixed(value >= 1e7 ? 0 : 1) + 'm';
+    if (value >= 1e3) return (value / 1e3).toFixed(value >= 1e4 ? 0 : 1) + 'k';
+    if (value >= 10) return String(Math.round(value));
+    if (value >= 0.1) return value.toFixed(2);
+    if (value === 0) return '0';
+    return value.toPrecision(2);
+}
+
+function formatRate(value) {
+    if (value <= 0) return 'off';
+    if (value >= 0.01) return value.toPrecision(3);
+    return value.toExponential(1);
+}
+
+const RAIL_W = 356;
+const GAP = 16;
+const WIDE_MIN = 900;
+const GRAPH_HEAD = 18;
+const GRAPH_GAP = 10;
+const GRAPH_MIN = 56;
+
+const GRAPH_AREA = 0;
+const GRAPH_ENERGY = 1;
+const GRAPH_SUBS = 2;
+const GRAPH_KEYS = ['area', 'energy', 'diversity'];
+const GRAPH_TITLES = [
+    'Species area · one point per two sweeps',
+    'Species energy α · one point per two sweeps',
+    'Sub-species per species · one point per two sweeps'
+];
+
+let graphMetric = GRAPH_SUBS;
+
+// The perimeter is a display option, not one of the rules: it reads the lattice
+// and changes nothing in it, so it lives out here rather than inside Sim.
+const OUTLINE_OFF = 0;
+const OUTLINE_SPECIES = 1;
+// Below two device pixels a cell is barely a dot, and a line on every face
+// would cover the grid rather than describe it.
+const OUTLINE_MIN_CELL = 2;
+
+// Only the eight largest living species get a full-strength trace. Everything
+// else used to be drawn not at all: a species that fragmented lost its whole
+// history the instant it died, and so did one that merely slipped out of the
+// top eight. Both are now kept, faintly, underneath. A faded line that stops
+// mid-graph is a species that died there; one that reaches the right edge is
+// alive and small.
+// Faint enough to read as background, dark enough to follow a single line back
+// through several bursts.
+const GHOST_ALPHA = 0.15;
+const GHOST_CAP = 32;
+
+let outlineMode = OUTLINE_SPECIES;
+let outlineContext = null;
+let outlineCell = 0;
+let outlineKey = '';
+let outlineScratch = null;
+
+function computeLayout() {
+    const canvas = $('#grid');
+    const panel = $('.panel');
+    const viewWidth = document.documentElement.clientWidth;
+    const viewHeight = document.documentElement.clientHeight;
+    const wide = viewWidth >= WIDE_MIN;
+    const pad = wide ? 16 : 10;
+
+    panel.style.height = 'auto';
+
+    let availableWidth = viewWidth - pad * 2;
+    if (wide) availableWidth -= RAIL_W + GAP;
+
+    const chrome = pad * 2 + GRAPH_HEAD + GRAPH_GAP;
+    let availableHeight = viewHeight - chrome - GRAPH_MIN;
+    if (!wide) availableHeight = Math.min(availableHeight, viewHeight * 0.56);
+
+    const available = Math.max(120, Math.min(availableWidth, availableHeight));
+    const dpr = window.devicePixelRatio || 1;
+    const deviceScale = Math.floor(available * dpr / Sim.GRID_N);
+    let size;
+
+    if (deviceScale >= 1) {
+        size = Sim.GRID_N * deviceScale / dpr;
+        canvas.style.imageRendering = 'pixelated';
+    } else {
+        size = Math.floor(available);
+        canvas.style.imageRendering = 'auto';
+    }
+
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    $('.board').style.width = size + 'px';
+
+    // The overlay covers the grid exactly, at device resolution. In the
+    // pixelated branch size*dpr is GRID_N*deviceScale on the nose, so a cell is
+    // a whole number of device pixels and a hairline offset by half a pixel
+    // lands on one pixel column rather than smearing across two.
+    const outlineCanvas = $('#outline');
+    const backing = Math.round(size * dpr);
+    if (outlineCanvas.width !== backing) {
+        outlineCanvas.width = backing;
+        outlineCanvas.height = backing;
+    }
+    outlineCanvas.style.width = size + 'px';
+    outlineCanvas.style.height = size + 'px';
+    outlineCell = backing / Sim.GRID_N;
+    outlineKey = '';
+
+    const graphMax = wide ? 110 : 72;
+    const leftover = viewHeight - chrome - size;
+    const graphHeight = Math.round(Math.max(GRAPH_MIN, Math.min(graphMax, leftover)));
+    $('#graph').style.height = graphHeight + 'px';
+
+    if (wide) {
+        const boardHeight = size + GRAPH_GAP + GRAPH_HEAD + graphHeight;
+        panel.style.height = Math.max(420, boardHeight) + 'px';
+    }
+}
+
+function roundedRect(context, x, y, width, height, radius) {
+    const r = Math.min(radius, width / 2, height / 2);
+    context.moveTo(x + r, y);
+    context.arcTo(x + width, y, x + width, y + height, r);
+    context.arcTo(x + width, y + height, x, y + height, r);
+    context.arcTo(x, y + height, x, y, r);
+    context.arcTo(x, y, x + width, y, r);
+    context.closePath();
+}
+
+const theme = {};
+
+function readTheme() {
+    const style = getComputedStyle(document.documentElement);
+    theme.surface = style.getPropertyValue('--surface').trim() || 'rgb(36, 40, 49)';
+    theme.panelEdge = style.getPropertyValue('--panel-edge').trim() || 'rgb(50, 55, 66)';
+    theme.track = style.getPropertyValue('--track').trim() || 'rgb(44, 48, 59)';
+    theme.emptyLine = style.getPropertyValue('--empty-line').trim() || 'rgb(104, 112, 128)';
+    theme.burst = style.getPropertyValue('--burst').trim() || 'rgb(214, 128, 96)';
+}
+
+// The slot a tag sits at, or -1. Callers want the row, not just one column of
+// it: a trace reads its value from the metric array and its colour from rgb.
+function indexAt(sample, id) {
+    const ids = sample.ids;
+    let lo = 0;
+    let hi = ids.length - 1;
+    while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        const probe = ids[mid];
+        if (probe === id) return mid;
+        if (probe < id) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+
+const graph = {
+    canvas: null,
+    context: null,
+    capacity: 300,
+    samples: [],
+    lastMax: 0,
+
+    // Bumped whenever the window moves, so the ghost ranking is rebuilt when a
+    // sample arrives rather than on every frame.
+    version: 0,
+    ghostKey: '',
+    ghostTags: [],
+
+    push: function (sample) {
+        this.samples.push(sample);
+        if (this.samples.length > this.capacity) this.samples.shift();
+        this.version++;
+    },
+
+    seed: function (sample) {
+        this.samples = [];
+        this.lastMax = 0;
+        this.version++;
+        this.push(sample);
+    },
+
+    // Every tag in the window, ranked by how large it ever got, so the faint
+    // traces are the ones worth seeing rather than an even wash of everything
+    // that has ever lived here.
+    rankGhosts: function () {
+        const key = this.version + ':' + graphMetric;
+        if (key === this.ghostKey) return this.ghostTags;
+        this.ghostKey = key;
+
+        const metric = GRAPH_KEYS[graphMetric];
+        const peak = new Map();
+        for (const sample of this.samples) {
+            const ids = sample.ids;
+            const values = sample[metric];
+            for (let i = 0; i < ids.length; i++) {
+                const best = peak.get(ids[i]);
+                if (best === undefined || values[i] > best) peak.set(ids[i], values[i]);
+            }
+        }
+
+        const tags = Array.from(peak.keys());
+        tags.sort(function (a, b) { return peak.get(b) - peak.get(a); });
+        this.ghostTags = tags.slice(0, GHOST_CAP);
+        return this.ghostTags;
+    },
+
+    scale: function (ids) {
+        if (graphMetric === GRAPH_AREA) return Sim.CELLS_N;
+        const key = GRAPH_KEYS[graphMetric];
+        let max = 0;
+        for (const sample of this.samples) {
+            const values = sample[key];
+            for (let i = 0; i < values.length; i++) {
+                if (values[i] > max) max = values[i];
+            }
+        }
+        // Ease the ceiling downwards so the trace does not jitter after a burst.
+        if (max > this.lastMax) this.lastMax = max;
+        else this.lastMax = this.lastMax * 0.96 + max * 0.04;
+        return Math.max(this.lastMax, 1e-6);
+    },
+
+    draw: function (living) {
+        const canvas = this.canvas;
+        const context = this.context;
+        if (!canvas || !context) return 0;
+
+        const dpr = window.devicePixelRatio || 1;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        if (!width || !height) return 0;
+
+        const backingWidth = Math.round(width * dpr);
+        const backingHeight = Math.round(height * dpr);
+        if (canvas.width !== backingWidth || canvas.height !== backingHeight) {
+            canvas.width = backingWidth;
+            canvas.height = backingHeight;
+        }
+
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        context.clearRect(0, 0, width, height);
+        context.beginPath();
+        roundedRect(context, 0.5, 0.5, width - 1, height - 1, 4);
+        context.fillStyle = theme.surface;
+        context.fill();
+        context.strokeStyle = theme.panelEdge;
+        context.lineWidth = 1;
+        context.stroke();
+
+        for (let line = 1; line < 4; line++) {
+            const y = Math.round(height * line / 4) + 0.5;
+            context.beginPath();
+            context.moveTo(1, y);
+            context.lineTo(width - 1, y);
+            context.strokeStyle = line === 2 ? theme.panelEdge : theme.track;
+            context.stroke();
+        }
+
+        const count = this.samples.length;
+        if (!count) return 0;
+
+        const yMax = this.scale();
+        const stepX = (width - 4) / (this.capacity - 1);
+        const xOf = function (index) { return 2 + stepX * index; };
+        const yOf = function (value) {
+            const unit = Math.max(0, Math.min(1, value / yMax));
+            return height - 2 - unit * (height - 4);
+        };
+
+        const first = this.samples[0].time;
+        const last = this.samples[count - 1].time;
+        const span = Math.max(1e-9, last - first);
+
+        for (const time of Sim.burstTimes) {
+            if (time < first || time > last) continue;
+            const x = Math.round(xOf((time - first) / span * (count - 1))) + 0.5;
+            context.beginPath();
+            context.moveTo(x, 2);
+            context.lineTo(x, height - 2);
+            context.strokeStyle = theme.burst;
+            context.globalAlpha = 0.28;
+            context.lineWidth = 1;
+            context.stroke();
+            context.globalAlpha = 1;
+        }
+
+        const key = GRAPH_KEYS[graphMetric];
+        const drawn = living.slice(0, 8);
+        const alive = new Set(drawn.map(function (sp) { return sp.tag; }));
+
+        // Underneath the bright traces, in the colour the species was last seen
+        // wearing: a line that ends is a species that died, not one that was
+        // never there.
+        context.globalAlpha = GHOST_ALPHA;
+        context.lineWidth = 1.3;
+        context.lineJoin = 'round';
+
+        for (const tag of this.rankGhosts()) {
+            if (alive.has(tag)) continue;
+
+            context.beginPath();
+            let pen = false;
+            let colour = '';
+
+            for (let index = 0; index < count; index++) {
+                const sample = this.samples[index];
+                const at = indexAt(sample, tag);
+                if (at < 0) {
+                    pen = false;
+                    continue;
+                }
+                const x = xOf(index);
+                const y = yOf(sample[key][at]);
+                if (pen) context.lineTo(x, y);
+                else context.moveTo(x, y);
+                pen = true;
+                colour = 'rgb(' + sample.rgb[at * 3] + ',' +
+                    sample.rgb[at * 3 + 1] + ',' + sample.rgb[at * 3 + 2] + ')';
+            }
+
+            if (colour === '') continue;
+            context.strokeStyle = colour;
+            context.stroke();
+        }
+
+        context.globalAlpha = 1;
+
+        for (const sp of drawn) {
+            context.beginPath();
+            let pen = false;
+            for (let index = 0; index < count; index++) {
+                const sample = this.samples[index];
+                const at = indexAt(sample, sp.tag);
+                if (at < 0) {
+                    pen = false;
+                    continue;
+                }
+                const x = xOf(index);
+                const y = yOf(sample[key][at]);
+                if (pen) context.lineTo(x, y);
+                else context.moveTo(x, y);
+                pen = true;
+            }
+            context.strokeStyle = sp.css;
+            context.lineWidth = 1.3;
+            context.lineJoin = 'round';
+            context.stroke();
+        }
+
+        if (graphMetric === GRAPH_AREA) {
+            context.beginPath();
+            for (let index = 0; index < count; index++) {
+                const x = xOf(index);
+                const y = yOf(this.samples[index].empty);
+                if (index === 0) context.moveTo(x, y);
+                else context.lineTo(x, y);
+            }
+            context.strokeStyle = theme.emptyLine;
+            context.lineWidth = 1.2;
+            context.setLineDash([3, 3]);
+            context.stroke();
+            context.setLineDash([]);
+        }
+
+        return yMax;
+    }
+};
+
+let running = false;
+let loopsPerFrame = 80000;
+
+const sliders = [
+    {
+        id: 'speed',
+        host: '#speedSlider',
+        label: 'Speed',
+        min: 1000,
+        max: 500000,
+        step: 1000,
+        get: function () { return loopsPerFrame; },
+        set: function (value) { loopsPerFrame = Math.round(value); },
+        text: function (value) { return groupDigits(value); }
+    },
+    {
+        id: 'd',
+        host: '#paramSliders',
+        label: 'd · empty ground',
+        min: 0,
+        max: 1,
+        step: 0.005,
+        get: function () { return Sim.dRaw; },
+        set: function (value) { Sim.setD(value); },
+        text: function () { return Sim.dRaw.toFixed(2); }
+    },
+    {
+        id: 'E',
+        host: '#paramSliders',
+        label: 'E · energy per cell',
+        min: -3,
+        max: -0.5,
+        step: 0.02,
+        get: function () { return Math.log10(Sim.E); },
+        set: function (value) { Sim.setE(Math.pow(10, value)); },
+        text: function () { return formatRate(Sim.E); },
+        fromText: Math.log10
+    },
+    {
+        id: 'beta',
+        host: '#paramSliders',
+        label: 'β · cost per sub-species',
+        min: -1,
+        max: 1.5,
+        step: 0.02,
+        get: function () { return Math.log10(Sim.beta); },
+        set: function (value) { Sim.setBeta(Math.pow(10, value)); },
+        text: function () { return formatRate(Sim.beta); },
+        fromText: Math.log10
+    },
+    {
+        id: 'm',
+        host: '#paramSliders',
+        label: 'm · mutation rate',
+        min: -5,
+        max: -1,
+        step: 0.05,
+        get: function () { return Math.log10(Sim.m); },
+        set: function (value) { Sim.setM(Math.pow(10, value)); },
+        text: function () { return formatRate(Sim.m); },
+        fromText: Math.log10
+    },
+    {
+        id: 'delta',
+        host: '#paramSliders',
+        label: 'δ · fragmentation rate',
+        min: -3,
+        max: 1,
+        step: 0.05,
+        get: function () { return Math.log10(Sim.delta); },
+        set: function (value) { Sim.setDelta(Math.pow(10, value)); },
+        text: function () { return formatRate(Sim.delta); },
+        fromText: Math.log10
+    },
+    {
+        id: 'alpha0',
+        host: '#paramSliders',
+        label: 'α₀ · seed / reset energy',
+        min: -2,
+        max: 2,
+        step: 0.05,
+        get: function () { return Math.log10(Sim.alpha0); },
+        set: function (value) { Sim.setAlpha0(Math.pow(10, value)); },
+        text: function () { return formatRate(Sim.alpha0); },
+        fromText: Math.log10
+    },
+    {
+        id: 'lambda',
+        host: '#typeIISliders',
+        when: function () { return Sim.typeIIMode === Sim.TII_BIAS; },
+        label: 'λ · sub-species bias',
+        min: 0,
+        max: 2,
+        step: 0.01,
+        get: function () { return Sim.lambda; },
+        set: function (value) { Sim.setLambda(value); },
+        text: function () { return Sim.lambda.toFixed(2); }
+    },
+    {
+        id: 'theta',
+        host: '#supportSliders',
+        when: function () { return Sim.supportMode === Sim.SUP_ON; },
+        label: 'θ · neighbour support',
+        min: 0,
+        max: 5,
+        step: 0.05,
+        get: function () { return Sim.theta; },
+        set: function (value) { Sim.setTheta(value); },
+        text: function () { return Sim.theta.toFixed(2); }
+    },
+    {
+        id: 'dispersal',
+        host: '#hueSliders',
+        when: function () { return Sim.hueMode === Sim.HUE_THERMO; },
+        label: 'D · burst hue dispersal',
+        min: 0,
+        max: 360,
+        step: 5,
+        get: function () { return Sim.dispersal; },
+        set: function (value) { Sim.setDispersal(value); },
+        text: function () { return String(Math.round(Sim.dispersal)); }
+    },
+    {
+        id: 'settle',
+        host: '#hueSliders',
+        when: function () { return Sim.hueMode === Sim.HUE_THERMO; },
+        label: 'T · colour settle time',
+        min: -0.5,
+        max: 2.3,
+        step: 0.05,
+        get: function () { return Math.log10(Sim.settle); },
+        set: function (value) { Sim.setSettle(Math.pow(10, value)); },
+        text: function () { return formatRate(Sim.settle); },
+        fromText: Math.log10
+    },
+    {
+        id: 'drift',
+        host: '#hueSliders',
+        when: function () { return Sim.hueMode === Sim.HUE_THERMO; },
+        label: 'α · settle pull',
+        min: 0,
+        max: 12,
+        step: 0.1,
+        get: function () { return Sim.drift; },
+        set: function (value) { Sim.setDrift(value); },
+        text: function () { return Sim.drift.toFixed(1); }
+    },
+    {
+        id: 'wells',
+        host: '#hueSliders',
+        when: function () { return Sim.hueMode === Sim.HUE_THERMO && Sim.drift > 0; },
+        label: 'k · settled hues',
+        min: 2,
+        max: 36,
+        step: 1,
+        get: function () { return Sim.wells; },
+        set: function (value) { Sim.setWells(value); },
+        text: function () { return String(Sim.wells); }
+    },
+    {
+        id: 'spread',
+        host: '#hueSliders',
+        when: function () { return Sim.hueMode === Sim.HUE_SPREAD; },
+        label: 'g · burst hue spread',
+        min: 0,
+        max: 5,
+        step: 0.05,
+        get: function () { return Sim.spread; },
+        set: function (value) { Sim.setSpread(value); },
+        text: function () { return Sim.spread.toFixed(2); }
+    },
+    {
+        id: 'jitter',
+        host: '#hueSliders',
+        when: function () { return Sim.hueMode === Sim.HUE_JITTER; },
+        label: 'σ · burst hue jitter',
+        min: 0,
+        max: 180,
+        step: 1,
+        get: function () { return Sim.jitter; },
+        set: function (value) { Sim.setJitter(value); },
+        text: function () { return String(Math.round(Sim.jitter)); }
+    },
+    {
+        id: 'size',
+        host: '#latticeSliders',
+        label: 'Grid size',
+        min: 6,
+        max: 9,
+        step: 1,
+        get: function () { return Math.log2(Sim.GRID_N); },
+        set: function (value) { doSetGridSize(1 << Math.round(value)); },
+        text: function (value) { return String(1 << Math.round(value)); },
+        fromText: Math.log2
+    }
+];
+
+function buildSliders() {
+    for (const slider of sliders) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slider';
+        wrapper.innerHTML =
+            '<div class="slider-head">' +
+              '<label class="slider-label" for="s-' + slider.id + '"></label>' +
+              '<span class="slider-value"></span>' +
+            '</div>' +
+            '<input type="range" id="s-' + slider.id + '">';
+
+        wrapper.querySelector('label').textContent = slider.label;
+        const input = wrapper.querySelector('input');
+        input.min = slider.min;
+        input.max = slider.max;
+        input.step = slider.step;
+        input.value = slider.get();
+
+        slider.element = wrapper;
+        slider.input = input;
+        slider.valueElement = wrapper.querySelector('.slider-value');
+
+        const readout = slider.valueElement;
+        readout.contentEditable = 'true';
+        readout.spellcheck = false;
+        readout.setAttribute('inputmode', 'decimal');
+        readout.setAttribute('role', 'textbox');
+        readout.setAttribute('aria-label', slider.label);
+
+        readout.addEventListener('focus', function () {
+            slider.editing = true;
+            const range = document.createRange();
+            range.selectNodeContents(readout);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        });
+
+        readout.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                readout.blur();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                slider.editing = false;
+                paintSlider(slider);
+                readout.blur();
+            }
+        });
+
+        readout.addEventListener('blur', function () { commitSliderText(slider); });
+
+        input.addEventListener('input', function () {
+            slider.set(parseFloat(input.value));
+            paintSlider(slider);
+            syncSliderVisibility();
+            update();
+            render();
+        });
+
+        $(slider.host).appendChild(wrapper);
+        paintSlider(slider);
+    }
+
+    syncSliderVisibility();
+}
+
+function paintSlider(slider) {
+    const value = slider.get();
+    const span = slider.max - slider.min;
+    const fraction = span === 0 ? 0 : (value - slider.min) / span;
+    slider.input.style.setProperty('--fill', Math.min(1, Math.max(0, fraction)) * 100 + '%');
+    if (!slider.editing) slider.valueElement.textContent = slider.text(value);
+}
+
+// The readout is the number itself, so it is edited in place. A typed value is
+// mapped back onto the slider's own scale by fromText (log for the decade
+// sliders, identity otherwise). Typing is allowed to land outside the slider's
+// range; the handle then sits at the nearer end, and dragging brings the value
+// back onto the track.
+function commitSliderText(slider) {
+    const shown = slider.valueElement.textContent;
+    slider.editing = false;
+
+    // If the text still reads exactly as we would render it, nothing was typed,
+    // and the rounded display must not be written back over a more precise
+    // value. The test is deliberately stateless: focusing one readout blurs the
+    // last one a second time, and a remembered snapshot would already be spent.
+    if (shown === slider.text(slider.get())) {
+        paintSlider(slider);
+        return;
+    }
+
+    const typed = parseFloat(shown.replace(/,/g, '').trim());
+
+    if (Number.isFinite(typed)) {
+        const raw = slider.fromText ? slider.fromText(typed) : typed;
+        if (Number.isFinite(raw)) {
+            // The typed value is taken exactly, even outside the slider range,
+            // and is not rounded to the slider's step; the step only positions
+            // the handle when the value sits on the track.
+            slider.set(raw);
+        }
+    }
+
+    slider.input.value = slider.get();
+    paintSlider(slider);
+    syncSliderVisibility();
+    update();
+    render();
+}
+
+function paintAllSliders() {
+    for (const slider of sliders) {
+        slider.input.value = slider.get();
+        paintSlider(slider);
+    }
+    syncSliderVisibility();
+}
+
+// Only the parameters that bear on the current selection are shown; a host left
+// with nothing in it is hidden too, so it contributes no gap.
+function syncSliderVisibility() {
+    const counts = {};
+
+    for (const slider of sliders) {
+        if (!slider.when) continue;
+        const shown = slider.when();
+        slider.element.hidden = !shown;
+        counts[slider.host] = (counts[slider.host] || 0) + (shown ? 1 : 0);
+    }
+
+    for (const host in counts) {
+        const node = $(host);
+        if (node) node.hidden = counts[host] === 0;
+    }
+}
+
+// Every control below is one of the choices the notes leave open.
+const segments = [
+    {
+        id: 'mut',
+        host: '#segHost',
+        label: 'Mutation rate',
+        options: ['m·N', 'm·α·N'],
+        get: function () { return Sim.mutMode; },
+        set: function (mode) { Sim.setMutMode(mode); }
+    },
+    {
+        id: 'typeII',
+        host: '#segHost',
+        follow: 'typeIISliders',
+        label: 'Within-species contests',
+        options: ['tie 1/2', 'occupancy λ'],
+        get: function () { return Sim.typeIIMode; },
+        set: function (mode) { Sim.setTypeIIMode(mode); }
+    },
+    {
+        id: 'support',
+        host: '#segHost',
+        follow: 'supportSliders',
+        label: 'Neighbour support · Types II and III',
+        options: ['off', 'on, θ'],
+        get: function () { return Sim.supportMode; },
+        set: function (mode) { Sim.setSupportMode(mode); }
+    },
+    {
+        id: 'hue',
+        host: '#segHost',
+        follow: 'hueSliders',
+        label: 'Colour after a burst',
+        options: ['redraw', 'thermostat', 'spread', 'jitter'],
+        get: function () { return Sim.hueMode; },
+        set: function (mode) { Sim.setHueMode(mode); }
+    },
+    {
+        id: 'child',
+        host: '#segHost',
+        label: 'Energy of the fragments',
+        options: ['reset to α₀', 'equal split', 'by area'],
+        get: function () { return Sim.childMode; },
+        set: function (mode) { Sim.setChildMode(mode); }
+    },
+    {
+        id: 'outline',
+        host: '#segHost2',
+        label: 'Species perimeter',
+        options: ['off', 'on'],
+        get: function () { return outlineMode; },
+        set: function (mode) { outlineMode = mode; }
+    },
+    {
+        id: 'graph',
+        host: '#segHost2',
+        label: 'Graph',
+        options: ['area', 'energy α', 'sub-species'],
+        get: function () { return graphMetric; },
+        set: function (mode) {
+            graphMetric = mode;
+            graph.lastMax = 0;
+        }
+    }
+];
+
+function buildSegments() {
+    const pairs = {};
+
+    for (const segment of segments) {
+        const block = document.createElement('div');
+        block.className = 'seg-block';
+        block.innerHTML =
+            '<span class="seg-label" id="lbl-' + segment.id + '"></span>' +
+            '<div class="seg" role="radiogroup" aria-labelledby="lbl-' + segment.id + '"></div>';
+        block.querySelector('.seg-label').textContent = segment.label;
+
+        const seg = block.querySelector('.seg');
+        segment.seg = seg;
+
+        segment.options.forEach(function (label, mode) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            button.setAttribute('role', 'radio');
+            button.setAttribute('aria-checked', String(mode === segment.get()));
+            button.addEventListener('click', function () {
+                segment.set(mode);
+                paintSegments();
+                paintAllSliders();
+                update();
+                render();
+                button.blur();
+            });
+            seg.appendChild(button);
+        });
+
+        if (segment.pair) {
+            if (!pairs[segment.pair]) {
+                const row = document.createElement('div');
+                row.className = 'seg-pair';
+                $(segment.host).appendChild(row);
+                pairs[segment.pair] = row;
+            }
+            pairs[segment.pair].appendChild(block);
+        } else {
+            $(segment.host).appendChild(block);
+        }
+
+        // A segment may carry its own parameters directly beneath it.
+        if (segment.follow) {
+            const host = document.createElement('div');
+            host.className = 'sliders follow-sliders';
+            host.id = segment.follow;
+            block.parentNode.insertBefore(host, block.nextSibling);
+        }
+    }
+}
+
+function paintSegments() {
+    for (const segment of segments) {
+        const buttons = segment.seg.children;
+        const current = segment.get();
+        for (let index = 0; index < buttons.length; index++) {
+            buttons[index].setAttribute('aria-checked', String(index === current));
+        }
+    }
+}
+
+let rateClock = 0;
+let eventsAtLastSample = 0;
+let framesSinceSample = 0;
+let framesPerSecond = 0;
+let eventsPerSecond = 0;
+let gridContext = null;
+let gridImage = null;
+let baseSeed = 0;
+
+// The label is refreshed on the spot rather than waiting for the next frame,
+// so the button never trails the click when the frame rate is low.
+function paintRunButton() {
+    const label = running ? 'Stop' : 'Start';
+    const button = $('#runBtn');
+    if (button && button.textContent !== label) button.textContent = label;
+}
+
+function doStart() { running = true; paintRunButton(); }
+function doStop() { running = false; paintRunButton(); }
+
+function doToggleRun() {
+    if (running) doStop();
+    else doStart();
+}
+
+function seedGraph() {
+    graph.seed(Sim.snapshot());
+}
+
+function doReset() {
+    Sim.reset();
+    seedGraph();
+    eventsAtLastSample = 0;
+    update();
+    render();
+}
+
+function doSetGridSize(size) {
+    if (size === Sim.GRID_N) return;
+    Sim.setGridSize(size);
+
+    const canvas = $('#grid');
+    canvas.width = Sim.GRID_N;
+    canvas.height = Sim.GRID_N;
+    gridImage = new ImageData(Sim.pixels, Sim.GRID_N, Sim.GRID_N);
+    graph.lastMax = 0;
+    seedGraph();
+    eventsAtLastSample = 0;
+    computeLayout();
+    update();
+    render();
+}
+
+function doNextGraph() {
+    const segment = segments[segments.length - 1];
+    segment.set((graphMetric + 1) % 3);
+    paintSegments();
+    update();
+    render();
+}
+
+function livingSpecies() {
+    return Sim.aliveSpecies
+        .slice()
+        .sort(function (a, b) { return b.cells - a.cells || a.tag - b.tag; });
+}
+
+function paintLegend(living) {
+    const host = $('#legend');
+    host.textContent = '';
+    const shown = living.slice(0, 4);
+
+    for (const sp of shown) {
+        const item = document.createElement('span');
+        const dot = document.createElement('i');
+        dot.style.background = sp.css;
+        item.appendChild(dot);
+        item.appendChild(document.createTextNode('S' + sp.tag));
+        host.appendChild(item);
+    }
+
+    if (living.length > shown.length) {
+        const more = document.createElement('span');
+        more.className = 'more';
+        more.textContent = '+' + (living.length - shown.length);
+        host.appendChild(more);
+    }
+
+    if (graphMetric === GRAPH_AREA) {
+        const empty = document.createElement('span');
+        empty.className = 'empty-dot';
+        empty.innerHTML = '<i></i>empty';
+        host.appendChild(empty);
+    }
+}
+
+function paintSpeciesRows(living) {
+    const host = $('#typeRows');
+    host.textContent = '';
+
+    for (const sp of living.slice(0, 6)) {
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.title = 'Species ' + sp.tag +
+            ' · α ' + sp.alpha.toPrecision(4) +
+            ' · ' + sp.subsAlive + ' sub-species extant of ' + sp.subsEver + ' ever';
+
+        const name = document.createElement('span');
+        name.className = 'stat-name';
+        const swatch = document.createElement('i');
+        swatch.className = 'type-swatch';
+        swatch.style.background = sp.css;
+        name.appendChild(swatch);
+        name.appendChild(document.createTextNode('S' + sp.tag));
+
+        const cells = document.createElement('span');
+        cells.className = 'stat-count';
+        cells.textContent = groupDigits(sp.cells);
+
+        const alpha = document.createElement('span');
+        alpha.className = 'stat-alpha';
+        alpha.textContent = compactNumber(sp.alpha);
+
+        const x = document.createElement('span');
+        x.className = 'stat-subs';
+        x.textContent = groupDigits(Sim.xOf(sp));
+
+        row.append(name, cells, alpha, x);
+        host.appendChild(row);
+    }
+}
+
+function warnText() {
+    const notes = [];
+    if (Sim.beta <= Sim.E) {
+        notes.push('β ≤ E · no species can ever lose energy, so nothing bursts');
+    }
+    return notes.join('\n');
+}
+
+function paintStats(living, yMax) {
+    paintLegend(living);
+    paintSpeciesRows(living);
+    $('#countEmpty').textContent = groupDigits(Sim.emptyN);
+
+    let title = GRAPH_TITLES[graphMetric];
+    if (graphMetric !== GRAPH_AREA) title += ' · max ' + compactNumber(yMax);
+    $('#graphTitle').textContent = title;
+
+    let line =
+        't ' + Sim.simTime.toFixed(1) + ' sweeps    ' +
+        compactNumber(Sim.totalEvents) + ' events' +
+        '\n' + groupDigits(Sim.occupiedN) + ' occupied  ' + percentOf(Sim.occupiedN) +
+        '\n' + groupDigits(Sim.aliveSpecies.length) + '/' + groupDigits(Sim.speciesEver) +
+            ' species alive/ever' +
+        '\n' + groupDigits(Sim.aliveSubs.length) + '/' + groupDigits(Sim.subsEver) +
+            ' sub-species alive/ever' +
+        '\n' + compactNumber(Sim.expansions) + ' growth   ' +
+            compactNumber(Sim.contests) + ' between   ' +
+            compactNumber(Sim.innerContests) + ' within' +
+        '\n' + groupDigits(Sim.mutations) + ' mutations   ' +
+            groupDigits(Sim.bursts) + ' bursts' +
+        '\n' + framesPerSecond.toFixed(0) + ' fps    ' +
+            compactNumber(eventsPerSecond) + ' events/s';
+    if (!running) line += '    paused';
+
+    $('#counters').textContent = line;
+    $('#warnLine').textContent = warnText();
+}
+
+let lastLiving = [];
+
+function update() {
+    paintRunButton();
+
+    framesSinceSample++;
+    const now = performance.now();
+    const elapsed = (now - rateClock) / 1000;
+    if (elapsed >= 0.5) {
+        framesPerSecond = framesSinceSample / elapsed;
+        eventsPerSecond = (Sim.totalEvents - eventsAtLastSample) / elapsed;
+        eventsAtLastSample = Sim.totalEvents;
+        framesSinceSample = 0;
+        rateClock = now;
+    }
+
+    for (const sample of Sim.drainGraphSamples()) graph.push(sample);
+    lastLiving = livingSpecies();
+}
+
+// The perimeter reads the lattice exactly the way a Type III contest reads it:
+// through sub.sp, never through the sub-species id. Two sub-species of one
+// species therefore have no face between them, which is the whole point of the
+// option. Empty ground is label -1, so a species alone in the open still closes
+// its own outline.
+function outlineLabels(row, into) {
+    const cells = Sim.cells;
+    const subs = Sim.subs;
+    const empty = Sim.EMPTY;
+    const n = into.length;
+    const base = row * n;
+
+    for (let c = 0; c < n; c++) {
+        const occupant = cells[base + c];
+        into[c] = occupant === empty ? -1 : subs[occupant].sp;
+    }
+}
+
+// Two label rows and a row of open run starts, kept across frames: the sim
+// allocates nothing per step, and neither should the layer drawn over it.
+function outlineBuffers(n) {
+    if (outlineScratch === null || outlineScratch.n !== n) {
+        outlineScratch = {
+            n: n,
+            current: new Int32Array(n),
+            next: new Int32Array(n)
+        };
+    }
+    return outlineScratch;
+}
+
+// A darker cast of the species' own colour, taken off the rgb it is already
+// painted in rather than back through hue, so the outline follows the
+// thermostat for free.
+function outlineColour(sp) {
+    return 'rgb(' + ((sp.r * 0.40) | 0) + ',' +
+                    ((sp.g * 0.40) | 0) + ',' +
+                    ((sp.b * 0.40) | 0) + ')';
+}
+
+// Each species draws the boundary of its own territory, inset one device pixel
+// into its own cells: where two meet you see both hairlines side by side, each
+// in its own cast, and against empty ground you see only the one. Faces cannot
+// be merged into runs here, because a run would have to hold the same species
+// on the same side throughout, so they go out one at a time into a path per
+// species — one stroke each, since each carries its own colour.
+function buildOutlineBySpecies() {
+    const n = Sim.GRID_N;
+    const mask = n - 1;
+    const cell = outlineCell;
+    const far = n * cell;
+    const scratch = outlineBuffers(n);
+    const paths = new Map();
+    let current = scratch.current;
+    let next = scratch.next;
+
+    function pathFor(id) {
+        let path = paths.get(id);
+        if (path === undefined) {
+            path = new Path2D();
+            paths.set(id, path);
+        }
+        return path;
+    }
+
+    // On the seam the two sides of one face sit at opposite edges of the canvas,
+    // which is exactly where each of them belongs.
+    function face(a, b, aCoord, bCoord, from, to, vertical) {
+        if (a >= 0) {
+            const path = pathFor(a);
+            if (vertical) { path.moveTo(aCoord, from); path.lineTo(aCoord, to); }
+            else { path.moveTo(from, aCoord); path.lineTo(to, aCoord); }
+        }
+        if (b >= 0) {
+            const path = pathFor(b);
+            if (vertical) { path.moveTo(bCoord, from); path.lineTo(bCoord, to); }
+            else { path.moveTo(from, bCoord); path.lineTo(to, bCoord); }
+        }
+    }
+
+    outlineLabels(0, current);
+
+    for (let r = 0; r < n; r++) {
+        outlineLabels((r + 1) & mask, next);
+
+        for (let c = 0; c < n; c++) {
+            const here = current[c];
+            const east = current[(c + 1) & mask];
+            const south = next[c];
+
+            if (here !== east) {
+                const seam = c === mask;
+                face(here, east,
+                    seam ? far - 0.5 : (c + 1) * cell - 0.5,
+                    seam ? 0.5 : (c + 1) * cell + 0.5,
+                    r * cell, (r + 1) * cell, true);
+            }
+
+            if (here !== south) {
+                const seam = r === mask;
+                face(here, south,
+                    seam ? far - 0.5 : (r + 1) * cell - 0.5,
+                    seam ? 0.5 : (r + 1) * cell + 0.5,
+                    c * cell, (c + 1) * cell, false);
+            }
+        }
+
+        const swap = current;
+        current = next;
+        next = swap;
+    }
+
+    return paths;
+}
+
+// Nothing on the lattice moves except by running events, so the key doubles as
+// a change detector: a paused grid keeps the strokes it already has, and the
+// scan is paid for only on the frames that earned it.
+function drawOutline() {
+    if (outlineContext === null) return;
+
+    const width = outlineContext.canvas.width;
+    const drawable = outlineMode === OUTLINE_SPECIES && outlineCell >= OUTLINE_MIN_CELL;
+    const key = drawable
+        ? outlineMode + ':' + Sim.totalEvents + ':' + Sim.GRID_N + ':' + width
+        : 'off';
+
+    if (key === outlineKey) return;
+    outlineKey = key;
+
+    outlineContext.clearRect(0, 0, width, outlineContext.canvas.height);
+    if (!drawable) return;
+
+    outlineContext.lineWidth = 1;
+
+    const species = Sim.species;
+    const paths = buildOutlineBySpecies();
+    for (const entry of paths) {
+        outlineContext.strokeStyle = outlineColour(species[entry[0]]);
+        outlineContext.stroke(entry[1]);
+    }
+}
+
+function render() {
+    gridContext.putImageData(gridImage, 0, 0);
+    drawOutline();
+    const yMax = graph.draw(lastLiving);
+    paintStats(lastLiving, yMax);
+}
+
+function frame() {
+    if (running) Sim.step(loopsPerFrame);
+    update();
+    render();
+    requestAnimationFrame(frame);
+}
+
+function onKey(event) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.target && event.target.isContentEditable) return;
+    const tag = event.target && event.target.tagName;
+    if (tag === 'INPUT' && event.key !== ' ') return;
+
+    switch (event.key) {
+    case ' ':
+        event.preventDefault();
+        doToggleRun();
+        break;
+    case 'r':
+    case 'R':
+        doReset();
+        break;
+    case 'g':
+    case 'G':
+        doNextGraph();
+        break;
+    default:
+        return;
+    }
+}
+
+function finiteParam(params, name, fallback) {
+    const raw = params.get(name);
+    if (raw === null || raw === '') return fallback;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : fallback;
+}
+
+function applyRuleString(text) {
+    if (!text) return;
+    const digits = text.split('').map(Number);
+    if (digits.some(function (value) { return !Number.isInteger(value); })) return;
+    if (digits.length > 0) Sim.setChildMode(digits[0]);
+    if (digits.length > 1) Sim.setMutMode(digits[1]);
+    if (digits.length > 2) Sim.setTypeIIMode(digits[2]);
+    if (digits.length > 3) Sim.setSupportMode(digits[3]);
+    if (digits.length > 4) Sim.setHueMode(digits[4]);
+}
+
+function init() {
+    readTheme();
+
+    const params = new URLSearchParams(location.search);
+    baseSeed = finiteParam(params, 'seed', Date.now()) >>> 0;
+
+    Sim.srand(baseSeed);
+    Sim.setD(finiteParam(params, 'd', Sim.dRaw));
+    Sim.setE(finiteParam(params, 'E', Sim.E));
+    Sim.setBeta(finiteParam(params, 'beta', Sim.beta));
+    Sim.setM(finiteParam(params, 'm', Sim.m));
+    Sim.setDelta(finiteParam(params, 'delta', Sim.delta));
+    Sim.setAlpha0(finiteParam(params, 'a0', Sim.alpha0));
+    Sim.setLambda(finiteParam(params, 'lam', Sim.lambda));
+    Sim.setTheta(finiteParam(params, 'theta', Sim.theta));
+    Sim.setDispersal(finiteParam(params, 'disp', Sim.dispersal));
+    Sim.setSettle(finiteParam(params, 'tset', Sim.settle));
+    Sim.setDrift(finiteParam(params, 'pull', Sim.drift));
+    Sim.setWells(finiteParam(params, 'wells', Sim.wells));
+    Sim.setSpread(finiteParam(params, 'mult', Sim.spread));
+    Sim.setJitter(finiteParam(params, 'sig', Sim.jitter));
+    applyRuleString(params.get('rules'));
+
+    const requestedSize = finiteParam(params, 'size', 256);
+    const legalSizes = [64, 128, 256, 512];
+    const startSize = legalSizes.includes(requestedSize) ? requestedSize : 256;
+    if (startSize !== Sim.GRID_N) Sim.setGridSize(startSize);
+    else Sim.reset();
+
+    const canvas = $('#grid');
+    canvas.width = Sim.GRID_N;
+    canvas.height = Sim.GRID_N;
+    gridContext = canvas.getContext('2d', { alpha: false });
+    gridImage = new ImageData(Sim.pixels, Sim.GRID_N, Sim.GRID_N);
+    outlineContext = $('#outline').getContext('2d');
+
+    graph.canvas = $('#graph');
+    graph.context = graph.canvas.getContext('2d');
+
+    buildSegments();
+    buildSliders();
+    paintSegments();
+    seedGraph();
+
+    $('#runBtn').addEventListener('click', function (event) {
+        doToggleRun();
+        event.target.blur();
+    });
+    $('#resetBtn').addEventListener('click', function (event) {
+        doReset();
+        event.target.blur();
+    });
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', computeLayout);
+
+    computeLayout();
+    rateClock = performance.now();
+    update();
+    render();
+    requestAnimationFrame(frame);
+}
+
+window.DissipationCA = {
+    sim: Sim,
+    get running() { return running; },
+    get loopsPerFrame() { return loopsPerFrame; },
+    set loopsPerFrame(value) {
+        loopsPerFrame = value;
+        sliders[0].input.value = value;
+        paintSlider(sliders[0]);
+    },
+    start: doStart,
+    stop: doStop,
+    toggleRun: doToggleRun,
+    reset: doReset,
+    setGridSize: doSetGridSize,
+    sliders: sliders,
+    segments: segments,
+    graph: graph
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+})();
+</script>
+</body>
+</html>

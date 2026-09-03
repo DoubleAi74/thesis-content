@@ -1,0 +1,15 @@
+{
+  "figure": "fig12",
+  "chapter_number": "5.12",
+  "label": "dist:fig:subextensive",
+  "slug": "yield_subextensive",
+  "included_from": "sections/09_several_founders.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig12.pdf",
+    "fig12.png"
+  ],
+  "simulation": false
+}

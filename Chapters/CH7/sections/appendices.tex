@@ -1,0 +1,102 @@
+\appendix
+
+\section{From product of survival factors to the pathwise exponential}
+\label{app:product-to-exponential}
+
+Along a fixed path the catastrophe clock has instantaneous rate $\lambda(s)$. Over a short bin of length $\Delta t$ the chance of no trigger is about $1-\lambda(s)\Delta t$. Partitioning $[0,t]$ into $n$ equal bins of width $t/n$, the chance of no trigger on the whole interval is a product of $n$ such factors. In the constant-rate case the elementary limit
+\[
+\left(1-\frac{\lambda t}{n}\right)^{n}\longrightarrow e^{-\lambda t}
+\qquad(n\to\infty)
+\]
+turns that product into an exponential. With a slowly varying rate the same mesh argument yields
+\[
+\exp\Bigl\{-\int_0^t\lambda(s)\,\dd s\Bigr\}
+=\exp\Bigl\{-\int_0^t\bigl(\delta_1X_s+\delta_2Y_s\bigr)\,\dd s\Bigr\},
+\]
+which is the pathwise weight averaged in \cref{prop:feynman-kac}.
+
+\section{Hypergeometric derivatives and resonant parameters}
+\label{app:hypergeometric-details}
+
+The derivative of the first basis function follows from the standard identity
+\[
+\frac{\dd}{\dd z}{}_2F_1(A,B;C;z)
+=\frac{AB}{C}{}_2F_1(A+1,B+1;C+1;z).
+\]
+Thus
+\begin{equation}
+\label{eq:U-derivative}
+U'(z)=\frac{AB}{C}
+{}_2F_1(A+1,B+1;C+1;z).
+\end{equation}
+
+For the second basis function, set
+\begin{equation*}
+A_2=A-C+1,
+\qquad
+B_2=B-C+1,
+\qquad
+C_2=2-C.
+\end{equation*}
+The product rule gives
+\begin{equation}
+\label{eq:V-derivative}
+\begin{aligned}
+V'(z)=(-z)^{1-C}\Biggl[
+\frac{1-C}{z}{}_2F_1(A_2,B_2;C_2;z)
++\frac{A_2B_2}{C_2}
+{}_2F_1(A_2+1,B_2+1;C_2+1;z)
+\Biggr].
+\end{aligned}
+\end{equation}
+Equations \eqref{eq:U-derivative} and \eqref{eq:V-derivative} show that the main result uses only shifted Gauss hypergeometric functions and elementary factors.
+
+When $C\in\mathbb Z$, the pair in \cref{eq:UV-definitions} is not generally a fundamental pair because the two Frobenius exponents differ by an integer. A logarithmic second solution can be constructed in the usual way, or the physical solution can be obtained as a continuous limit from nearby noninteger $C$. The probability itself is fixed by the regular initial-value problem \cref{eq:backward-scaled}; only this convenient basis changes. In computation, direct ODE integration near resonance is a useful independent check.
+
+\input{sections/05_limits}
+
+\section{Equation-level recovery of Antal--Krapivsky}
+\label{app:AK-recovery}
+\label{sec:AK-recovery}
+
+This appendix records the precise relation to Antal and Krapivsky \cite{AntalKrapivsky2011}. Their observable is the generating function of the terminal population counts; ours is the probability that a global catastrophe has not occurred. The branching skeleton (two types, one-way conversion, triangular backward structure) is shared (\cref{fig:ak-contrast}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/fig15_ak_contrast/fig15.pdf}
+  \caption{Antal--Krapivsky terminal-population generating functions (left) versus the no-catastrophe probabilities studied here (right).
+  Both use the same two-type one-way branching skeleton.
+  Left: $\mathcal A(x,y,t)=\E[x^{X_t}y^{Y_t}]$ with initial data $\mathcal A(x,y,0)=x$, $\mathcal B(x,y,0)=y$, and no global absorbing catastrophe.
+  Right: $S(t)=\Prob_{(1,0)}(\tau_{\!c}>t)$ and $G(t)=\Prob_{(0,1)}(\tau_{\!c}>t)$ with $S(0)=G(0)=1$ and catastrophe rate $\delta_1x+\delta_2y$.}
+  \label{fig:ak-contrast}
+\end{figure}
+
+To make the equation-level map exact, set $\delta_1=\delta_2=0$ and let $\mathcal A(x,y,t)$ and $\mathcal B(x,y,t)$ denote the generating functions starting from one type-1 and one type-2 individual. Their initial data are
+\begin{equation*}
+\mathcal A(x,y,0)=x,
+\qquad
+\mathcal B(x,y,0)=y,
+\end{equation*}
+rather than the survival values $S(0)=G(0)=1$. The backward system is then
+\begin{align*}
+\partial_t\mathcal A
+&=\lambda_1\mathcal A^2
+-(\lambda_1+\mu_1+\nu)\mathcal A
++\mu_1+\nu\mathcal B,\\
+\partial_t\mathcal B
+&=\lambda_2\mathcal B^2
+-(\lambda_2+\mu_2)\mathcal B+\mu_2.
+\end{align*}
+Under the rate map
+\begin{equation*}
+\alpha_i^{\mathrm{AK}}=\lambda_i,
+\qquad
+\beta_i^{\mathrm{AK}}=\mu_i,
+\qquad
+\nu^{\mathrm{AK}}=\nu,
+\end{equation*}
+these are exactly the triangular equations used in that paper, before its normalisation $\alpha_1^{\mathrm{AK}}=1$.
+
+If instead the catastrophe rates vanish while our survival data are kept, \cref{eq:no-catastrophe-trivial} follows and both probabilities are identically one. Recovering the earlier governing system therefore requires the generating-function initial data $x,y$; the no-catastrophe formula alone does not yield a nontrivial terminal population distribution.
+
+\input{sections/app_killed_pgf}

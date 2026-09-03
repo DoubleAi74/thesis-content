@@ -1,0 +1,245 @@
+{
+  "figure": "fig_precatastrophe_moments",
+  "slug": "precatastrophe_moments",
+  "method": "exact_moment_hierarchy_from_killed_PGF_differentiated_at_(1,1)_RK4_no_simulation",
+  "quantities": [
+    "E[X_{tau_c-}] given tau_c < infinity, from one type-1 founder",
+    "E[Y_{tau_c-}] given tau_c < infinity, from one type-1 founder"
+  ],
+  "seed_parameters": {
+    "lambda1": 1.2,
+    "lambda2": 1.2,
+    "mu1": 0.8,
+    "mu2": 0.8,
+    "nu_values": [
+      0.1,
+      0.4,
+      1.0
+    ],
+    "delta1_range": [
+      0.0,
+      0.5
+    ],
+    "delta2_range": [
+      0.02,
+      0.5
+    ],
+    "grid": [
+      111,
+      111
+    ]
+  },
+  "final_parameters": {
+    "lambda1": 1.2,
+    "lambda2": 1.2,
+    "mu1": 0.8,
+    "mu2": 0.8,
+    "nu_values": [
+      0.1,
+      0.4,
+      1.0
+    ],
+    "delta1_range": [
+      0.0,
+      0.5
+    ],
+    "delta2_range": [
+      0.02,
+      0.5
+    ],
+    "grid": [
+      111,
+      111
+    ]
+  },
+  "adjustment_reason": "birth and death held equal across both types and fixed throughout, with birth above death, so that nu is the only demographic parameter varying between columns; nu = 0.4 = lambda - mu is exactly the type-1 criticality point",
+  "parameter_note": "these demographic rates differ deliberately both from fig_bio_regimes (lambda1=1.0, mu1=0.45, nu=0.35, lambda2=0.85, mu2=0.40) and from the worked example in section 10 of the teaching document; the three are not one parameter family",
+  "T_horizon": 120.0,
+  "rk4_steps": 60000,
+  "domain_note": {
+    "delta1_zero": "regular; catastrophe remains reachable through the type-2 channel, so the delta1 = 0 edge is retained",
+    "delta2_zero": "singular and therefore excluded. On delta2 = 0 one has G == 1, hence theta2 = lambda2 - mu2 > 0, and E[Y_{tau-}] diverges whenever theta1(inf) + (lambda2 - mu2) > 0. At delta1 = 0 the discriminant is a perfect square and the criterion collapses to |lambda1 - mu1 - nu| < lambda2 - mu2",
+    "singular_edge_delta1_threshold": {
+      "0.1": 0.01660104885167235,
+      "0.4": 0.03310501211928796,
+      "1.0": 0.0
+    },
+    "threshold_meaning": "largest delta1 for which the delta2 = 0 edge is still divergent; 0.0 means that edge is regular for every delta1 >= 0"
+  },
+  "validation": {
+    "horizon_selfcheck": {
+      "method": "fraction of each running integral accumulated in the final 5 percent of [0,T]",
+      "max_tail_fraction": 0.0
+    },
+    "step_halving": {
+      "method": "max absolute change in E[X], E[Y] when RK4 steps are doubled, over a spread of points including the small-delta corner",
+      "max_abs_change_by_nu": {
+        "0.1": [
+          9.894307595459395e-13,
+          4.085620730620576e-13
+        ],
+        "0.4": [
+          3.6770586575585185e-13,
+          2.0108359422010835e-12
+        ],
+        "1.0": [
+          1.8030021919912542e-13,
+          1.666222715357435e-12
+        ]
+      }
+    },
+    "flux_identity": {
+      "statement": "J_1(1,1,t) = delta1*m_x + delta2*m_y must equal -S'(t); J_2(1,1,t) = delta2*n_y must equal -G'(t)",
+      "max_abs_residual": 1.85e-13
+    },
+    "gillespie": {
+      "method": "exact continuous-time simulation, 120000 paths per point, recording (X,Y) in the instant before catastrophe",
+      "points_checked": 12,
+      "comparisons": 24,
+      "result": "all within about two standard errors",
+      "table": [
+        {
+          "nu": 0.1,
+          "delta1": 0.1,
+          "delta2": 0.1,
+          "EX_theory": 4.6972,
+          "EX_sim": 4.712,
+          "EX_sem": 0.0207,
+          "EY_theory": 1.5777,
+          "EY_sim": 1.5587,
+          "EY_sem": 0.0149
+        },
+        {
+          "nu": 0.1,
+          "delta1": 0.3,
+          "delta2": 0.05,
+          "EX_theory": 2.8117,
+          "EX_sim": 2.8221,
+          "EX_sem": 0.0097,
+          "EY_theory": 0.8541,
+          "EY_sim": 0.8518,
+          "EY_sem": 0.0142
+        },
+        {
+          "nu": 0.1,
+          "delta1": 0.05,
+          "delta2": 0.3,
+          "EX_theory": 5.8923,
+          "EX_sim": 5.9347,
+          "EX_sem": 0.0284,
+          "EY_theory": 1.7215,
+          "EY_sim": 1.7161,
+          "EY_sem": 0.0109
+        },
+        {
+          "nu": 0.1,
+          "delta1": 0.25,
+          "delta2": 0.25,
+          "EX_theory": 2.9672,
+          "EX_sim": 2.9808,
+          "EX_sem": 0.0108,
+          "EY_theory": 0.5442,
+          "EY_sim": 0.547,
+          "EY_sem": 0.0062
+        },
+        {
+          "nu": 0.4,
+          "delta1": 0.1,
+          "delta2": 0.1,
+          "EX_theory": 2.2749,
+          "EX_sim": 2.2878,
+          "EX_sem": 0.0129,
+          "EY_theory": 4.0,
+          "EY_sim": 3.9862,
+          "EY_sem": 0.0232
+        },
+        {
+          "nu": 0.4,
+          "delta1": 0.3,
+          "delta2": 0.05,
+          "EX_theory": 1.9772,
+          "EX_sim": 1.9683,
+          "EX_sem": 0.0082,
+          "EY_theory": 2.9699,
+          "EY_sim": 2.9902,
+          "EY_sem": 0.0273
+        },
+        {
+          "nu": 0.4,
+          "delta1": 0.05,
+          "delta2": 0.3,
+          "EX_theory": 2.2141,
+          "EX_sim": 2.1981,
+          "EX_sem": 0.0131,
+          "EY_theory": 2.9975,
+          "EY_sim": 3.0252,
+          "EY_sem": 0.0129
+        },
+        {
+          "nu": 0.4,
+          "delta1": 0.25,
+          "delta2": 0.25,
+          "EX_theory": 1.9113,
+          "EX_sim": 1.9147,
+          "EX_sem": 0.0082,
+          "EY_theory": 1.6,
+          "EY_sim": 1.5917,
+          "EY_sem": 0.0101
+        },
+        {
+          "nu": 1.0,
+          "delta1": 0.1,
+          "delta2": 0.1,
+          "EX_theory": 0.8166,
+          "EX_sim": 0.8198,
+          "EX_sem": 0.0065,
+          "EY_theory": 5.4583,
+          "EY_sim": 5.4835,
+          "EY_sem": 0.0258
+        },
+        {
+          "nu": 1.0,
+          "delta1": 0.3,
+          "delta2": 0.05,
+          "EX_theory": 1.079,
+          "EX_sim": 1.0758,
+          "EX_sem": 0.0059,
+          "EY_theory": 5.5975,
+          "EY_sim": 5.5745,
+          "EY_sem": 0.0365
+        },
+        {
+          "nu": 1.0,
+          "delta1": 0.05,
+          "delta2": 0.3,
+          "EX_theory": 0.7554,
+          "EX_sim": 0.7551,
+          "EX_sem": 0.0061,
+          "EY_theory": 3.3808,
+          "EY_sim": 3.3962,
+          "EY_sem": 0.0125
+        },
+        {
+          "nu": 1.0,
+          "delta1": 0.25,
+          "delta2": 0.25,
+          "EX_theory": 0.9763,
+          "EX_sim": 0.9742,
+          "EX_sem": 0.0055,
+          "EY_theory": 2.535,
+          "EY_sim": 2.5327,
+          "EY_sem": 0.012
+        }
+      ]
+    }
+  },
+  "open_observation": {
+    "statement": "at nu = lambda - mu = 0.4 with delta1 = delta2 = delta, the computed E[Y_{tau-}] equals (lambda - mu)/delta to all printed digits (4.0000 at delta=0.10, 1.6000 at delta=0.25). It does not hold at other nu, nor when delta1 != delta2.",
+    "status": "numerical observation only; not derived. Recorded as a remark and an open exercise in teaching_precatastrophe.tex section 11; not claimed in main.tex"
+  },
+  "outputs": [
+    "fig_precatastrophe_moments.png",
+    "fig_precatastrophe_moments.pdf"
+  ],
+  "used_by": "teaching_precatastrophe.tex, section 11 (The parameter plane); not used by main.tex"
+}

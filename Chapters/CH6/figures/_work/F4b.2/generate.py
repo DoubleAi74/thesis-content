@@ -94,6 +94,14 @@ def run_asserts() -> None:
 
 NOTE_POS = {"a": (0.52, 0.62), "b": (0.46, 0.28), "c": (0.50, 0.30)}
 
+# Corner for the "L = ..., (lambda,mu,delta)" caption block inside each panel.
+# In panel (a) both extinction curves fall away to the bottom right, so the
+# block was being overprinted by the budding curve; there the free corner is
+# the top right.  In (b) and (c) the curves stay high and the bottom right is
+# clear.  A translucent backing box guards against the remaining near misses.
+LABEL_CORNER = {"a": (0.97, 0.97, "top"), "b": (0.97, 0.03, "bottom"),
+                "c": (0.97, 0.03, "bottom")}
+
 
 def annotate_gap(ax: plt.Axes, regime: Regime, note_pos) -> None:
     q_value = regime.q_representative
@@ -162,9 +170,12 @@ def make_figure() -> plt.Figure:
         )
         annotate_gap(ax, regime, NOTE_POS[panel_letter])
         style_rc.panel_label(ax, f"({panel_letter})")
-        ax.text(0.97, 0.03, rf"$L={flooding_parameter:.2f}$" "\n" + regime.parameter_label,
-                transform=ax.transAxes, ha="right", va="bottom", fontsize=8.2,
-                color=style_rc.SOFT, linespacing=1.35)
+        lx, ly, lva = LABEL_CORNER[panel_letter]
+        ax.text(lx, ly, rf"$L={flooding_parameter:.2f}$" "\n" + regime.parameter_label,
+                transform=ax.transAxes, ha="right", va=lva, fontsize=8.2,
+                color=style_rc.SOFT, linespacing=1.35, zorder=5,
+                bbox=dict(facecolor="white", edgecolor="none",
+                          alpha=0.82, pad=1.6))
 
         ax.set_xlim(max(0.0, q_boundary - 0.035), 1.01)
         ax.set_ylim(0.0, 1.04)

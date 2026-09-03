@@ -1,0 +1,304 @@
+% The two phases of infection --- plan \S3.3, "\S8".  Opens Part B.
+% Sources: 10/02 entire.
+% C7: 10/02:57 prints p_0 with no derivation and no declaration that its
+%     letters are CH4/CH5's own.  The formula is correct; the work here is the
+%     derivation, the declaration and the closed form.
+% A4: the geometric sum closed, \cref{var:eq:p0closed}.
+% Renames (plan \S7.2): phase-2 rates \beta,\nu -> \lambda_2,\mu_2; phase-1
+% rates \lambda,\mu,\delta -> \lambda_1,\mu_1,\delta_1; and the two constants
+% of the decaying death rate, both printed as "a" at 10/02:14, written
+% \mu_\infty and \mu_0 -- see the NEEDS-AUTHOR marker below, since a is CH4's
+% larger root and is used in that sense in this very section.
+% The source at 10/02:63 prints E(Z) = 2(1 - b + sum); the sign of the sum is
+% wrong there, since p_0 = b + sum.  \cref{var:eq:EZ} carries the correct one.
+
+\section{The two phases of infection}
+\label{var:sec:twophase}
+
+In every model so far a rate has moved because the process changed its own
+circumstances: it used up a capacity, hardened a competitor, depleted a
+potential, infected its neighbours, or manufactured its own advantage. This
+last model is not like that. Here the rate changes because the host does. An
+infection proceeds for a while under one set of conditions, the host
+recognises it, and from that point the conditions are different ones. That
+difference pays for itself at once: each phase is a constant-rate process of
+a kind already solved, and the whole problem reduces to describing the state
+handed across the join. This is the section in which the mathematics closes
+again, and \cref{var:sec:pattern} takes up what exactly buys that.
+
+\subsection{The biology, and the shape it dictates}
+\label{var:sec:twophasebiology}
+
+The pathogenesis of \yp{} has two distinct phases, the pre-inflammatory and
+the post-inflammatory. In the first the bacterium replicates mostly
+intracellularly, within macrophages
+\cite{PujolBliska2003,ConnorEtAl2018}. As the body recognises the alien
+presence and mounts a neutrophil response, it switches to extracellular
+replication \cite{BosioEtAl2005,PetersEtAl2013}. That the bacterium does not
+simply begin extracellularly is itself the evidence that living within
+macrophages carries an advantage, and the simplest model of that advantage is
+a higher replication rate during the first phase.
+
+The switch from intracellular to extracellular replication is coincident
+with the neutrophil response in the histology
+\cite{BosioEtAl2005,PetersEtAl2013}; whether the neutrophils drive the
+switch, rather than arriving at the same time, is not settled by those
+studies and is not needed below.
+
+\begin{remark}[A decaying extracellular death rate]
+\label{var:rem:mudecay}
+Inside the cell there are fewer of the extracellular mechanisms of innate
+immunity --- complement, and bacteriophages. One reading, the least supported
+claim in this section, is that the bacterium adapts to host-specific phages
+within the handful of replication cycles a single infection lasts, so that
+the death rate in the second phase decays rather than holding constant. That
+would give
+\begin{equation}
+\mu_2(t)=\mu_\infty+\mu_0\,\ee^{-t/T},
+\label{var:eq:mudecay}
+\end{equation}
+with $T$ the decay timescale, taken as the unit of time in any numerical
+illustration so that the exponential is $e^{-t}$. The two constants are
+independent; nothing requires the initial death rate to be twice the
+asymptotic one. With this rate the second phase is subcritical for a while
+and then not, and the size of the population handed over from the first phase
+is decisive. The analysed model below does not use it.
+\end{remark}
+
+The same two-phase structure is argued from the other direction in
+\cref{path:sec:ypestis}, where the phases are distinguished by the density of
+the killer-cell field and the switch is placed where a removal budget
+$\vartheta^{\ast}$ is crossed. That account asks why the switch happens;
+this one asks what composing the two phases does to the probability that the
+infection establishes. Neither is derived from the other and they are not
+duplicates, but they concern one organism and one transition, and
+\cref{var:sec:connections} returns to what reconciling them would take.
+
+\subsection{Phase composition}
+\label{var:sec:composition}
+
+Take the first phase to be a birth--death--catastrophe process with rates
+$\lambda_1,\mu_1,\delta_1$ and $\lambda_1\gg\mu_1$, so that it strongly
+favours replication, running until the catastrophe --- the rupture of the
+host cell --- releases its load. Take the second to be a linear birth--death
+process with rates $\lambda_2,\mu_2$, only slightly supercritical, so that
+$\lambda_2>\mu_2$ but $\lambda_2\approx\mu_2$. Write $t_c$ for the switch.
+
+The biology of \cref{var:sec:twophasebiology} puts the switch at the
+neutrophil response, and the model puts it at the rupture of the host cell.
+These are treated here as one event: the rupture is what ends the
+intracellular phase, and the immune response is what the surrounding argument
+supposes provokes it. So $t_c$ is not a fixed time chosen from outside but the
+catastrophe time of the first phase, and \cref{var:eq:phasepgf} is read
+conditionally on it. That is the honest reading, and it is also the one that
+explains why this section closes where \cref{var:sec:rrrr}, whose catastrophe
+rate is state-dependent in the same way, does not: the burst-size law
+\cref{dist:eq:burstlaw} has already integrated the rupture time out, and hands
+across a distribution over $\Kb$ that no longer mentions when the rupture
+came.
+
+\emph{Phase composition} is then the statement that the generating function
+of the whole process is the second phase's, composed over the state the first
+phase has reached at $t_c$:
+\begin{equation}
+G^{\text{whole}}(x,t)=
+\begin{cases}
+G^{(1)}(x,t), & t<t_c,\\[4pt]
+\displaystyle\sum_{k\ge0}\pr{X^{(1)}_{t_c}=k}
+\bigl(G^{(2)}(x,t-t_c)\bigr)^{k}, & t\ge t_c,
+\end{cases}
+\label{var:eq:phasepgf}
+\end{equation}
+the $k$th power being available because the $k$ agents handed over found
+independent lineages, and the weights being read off the first phase in the
+usual way, $\pr{X^{(1)}_{t_c}=k}=(k!)^{-1}\partial_x^{\,k}G^{(1)}(0,t_c)$.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  >={Stealth[length=1.9mm]},
+  ph/.style={draw=ink,thick,rounded corners=2pt,minimum height=9mm,
+             inner xsep=6pt,font=\small,align=center,text=ink},
+  lb/.style={font=\footnotesize,inner sep=2pt},
+  every path/.style={thick}
+]
+\node[ph,fill=type1!12] (p1) at (0,0)
+  {phase 1: BDC\\[-1pt]\footnotesize $\lambda_1,\mu_1,\delta_1$};
+\node[ph,fill=type2!12] (p2) at (6.2,0)
+  {phase 2: BD\\[-1pt]\footnotesize $\lambda_2,\mu_2$};
+\node[lb] (k) at (3.1,0.55) {$\Kb$ released};
+\draw[->] (p1) -- node[below,lb]{$t_c$} (p2);
+\node[lb,anchor=west] (est) at (8.2,0.45) {establishes, w.p.\ $1-p_0$};
+\node[lb,anchor=west] (die) at (8.2,-0.45) {dies out, w.p.\ $p_0$};
+\draw[->] (p2.east) -- (est.west);
+\draw[->] (p2.east) -- (die.west);
+\node[ph] (h0) at (0,2.4) {one infected host};
+\node[ph] (h1) at (6.2,2.4) {two infected hosts};
+\draw[->] (h0) -- node[above,lb]{w.p.\ $p=1-p_0$} (h1);
+\draw[->,densely dashed] (h0.south) -- node[left,lb]{within-host} (p1.north);
+\draw[->,densely dashed] (est.north) to[out=90,in=-30] (h1.south east);
+\node[lb] at (3.1,3.35)
+  {\itshape the host-to-host layer sits above the within-host process};
+\end{tikzpicture}
+\caption{The two-phase model and the branching layer above it. Within one
+host the infection runs as a birth--death--catastrophe process until rupture
+at $t_c$ releases a burst of size $\Kb$, and those $\Kb$ agents found
+independent lineages of a slightly supercritical birth--death process, which
+either establishes or dies out. Above it sits a Galton--Watson process with a
+two-point offspring law: establishment sends the infection to two new hosts,
+failure ends the line. The whole of the analysis below is the computation of
+the one number $p_0$ joining the two levels.}
+\label{var:fig:phase-schematic}
+\end{figure}
+
+\subsection{The host-to-host layer}
+\label{var:sec:hosttohost}
+
+Above the within-host process sits an epidemic. An infected individual either
+goes on to infect exactly two others or recovers and infects none, and which
+of the two happens is decided by whether the within-host infection
+establishes. Writing $p$ for the probability that it does, the offspring
+count $Z$ has
+\begin{equation}
+\pr{Z=2}=p,\qquad \pr{Z=0}=1-p,\qquad \ex{Z}=2p .
+\label{var:eq:offspring}
+\end{equation}
+
+The two-point law is a modelling assumption and not a derived one. It is the
+crudest available caricature of transmission, and it is adopted because it
+makes $\ex{Z}$ a function of $p$ alone, $p$ being the one quantity the
+within-host model supplies. Little rests on it: a general offspring law with
+mean $m$ gives $\ex{Z}=mp$, so only the multiplier moves and nothing below
+about how $\ex{Z}$ responds to the phase-1 parameters is an artefact of the
+choice. What it does cost is the variance of $Z$, and with it every statement
+about the epidemic beyond its mean --- the extinction probability of the
+Galton--Watson process itself depends on the whole offspring law and not
+merely on where it is centred.
+
+\subsection{The extinction probability, derived}
+\label{var:sec:extinction}
+
+The within-host process fails if the phase-2 population dies out, and by the
+law of total probability, conditioning on the burst size,
+\begin{equation}
+p_0=\sum_{k\ge0}\pr{\Kb=k}\lrb{\frac{\mu_2}{\lambda_2}}^{\!k}.
+\label{var:eq:p0sum}
+\end{equation}
+The sum is worth naming: \cref{var:eq:p0sum} is the \emph{phase-1 burst-size
+generating function evaluated at the phase-2 extinction probability},
+$p_0=G_{\Kb}(\mu_2/\lambda_2)$. Both of its ingredients are proved elsewhere
+in this thesis, and neither is re-derived here.
+
+The first is the burst-size law. For a birth--death--catastrophe process the
+load released at rupture is geometric on the larger root,
+$\pr{\Kb=k}=(\delta_1/\lambda_1)a^{-k}$ for $k\ge1$, which is
+\cref{dist:eq:burstlaw}, with $a$ and $b$ the roots of the characteristic
+quadratic of \cref{bdc:lem:roots}. The second is the extinction probability
+of a supercritical linear birth--death process from one founder,
+$\mu_2/\lambda_2$, and hence $(\mu_2/\lambda_2)^k$ from $k$ independent
+founders, which is \cref{m:sec:bd}.
+
+The $k=0$ term is the mass on paths that never rupture at all: the cell's
+occupants die out before the catastrophe can come, no load is released, and
+no onward host is infected. That mass is $b$, and it is not a free
+parameter.
+\Cref{dist:eq:burstlaw} is stated unconditionally, including the paths that
+never burst, and its normalisation is
+$\sum_{k\ge1}(\delta_1/\lambda_1)a^{-k}=(\delta_1/\lambda_1)/(a-1)=1-b$, so
+\begin{equation}
+b=1-\frac{\delta_1/\lambda_1}{a-1},
+\label{var:eq:bdetermined}
+\end{equation}
+which is also the smaller root of the same quadratic. The three constants
+$a$, $b$ and $\delta_1/\lambda_1$ are determined by $(\lambda_1,\mu_1,\delta_1)$
+together and only two of them may be chosen independently.
+
+The sum in \cref{var:eq:p0sum} is geometric and closes. With
+$x=\mu_2/(a\lambda_2)$,
+\[
+\sum_{k\ge1}\frac{\delta_1}{\lambda_1}\,a^{-k}
+\lrb{\frac{\mu_2}{\lambda_2}}^{\!k}
+=\frac{\delta_1}{\lambda_1}\cdot\frac{x}{1-x},
+\]
+so that
+\begin{equation}
+p_0=b+\frac{\delta_1}{\lambda_1}\cdot\frac{\mu_2}{a\lambda_2-\mu_2},
+\qquad\text{convergent if and only if } a\lambda_2>\mu_2 ,
+\label{var:eq:p0closed}
+\end{equation}
+and therefore
+\begin{equation}
+\ex{Z}=2\lrb{1-b-\frac{\delta_1}{\lambda_1}
+\cdot\frac{\mu_2}{a\lambda_2-\mu_2}} .
+\label{var:eq:EZ}
+\end{equation}
+The convergence condition costs nothing: the second phase is supercritical by
+assumption, so $\lambda_2>\mu_2$, and $a>1$ by \cref{bdc:lem:roots}, so
+$a\lambda_2>\lambda_2>\mu_2$ always.
+
+What \cref{var:eq:p0closed} buys is a dependence of the epidemic on the
+intracellular phase that is explicit rather than numerical. The first phase
+appears in \cref{var:eq:EZ} only through $a$ and $\delta_1/\lambda_1$, and
+both fall as $\delta_1$ falls, a cell less inclined to rupture holding its
+occupants longer and releasing more of them. The second enters only through
+the ratio $\mu_2/\lambda_2$, and the product $a\lambda_2$ in the denominator
+is the whole of the interaction between them, and it is where the leverage
+is: a larger burst multiplies the founding cohort of a near-critical process,
+and since extinction from $k$ founders is the $k$th power of a number close
+to one, multiplying $k$ is the most effective thing that can be done to it.
+
+\subsection{Other compositions}
+\label{var:sec:variants}
+
+The composition above is the birth--death--catastrophe to birth--death case.
+Three nearby variants share the same two-phase skeleton and differ only in
+which parameter does the work: a first phase that is an ordinary birth--death
+process running for a fixed time; the BDC case just analysed, in which
+$\delta_1$ sets duration and handover together; and a first phase that simply
+delivers a fixed count, the comparator against which the others are read.
+A fourth variant does not share the machinery. It is a fixed handover into
+the decaying death rate of \cref{var:rem:mudecay}, and with $\mu_2$ a
+function of time the extinction probability of the second phase is no longer
+$\mu_2/\lambda_2$ but the solution of the backward Riccati equation
+\cref{m:eq:riccatiext}. It is named here and left there.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{fig12_EZ/fig12}
+\caption{The host-to-host mean $\ex{Z}$ against the phase-1 catastrophe rate
+$\delta_1$, from the closed form \cref{var:eq:EZ}, at
+$(\lambda_1,\mu_1)=(1,0.2)$ and $(\lambda_2,\mu_2)=(1,0.9)$. The second phase
+is barely supercritical, so a lineage founded by a single agent almost
+certainly fails; what rescues the infection is arriving in numbers. A small
+$\delta_1$ is a longer first phase and a larger release, and that is what
+carries $\ex{Z}$ above one. The unit crossing is at $\delta_1\simeq0.061$.}
+\label{var:fig:rough1}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{fig13_EZ_decomp/fig13}
+\caption{The same dependence, decomposed. Panel~(a): mean burst size against
+$\delta_1$, a lower propensity to burst yielding a larger burst.
+Panel~(b): $\ex{Z}$ against mean burst size, a larger founding cohort raising
+the chance of surviving the near-critical extracellular phase.
+Read together, $\delta_1$ acts on the epidemic entirely through the burst
+size, which is what \cref{var:eq:EZ} makes explicit.}
+\label{var:fig:rough23}
+\end{figure}
+
+\openqs{
+\item \textbf{The decaying-rate variant.} The decaying-$\mu_2(t)$ model of
+\cref{var:rem:mudecay} is named and not analysed. Taking it up needs the
+inhomogeneous extinction probability of \cref{m:eq:riccatiext} in place of
+$\mu_2/\lambda_2$.
+\item \textbf{Against the threshold budget.} \Cref{path:sec:ypestis} reaches
+the same organism and the same transition with different machinery, and
+offers a threshold budget $\vartheta^{\ast}$ at which the intracellular
+strategy stops paying. How $\ex{Z}$ here compares against that threshold ---
+whether the $\delta_1$ that puts $\ex{Z}$ above one is the one that puts the
+switch where $\vartheta^{\ast}$ puts it --- is the question that would join
+the two accounts.
+}
+
+\FloatBarrier
