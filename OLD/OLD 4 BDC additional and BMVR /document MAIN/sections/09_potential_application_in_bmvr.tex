@@ -1,0 +1,92 @@
+\section{Potential application in BMVR}
+
+
+
+
+\noindent
+Consider a reasonably large population of cells initially infected all by a single \ft $\; $bacteria. Over time, each cell acts independently as a birth death catastrophe process described by the usual quantities, $J$ and $I$. Say there were $N_0$ of such cells at the beginning; as the model progresses there will be approximately $N_0 I(t)$ cells which are yet to rupture. This estimate becoming increasingly accurate with progressively larger $N_0$.\par
+In previous work, the quantity, $V(t)$, has been used to describe the count of bacteria released from a single cell. In that application, it has been found to increase at a rate proportional to the second moment of intracellular count, $\delta \mean{\xt^2}$. In this case of $N_0$ initially infected cells, there doesn't seem to be an issue with the same quantification being used --- there being $\Vt(t) = N_0 V(t)$ extracellular bacteria through time (assuming no reabsorption or replication in the extracellular population).\par 
+
+\subsubsection*{Proportional release formula}
+
+But I'm curious about another way $\Vt$ might be quantified. As a starting point, suppose $N_0$ is very large, and that we begin observing the model at a reasonably late start-time, $t_s$. Late enough for convergence to the quasi-stationary distribution in $\xt$. We have previously computed this limiting conditional distribution and its mean: $\mean{\xt | \xt\notin\{R, 0\}}_{t\to\infty}$ and $\pr{\xt = k | \xt\notin\{R, 0\}}_{t\to\infty}$. \par
+Through this period of time, it seems the rate of extracellular release, $\dd \Vt/ \dd t$, should be made up of the number of infected cells remaining, $N_0 \hat I(t_s + t)$, ($\hat I $ being the non-fixation probability), multiplied by the expected number in each cell, $\mean{\xx_{t_s + t} | \xx_{t_s + t}\notin\{R, 0\}}_{t\to\infty}$.
+
+$$\ddt{\Vt} = N_0 \hat I(t_s + t) \cdot \mean{\xx_{t_s + t} | \xx_{t_s + t}\notin\{R, 0\}}_{t\to\infty}$$
+
+
+\noindent
+(for $t> t_s$, the stationarity time). In principle, we might be able to compute $\Vt$ in this way.\par
+There is an apparent issue with this arrangement, which is: at late time, as the mean bacterial count becomes stationary, it is also true that the non-fixation probability tends towards 0. This could be mitigated by assuming $N_0$ is sufficiently large. Or, say for example we don't know when the infection began, or how many bacteria it started with. But suppose we do know the current concentration of infected cells in the blood, and, we know the infection has been going on long enough for contents of remaining infected cells to be near the stationary distribution. (Of course, this now assumes reabsorption). In this case, the infected cell count, $N_0 \hat I(t_s + t)$, would be taken as a constant --- call it $\Ic$. And, the factor multiplying it in the release rate would merely be the QS mean (which we have a formula for):
+
+$$\ddt{\Vt} = \Ic\cdot \mean{\xx_{t} | \xx_{t}\notin\{R, 0\}}_{t\to\infty}$$
+
+Important to recognise this now assumes reabsorption, but say we roll with the idea.
+
+
+\subsubsection*{Intuitive argument}
+
+By some intuitive logic of this kind,  it may be feasible to propose a small update to the ``basic model of viral replication'':\par
+From this,
+
+\begin{align*}
+\ddt{I} &= \beta T V - \delta I\\
+\ddt{V} &= p I - c V
+\end{align*}
+
+
+\noindent
+to this,
+
+\begin{align*}
+\ddt{I} &= \beta T V - \delta I\\
+\ddt{V} &= \lrbs{\mean{\xx_{t} | \xx_{t}\notin\{R, 0\}}_{t\to\infty}} I - c V
+\end{align*}
+
+
+\noindent
+Where the only difference is that the constant viral release rate, $p$, has been replaced by a slightly more complicated constant value which is a combination of intra-cellular rates.
+
+$$p = \mean{\xx_{t} | \xx_{t}\notin\{R, 0\}}_{t\to\infty} =\quad ?$$ 
+
+
+\noindent
+The purpose of this is that, given someone is in a situation where they have a good estimate for $p$, the viral release rate, by our logic, they may then be able to access an approximation for the rates constituting the QS mean. \par
+
+\vspace{15pt}
+
+
+\noindent
+(need to look up the formula for QS mean, but its something like $\lim_{t\to\infty}{J(t) / (1-\hat I(t))}$. I think there is an important point around whether $\mu = 0$ or not.)
+
+
+\subsubsection*{Towards a correction}
+
+The above formula is incorrect, but there might be a way to fix it. The problem is that the burst rate depends on intracellular load.
+
+
+We can use the approximation which assumes that the distribution of cell infection sizes is at its late-time stationary value. Or maybe this isn't the best option. Because at any time, there will be infected cells that begin their infection dynamics at a number of different start times. The distribution of release times is given by a known formula. So Perhaps there is some way of combining this time pdf and the second-moment formula conditional on time in a normalization. 
+
+Is it an integral:
+
+$$p =  \delta \int \phi(t) \mean{\xt^2 | \xt \notin \{R, 0 \} }(t)  \dd t$$
+
+(The second moment conditional on non-rupture, normalized over the probability density of burst times ) Where $\phi(t)$ is the known pdf of rupture times. \par
+Or is it this:
+
+
+$$p = \int \phi(t) \mean{R | \tau = t} \dd t$$
+
+(The rupture size probability given burst time, normalized over the probability density of burst times)
+
+
+\subsubsection*{Iterating cycles --- overall expected release rate?}
+The quantity this is trying to represent can be thought of simply as follows. Consider a model where at first there is a single infected macrophage. When it ruptures, each of the output bacteria go on to found a new BDC process in a new infected cell. Until, at different times, each of these ends in turn and cycles continue with new intracellular infectious processes beginning and ending, beginning and ending.\par
+
+Over a sufficient period of time following the initial cell, there will emerge a sort of stationarity whereby any given release event will exhibit a burst time and burst size according to the known distributions. Short-duration processes will by nature occur more frequently than longer-duration ones. 
+
+
+{ What we desire is an overall rate of release events and their sizes to make up an approximation to replace the} $p I $ {term in the Basic Model of Viral Replication above.}
+
+
+{For any given cell, the probability that it will burst soon will be higher if it has a high internal census. But large bursts, in this population cyclic dynamic will be less frequent because short release times with smaller bursts happen with a greater frequency. }

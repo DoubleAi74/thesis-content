@@ -1,0 +1,93 @@
+\section{Conditional burst means}
+\label{sec:cond-means}
+
+The mean burst size and its various conditionings hide a small trap. It is
+worth springing it deliberately.
+
+\subsection{The overall expected burst size}
+
+Recall that $V(t)=\mean{\wt}$, where $\wt$ is the number of particles
+released by time $t$. Whether the catastrophe has taken place or not can be
+represented by the truth of $\wt>0$, since the minimum burst size is $1$;
+rupture has occurred with probability $1-I(t)$. Decomposing,
+$$\mean{\wt} = \mean{\wt\mid\wt > 0}(1-I(t)) + {\mean{\wt \mid \wt = 0}}I(t),$$
+and since ${\mean{\wt \mid \wt = 0}} = 0$,
+$$\mean{\wt} = \mean{\wt\mid\wt > 0}(1-I(t)),$$
+that is,
+\begin{equation}
+\mean{\wt\mid\wt > 0} = \frac{V(t)}{1-I(t)}.
+\label{eq:VoverI}
+\end{equation}
+This can be read as ``mean burst size, given that a burst has happened by
+$t$''. The overall expected burst size --- the expected size of an
+arbitrarily generated burst --- is the late-time value of this expression:
+\begin{equation}
+\mean{\Kb}=\lim_{t\to\infty}\frac{V(t)}{1-I(t)}
+=\frac{V_\infty}{1-b}
+=\frac{\lambda-\mu}{\delta}+\frac{1}{1-b},
+\label{eq:meanK}
+\end{equation}
+where the last form follows from \eqref{eq:Vinf}, and $\mean{\Kb}=a/(a-1)$
+as already noted there. The distinction matters:
+$V_\infty$ itself averages in the realisations that cleared internally and
+released nothing, so $V_\infty$ is \emph{not} the mean burst size unless
+$\mu=0$.
+
+\subsection{The curious circularity, resolved}
+\label{sec:circularity}
+
+What is the expected burst size of a cell that has \emph{not yet} burst?
+Decomposing $\mean{\Kb}$ on the event $\{\tau>t\}$,
+\begin{align}
+\mean{\Kb} &= \mean{\Kb\mid \tau > t} \pr{\tau > t} + \mean{\Kb\mid \tau < t}\pr{\tau<t}\nonumber\\
+&= \mean{\Kb\mid\tau > t}\, I(t) + \frac{V(t)}{1 - I(t)} \lrb{1 - I(t)},
+\end{align}
+so that
+\begin{equation}
+\mean{\Kb\mid \tau > t}  = \frac{\mean{\Kb} - V(t)}{I(t)}
+=\frac{V_\infty/(1-b) - V(t)}{I(t)}.
+\label{eq:Kcond}
+\end{equation}
+So far, so good. The trap is what happens when one takes $t\to\infty$ in
+\eqref{eq:Kcond}. A first attempt gives
+$$
+\lim_{t\to\infty}\mean{\Kb\mid \tau > t}
+=\frac{V_\infty/(1-b)-V_\infty}{b},
+$$
+which, after a little algebra, appears to return $\mean{\Kb}$ itself --- a
+curious circularity: the burst size of a cell that has waited an infinite
+time to burst seems to equal the burst size of a typical cell, which makes
+no sense, since conditioning on $\tau>t$ as $t\to\infty$ should select the
+realisations that never burst at all.
+
+The resolution is that \eqref{eq:Kcond} mixes two conditionings. Its
+numerator $\mean{\Kb}-V(t)$ is the contribution to the burst size from
+realisations that burst \emph{after} $t$; its denominator $I(t)$ is the
+probability of not having burst by $t$, which includes the mass $b$ of
+realisations that will never burst and whose burst size is zero. Written
+consistently,
+\begin{equation}
+\mean{\Kb\,\mathbf 1\{\text{burst}\}\mid\tau>t}
+=\frac{V_\infty-V(t)}{I(t)}
+\xrightarrow[t\to\infty]{}\frac{V_\infty-V_\infty}{b}=0,
+\end{equation}
+which is correct and unmysterious: conditioning on ``has not burst yet''
+converges to ``never bursts'', on which event the burst size is zero.
+
+The genuinely interesting limit conditions on eventual burst as well:
+\begin{equation}
+\mean{\Kb\mid \tau>t,\ \text{burst eventually}}
+=\frac{V_\infty-V(t)}{I(t)-b}.
+\end{equation}
+This is of the form $0/0$ as $t\to\infty$; by l'H\^opital's rule, using
+$V'=\delta K$ and $I'=-\delta J$,
+\begin{equation}
+\lim_{t\to\infty}\mean{\Kb\mid \tau>t,\ \text{burst eventually}}
+=\lim_{t\to\infty}\frac{K(t)}{J(t)}
+=\frac{\langle X^2\rangle_{\rm QS}}{\langle X\rangle_{\rm QS}}
+=1+\frac{2\lambda}{\delta}(1-b),
+\label{eq:latemean}
+\end{equation}
+in agreement with \eqref{eq:sizebias}: the eventual burst size of a very
+patient cell is the size-biased quasi-stationary mean. The circularity was
+never in the mathematics; it was in the conditioning.

@@ -1,0 +1,39 @@
+\section{What carries forward}
+\label{m:sec:summary}
+
+Three things have been assembled in this chapter, and it is worth separating them
+before they are used.
+
+The first is standard apparatus: exponential clocks and the races between them,
+continuous-time Markov chains and their generators, generating functions, and the
+linear birth--death process together with the first-order equation
+\cref{m:eq:bdpde} satisfied by its generating function. That equation is the template
+for every generating-function calculation in this thesis.
+
+The second is the quasi-stationary picture. A subcritical binary Galton--Watson
+process is certain to die out, but conditioned on survival its population settles
+to a fixed distribution whose mean is $1/A(p)$ and whose variance is
+\cref{m:eq:condvar}. Both are expressed entirely in terms of $p$ and the constant
+$A(p) = \lim_n S_n/(2p)^n$. The continuous-time analogue admits the closed form
+$\Ac(p)=(1-2p)/(1-p)$. The full analytic theory of the discrete constant ---
+product and series representations, two-sided bounds, near-critical asymptotics,
+closed-form search, and the identification of $A(p)$ with a value of the Koenigs
+function --- is developed in \ChA.
+
+The third is the method of characteristics for the generating-function equations of
+absorption models, developed on a case whose answer was already known and then
+applied to absorption--birth--death, where it produces the closed form
+\cref{m:eq:Gabd}. That is the tool that
+\fwd{bdc}{the later chapters on birth--death--catastrophe processes} take up, first
+for the process of \cref{m:def:bdc} and then for the multi-type and multi-compartment
+extensions.
+
+What has deliberately not been done here is to develop those extensions, or to
+analyse $A(p)$ beyond the level needed to use the limiting conditional mean. The
+birth--death--catastrophe process has been defined and its generating-function
+equation written down, and no more; the results belong to the chapters that need
+them. Open modelling questions that belong with the present toolkit include the
+existence of a quasi-stationary distribution when one conditions on neither
+extinction nor rupture, and the tightness of the Jensen bound for discrete
+catastrophe survival. Questions about the arithmetic nature of values $A(p_0)$, or
+about elementarity of the map $p\mapsto A(p)$, are deferred to \ChA.

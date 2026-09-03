@@ -1,0 +1,63 @@
+% ===========================================================================
+%  main.tex --- standalone wrapper for Chapter M.
+%
+%  This file exists so that the chapter compiles on its own.  The chapter
+%  itself is chapter_M.tex, a thesis-ready fragment that opens with \chapter
+%  and uses no preamble of its own.  To place it in the thesis, merge
+%  ch_preamble.tex into the thesis preamble and \input{chapter_M.tex}.
+% ===========================================================================
+
+\documentclass[11pt]{report}
+\usepackage[margin=1in]{geometry}
+\input{ch_preamble}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={Mathematical introduction},
+  pdfauthor={Adam Aldridge}
+}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{4cm}
+{\LARGE\bfseries Mathematical introduction\par}
+\vspace{6pt}
+{\large Branching, quasi-stationarity, and absorption models\par}
+\vspace{2.5cm}
+{\large Adam Aldridge\par}
+\vspace{4pt}
+{University of Leeds\par}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+% Thesis order: the mathematical introduction is Chapter 2.
+\setcounter{chapter}{1}
+
+\input{chapter_M}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

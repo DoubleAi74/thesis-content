@@ -1,0 +1,43 @@
+\subsection{Computing \texorpdfstring{$A(p)$}{A(p)} in practice}
+\label{a:sec:practical}
+
+In the absence of an elementary formula, evaluation must combine exact numerical
+iteration with asymptotic approximation.  The two regimes identified in
+\cref{a:sec:Abounds} indicate where to divide the calculation.
+
+Across most of the interval, direct iteration is satisfactory.  The infinite
+product \cref{a:eq:prodFormula} converges quickly, each partial product bounds
+$A(p)$ from above, and a modest number of iterations gives many digits.  The
+difficulty is concentrated near $p=\tfrac12$.  As $A(p)\to0$, the quantity of
+interest $1/A$ diverges, so a fixed absolute error in $A$ becomes unbounded in the
+quasi-stationary mean.  More importantly, the process lifetime grows sharply near
+criticality and $S_n$ recedes ever more slowly.  Iteration must continue until the
+ratio has effectively stabilised, at a cost illustrated by \cref{a:tab:Avals}:
+about $10^2$ iterations at $p=0.2$, $10^3$ at $p=0.45$, and nearly
+$5\times10^5$ at $p=0.4999$.
+
+The near-critical region can instead be handled by the asymptotic
+\cref{a:eq:A-near-critical}, which is exact in the limit and inexpensive to
+evaluate:
+\begin{equation}
+\label{a:eq:Apractical}
+A(p) \approx
+\begin{cases}
+\displaystyle \frac12\prod_{k=1}^{N}\lrb{1-\frac{S_k}{2}}, & p<p_\ast,\quad N\gg1,\\[14pt]
+2-4p, & p\ge p_\ast,
+\end{cases}
+\end{equation}
+with the crossover $p_\ast$ chosen just below $\tfrac12$.
+\Cref{a:thm:A-near-critical} indicates where that crossover should lie.  The
+relative error of the asymptotic is about
+$\varepsilon\ln(1/\varepsilon)$, so at $p_\ast = 0.4999$
+($\varepsilon = 2\times10^{-4}$) the asymptotic is already accurate to about two
+parts in $10^3$, while the product still converges in a few hundred thousand
+iterations.  Any $p_\ast$ between $0.499$ and $0.4999$ gives better than one per
+cent accuracy throughout.  If continuity of the derivative is required, the two
+branches may be blended across a narrow window.
+
+This hybrid calculation produces the numerical values quoted in this chapter and
+in \cref{a:tab:Avals}; the corresponding conditional-mean plot appears in \ChM.
+
+\FloatBarrier

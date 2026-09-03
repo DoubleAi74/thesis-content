@@ -1,0 +1,213 @@
+
+========================================================================
+TEST A — Kernel self-consistency (inputs to Result 20.1)
+========================================================================
+[PASS] A.kernels[mu0_slow]
+       max|V'-g|/maxg=1.97e-05, |∫g-V∞|/V∞=5.49e-10, |∫Ihat-Tprod|/Tprod=8.69e-10, max|I'+δJ| rel=7.44e-05
+[PASS] A.kernels[mu_pos]
+       max|V'-g|/maxg=9.30e-06, |∫g-V∞|/V∞=2.05e-10, |∫Ihat-Tprod|/Tprod=1.83e-09, max|I'+δJ| rel=4.92e-05
+[PASS] A.kernels[fast_burst]
+       max|V'-g|/maxg=2.07e-04, |∫g-V∞|/V∞=8.68e-09, |∫Ihat-Tprod|/Tprod=9.48e-09, max|I'+δJ| rel=1.11e-04
+[PASS] A.kernels[high_death]
+       max|V'-g|/maxg=1.60e-04, |∫g-V∞|/V∞=3.17e-09, |∫Ihat-Tprod|/Tprod=1.46e-08, max|I'+δJ| rel=8.34e-09
+[PASS] A.kernels[L_eq_1]
+       max|V'-g|/maxg=2.16e-04, |∫g-V∞|/V∞=7.52e-09, |∫Ihat-Tprod|/Tprod=1.58e-08, max|I'+δJ| rel=4.08e-05
+
+========================================================================
+TEST B — γT=0 cohort: renewal reduces to single-cell formulas
+========================================================================
+[PASS] B.gamma0[mu0_slow,c=0.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=1.75e-14, max|V-I0 Vcum| rel=3.67e-07
+[PASS] B.gamma0[mu0_slow,c=0.25]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.02e-07
+[PASS] B.gamma0[mu0_slow,c=1.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.52e-06
+[PASS] B.gamma0[mu_pos,c=0.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.05e-15, max|V-I0 Vcum| rel=2.39e-07
+[PASS] B.gamma0[mu_pos,c=0.25]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=2.90e-07
+[PASS] B.gamma0[mu_pos,c=1.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.28e-06
+[PASS] B.gamma0[fast_burst,c=0.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=9.64e-15, max|V-I0 Vcum| rel=1.52e-06
+[PASS] B.gamma0[fast_burst,c=0.25]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.21e-07
+[PASS] B.gamma0[fast_burst,c=1.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=4.01e-06
+[PASS] B.gamma0[high_death,c=0.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=6.94e-15, max|V-I0 Vcum| rel=4.50e-07
+[PASS] B.gamma0[high_death,c=0.25]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=2.87e-07
+[PASS] B.gamma0[high_death,c=1.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.36e-06
+[PASS] B.gamma0[L_eq_1,c=0.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=5.84e-15, max|V-I0 Vcum| rel=1.18e-06
+[PASS] B.gamma0[L_eq_1,c=0.25]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.13e-07
+[PASS] B.gamma0[L_eq_1,c=1.0]
+       max|Icell-I0 Ihat|/I0=0.00e+00, max|V-conv|/scale=3.86e-06
+
+========================================================================
+TEST C — Residual of the V-equation on the numerical solution
+========================================================================
+[PASS] C.residual[super_mu0]
+       R0=1.760, max|V-eq residual|/scale=1.138e-04, max|Icell-def residual|/maxI=4.819e-18
+[PASS] C.residual[super_mu]
+       R0=2.098, max|V-eq residual|/scale=1.405e-04, max|Icell-def residual|/maxI=2.993e-18
+[PASS] C.residual[subcrit]
+       R0=0.275, max|V-eq residual|/scale=1.716e-04, max|Icell-def residual|/maxI=8.856e-17
+[PASS] C.residual[V0_seed]
+       R0=2.750, max|V-eq residual|/scale=3.254e-04, max|Icell-def residual|/maxI=0.000e+00
+[PASS] C.residual[high_death]
+       R0=2.632, max|V-eq residual|/scale=3.441e-04, max|Icell-def residual|/maxI=8.303e-19
+
+========================================================================
+TEST D — Exponential kernels reduce to classical BMVR exactly
+========================================================================
+[PASS] D.exp_kernel[p=2.0,d=0.5]
+       max|Vren-Vcls|/maxV=1.779e-05, max|Iren-Icls|/maxI=1.833e-05
+[PASS] D.exp_kernel[p=4.5,d=0.4]
+       max|Vren-Vcls|/maxV=4.703e-05, max|Iren-Icls|/maxI=4.754e-05
+[PASS] D.exp_kernel[p=1.0,d=1.0]
+       max|Vren-Vcls|/maxV=1.340e-05, max|Iren-Icls|/maxI=9.858e-06
+
+========================================================================
+TEST E — Growth rate matches characteristic equation
+========================================================================
+[PASS] E.growth[A]
+       R0=1.760, r_char=0.08775, r_fit=0.08775, rel_err=3.076e-07, peff(r*)=4.0260, class_eigs_resid=-5.55e-17
+[PASS] E.growth[B]
+       R0=2.098, r_char=0.09040, r_fit=0.09040, rel_err=2.424e-07, peff(r*)=4.0493, class_eigs_resid=-4.16e-17
+[PASS] E.growth[C]
+       R0=2.500, r_char=0.24446, r_fit=0.24446, rel_err=1.397e-06, peff(r*)=2.4143, class_eigs_resid=-1.11e-16
+[PASS] E.growth[E]
+       R0=2.632, r_char=0.17021, r_fit=0.17021, rel_err=6.531e-07, peff(r*)=0.7479, class_eigs_resid=0.00e+00
+[PASS] E.growth[F]
+       R0=2.750, r_char=0.15132, r_fit=0.15132, rel_err=4.745e-07, peff(r*)=3.6673, class_eigs_resid=-5.55e-17
+
+========================================================================
+TEST F — R0 threshold (growth vs decay)
+========================================================================
+[PASS] F.threshold[R0=0.5]
+       gammaT=0.01136, r_char=0.00000, r_fit=-0.08591, Vfinal/Vmid=3.217e-02
+[PASS] F.threshold[R0=0.8]
+       gammaT=0.01818, r_char=0.00000, r_fit=-0.03024, Vfinal/Vmid=2.983e-01
+[PASS] F.threshold[R0=0.95]
+       gammaT=0.02159, r_char=0.00000, r_fit=-0.00717, Vfinal/Vmid=7.507e-01
+[PASS] F.threshold[R0=1.05]
+       gammaT=0.02386, r_char=0.00694, r_fit=0.00694, Vfinal/Vmid=1.320e+00
+[PASS] F.threshold[R0=1.2]
+       gammaT=0.02727, r_char=0.02655, r_fit=0.02655, Vfinal/Vmid=2.892e+00
+[PASS] F.threshold[R0=1.5]
+       gammaT=0.03409, r_char=0.06131, r_fit=0.06131, Vfinal/Vmid=1.162e+01
+[PASS] F.threshold[R0=2.0]
+       gammaT=0.04545, r_char=0.10982, r_fit=0.10982, Vfinal/Vmid=8.087e+01
+[PASS] F.threshold[R0=3.0]
+       gammaT=0.06818, r_char=0.18533, r_fit=0.18533, Vfinal/Vmid=1.658e+03
+
+========================================================================
+TEST G — peff(r) classical matches renewal growth rate
+========================================================================
+[PASS] G.peff_match[A]
+       r*=0.08775, r_ren=0.08775, r_cls(peff)=0.08775, |r_cls-r_ren|/r_ren=3.076e-07, peff=4.0260, deff=0.3891
+[PASS] G.peff_match[B]
+       r*=0.09040, r_ren=0.09040, r_cls(peff)=0.09040, |r_cls-r_ren|/r_ren=2.424e-07, peff=4.0493, deff=0.3279
+[PASS] G.peff_match[C]
+       r*=0.24446, r_ren=0.24446, r_cls(peff)=0.24446, |r_cls-r_ren|/r_ren=1.397e-06, peff=2.4143, deff=0.8641
+[PASS] G.peff_match[E]
+       r*=0.17021, r_ren=0.17021, r_cls(peff)=0.17021, |r_cls-r_ren|/r_ren=6.531e-07, peff=0.7479, deff=0.7196
+
+========================================================================
+TEST H — Gillespie ensemble vs renewal (γT=0 cohort)
+========================================================================
+[PASS] H.gillespie_gamma0[mu0]
+       rel L2 Icell=8.938e-03, rel L2 V=1.809e-02 (n_reps=400, I0=20)
+[PASS] H.gillespie_gamma0[mu_pos]
+       rel L2 Icell=6.113e-03, rel L2 V=1.344e-02 (n_reps=500, I0=30)
+
+========================================================================
+TEST I — Initial free-virus seed (I0=0) consistency
+========================================================================
+[PASS] I.V0_seed_early
+       R0=2.750, max early |V - V0*exp(-c t)|/V0=9.609e-04, Icell[0]=0.00e+00, Icell[final]=61.167
+
+========================================================================
+TEST J — Mass / lifetime output check under γT=0, c=0
+========================================================================
+[PASS] J.lifetime_output[mu0_slow]
+       V(final)=10.999999, V∞=11.000000, rel_err=5.492e-08
+[PASS] J.lifetime_output[mu_pos]
+       V(final)=13.985699, V∞=13.985700, rel_err=2.048e-08
+[PASS] J.lifetime_output[fast_burst]
+       V(final)=2.999997, V∞=3.000000, rel_err=8.681e-07
+[PASS] J.lifetime_output[high_death]
+       V(final)=1.316227, V∞=1.316228, rel_err=3.166e-07
+[PASS] J.lifetime_output[L_eq_1]
+       V(final)=1.999998, V∞=2.000000, rel_err=7.523e-07
+
+========================================================================
+TEST K — Monotonicity / comparison sanity vs classical matched
+========================================================================
+[PASS] K.well_posed_nonneg
+       R0=1.760, max V_ren=1098.497, max V_cls=2696.603, final V_ren/V_cls=0.407
+
+========================================================================
+SUMMARY: 54/54 checks passed
+========================================================================
+  PASS  A.kernels[mu0_slow]
+  PASS  A.kernels[mu_pos]
+  PASS  A.kernels[fast_burst]
+  PASS  A.kernels[high_death]
+  PASS  A.kernels[L_eq_1]
+  PASS  B.gamma0[mu0_slow,c=0.0]
+  PASS  B.gamma0[mu0_slow,c=0.25]
+  PASS  B.gamma0[mu0_slow,c=1.0]
+  PASS  B.gamma0[mu_pos,c=0.0]
+  PASS  B.gamma0[mu_pos,c=0.25]
+  PASS  B.gamma0[mu_pos,c=1.0]
+  PASS  B.gamma0[fast_burst,c=0.0]
+  PASS  B.gamma0[fast_burst,c=0.25]
+  PASS  B.gamma0[fast_burst,c=1.0]
+  PASS  B.gamma0[high_death,c=0.0]
+  PASS  B.gamma0[high_death,c=0.25]
+  PASS  B.gamma0[high_death,c=1.0]
+  PASS  B.gamma0[L_eq_1,c=0.0]
+  PASS  B.gamma0[L_eq_1,c=0.25]
+  PASS  B.gamma0[L_eq_1,c=1.0]
+  PASS  C.residual[super_mu0]
+  PASS  C.residual[super_mu]
+  PASS  C.residual[subcrit]
+  PASS  C.residual[V0_seed]
+  PASS  C.residual[high_death]
+  PASS  D.exp_kernel[p=2.0,d=0.5]
+  PASS  D.exp_kernel[p=4.5,d=0.4]
+  PASS  D.exp_kernel[p=1.0,d=1.0]
+  PASS  E.growth[A]
+  PASS  E.growth[B]
+  PASS  E.growth[C]
+  PASS  E.growth[E]
+  PASS  E.growth[F]
+  PASS  F.threshold[R0=0.5]
+  PASS  F.threshold[R0=0.8]
+  PASS  F.threshold[R0=0.95]
+  PASS  F.threshold[R0=1.05]
+  PASS  F.threshold[R0=1.2]
+  PASS  F.threshold[R0=1.5]
+  PASS  F.threshold[R0=2.0]
+  PASS  F.threshold[R0=3.0]
+  PASS  G.peff_match[A]
+  PASS  G.peff_match[B]
+  PASS  G.peff_match[C]
+  PASS  G.peff_match[E]
+  PASS  H.gillespie_gamma0[mu0]
+  PASS  H.gillespie_gamma0[mu_pos]
+  PASS  I.V0_seed_early
+  PASS  J.lifetime_output[mu0_slow]
+  PASS  J.lifetime_output[mu_pos]
+  PASS  J.lifetime_output[fast_burst]
+  PASS  J.lifetime_output[high_death]
+  PASS  J.lifetime_output[L_eq_1]
+  PASS  K.well_posed_nonneg
+
+Wall time: 16.5s
+Figures written to: /Users/adamaldridge/Desktop/Thesis content 🎓 /4 BDC additional and BMVR/new_notes3/verify_figures

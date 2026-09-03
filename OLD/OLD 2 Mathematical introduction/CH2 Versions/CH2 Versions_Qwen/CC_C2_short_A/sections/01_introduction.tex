@@ -1,0 +1,55 @@
+\section{Introduction}
+\label{sec:intro}
+
+The models used throughout this thesis describe populations that are small enough
+for chance to matter. A handful of bacteria deposited in a mammalian host, a few
+viral particles inside a single cell: in each case the population is far from the
+regime where deterministic rate equations are informative, and the questions that
+matter --- will the population establish itself at all? if it survives, how large
+will it be? --- are questions about the fluctuations rather than about the mean.
+This chapter assembles the mathematical apparatus needed to answer them.
+
+Two threads run through what follows, and it is worth saying at the outset how they
+relate.
+
+The first concerns \emph{conditioning on survival}. A subcritical branching process
+dies out with probability one, so its unconditional mean decays geometrically and
+tells us very little. But if we look only at those realisations that happen still to
+be alive at generation $n$, a quite different picture emerges: the conditional
+population settles down to a fixed distribution, the \emph{quasi-stationary}
+distribution, whose mean is a constant. For the binary Galton--Watson process with
+replication probability $p<\tfrac12$ that constant is $1/A(p)$, where
+\begin{equation*}
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n},
+\end{equation*}
+$S_n$ being the probability of survival to generation $n$. Much of this chapter is
+concerned with $A(p)$: what it is, how to compute it, and why --- despite a good deal
+of effort --- no elementary formula for it has been found.
+
+The second thread concerns \emph{the near-critical regime}. As $p$ approaches
+$\tfrac12$ from below the process takes ever longer to die, the quasi-stationary mean
+$1/A(p)$ diverges, and every numerical scheme that relies on iterating to
+stationarity becomes impractical. Just above $\tfrac12$ the initial count of
+replicative individuals comes to weigh heavily on the chance of the process
+surviving at all. The behaviour on either side of $p=\tfrac12$ is what makes small
+inocula interesting, and it is also what makes them awkward to compute with.
+
+\Cref{sec:gw} sets out the Galton--Watson process and establishes the two facts on
+which everything else rests: that extinction is certain at and below criticality,
+and that at criticality the expected lifetime is nevertheless infinite.
+\Cref{sec:qsd} derives the limiting conditional mean and variance and so introduces
+$A(p)$. \Cref{sec:small} looks at what changes when the process starts from a cohort
+of $k$ individuals rather than one, and works out the corresponding constant for the
+continuous-time birth--death process, where a closed form \emph{is} available.
+\Cref{sec:Ap} is devoted to $A(p)$ itself. It gives an infinite-product
+representation, an exact series with two-sided bounds that pin the constant between
+the continuous-time answer and twice it, the near-critical asymptotic
+$A(p)\sim2(1-2p)$, and an account of why the exact function resists closed-form
+description --- a question that turns out to be one about the Koenigs linearisation
+of the logistic map. \Cref{sec:moc} changes tack and develops the machinery of
+generating-function partial differential equations and the method of characteristics
+for the absorption models used later in the thesis.
+
+Throughout, results that are standard are presented as such, and the places where
+the argument is heuristic or the numerics are doing the real work are marked
+explicitly. Where a claim can be checked numerically, it has been.

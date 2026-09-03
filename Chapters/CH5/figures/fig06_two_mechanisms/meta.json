@@ -1,0 +1,15 @@
+{
+  "figure": "fig06",
+  "chapter_number": "5.6",
+  "label": "dist:fig:two-mechanisms",
+  "slug": "two_mechanisms",
+  "included_from": "sections/06_burst_size.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig06.pdf",
+    "fig06.png"
+  ],
+  "simulation": false
+}

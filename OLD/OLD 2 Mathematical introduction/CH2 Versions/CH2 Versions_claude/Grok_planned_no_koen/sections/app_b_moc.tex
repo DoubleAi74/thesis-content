@@ -1,0 +1,104 @@
+\section{Appendix B-MoC: characteristic calculations}
+\label{app:b-moc}
+
+Heavy derivations supporting Section~\ref{sec:moc}: integral identities, coefficient extraction, and special cases. Statement-level results remain in the main ladder.
+
+\subsection*{Source appendix material}
+
+\subsection{Deriving the integral result (\ref{hypIden})}\label{appxa}
+To demonstrate the result
+$$\int\frac{\ee^{h\tau}}{p+q\ee^{k\tau}}\dd\tau= \frac{\ee^{h\tau}}{ph} {}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1; -\frac{q}{p}\ee^{k\tau}} + \text{const},$$
+we will use the hypergeometric integral identity
+
+\begin{equation}
+\label{idenHyp}
+{}_2F_1(a,b;c;z) = \frac{\Gamma(c)}{\Gamma(b)\Gamma(c-b)}\int^1_0 u^{b-1}(1-u)^{c-b-1}(1-zu)^{-a} \dd u
+\end{equation}
+($\Gamma(x)$ being the standard gamma function).
+
+Taking the integral,
+$$I(\tau) = \int\frac{\ee^{h\tau}}{p+q\ee^{k\tau}}\dd\tau,$$
+begin by applying the substitution $v = \ee^{k\tau}$, with $\dd\tau = k^{-1}v^{-1} \dd v$.
+\begin{align*}
+I(v(\tau)) &= \frac{1}{k}\int\frac{v^{\frac{h}{k}}}{p+qv}v^{-1}\dd v\\
+\notag\\
+&= \frac{1}{pk}\int\frac{v^{\frac{h}{k}-1}}{1+\frac{q}{p}v}\dd v.
+\end{align*}
+Re-writing this as a definite integral from 0 to $v$ using a dummy variable, $s$,
+$$I(v(\tau)) = \frac{1}{pk}\int^v_0\frac{s^{\frac{h}{k}-1}}{1+\frac{q}{p}s}\dd s,$$
+then changing variables again with $s = vu$ (as $v$ is constant with regards to the definite integral, $\dd s = v\dd u$),
+\begin{align}
+I(v(\tau)) &= \frac{1}{pk}\int^1_0\frac{(vu)^{\frac{h}{k}-1}}{1+\frac{q}{p}vu} v \dd u\notag\\
+\notag\\
+&= \frac{v^{\frac{h}{k}}}{pk}\int^1_0\frac{u^{\frac{h}{k}-1}}{1+\frac{q}{p}vu}  \dd u.\label{backat}
+\end{align}
+
+\noindent
+This integrand lines up with that of the identity, (\ref{idenHyp});
+\begin{equation*}
+\int^1_0u^{\frac{h}{k}-1}(1-u)^0 \left(1-\left(-\frac{q}{p}v\right) u\right)^{-1} \dd u= \int^1_0 u^{b-1}(1-u)^{c-b-1}(1-zu)^{-a} \dd u.
+\end{equation*}
+
+\noindent
+Notice, $b = \frac{h}{k}$, $c = \frac{h}{k}+1$,  $a = 1$,  and $z = -\frac{q}{p}v$. Hence,
+\begin{align*}
+\int^1_0\frac{u^{\frac{h}{k}-1}}{1+\frac{q}{p}vu}  \dd u &= \frac{\Gamma\left(\frac{h}{k}\right) \Gamma\lrb{1}}{\Gamma\lrb{\frac{h}{k} +1}} {}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1; -\frac{q}{p}v}\\
+\notag\\
+&= \frac{k}{h} {}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1; -\frac{q}{p}v},
+\end{align*}
+and, with (\ref{backat}),
+\begin{equation*}
+I(v(\tau)) = \frac{v^{\frac{h}{k}}}{ph}{}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1; -\frac{q}{p}v}.
+\end{equation*}
+Finally,
+$$I(\tau) = \frac{\ee^{h\tau}}{ph}{}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1; -\frac{q}{p}\ee^{k\tau}}\hspace{17pt} (+ \text{const}).$$
+
+
+\subsection{Extracting coefficients from the PGF -- a special case}
+
+For a probability generating function defined not in terms of a series sum --- for example,
+\begin{equation}
+\label{examplePgf}
+G(t;x,y) =  \lrb{\lrb{1-\ee^{-\alpha t}}x + \ee^{-\alpha t}y}^n
+\end{equation}
+--- it is possible to make a conversion to its equivalent of the form
+\begin{equation}
+\label{series1}
+G(t;x,y) = \sum^{\infty}_{i=0}\sum^{\infty}_{j=0} p_{i,j}(t)x^iy^j,
+\end{equation}
+thus extracting the time-dependent state probabilities, $p_{i,j}(t)$. All that is required is that the formula $G(t;x,y)$ can be partially differentiated continuously in $x$ and $y$.\par
+The reason is a bivariate generalisation of the Maclaurin expansion,
+$$f(x,y)\approx Q(x,y) = \sum^{\infty}_{k=0} \lrb{\frac{1}{k!} \sum^{\infty}_{r=0}{k \choose r} \partial_x^r \partial_y^{k-r}f\bigg |_{(0,0)} x^r y^{k-r} }. $$
+The coefficients of (\ref{series1}) can hence be generated via
+\begin{equation}
+\label{stateProb}
+p_{i,j}(t) = \lrb{i!j!}^{-1} \partial_x^i \partial_y^{j}f\big |_{(0,0)}.
+\end{equation}
+
+\subsection*{A special case}
+
+For a generating function of multinomial type,
+\[
+G(t;x,y) = \bigl(c(t) + f(t)\, x + g(t)\, y\bigr)^n,
+\]
+the multinomial theorem gives, whenever $i+j\leq n$,
+\begin{equation}
+\label{stateProbSpec2}
+p_{i,j}(t)
+=
+\binom{n}{i,j,n-i-j}
+f(t)^i\, g(t)^j\, c(t)^{n-i-j},
+\end{equation}
+and $p_{i,j}(t)=0$ otherwise. (In particular the incorrect product rule $\partial_x^a\partial_y^b G=(nf)^a(ng)^b G$ must not be used.)
+
+\subsection*{Applied to PGFs from absorption only and absorption-death}
+For the absorption-only example \eqref{examplePgf}, one has $c\equiv 0$, $f=1-\ee^{-\alpha t}$, $g=\ee^{-\alpha t}$, supported on $i+j=n$:
+\[
+p_{i,j}(t)
+=
+\binom{n}{i}
+(1-\ee^{-\alpha t})^i
+(\ee^{-\alpha t})^j
+\qquad (i+j=n).
+\]
+The absorption--death generating function is again of multinomial type, with coefficients read from the closed form of $G$; its state probabilities are the corresponding multinomial weights, not the formula with factors $n^{i+j}/(i!j!)$ that appeared in an earlier draft.

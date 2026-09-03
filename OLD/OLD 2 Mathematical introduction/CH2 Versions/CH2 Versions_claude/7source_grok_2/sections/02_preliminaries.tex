@@ -1,0 +1,142 @@
+\section{Mathematical preliminaries}
+\label{sec:prelim}
+
+This section fixes notation and records four instruments used repeatedly below:
+exponential waiting times and their races; continuous-time Markov chains; probability
+generating functions; and first-step analysis. The treatment is deliberately short.
+Full catalogues of discrete laws, Laplace--Stieltjes transforms, and simulation
+algorithms are omitted; what is kept is the minimum needed for branching, quasi-stationarity,
+and the absorption models of \cref{sec:moc}.
+
+\subsection{Exponential clocks and competing risks}
+\label{sec:exp-race}
+
+In continuous time, events are organised by exponential clocks. A random variable
+$X\sim\mathrm{Exp}(\lambda)$ with rate $\lambda>0$ has density
+$f_X(x)=\lambda\ee^{-\lambda x}$ for $x\ge 0$, mean $1/\lambda$, and variance
+$1/\lambda^2$. Among continuous distributions in elementary use it is memoryless: for
+all $t_1,t_2>0$,
+\begin{equation*}
+\pr{X\ge t_1+t_2\mid X\ge t_1}=\pr{X\ge t_2}.
+\end{equation*}
+The residual waiting time does not depend on how long one has already waited. That
+property is precisely what makes a rate-driven jump process Markovian.
+
+When several independent exponential clocks run at once, two facts organise both
+analysis and simulation. Let $X\sim\mathrm{Exp}(\lambda)$ and $Y\sim\mathrm{Exp}(\mu)$ be
+independent. Then the first event time is again exponential,
+\begin{equation}
+\label{eq:minXY}
+Z=\min\{X,Y\}\sim\mathrm{Exp}(\lambda+\mu),
+\end{equation}
+and the identity of the winner is a weighted choice independent of $Z$:
+\begin{equation}
+\label{eq:compXY}
+\pr{X<Y}=\frac{\lambda}{\lambda+\mu},\qquad
+\pr{Y<X}=\frac{\mu}{\lambda+\mu}.
+\end{equation}
+For $n$ independent clocks with rates $\lambda_1,\ldots,\lambda_n$ the same pattern
+extends: the minimum is $\mathrm{Exp}(\sum_i\lambda_i)$, and clock $i$ wins with
+probability $\lambda_i/\sum_j\lambda_j$. In the models of later chapters, birth, death,
+absorption, and catastrophe are competing exponential channels of this kind.
+
+\subsection{Continuous-time Markov chains}
+\label{sec:ctmc}
+
+A continuous-time Markov chain (CTMC) on a discrete state space $\Omega$ is a process
+$(X(t))_{t\ge 0}$ for which the future depends on the past only through the present
+state. Time-homogeneous transition probabilities are written
+\begin{equation*}
+p_{ij}(t)=\pr{X(t)=j\mid X(0)=i},\qquad i,j\in\Omega,
+\end{equation*}
+and models are specified by rates rather than by closed forms for $P(t)=(p_{ij}(t))$.
+Differentiating short-time transitions produces the infinitesimal generator $Q=(q_{ij})$:
+\begin{equation}
+\label{eq:generator}
+q_{ij}=\lim_{\Delta t\to 0^+}\frac{p_{ij}(\Delta t)}{\Delta t}\ (i\neq j),\qquad
+q_{ii}=-\sum_{j\neq i}q_{ij},
+\end{equation}
+so that $p_{ij}(\Delta t)=\delta_{ij}+q_{ij}\Delta t+o(\Delta t)$. Off-diagonal entries
+are non-negative; rows of $Q$ sum to zero.
+
+Pathwise construction follows the exponential race of \cref{sec:exp-race}. While the
+chain sits in a non-absorbing state $i$, it waits an exponential time of rate
+$\Lambda_i=-q_{ii}$, then jumps to $j\neq i$ with probability $q_{ij}/\Lambda_i$. A state
+$i$ is absorbing if $q_{ii}=0$. In linear birth--death models, population zero is
+absorbing and represents extinction; in absorption models of \cref{sec:moc}, rupture or
+uptake can introduce further absorbing compartments.
+
+The forward Kolmogorov (master) equations for the occupation probabilities
+$p_j(t)=\pr{X(t)=j}$ are the componentwise form of $\mathrm{d}P/\mathrm{d}t=QP$ (with
+$P(0)=I$ in matrix notation). Probability flows into $j$ along incoming rates and out
+along $\Lambda_j$. For infinite state spaces the master equations are rarely solved
+state by state; generating functions compress them into a single partial differential
+equation.
+
+\subsection{Linear birth--death rates}
+\label{sec:bd-linear-prelim}
+
+The linear birth--death process on $\{0,1,2,\ldots\}$ is the standard population model
+before catastrophe rates are added. From state $i\ge 1$, a birth moves to $i+1$ at rate
+$i\lambda$ and a death moves to $i-1$ at rate $i\mu$, with $0$ absorbing. Each individual
+reproduces and dies independently; the per-capita growth rate $\lambda-\mu$ decides
+whether means explode or decay. Ultimate extinction from a single individual is certain
+if $\lambda\le\mu$, and equals $\mu/\lambda$ if $\lambda>\mu$. Finite-time extinction
+probabilities and the continuous-time quasi-stationary mean reappear in
+\cref{sec:cts}. Birth--death--catastrophe dynamics --- an additional load-dependent
+killing event that empties the population --- are defined briefly in \cref{sec:bdc} and
+developed fully in later chapters.
+
+\subsection{Probability generating functions}
+\label{sec:pgf-prelim}
+
+When counts are non-negative integers, the probability generating function packages an
+entire distribution into a single analytic object. For a discrete random variable $X$
+on $\{0,1,2,\ldots\}$,
+\begin{equation}
+\label{eq:pgf-def}
+G_X(z)=\ex{z^X}=\sum_{k\ge 0}\pr{X=k}\,z^k,\qquad |z|\le 1.
+\end{equation}
+The operations used throughout are mechanical but decisive:
+\begin{align*}
+\pr{X=k}&=\frac1{k!}\,G_X^{(k)}(0),\\
+G_X(1)&=1,\\
+\ex{X}&=G_X'(1),\\
+\mathrm{Var}(X)&=G_X''(1)+G_X'(1)-\bigl(G_X'(1)\bigr)^2.
+\end{align*}
+In particular $G_X(0)=\pr{X=0}$. When $X$ is a population size, that value is an
+extinction probability --- the quantity small-population models are built to study.
+
+For a non-negative integer-valued CTMC $X(t)$ with $X(0)=k$, the generating function
+becomes a function of two variables,
+\begin{equation}
+\label{eq:pgf-process}
+G_k(z,t)=\ex{z^{X(t)}\mid X(0)=k}=\sum_{i\ge 0}p_{ki}(t)\,z^i.
+\end{equation}
+Multiplying the Kolmogorov equations by $z^i$ and summing replaces an infinite system of
+ordinary differential equations by a first-order partial differential equation for $G$.
+That compression is the analytical centre of the absorption models in \cref{sec:moc}, and
+of the birth--death--catastrophe analyses of later chapters.
+
+When several types are tracked at once, the multivariate extension is
+\begin{equation}
+\label{eq:pgf-multi}
+\phi_{\mathbf{X}}(z_1,\ldots,z_n)
+=\sum_{k_1,\ldots,k_n\ge 0}
+p(k_1,\ldots,k_n)\, z_1^{k_1}\cdots z_n^{k_n},
+\end{equation}
+with each $z_i\in[0,1]$. Multi-type generating functions are prepared ground for
+two-type catastrophe models; they are not developed fully here.
+
+\subsection{First-step analysis}
+\label{sec:first-step}
+
+When the question is not the full time course but a hitting probability or mean time,
+first-step analysis conditions on the first exit from the current state and solves a
+linear system. The same gesture appears as conditioning on which exponential clock won
+the race, and as the Galton--Watson extinction fixed-point equation $s=\phi(s)$ of
+\cref{sec:gw}: one step of randomness, then a self-consistent equation for the quantity
+of interest.
+
+With these instruments in place we turn to the discrete-generation branching process
+that carries the first half of the chapter.

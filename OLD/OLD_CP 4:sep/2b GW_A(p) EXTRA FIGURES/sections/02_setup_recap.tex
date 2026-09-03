@@ -1,0 +1,79 @@
+\section{Standing setup}
+\label{a:sec:setup}
+
+This section fixes what is carried over from \ChM.
+
+Let $Z_n$ be the binary Galton--Watson process started from a single progenitor,
+$Z_0=1$, in which each individual independently divides into two with probability
+$p$ and dies with probability $1-p$ at each generational increment. Its offspring
+generating function is $\phi(z) = pz^2+(1-p)$, the mean population is
+$\ex{Z_n} = (2p)^n$, and the survival probability $S_n = \pr{Z_n>0}$ satisfies
+\begin{equation}
+\label{a:eq:SnIter}
+S_{n+1} = 2pS_n - pS_n^2,\qquad S_0 = 1 .
+\end{equation}
+Throughout this chapter $p$ is confined to the subcritical range
+\begin{equation}
+\label{a:eq:range}
+0\le p<\tfrac12,
+\end{equation}
+where extinction is certain and $S_n\downarrow0$. Two derived symbols are used
+constantly:
+\begin{equation}
+\label{a:eq:epsr}
+\varepsilon = 1-2p\in(0,1] \quad\text{(the distance from criticality)},
+\qquad
+r = 2p\in[0,1) \quad\text{(the logistic multiplier)} .
+\end{equation}
+
+Because the quadratic term in \cref{a:eq:SnIter} becomes negligible once $S_n$ is
+small, the decay is asymptotically geometric with ratio $2p$, and the constant
+$A(p)$ of \cref{a:eq:Apdef} is the amplitude of that decay:
+\begin{equation}
+\label{a:eq:lateS}
+S_n\sim A(p)\,(2p)^n\qquad(n\to\infty) .
+\end{equation}
+The relation is an asymptotic equivalence, not an identity: $S_n$ itself tends to
+zero, and what converges is the ratio $S_n/(2p)^n$. That this ratio converges to
+something finite and strictly positive is not assumed here; it is proved in
+\cref{a:sec:product}.
+
+Splitting
+$\ex{Z_n}$ over the events $\{Z_n=0\}$ and $\{Z_n>0\}$, the first contributing
+nothing, gives $\ex{Z_n\mid Z_n>0} = (2p)^n/S_n$ and hence
+\begin{equation}
+\label{a:eq:qsmean}
+\ex{Z_n\mid Z_n>0}\;\longrightarrow\;\frac{1}{A(p)},
+\end{equation}
+the \emph{quasi-stationary mean}; and the corresponding second-moment calculation
+gives a limiting conditional variance
+\begin{equation}
+\label{a:eq:condvar}
+\var{Z_n\mid Z_n>0}\;\longrightarrow\;
+\frac{1}{A(p)}\lrb{1+\frac{1}{1-2p}} - \frac{1}{A(p)^2} ,
+\end{equation}
+again a function of $p$ and $A(p)$ alone. The derivations of
+\cref{a:eq:qsmean,a:eq:condvar}, together with the existence of the Yaglom limit
+they describe, are given in \ChM{} and are not repeated.
+
+One comparison object is also inherited. The continuous-time linear birth--death
+process with per-capita birth rate $\lambda$ and death rate $\mu>\lambda$ has a
+limiting conditional mean $\mu/(\mu-\lambda)$, and matching the parametrisations
+through the competing-clocks identity $p=\lambda/(\lambda+\mu)$ --- proved in
+\ChM{} and used here by citation --- turns this into
+\begin{equation}
+\label{a:eq:Acts}
+\Ac(p) = \frac{1-2p}{1-p} = \frac{2\varepsilon}{1+\varepsilon},
+\qquad
+\frac{1}{\Ac(p)} = \frac{1-p}{1-2p} .
+\end{equation}
+Unlike $A(p)$, the continuous-time constant $\Ac(p)$ is elementary.
+
+Finally, an endpoint convention. At $p=0$ the process dies at the first step and
+\cref{a:eq:SnIter} degenerates; we set
+\begin{equation}
+\label{a:eq:endpoint}
+A(0) := \lim_{p\downarrow0}A(p) = \tfrac12,
+\end{equation}
+a value confirmed independently by the product of \cref{a:sec:product} and by the
+parity bound of \cref{a:prop:parity}.

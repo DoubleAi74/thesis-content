@@ -1,0 +1,2447 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[most]{empheq}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[hypcap=false]{caption}
+\usepackage{hyperref}
+\usepackage{titlesec}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!60!black,
+  pdftitle={Core publishable work: BDC and burst-aware BMVR},
+  pdfauthor={Adam Aldridge}
+}
+
+% ---------------------------------------------------------------------------
+% Macros
+% ---------------------------------------------------------------------------
+\newcommand{\dd}{{\rm d}}
+\newcommand{\ee}{{\rm e}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}[1]{\mathbb{P}\!\left\{#1\right\}}
+\newcommand{\xt}{X_t}
+\newcommand{\wt}{W_t}
+\newcommand{\Ihat}{\widehat{I}}
+\newcommand{\Kb}{\mathcal{K}}
+\newcommand{\Icell}{\mathcal{I}}
+\newcommand{\Vfree}{\mathcal{V}}
+\newcommand{\Lap}[1]{\widetilde{#1}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\Fhyp}{{}_2F_1}
+\newcommand{\Aa}{A}
+\newcommand{\Bb}{B}
+\newcommand{\highlight}[1]{\colorbox{blue!8}{\parbox{0.96\linewidth}{#1}}}
+
+\theoremstyle{plain}
+\newtheorem{result}{Result}[section]
+\theoremstyle{definition}
+\newtheorem{definition}[result]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[result]{Remark}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=0.25em}
+\setlist[itemize]{leftmargin=1.6em,itemsep=0.2em}
+
+\title{\textbf{Core Publishable Work}\\[0.35em]
+\large From the single-cell birth--death--catastrophe process\\
+to a burst-aware Basic Model of Viral Replication}
+\author{Summary drawn from Chapters~3--4 and the BMVR extension notes}
+\date{\today}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+\begin{abstract}
+\noindent
+This document is a clean, self-contained summary of the results that are ready
+(or nearly ready) for publication. It has two layers.
+
+\begin{enumerate}[leftmargin=1.4em]
+\item \textbf{Single-cell BDC theory.} Closed forms for survival, moments,
+burst time, burst size, and the quasi-stationary distribution --- with several
+simplifications, one major correction, and one striking identity that the thesis
+chapters contain the ingredients for but never state.
+\item \textbf{Population (BMVR) extension.} A renewal formulation that embeds
+those single-cell kernels into a within-host model, with exact effective
+parameters, an invariant basic reproduction number, and a sharp criterion for when
+bursting beats constant budding at matched~$R_0$ (the ``flooding advantage'').
+\end{enumerate}
+Everything stated as a Result has been checked algebraically and numerically.
+Open technical tasks and thesis errata are deliberately omitted here.
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+% ===========================================================================
+\section{The story in one page}
+% ===========================================================================
+
+Many within-host models treat infected cells as black boxes that release virions
+at a constant rate~$p$ (the Basic Model of Viral Replication, BMVR). Real
+lytic pathogens --- \textit{Yersinia pestis}, \textit{Francisella tularensis},
+lytic phage --- do something different: they grow inside a cell and dump their
+load in a single burst. The question is whether that strategy can be modelled
+exactly, and what it buys the pathogen early on, when stochastic extinction is
+still likely.
+
+The route taken here is:
+\begin{enumerate}
+\item model one infected cell as a classical \textbf{birth--death--catastrophe
+(BDC)} process (birth rate~$\beta$, death~$\mu$, load-proportional burst
+rate~$\delta$);
+\item derive closed forms for everything that cell does --- survival, load,
+release, burst timing and size;
+\item feed those formulas into a \textbf{renewal (age-structured) BMVR}, so the
+population model is no longer phenomenological but is forced by the
+intracellular process;
+\item read off what changes: effective release rate, $R_0$, growth rate, and
+especially the probability that the infection dies out in the first generation.
+\end{enumerate}
+
+The headline biological result is simple to state:
+\begin{center}
+\fbox{\parbox{0.9\linewidth}{\centering
+At fixed total output per cell, bursting lowers extinction probability relative
+to constant budding \emph{if and only if}
+\[
+\frac{1}{\delta}\;<\;\frac{1}{\beta}+\frac{1}{\mu}.
+\]
+When $\mu=0$, bursting always wins.}}
+\end{center}
+
+Everything else in this document either supports that claim, or shows how the
+same single-cell formulas yield effective BMVR parameters and testable
+single-cell predictions.
+
+% ===========================================================================
+\section{Notation (used consistently throughout)}
+% ===========================================================================
+
+{\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}llp{0.42\textwidth}@{}}
+\toprule
+Symbol & Meaning & Notes \\
+\midrule
+$\beta,\mu,\delta$ & birth, death, catastrophe rates & per capita, intracellular \\
+$\xt$ & intracellular particle count & CTMC \\
+$R$ & absorbing rupture state & \\
+$\wt$ & released count from one cell & $0$ until burst \\
+$\tau$ & burst time & may be $\infty$ \\
+$\Kb$ & burst size (random) & $=\xt$ at burst \\
+$I(t)$ & no-burst probability & $\to b$ as $t\to\infty$ \\
+$D(t)$ & cleared, no burst by $t$ & $=p_0(t)$ \\
+$\Ihat(t)$ & still productively infected & $=I-D$ \\
+$J(t),K(t)$ & $\E[\xt]$, $\E[\xt^2]$ & mean load moments \\
+$V(t)$ & $\E[\wt]$ & cumulative mean release \\
+$a,b$ & characteristic roots & $b<1<a$ \\
+$\Aa,\Bb$ & $a-1$, $1-b$ & simplify almost everything \\
+$\theta$ & $\beta(a-b)$ & growth exponent \\
+$T$ & target-cell count (held fixed) & BMVR \\
+$\gamma$ & infection rate & BMVR (not $\beta$) \\
+$\Icell,\Vfree$ & infected cells, free virions & BMVR counts \\
+$c$ & virion clearance & BMVR \\
+\bottomrule
+\end{tabular}
+}
+
+% ===========================================================================
+\section{The single-cell process}
+% ===========================================================================
+
+\subsection{Definition}
+
+Starting from $\xt=1$ (one founder particle), the process jumps
+\[
+n \;\to\; n+1 \quad\text{at rate }\beta n,\qquad
+n \;\to\; n-1 \quad\text{at rate }\mu n,\qquad
+n \;\to\; R \quad\text{at rate }\delta n.
+\]
+On the jump to~$R$ the cell bursts: $\wt$ is set to the pre-burst load and stays
+there. The process is classical (Brockwell--Gani--Resnick; Karlin--Tavar\'e);
+what matters for applications is the family of closed forms below.
+
+\subsection{Root algebra}
+
+\begin{equation}
+\eta=\frac{\beta+\mu+\delta}{2\beta},\qquad
+a=\eta+\sqrt{\eta^2-\tfrac{\mu}{\beta}},\qquad
+b=\eta-\sqrt{\eta^2-\tfrac{\mu}{\beta}}.
+\end{equation}
+Write $\Aa:=a-1>0$, $\Bb:=1-b>0$, $\theta:=\beta(a-b)$. The identities that do
+most of the work are
+\begin{equation}
+\label{eq:AB}
+ab=\frac{\mu}{\beta},\qquad
+\Aa\Bb=\frac{\delta}{\beta},\qquad
+\Aa+\Bb=a-b.
+\end{equation}
+In particular $b<1<a$ always, and $\beta(1-a)(1-b)=-\delta$.
+
+\subsection{Three fixation functions}
+
+There are three natural absorbing-behaviour probabilities, not two:
+\begin{align}
+I(t)&=\Prob{\text{no burst by }t},\\
+D(t)&=\Prob{\text{internal extinction by }t,\ \text{no burst}},\\
+\Ihat(t)&=\Prob{\xt\notin\{0,R\}}=I(t)-D(t).
+\end{align}
+Both $I$ and $D$ solve the Riccati equation
+\[
+f'=\beta(f-a)(f-b)=\mu-(\beta+\mu+\delta)f+\beta f^2,
+\]
+with $I(0)=1$ and $D(0)=0$. Writing $w:=\ee^{\theta t}\ge 1$:
+\begin{result}[Closed forms for $I$, $D$, $\Ihat$]
+\begin{equation}
+I(t)=\frac{a\Bb+b\Aa w}{\Bb+\Aa w},\qquad
+D(t)=\frac{ab\,(w-1)}{aw-b},\qquad
+\Ihat(t)=\frac{(a-b)^2\,w}{(\Bb+\Aa w)(aw-b)}.
+\end{equation}
+Limits: $I(\infty)=D(\infty)=b$, $\Ihat(\infty)=0$, $\Ihat(0)=1$.
+\end{result}
+
+\begin{remark}[Correction of thesis formula]
+The formula $\Ihat(t)=\hat\eta\big/\bigl(1-(1-\hat\eta)\ee^{\hat\eta\beta t}\bigr)$
+used in Chapter~3 is wrong whenever $\mu>0$. It comes from treating $\Ihat$ as if
+it obeyed the same autonomous Riccati as~$I$. The correct branching term on a
+birth is $I^2-D^2$, not $\Ihat^2$. The error is invisible when $\mu=0$ (then
+$D\equiv 0$). For $X_0=k$ founders one has $\Ihat_k=I^k-D^k$, not $\Ihat^{\,k}$.
+\end{remark}
+
+\subsection{Moments and mean release}
+
+\begin{result}[First and second moments; mean release]
+\begin{align}
+J(t)&=\E[\xt]=\frac{(a-b)^2\,w}{(\Bb+\Aa w)^2}
+=-\frac{\beta}{\delta}(I-a)(I-b),\\[0.3em]
+K(t)&=\E[\xt^2]=\Bigl[1+\tfrac{2\beta}{\delta}(1-I)\Bigr]J,\\[0.3em]
+V(t)&=\E[\wt]=(1-I)\Bigl[1+\tfrac{\beta}{\delta}(1-I)\Bigr].
+\end{align}
+\end{result}
+Two useful simplifications: $J$ no longer carries the cluttered prefactor of the
+thesis form (the identity $\Aa\Bb=\delta/\beta$ cancels it), and $V$ is a
+quadratic in $(1-I)$ alone --- no separate $J$ or $\mu$.
+
+\begin{result}[Lifetime-time release and conditional mean burst size]
+\begin{equation}
+V_\infty=\frac{a(1-b)}{a-1}=\frac{a\Bb}{\Aa},\qquad
+\E[\Kb\mid\text{burst}]=\frac{V_\infty}{1-b}=\frac{a}{a-1}.
+\end{equation}
+$V_\infty$ includes realisations that clear internally and release nothing;
+$\E[\Kb\mid\text{burst}]$ conditions them out.
+\end{result}
+
+% ===========================================================================
+\section{Burst time, burst size, and the quasi-stationary distribution}
+% ===========================================================================
+
+\subsection{Burst time}
+
+\begin{result}
+$\Prob{\tau>t}=I(t)$, so the (defective) density of burst time is
+\[
+\varphi(t)=-I'(t)=\delta J(t),\qquad \int_0^\infty\varphi(t)\,\dd t=1-b.
+\]
+Mass $b$ sits at $\tau=\infty$ (internal clearance without burst).
+\end{result}
+
+\subsection{State probabilities are geometric at every time}
+
+For $n\ge 1$,
+\begin{equation}
+p_n(t)=\Bigl(\frac{a-b}{b-aw}\Bigr)^{\!2}w\;P(t)^{\,n-1},
+\qquad P(t)=\frac{1-w}{b-aw}.
+\end{equation}
+Conditional on $\xt\ge 1$, the load is geometric with ratio $P(t)$ at every~$t$,
+and $P(t)\to 1/a$.
+
+\subsection{The identity}
+
+\begin{result}[Burst size $=$ quasi-stationary distribution]
+Both are geometric on $\{1,2,\dots\}$ with ratio $1/a$:
+\begin{align}
+\mathrm{QSD}(n)
+&=\lim_{t\to\infty}\Prob{\xt=n\mid \xt\notin\{0,R\}}
+=(a-1)\,a^{-n},\\
+\Prob{\Kb=k\mid\text{burst}}
+&=(a-1)\,a^{-k}.
+\end{align}
+Unconditionally (including no-burst realisations),
+$\Prob{\Kb=k}=(\delta/\beta)\,a^{-k}$ for $k\ge 1$, with mass $b$ at~$0$.
+\end{result}
+
+This is the cleanest single-cell result in the project. It is not obvious:
+bursts are size-biased draws from the transient load, integrated against the
+burst intensity $\delta n$. That the outcome is exactly the QSD deserves a
+conceptual proof; the algebra is already complete (see below).
+
+Immediate QSD moments:
+\begin{equation}
+\langle X\rangle_{\rm QS}=\frac{a}{a-1},\qquad
+\mathrm{Var}_{\rm QS}(X)=\frac{a}{(a-1)^2}.
+\end{equation}
+Note $\langle X\rangle_{\rm QS}=\E[\Kb\mid\text{burst}]$. When $\mu=0$ both also
+equal $V_\infty$; when $\mu>0$ they differ
+(e.g.\ at $(\beta,\mu,\delta)=(1,0.2,0.05)$: $17.23$ versus $13.99$).
+
+\subsection{Proof of the burst-size law (no simulation required)}
+
+With $P(t)=(1-w)/(b-aw)$ one has
+\[
+\frac{\dd}{\dd t}\Bigl[\frac{P^k}{k\beta}\Bigr]=p_k(t).
+\]
+Hence
+\[
+\Prob{\Kb=k}
+=\delta k\int_0^\infty p_k(t)\,\dd t
+=\frac{\delta}{\beta}\bigl[P^k\bigr]_0^\infty
+=\frac{\delta}{\beta}\,a^{-k}.
+\]
+Two independent checks close the loop:
+\begin{enumerate}
+\item $\sum_{k\ge 1}(\delta/\beta)a^{-k}=1-b$ (eventual-burst probability);
+\item $\sum_{k\ge 1}k(\delta/\beta)a^{-k}=V_\infty$ (mean release).
+\end{enumerate}
+
+\subsection{Size-biasing and late bursts}
+
+A cell bursts at rate $\delta\xt$, so given burst at time~$t$ the size is
+size-biased:
+\[
+\E[\Kb\mid\tau=t]=\frac{K(t)}{J(t)}
+\;\xrightarrow[t\to\infty]{}\;
+1+\frac{2\beta}{\delta}(1-b).
+\]
+A very late burst is roughly twice the size of an average one --- the signature
+of size-biasing a geometric.
+
+% ===========================================================================
+\section{From one cell to a population: the renewal BMVR}
+% ===========================================================================
+
+\subsection{Why a constant~$p$ substitution fails}
+
+Chapter~4 attempted to replace the BMVR release rate~$p$ by the QSD mean
+$\langle X\rangle_{\rm QS}$. That cannot work: $p$ has units of particles per
+unit time, while $\langle X\rangle_{\rm QS}$ is a pure count. When $\mu=0$ one
+even has $\langle X\rangle_{\rm QS}=V_\infty$, so the proposal substitutes total
+lifetime output for an output \emph{rate}.
+
+The deeper issue is that infected cells are not synchronised: at any host time
+$t$ they have a distribution of ages (times since infection). The right object
+is therefore an age-structured, or renewal, formulation.
+
+\subsection{Classical BMVR (for comparison)}
+
+In the simplified (target-cell-constant) Basic Model of Viral Replication one
+has incidence $i(t)=\gamma T\,\Vfree(t)$ and the ODE system
+\begin{equation}
+\label{eq:BMVR-classical}
+\begin{aligned}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,\\[0.25em]
+\ddt{\Vfree}
+&= p\,\Icell - c\,\Vfree.
+\end{aligned}
+\end{equation}
+Here $p$ is a constant per-cell release rate and $d_{\Icell}$ a constant infected-cell
+removal rate. Both are phenomenological: they are not derived from intracellular
+dynamics.
+
+\subsection{The two kernels from the BDC}
+
+Both are already closed-form from the single-cell theory:
+\begin{align}
+\label{eq:kernels}
+\Ihat(a)
+&=\Prob{\text{cell of age }a\text{ is still productively infected}}
+=\frac{(a-b)^2\,w}{(\Bb+\Aa w)(aw-b)},
+\quad w=\ee^{\theta a},\\[0.3em]
+g(a)
+&=\delta K(a)=V'(a)
+=\text{expected release flux at age }a.
+\end{align}
+The release kernel is correct because a cell bursts at rate $\delta\xt$ releasing
+$\xt$ particles, so expected release in $[a,a+\dd a]$ is
+$\delta\E[\xt^2]\,\dd a=\delta K(a)\,\dd a$. Explicitly,
+\begin{equation}
+K(a)=\Bigl[1+\tfrac{2\beta}{\delta}\bigl(1-I(a)\bigr)\Bigr]J(a),
+\qquad
+J(a)=\frac{(a-b)^2\,w}{(\Bb+\Aa w)^2}.
+\end{equation}
+
+\subsection{The new viral dynamics equations}
+
+With target cells $T$ held constant, infection rate $\gamma$, virion clearance
+$c$, and incidence
+\begin{equation}
+i(t)=\gamma T\,\Vfree(t),
+\end{equation}
+the burst-aware (renewal) model is the following integro-differential system.
+
+\begin{result}[New viral dynamics --- burst-aware BMVR]
+\label{res:new-vde}
+\begin{empheq}[box=\fbox]{align}
+\Icell(t)
+&= \Icell_0\,\Ihat(t)
++\int_0^t i(t-\alpha)\,\Ihat(\alpha)\,\dd\alpha,
+\label{eq:Icell-full}\\[0.5em]
+\ddt{\Vfree}
+&= \Icell_0\,g(t)
++\int_0^t i(t-\alpha)\,g(\alpha)\,\dd\alpha
+-c\,\Vfree(t),
+\label{eq:Vfree-full}
+\end{empheq}
+with kernels \eqref{eq:kernels} and $g=\delta K$. Equivalently, writing the
+convolutions more compactly and using $i=\gamma T\,\Vfree$,
+\begin{empheq}[box=\fbox]{align}
+\Icell(t)
+&= \Icell_0\,\Ihat(t)
++\bigl(\gamma T\,\Vfree * \Ihat\bigr)(t),
+\label{eq:Icell-conv}\\[0.35em]
+\ddt{\Vfree}
+&= \Icell_0\,g(t)
++\bigl(\gamma T\,\Vfree * g\bigr)(t)
+-c\,\Vfree(t).
+\label{eq:Vfree-conv}
+\end{empheq}
+\end{result}
+
+Here $\Icell_0$ is the number of cells already infected at $t=0$ (the initial
+cohort); their contribution is $\Icell_0\Ihat(t)$ to the infected-cell count and
+$\Icell_0 g(t)$ to the release flux. If the infection is seeded only by free
+virions with $\Icell_0=0$, those terms drop and one recovers the pure convolution
+form used in the working notes.
+
+\paragraph{What each equation replaces.}
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}p{0.42\textwidth}p{0.48\textwidth}@{}}
+\toprule
+Classical BMVR \eqref{eq:BMVR-classical} & New system \eqref{eq:Icell-full}--\eqref{eq:Vfree-full} \\
+\midrule
+$\Icell'=i-d_{\Icell}\Icell$
+  (constant removal rate $d_{\Icell}$)
+& $\Icell = \Icell_0\Ihat + i*\Ihat$
+  (age-structured survival via $\Ihat$) \\[0.6em]
+$\Vfree'=p\Icell-c\Vfree$
+  (constant release rate $p$)
+& $\Vfree' = \Icell_0 g + i*g - c\Vfree$
+  (age-structured release via $g=\delta K$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Both constant BMVR terms are replaced: not only release $p\Icell$, but also cell
+removal $d_{\Icell}\Icell$. Chapter~4's original attempt only ever proposed to
+change the first.
+
+\paragraph{Why the equations look different.}
+In the classical model, infected cells are memoryless: every cell, regardless of
+age, contributes the same $p$ and dies at the same $d_{\Icell}$. In the new model
+a cell of age~$\alpha$ is still productively infected only with probability
+$\Ihat(\alpha)$, and contributes expected release flux $g(\alpha)$. Because cells
+are infected at different times, the population totals are convolutions of
+incidence against these kernels --- not products of a stock $\Icell(t)$ with a
+constant.
+
+\paragraph{Optional differential form for $\Icell$.}
+Differentiating \eqref{eq:Icell-full} (fundamental theorem + Leibniz rule) gives
+\begin{equation}
+\label{eq:Icell-diff}
+\ddt{\Icell}
+= i(t)
++\Icell_0\,\Ihat'(t)
++\int_0^t i(t-\alpha)\,\Ihat'(\alpha)\,\dd\alpha,
+\end{equation}
+so the incidence $i(t)$ appears as a source term exactly as in the classical
+model, while the remaining terms encode age-dependent loss of productivity
+(burst or internal clearance). There is in general no constant $d_{\Icell}$ for
+which \eqref{eq:Icell-diff} reduces to $\Icell'=i-d_{\Icell}\Icell$ for all
+histories of~$i$; such a reduction holds only for pure exponential solutions
+(Section~\ref{sec:peff}).
+
+\begin{remark}[What is and is not novel]
+The renewal/age-structured framework itself is standard (McKendrick--von
+Foerster; Nelson--Gilchrist--Perelson-type models). The novelty is that the
+kernels $\Ihat$ and $g$ are derived in closed form from a mechanistic
+intracellular stochastic process, rather than posited phenomenologically ---
+together with the consequences below.
+\end{remark}
+
+% ===========================================================================
+\section{Numerical overlays of the two systems}
+\label{sec:overlays}
+% ===========================================================================
+
+To make the difference between \eqref{eq:BMVR-classical} and
+\eqref{eq:Icell-full}--\eqref{eq:Vfree-full} concrete, both systems are
+integrated side by side for a range of intracellular and population
+parameters.
+
+\paragraph{How to read every plot.}
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Style & Model \\
+\midrule
+\textbf{Solid navy line} & \textbf{NEW model} --- renewal / burst-aware BMVR
+  (kernels $\Ihat$, $g=\delta K$) \\
+\textbf{Dashed orange line with open circles} & \textbf{CLASSICAL BMVR} ---
+  constant release rate $p$ and removal $d_{\Icell}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Each panel also carries its own legend and the words ``NEW'' / ``CLASSICAL''
+printed near the curves. The CLASSICAL parameters are the fairest
+constant-parameter match at the $r=0$ end of the effective-rate map,
+\begin{equation}
+p = p_{\rm eff}(0)=\frac{\beta V_\infty}{\log\bigl(a/(a-1)\bigr)},
+\qquad
+d_{\Icell}=d_{\Icell,{\rm eff}}(0)=\frac{\beta}{\log\bigl(a/(a-1)\bigr)},
+\end{equation}
+so total lifetime output and mean productive lifetime agree. Figures are
+generated by \texttt{figures/plot\_bmvr\_comparison.py}.
+
+\subsection{Single-cell kernels (NEW model only)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/kernels.pdf}
+\caption{Cell-survival kernel $\Ihat(a)$ and release kernel $g(a)=\delta K(a)$
+for four intracellular parameter sets. These age-dependent kernels drive the
+\textbf{NEW} model. The \textbf{CLASSICAL} model has no kernels --- only the
+constants $p$ and $d_{\Icell}$.}
+\label{fig:kernels}
+\end{figure}
+
+\subsection{Free virions and infected cells}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/overlay_V.pdf}
+\caption{Free-virion trajectories $\Vfree(t)$.
+\textbf{Solid navy = NEW model} (renewal / burst-aware);
+\textbf{dashed orange with circles = CLASSICAL BMVR} (constant $p$, $d$).
+Six scenarios: supercritical growth, subcritical decay, fast burst, high
+intracellular death, and free-virion-only seeding.}
+\label{fig:overlay-V}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/overlay_I.pdf}
+\caption{Infected-cell trajectories $\Icell(t)$ for the same six scenarios.
+Same line code as Figure~\ref{fig:overlay-V}:
+\textbf{solid navy = NEW}, \textbf{dashed orange = CLASSICAL}.}
+\label{fig:overlay-I}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/overlay_V_with_naive.pdf}
+\caption{Optional third curve (dotted green): CLASSICAL BMVR with the
+dimensionally inconsistent Chapter~4 choice $p=\langle X\rangle_{\rm QS}$.
+Still read as: \textbf{solid navy = NEW};
+\textbf{dashed orange = CLASSICAL matched}; dotted green = CLASSICAL naive.}
+\label{fig:overlay-V-naive}
+\end{figure}
+
+\subsection{Where matching fails}
+
+Even with $p$ and $d_{\Icell}$ chosen to match mean lifetime output, the
+CLASSICAL ODEs cannot reproduce the NEW-model transients: early on, young cells
+dominate and release is closer to the young-cell limit $p\to\delta$; later, if
+the epidemic grows, generation-time structure (and hence the operative
+$p_{\rm eff}(r)$) departs from the $r=0$ value. The relative discrepancy
+\begin{equation}
+\frac{\bigl|\Vfree^{\rm NEW}(t)-\Vfree^{\rm CLASSICAL}(t)\bigr|}
+{\max_s \Vfree^{\rm NEW}(s)}
+\end{equation}
+is plotted in Figure~\ref{fig:rel-diff}. In supercritical regimes the error is
+often order-one or larger by the end of the plotted window; in the high-death
+panel it is especially severe because $V_\infty$ is small while the
+age-structure of release remains strongly non-exponential.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/overlay_rel_diff.pdf}
+\caption{Relative free-virion discrepancy
+$|\text{NEW}-\text{CLASSICAL}|/\max(\text{NEW})$.
+Large values mean the classical constant-$p$ ODEs fail to track the new model.}
+\label{fig:rel-diff}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/overlay_growth_phase.pdf}
+\caption{Growth-phase mismatch for one supercritical set
+($\beta=1$, $\mu=0$, $\delta=0.1$).
+\textbf{Solid navy = NEW model};
+\textbf{dashed orange = CLASSICAL} with $r{=}0$ matching;
+\textbf{dash-dot purple = CLASSICAL} with young-cell limit
+$p=\delta$, $d_{\Icell}=\mu+\delta$.
+Neither classical choice tracks the new curve over the whole trajectory.
+Left panel logarithmic in $\Vfree$.}
+\label{fig:growth-phase}
+\end{figure}
+
+\paragraph{Reading the plots.}
+\begin{itemize}
+\item Always: \textbf{solid navy = NEW}, \textbf{dashed orange = CLASSICAL}.
+\item \textbf{CLASSICAL matched} ($p=p_{\rm eff}(0)$) is the fairest
+constant-parameter comparison. It often gets the order of magnitude, but not
+the shape (early lag, peak timing, late growth rate).
+\item \textbf{CLASSICAL young-cell} ($p=\delta$) is better only briefly, then
+under-produces.
+\item \textbf{CLASSICAL naive} ($p=\langle X\rangle_{\rm QS}$) treats a count as a
+rate and is systematically wrong in scale
+(Figure~\ref{fig:overlay-V-naive}).
+\item Discrepancies grow with supercritical $R_0$ and with strong
+age-structure in the kernels (slow bursting, nonzero $\mu$).
+\end{itemize}
+These numerical facts are exactly what the analytic reduction of
+Section~\ref{sec:peff} predicts: constant $(p,d_{\Icell})$ can match one growth
+rate~$r$ exactly, but not an entire transient that samples a continuum of
+ages.
+
+% ===========================================================================
+\section{Effective parameters, $R_0$, and growth-phase dependence}
+\label{sec:peff}
+% ===========================================================================
+
+\subsection{Mean productive lifetime}
+
+\begin{result}
+\begin{equation}
+\E[T_{\rm prod}]
+=\int_0^\infty\Ihat(t)\,\dd t
+=\frac{1}{\beta}\log\!\Bigl(\frac{a}{a-1}\Bigr)
+=\frac{1}{\beta}\log\langle X\rangle_{\rm QS}.
+\end{equation}
+\end{result}
+When $\mu=0$ this is $\beta^{-1}\log(1+\beta/\delta)$. The productive lifetime
+is the time exponential growth at rate~$\beta$ takes to reach the
+quasi-stationary level.
+
+\subsection{Exact reduction in the exponential phase}
+
+Substitute $i(t)=i_0\ee^{rt}$ into the renewal system and compare with the
+classical BMVR. Writing $\Lap{f}(r)=\int_0^\infty\ee^{-r\alpha}f(\alpha)\,\dd\alpha$:
+\begin{result}[Effective BMVR parameters]
+\begin{equation}
+p_{\rm eff}(r)=\frac{\delta\,\Lap{K}(r)}{\Lap{\Ihat}(r)},
+\qquad
+d_{\Icell,{\rm eff}}(r)=\frac{1}{\Lap{\Ihat}(r)}-r.
+\end{equation}
+\end{result}
+This reduction is \emph{exact} for exponential solutions (not for transients):
+substituting into the BMVR eigenvalue relation recovers the renewal
+characteristic equation. Limits:
+\begin{align}
+r=0:&\quad
+p_{\rm eff}=\frac{\beta\,V_\infty}{\log\bigl(a/(a-1)\bigr)},
+\quad
+d_{\Icell,{\rm eff}}=\frac{\beta}{\log\bigl(a/(a-1)\bigr)};\\
+r\to\infty:&\quad
+p_{\rm eff}\to\delta,\qquad
+d_{\Icell,{\rm eff}}\to\mu+\delta.
+\end{align}
+The young-cell limit is intuitive: a newly infected cell holds one particle and
+bursts at rate~$\delta$.
+
+\subsection{\texorpdfstring{$R_0$}{R0} is unchanged by bursting}
+
+\begin{result}
+The characteristic equation is
+\[
+r+c=\gamma T\,\delta\Lap{K}(r),
+\qquad\text{hence}\qquad
+R_0=\frac{\gamma T\,V_\infty}{c}.
+\]
+At fixed total per-cell output $V_\infty$, replacing constant budding by bursting
+leaves $R_0$ \emph{exactly} unchanged. Bursting alters generation times ---
+hence the growth rate~$r$ and the extinction probability --- but not the
+threshold.
+\end{result}
+
+\subsection{\texorpdfstring{$p$}{p} is not a constant of the pathogen}
+
+Because $p_{\rm eff}$ decreases from $p_{\rm eff}(0)$ toward $\delta$ as $r$
+grows, the effective release rate is smaller during acute exponential growth
+(young cells, low loads) than at set-point. At
+$(\beta,\mu,\delta)=(1,0,0.1)$ one has $p_{\rm eff}(0)\approx 4.59$ against
+$p_{\rm eff}(\infty)=0.1$.
+
+\begin{result}[Prediction]
+BMVR fits to acute-phase data and to set-point data should yield systematically
+different~$p$, in a direction and by an amount the theory specifies.
+Equivalently: the eclipse-like delay usually inserted by hand into within-host
+models emerges here from the intracellular dynamics, with no extra parameter.
+\end{result}
+
+\subsection{Identifiability (a useful negative result)}
+
+Three intracellular rates $(\beta,\mu,\delta)$ map onto two BMVR parameters
+$(p,d_{\Icell})$ at any given~$r$. The map is not invertible. Recovering the
+intracellular rates therefore needs a third observable, for example:
+\begin{enumerate}
+\item burst-size dispersion (the geometric ratio $1/a$);
+\item fraction of infected cells that clear without bursting ($b$);
+\item shape of the release-time density $\varphi=\delta J$.
+\end{enumerate}
+Any one of these plus $(p,d_{\Icell})$ over-determines $(\beta,\mu,\delta)$ and
+gives a consistency test.
+
+% ===========================================================================
+\section{The flooding advantage}
+% ===========================================================================
+
+This is the strongest single biological result: it answers, exactly, when
+bursting helps a pathogen establish at low numbers.
+
+\subsection{Offspring of one infected cell}
+
+Each released particle independently infects with probability
+$q=\gamma T/(\gamma T+c)$. The offspring generating function of one bursting
+cell is
+\begin{equation}
+G_{\rm off}(z)=b+\frac{\delta}{\beta}\,\frac{y}{a-y},
+\qquad y=1-q+qz,
+\end{equation}
+with mean $m=qV_\infty$ ($=R_0$ when $\gamma T\ll c$).
+
+\subsection{Extinction probability in closed form}
+
+$G_{\rm off}(z)=z$ is quadratic in~$y$. The non-trivial root is
+\begin{equation}
+z_{\rm ext}^{\rm burst}
+=\frac{a(1-q+qb)-1+q}{q}.
+\end{equation}
+
+\subsection{\texorpdfstring{Comparison with matched-$R_0$ budding}{Comparison with matched-R0 budding}}
+
+Comparator: a BMVR cell with exponential lifetime producing at constant rate,
+matched so that total mean output equals $V_\infty$, with the same~$q$. Its
+offspring number is geometric with mean~$R_0$, so
+$z_{\rm ext}^{\rm bud}=1/R_0$.
+
+Write $L:=a(1-b)=a-\mu/\beta$, so $V_\infty=L/(a-1)$. Then:
+\begin{result}[Flooding advantage --- main theorem]
+\label{res:flood}
+For $R_0>1$,
+\begin{equation}
+z_{\rm ext}^{\rm burst}-z_{\rm ext}^{\rm bud}
+=\bigl(L-1\bigr)\Bigl(\frac{1}{R_0}-1\Bigr).
+\end{equation}
+Hence bursting strictly lowers extinction probability relative to matched-$R_0$
+budding if and only if $L>1$, i.e.
+\begin{equation}
+\boxed{\;
+\frac{1}{\delta}\;<\;\frac{1}{\beta}+\frac{1}{\mu}\;}.
+\end{equation}
+When $L=1$ the two extinction probabilities are \emph{identical for every~$q$}.
+When $\mu=0$ the condition holds for all $\delta>0$: bursting always wins.
+\end{result}
+
+\paragraph{Interpretation.}
+Bursting concentrates output into one batch, which lowers offspring variance
+relative to the geometric output of a budding cell. But it also carries the
+all-or-nothing hazard that the intracellular population dies out first
+(probability~$b$) and the cell releases nothing. The condition says the
+advantage survives exactly when the burst timescale $1/\delta$ is shorter than
+the harmonic-type combination of birth and death timescales.
+
+\paragraph{Numerical checks (branching simulation).}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+$(\beta,\mu,\delta)$ & $q$ & $z^{\rm burst}$ & $z^{\rm bud}$ & Winner \\
+\midrule
+$(1,0,0.1)$ & $0.2$ & $0.400$ & $0.455$ & bursting ($L>1$) \\
+$(1,0.9,0.1)$ & $0.9$ & $0.935$ & $0.844$ & budding ($L<1$) \\
+$(1,0.5,1/3)$ & $0.6$ & $0.833$ & $0.833$ & tie ($L=1$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The comparison holds the offspring \emph{mean} fixed and is therefore a
+statement about branching structure only. It says nothing about nonlinear
+effects (immune saturation, local depletion) of the kind Komarova's ``all run
+out at once'' intuition concerns. Both mechanisms should be named and
+separated in any write-up.
+\end{remark}
+
+% ===========================================================================
+\section{Further consequences}
+% ===========================================================================
+
+\subsection{Multiplicity of infection}
+
+For a cell founded by $k$ particles,
+\[
+\Ihat_k(a)=I(a)^k-D(a)^k,\qquad
+g_k(a)=\delta\bigl[k\,K(a)+k(k-1)J(a)^2\bigr].
+\]
+The release kernel is \emph{superlinear} in~$k$, so MOI matters even in the
+mean --- a prediction the classical BMVR cannot express, and one that single-cell
+or low-MOI assays can test.
+
+\subsection{Two-type process and the eclipse phase}
+
+Chapter~5 already gives the exact finite-time no-catastrophe probability $S(t)$
+for a two-type BDC with type-specific rates $(\delta_1,\delta_2)$. The regime
+$\delta_1=0<\delta_2$ (GATE: no burst before conversion) has $S'(0)=0$ --- a
+zero initial hazard followed by a rising one. That is precisely the eclipse-phase
+signature that within-host models normally insert by hand; here it emerges
+mechanistically, with eclipse duration set by the conversion rate. Completing
+the two-type release and survival kernels is the natural next technical step
+and would make Chapters~4 and~5 one continuous story.
+
+\subsection{Single-cell assay predictions (lytic BDC)}
+
+A limiting-dilution assay of the Hataye type measures single-lineage release.
+For a pure one-type BDC, predictions include:
+\begin{enumerate}
+\item a fraction $b$ of wells show no release ever;
+\item cumulative release per well is a step: zero, then one terminal jump;
+\item jump times follow density $\delta J(t)/(1-b)$;
+\item jump sizes are geometric with ratio $1/a$ (same law as the QSD);
+\item between-well variance equals $\mathrm{Var}(W_\infty)$, which the
+deterministic BMVR cannot produce.
+\end{enumerate}
+Those predictions are appropriate for genuinely lytic systems
+(\textit{Y.~pestis}, \textit{F.~tularensis}, lytic phage). For HIV they are
+too strong: see the next section.
+
+% ===========================================================================
+\section{Distinction with HIV: what Hataye et al.\ show, and a candidate model}
+\label{sec:hiv}
+% ===========================================================================
+
+The core BDC and renewal results above are written for pathogens whose
+intracellular life ends in a \textbf{load-proportional catastrophe} (lyse and dump).
+HIV is different. It \textbf{buds} from the plasma membrane; the infected cell is not
+required to rupture and empty itself in one event. Single-cell and limiting-dilution
+data nevertheless show something that \emph{looks} surge-like: long quiet periods,
+then a concentrated bout of release. The right modelling response is not to force HIV
+into pure BDC, nor to keep classical constant-$p$ BMVR, but to use an
+\textbf{eclipse-structured, short productive pulse} with the same renewal free-virus
+coupling.
+
+\subsection{What the Hataye et al.\ (2019) paper shows}
+
+Hataye, Casazza, Best, Perelson, Koup and co-authors
+(\textit{Cell Host \& Microbe} 26:748--763, 2019) couple limiting-dilution
+latency-reactivation cultures to stochastic models. The findings that matter for
+equation choice are the following.
+
+\paragraph{On initial release (viral inhibition cultures; no de novo infection).}
+\begin{enumerate}
+\item Timing and magnitude of first HIV RNA release from reactivated latently
+infected CD4 T cells are \textbf{highly variable} (total yield, delay to first
+detection, detection duration).
+\item Mean release is delayed: first detection most often around day~3, with a
+\textbf{sudden bulk of production around days 3--5} --- not a flat continuous drip
+from day~0.
+\item A simple productive-cell model (release at constant rate $p$, death at rate
+$\delta$, total yield geometric with mean $p/\delta$) is
+\textbf{under-dispersed} relative to the data (Fano factor too small).
+\item A single exponential eclipse $E\to I$ fits the delay poorly (mode at day~1).
+A \textbf{multi-stage eclipse} (Erlang-like chain of $n$ compartments; they favour
+$n\approx 5$) fixes the mean timing.
+\item Multi-stage eclipse alone still under-disperses. Transcriptional
+ON/OFF toggling does not fix dispersion under realistic CD4 division/death rates
+($\rho\approx\mu\approx 0.5/$day from CFSE and population data).
+\item Their best structure (\textbf{Model 3}) uses \textbf{two distinct eclipse
+paths} (high- and low-release potential), multi-stage delay, and division/death
+in eclipse. Then:
+\begin{itemize}
+\item many stimulated lineages release \textbf{nothing} detectable
+  ($f_{\mathrm{HIV}}\approx 0.41$ of single LICs give detectable virus in their fit);
+\item most productive sojourns in $I$ last on the order of \textbf{about a day};
+\item multi-day ``sustained'' detection is largely from \textbf{proliferation in
+  eclipse} then staggered short $E\to I$ transitions of descendants --- not one
+  cell budding steadily for a week.
+\end{itemize}
+\end{enumerate}
+
+\paragraph{On establishment (outgrowth cultures; de novo infection allowed).}
+\begin{enumerate}
+\item Release of replication-competent virus often fails to establish exponential
+spread.
+\item Establishment probability as a function of the expected number of
+virus-releasing LICs per well is \textbf{sigmoid}, not the concave curve of
+independent per-cell success. They interpret this as an \textbf{Allee effect}
+(synergy at low census).
+\item A critical threshold sits near $\Lambda\approx 2.3$ LICs, corresponding on
+average to roughly \textbf{$5100$ detected HIV RNA copies} of initial release
+(with their establishment definition $\ge 2\times 10^5$ RNA copies).
+\item For exactly one stimulated LIC, their fitted dynamics predict establishment
+only on the order of \textbf{$\sim 2\%$} of the time --- consistent with the known
+gap between intact provirus and quantitative viral outgrowth.
+\end{enumerate}
+
+\paragraph{Reading for this document.}
+Hataye et al.\ therefore support three modelling decisions and reject two others:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}p{0.46\textwidth}p{0.46\textwidth}@{}}
+\toprule
+Supported for HIV & Not supported as literal HIV \\
+\midrule
+Multi-stage eclipse (delay) & Pure one-type BDC terminal catastrophe \\
+Short productive pulse then cell death & Memoryless constant-$p$ BMVR from $t=0$ \\
+High stochasticity; many silent lineages & Independent branching alone near threshold \\
+Renewal / stage structure for free virus & QSD $=$ geometric burst size as an HIV law \\
+Allee / synergistic establishment & \\
+\bottomrule
+\end{tabular}
+\end{center}
+The visual ``surge'' is real, but in their best model it is
+\textbf{delay + brief constant-$p$ production + latent lineage dynamics}, not a
+single lytic dump of intracellular load.
+
+\subsection{Biological distinction from the lytic BDC}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & Lytic BDC (this document, core) & HIV (Hataye-guided) \\
+\midrule
+Release mechanism & Catastrophe at rate $\delta X$ & Budding while productive \\
+End of production & Terminal; process absorbed & Short $I$ lifetime; cell dies \\
+Intracellular load $X$ & Explicit birth--death state & Not required as primary state \\
+Quiet period & Until first catastrophe & Multi-stage eclipse (+ latency) \\
+Sustained multi-day RNA & One large dump (or nothing) & Often staggered short pulses \\
+Establishment theory & Independent offspring OK as baseline & Allee synergy near threshold \\
+Natural hosts & \textit{Y.\ pestis}, \textit{F.\ tularensis}, phage & CD4 T cell latency / rebound \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Candidate equations for the HIV case}
+\label{sec:hiv-eqns}
+
+The following is a compact, Hataye-aligned system suitable for coupling to the
+renewal free-virus layer of Result~\ref{res:new-vde}. Notation is chosen to
+avoid collisions with the BDC rates $(\beta,\mu,\delta)$.
+
+\subsubsection*{Latent / eclipse / productive stages (one LIC lineage)}
+
+Let $L$ be a stimulated latently infected cell (or the start of reactivation).
+Two eclipse pathways $A$ (high release potential) and $B$ (low, brief) run in
+parallel; pathway $A$ is multi-stage.
+
+\begin{empheq}[box=\fbox]{align}
+L &\;\xrightarrow{\alpha_A}\; E_1^{(A)},
+&
+L &\;\xrightarrow{\alpha_B}\; E^{(B)},
+\label{eq:hiv-split}\\[0.35em]
+E_j^{(A)}
+&\;\xrightarrow{a}\; E_{j+1}^{(A)},
+\quad j=1,\dots,n-1,
+&
+E_n^{(A)}
+&\;\xrightarrow{a}\; I^{(A)},
+\label{eq:hiv-erlang}\\[0.35em]
+E^{(B)}
+&\;\xrightarrow{a_B}\; I^{(B)}.
+&&
+\label{eq:hiv-B}
+\end{empheq}
+In each eclipse compartment, cells may divide or die without releasing virus:
+\begin{equation}
+\label{eq:hiv-eclipse-bd}
+E \;\xrightarrow{\rho}\; E+E,
+\qquad
+E \;\xrightarrow{\mu_E}\; \varnothing
+\qquad
+\text{(same rates on $E_j^{(A)}$ and, if desired, on $E^{(B)}$)}.
+\end{equation}
+Hataye et al.\ take $\rho\approx\mu_E\approx 0.5\,/\mathrm{day}$ from CFSE and
+bulk population stability under stimulation. Productive cells release free virus
+(or supernatant RNA) at a constant rate and die:
+\begin{empheq}[box=\fbox]{align}
+I^{(A)} &\;\xrightarrow{p_A}\; I^{(A)}+\Vfree,
+&
+I^{(A)} &\;\xrightarrow{\delta_I}\; \varnothing,
+\label{eq:hiv-prodA}\\[0.25em]
+I^{(B)} &\;\xrightarrow{p_B}\; I^{(B)}+\Vfree,
+&
+I^{(B)} &\;\xrightarrow{\delta_I}\; \varnothing,
+\label{eq:hiv-prodB}
+\end{empheq}
+with $p_A\gg p_B$ (or $p_B$ small and $I^{(B)}$ short-lived) to match the
+bimodal release distribution. Free virus / RNA in culture or plasma decays
+\begin{equation}
+\label{eq:hiv-clear}
+\Vfree \;\xrightarrow{c}\; \varnothing.
+\end{equation}
+(In their inhibition cultures $c$ is set by measured supernatant RNA half-life;
+in vivo $c$ is the usual plasma clearance.)
+
+\paragraph{Mean-field stage ODEs (large $\Lambda$).}
+Writing $E_j$ for pathway $A$ and suppressing the dual path for display,
+\begin{align}
+\ddt{E_1}
+&= \alpha_A L_0\,\delta_0(t)
++\rho E_1
+-(\mu_E+\rho+a)E_1,
+\label{eq:hiv-ode-E1}\\
+\ddt{E_j}
+&= a E_{j-1}
++\rho E_j
+-(\mu_E+\rho+a)E_j,
+\quad j=2,\dots,n,
+\label{eq:hiv-ode-Ej}\\
+\ddt{I}
+&= a E_n
+-\delta_I I,
+\label{eq:hiv-ode-I}\\
+\ddt{\Vfree}
+&= p_A I
+-c\,\Vfree
+\qquad\text{(plus the $B$-path contribution $p_B I^{(B)}$)}.
+\label{eq:hiv-ode-V}
+\end{align}
+(The Dirac source stands for an initial cohort; for ongoing infection replace it
+by an incidence term as below.) Stochastic simulation of the same transitions
+(Gillespie) is what Hataye et al.\ use to match single-well dispersion.
+
+\subsubsection*{Coupling to free virus and new infections}
+
+When de novo infection is allowed, incidence should feed new eclipse cells, not
+instant productively infected cells:
+\begin{empheq}[box=\fbox]{align}
+i(t)
+&= f\bigl(\Vfree(t),T\bigr),
+\label{eq:hiv-incidence}\\[0.25em]
+\text{source into }E_1^{(A)}
+&= \pi_A\,i(t),
+\qquad
+\text{source into }E^{(B)}
+&= \pi_B\,i(t),
+\label{eq:hiv-split-inc}
+\end{empheq}
+with $\pi_A+\pi_B=1$ the pathway split.
+
+\paragraph{Linear infection (classical).}
+\[
+f(\Vfree,T)=\gamma T\,\Vfree.
+\]
+This is the right large-population limit and recovers a stage-structured BMVR.
+
+\paragraph{Allee / synergistic infection (Hataye establishment).}
+Near the critical threshold their data favour a sigmoid establishment law, not
+independent per-virion success. A minimal phenomenological upgrade is
+\begin{equation}
+\label{eq:hiv-allee}
+f(\Vfree,T)
+=\gamma T\,\Vfree\cdot
+\frac{\Vfree}{K_A+\Vfree},
+\end{equation}
+so that infection is inefficient at very low $\Vfree$ and saturates to the usual
+mass-action form when $\Vfree\gg K_A$. The scale $K_A$ is chosen so that
+cumulative initial release near $\sim 5\times 10^3$ RNA copies sits at the
+inflection of establishment probability (Hataye's empirical threshold). More
+mechanistic forms (cooperative entry, restriction-factor saturation, local
+multiplicity) can replace \eqref{eq:hiv-allee}; the point is that
+\textbf{linearity in $\Vfree$ alone is not faithful near establishment}.
+
+\subsubsection*{Renewal kernels induced by the HIV stage model}
+
+Exactly as in the lytic case, the population free-virus equation is a
+convolution against an age kernel --- only the kernel changes. Let $g_{\mathrm{HIV}}(a)$
+be the expected release rate at age $a$ after a single infection (or reactivation),
+and $S_{\mathrm{HIV}}(a)$ the probability of still being in a productive (or
+not-yet-cleared) lineage. Then the same structural system as
+Result~\ref{res:new-vde} holds:
+\begin{empheq}[box=\fbox]{align}
+\Icell(t)
+&= \Icell_0 S_{\mathrm{HIV}}(t)
++\bigl(i * S_{\mathrm{HIV}}\bigr)(t),
+\label{eq:hiv-Icell}\\[0.35em]
+\ddt{\Vfree}
+&= \Icell_0\,g_{\mathrm{HIV}}(t)
++\bigl(i * g_{\mathrm{HIV}}\bigr)(t)
+-c\,\Vfree(t).
+\label{eq:hiv-Vfree}
+\end{empheq}
+For the stage model above, $g_{\mathrm{HIV}}$ is \emph{not} $\delta K$ from the BDC.
+It is the density of productive sojourn times times $p_A$ (and $p_B$), with the
+Erlang eclipse supplying the delay. In particular $g_{\mathrm{HIV}}(a)\approx 0$ for
+small $a$, then rises and falls --- the mathematical expression of
+``nothing for a long time, then a lot.''
+
+The effective parameters of Section~\ref{sec:peff} carry over with the
+substitution $(\Ihat,g)\mapsto(S_{\mathrm{HIV}},g_{\mathrm{HIV}})$:
+\begin{equation}
+p_{\rm eff}(r)
+=\frac{\Lap{g_{\mathrm{HIV}}}(r)}{\Lap{S_{\mathrm{HIV}}}(r)},
+\qquad
+R_0
+=\frac{\gamma T}{c}\int_0^\infty g_{\mathrm{HIV}}(a)\,\dd a
+\quad\text{(linear infection)}.
+\end{equation}
+Under \eqref{eq:hiv-allee}, $R_0$ remains a large-population threshold; early
+establishment is controlled by the Allee scale $K_A$ as well.
+
+\subsection{What to keep from the BDC theory, and what not to claim for HIV}
+
+\begin{itemize}
+\item \textbf{Keep:} renewal free-virus coupling; age/stage kernels; the idea that
+constant $p$ is only an exponential-phase projection; stochastic early failure;
+eclipse as a real dynamical object (GATE / multi-stage).
+\item \textbf{Do not claim for HIV:} terminal catastrophe at rate $\delta X$;
+QSD $=$ geometric burst size; pure one-shot cumulative release as the only
+single-cell trajectory; independent branching as the full establishment story
+near the Hataye threshold.
+\item \textbf{Flooding comparison:} still meaningful as a \emph{linear} baseline
+(matched mean yield, compare variance of offspring). Hataye adds that near
+$\sim 5\times 10^3$ RNA copies, \textbf{synergy can dominate} variance effects.
+Any HIV write-up should separate the two mechanisms.
+\end{itemize}
+
+\subsection{Suggested role in a paper or thesis chapter}
+
+\begin{enumerate}
+\item Core publishable BDC + renewal BMVR results (lytic end of the spectrum).
+\item One section or companion note: \textbf{HIV is not BDC}; Hataye Model~3
+as the empirical intermediate; equations
+\eqref{eq:hiv-split}--\eqref{eq:hiv-Vfree}.
+\item Numerically extract $g_{\mathrm{HIV}}(a)$ from the stage model (or from
+Hataye's daily release curves) and overlay against constant-$p$ BMVR exactly as
+in Section~\ref{sec:overlays}.
+\item Establishment: independent branching vs Allee form \eqref{eq:hiv-allee},
+with the critical release scale taken from Hataye et al.
+\end{enumerate}
+That keeps the mathematical core honest for lytic pathogens while giving HIV a
+faithful, equation-level treatment grounded in the paper's data and models.
+
+% ===========================================================================
+\section{Reset-catastrophe process and its renewal BMVR}
+\label{sec:reset-bmvr}
+% ===========================================================================
+
+This section is self-contained. It records an intermediate intracellular model
+between pure continuous budding and absorbing BDC, and shows that it induces
+\textbf{the same renewal BMVR structure} as Section~\ref{sec:overlays} / 
+Result~\ref{res:new-vde}, with different kernels only.
+
+\paragraph{Biological status (one sentence).}
+Interpret $X$ as a local assembled pool (not whole-cell contents): full dump is a
+mathematical extreme of batch release; HIV budding is better thought of as many
+small exports, with this model as a tractable multi-pulse caricature on the
+budding--bursting spectrum.
+
+\subsection{Intracellular process (one productively infected cell)}
+
+Age $a=0$ at the start of productive infection. Load $X_a\in\{0,1,2,\ldots\}$.
+While the cell is alive:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Event & Jump & Rate \\
+\midrule
+Birth & $n\to n+1$ & $\beta n$ \\
+Death / degradation & $n\to n-1$ & $\mu n$ \\
+Immigration (optional) & $n\to n+1$ & $\nu$ \\
+\textbf{Dump (reset catastrophe)} & $n\to 0$, release $+n$ extracellular & $\delta n$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The cell itself dies at a separate rate $d_{\Icell}$ (cytopathic / immune),
+independent of $X$ in the simplest case. On cell death the process stops.
+Unlike absorbing BDC, a dump does \textbf{not} end the lineage: the pool
+resets to $0$ and may re-accumulate, so one cell can release \textbf{many}
+times before death.
+
+\subsection{Kernels}
+
+Dump intensity in state $n$ is $\delta n$ and the dump size is $n$, so the
+expected release rate at age $a$ is $\delta\E[X_a^2\mathbf 1_{\{\text{alive}\}}]$.
+With independent cell death at rate $d_{\Icell}$,
+\begin{empheq}[box=\fbox]{equation}
+\label{eq:g-reset}
+S(a)=e^{-d_{\Icell}a},
+\qquad
+g(a)=\delta\,e^{-d_{\Icell}a}\,\E[X_a^2],
+\end{empheq}
+where $\E[X_a^2]$ is computed for the reset process (no absorption at a rupture
+state). The structural formula $g\propto\E[X^2]$ matches BDC; the second moment
+differs because $X$ restarts after each dump instead of ending in $R$.
+
+Linear rates keep moments tractable: $\E[X_a]$ and $\E[X_a^2]$ obey a closed
+ODE system under the process generator (birth, death, immigration, and the
+reset jump). Then $g$ is explicit once those ODEs are solved.
+
+\subsection{Renewal BMVR (same skeleton as BDC)}
+
+With target cells $T$ fixed, infection rate $\gamma$, clearance $c$, and
+incidence $i(t)=\gamma T\,\Vfree(t)$:
+\begin{empheq}[box=\fbox]{align}
+i(t)
+&= \gamma T\,\Vfree(t),
+\label{eq:reset-i}\\[0.35em]
+\Icell(t)
+&= \Icell_0\,S(t)
++\int_0^t i(t-\alpha)\,S(\alpha)\,\dd\alpha,
+\label{eq:reset-I}\\[0.35em]
+\ddt{\Vfree}
+&= \Icell_0\,g(t)
++\int_0^t i(t-\alpha)\,g(\alpha)\,\dd\alpha
+-c\,\Vfree(t),
+\label{eq:reset-V}
+\end{empheq}
+with kernels \eqref{eq:g-reset}. In convolution form:
+$\Icell=\Icell_0 S+i*S$ and $\Vfree'=\Icell_0 g+i*g-c\Vfree$.
+
+This is identical in form to Result~\ref{res:new-vde}. Only $(S,g)$ change.
+
+\subsection{Effective parameters and mature-cell limit}
+
+For exponential incidence $i\propto e^{rt}$,
+\begin{equation}
+\label{eq:reset-peff}
+p_{\rm eff}(r)=\frac{\Lap{g}(r)}{\Lap{S}(r)},
+\qquad
+d_{\Icell,{\rm eff}}(r)=\frac{1}{\Lap{S}(r)}-r.
+\end{equation}
+With $S(a)=e^{-d_{\Icell}a}$ one has $\Lap{S}(r)=1/(r+d_{\Icell})$, hence
+$d_{\Icell,{\rm eff}}\equiv d_{\Icell}$ and
+$p_{\rm eff}(r)=(r+d_{\Icell})\Lap{g}(r)$. The linear-infection threshold is
+\begin{equation}
+R_0=\frac{\gamma T}{c}\int_0^\infty g(a)\,\dd a
+=\frac{\gamma T\cdot\E[\text{lifetime output per cell}]}{c}.
+\end{equation}
+Lifetime yield is finite only if $d_{\Icell}>0$ (otherwise recurrent dumps can
+continue forever).
+
+\paragraph{Mature-cell limit.}
+If $X$ admits a stationary law $\pi$ on $\{0,1,\ldots\}$ and $d_{\Icell}$ is
+small,
+\[
+p_\infty
+=\lim_{a\to\infty}\frac{g(a)}{S(a)}
+=\delta\,\E_\pi[X^2].
+\]
+A long-lived infected cell then behaves as classical constant-$p$ BMVR with
+that $p$. Transients (first dumps, young cells) still require the full kernel
+$g(a)$.
+
+\subsection{Comparison with absorbing BDC}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & Absorbing BDC & Reset catastrophe \\
+\midrule
+After dump & process ends in $R$ & $X\to 0$, continues \\
+Dumps per cell & $\le 1$ & many (until cell death) \\
+Survival kernel & $\Ihat$ (no burst / not extinct) & typically $e^{-d_{\Icell}a}$ \\
+Release kernel & $\delta K_{\mathrm{BDC}}(a)$ & $\delta e^{-d_{\Icell}a}\E[X_a^2]$ \\
+Population equations & renewal BMVR & \textbf{same form} \\
+Mature limit & not constant budding & $p\to\delta\E_\pi[X^2]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Optional eclipse.}
+Set $g(a)=0$ for $a<\tau_e$ (or Erlang-delay the start of the reset process);
+keep $S(a)=e^{-d_{\Icell}a}$. Equations \eqref{eq:reset-i}--\eqref{eq:reset-V}
+are unchanged.
+
+\paragraph{Takeaway.}
+Any intracellular model that supplies $(S,g)$ induces renewal BMVR. The
+reset-catastrophe process does so with a multi-pulse release kernel and a
+classical budding limit for mature cells, while remaining in the same
+linear-rate / moment-closed analytic class as BDC.
+
+% ===========================================================================
+\section{HIV intracellular mean growth: linear vs exponential}
+\label{sec:hiv-mean-growth}
+% ===========================================================================
+
+This section records a modelling decision for coarse-grained HIV intracellular
+dynamics: whether mean load grows \emph{exponentially} (birth--death) or
+\emph{linearly} (template-limited production), and what that implies for a
+minimal regime. Export / extracellular release is left open.
+
+\subsection{The dichotomy}
+
+Let $m(a)=\E[X_a]$ be mean intracellular load (Gag, genomes, or
+assembly-ready units) after productive infection begins.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Regime & Mean law (schematic) & Mechanism \\
+\midrule
+\textbf{Mean-exponential} & $m'=r\,m$ & each unit generates more units (branching / BDC) \\
+\textbf{Mean-linear} & $m'=\nu-\mu m$ (or $m'\approx\nu$) & production set by fixed templates / machinery \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Absorbing BDC and pure birth--death are exponential-mean. Immigration /
+constant production (and the productive phase of classical BMVR) are
+linear-mean.
+
+\subsection{What HIV biology favours}
+
+HIV does \textbf{not} amplify infectious units inside the cell by branching:
+
+\begin{itemize}
+\item After integration, the DNA template count is typically \textbf{one or a few
+proviruses} --- not an exponentially growing genome pool.
+\item Late genomic RNA is made by host Pol~II from that fixed DNA, not by
+cytoplasmic RdRp-style genome cascading.
+\item Gag and other structural products are translated from mRNA; they do not
+self-replicate. Production is immigration-like: rate set by mRNA and ribosomes,
+minus degradation / packaging / export.
+\end{itemize}
+
+So pure $m'=rm$ birth--death is a \textbf{poor} literal description of HIV
+intracellular load. It fits phage genome races, intracellular bacterial
+division, or some cytoplasmic RNA viruses better.
+
+The main nonlinearity is \textbf{Tat positive feedback}: transcription rate
+rises from a low basal level toward a saturated high state. During the switch,
+product counts can rise faster than a pure linear ramp (even looking briefly
+super-linear) because the \emph{production rate} is increasing --- not because
+each unit is a branching particle. Once fully ON, production is well
+approximated as roughly \textbf{constant} (or fluctuating about a high mean),
+hence mean accumulation is linear / saturating.
+
+\paragraph{Confidence.}
+\begin{itemize}
+\item \textbf{High:} not pure exponential-mean birth--death of virion-like units.
+\item \textbf{Medium--high:} main productive window is closer to mean-linear
+(template-limited) than exponential.
+\item \textbf{Medium:} exact shape of $m(a)$ (linear vs saturating vs sigmoidal)
+depends on species counted and on the Tat phase; few studies cleanly fit
+$e^{rt}$ vs $t$ to single-cell intracellular load.
+\end{itemize}
+
+\subsection{Does the Tat intermediate exceed the late linear rate?}
+
+Tat-controlled transcription is saturating in Tat:
+\[
+\text{rate}
+= r_0 + r_{\max}\,f(\mathrm{Tat}),
+\qquad f\text{ increasing, }f\to 1.
+\]
+The late fully-ON rate is the \textbf{ceiling}. The intermediate phase
+\textbf{climbs toward} that ceiling; in the mean, it does \textbf{not}
+systematically exceed it.
+
+Caveats (different observables):
+\begin{itemize}
+\item Stochastic transcriptional bursts can spike above the \emph{mean} late rate
+(noise, not a higher intermediate phase).
+\item \textbf{Net} accumulation $\dd X/\dd t$ can peak mid-course if export turns
+on late, even when production is still rising or flat --- that is export
+balance, not Tat overshoot.
+\end{itemize}
+For coarse modelling, treat Tat as acceleration \textbf{up to} the late rate, not
+a regime hotter than late ON.
+
+\subsection{Recommended coarse-grained regime}
+
+A fair, defensible minimal regime for HIV intracellular dynamics is:
+\begin{empheq}[box=\fbox]{equation}
+\textbf{eclipse}
+\;\longrightarrow\;
+\textbf{linear (immigration-type) accumulation of }X.
+\end{empheq}
+\begin{enumerate}
+\item \textbf{Eclipse:} negligible late product / no infectious export. Prefer a
+fixed or multi-step (Erlang) delay so first activity is not peaked at $t=0^+$.
+\item \textbf{Productive phase:} $m'\approx\nu-\mu m$ (or $m'\approx\nu$ while
+accumulating), with $\nu$ the late fully-ON production rate. Tat switch-on may
+be folded into a slightly longer eclipse plus an abrupt start of $\nu$.
+\item \textbf{Export:} undecided at this stage (constant rate, linear in $X$,
+batch, \ldots). The linear-vs-exponential choice for \emph{intracellular}
+accumulation does not force the export law.
+\end{enumerate}
+
+This matches fixed provirus templates, Hataye-type delay then productive window,
+and the mean-linear assessment above. It is \textbf{not} absorbing BDC, and it
+does not claim every molecular species is literally linear --- only that one
+coarse stock after eclipse is a fair reduction.
+
+\paragraph{Model ranking (HIV intracellular mean growth).}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Model & Fit as HIV intracellular growth \\
+\midrule
+Birth--death / absorbing BDC ($m'=rm$) & poor as literal mechanism \\
+Immigration + export/dump ($m'\approx\nu-\cdots$) & much better caricature \\
+Eclipse then constant production rate $\nu$ & best simple default \\
+Tat ON/OFF + immigration & best simple mechanistic default \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Takeaway.}
+Coarse-grained HIV: \textbf{eclipse, then mean-linear intracellular production};
+export to be chosen later. Do not default to exponential-mean BDC load growth
+inside the cell. Tat adds a switch up to the late rate, not a systematic
+overshoot of it.
+
+% ===========================================================================
+\section{Building BMVR piece by piece: five cases}
+\label{sec:bmvr-pieces}
+% ===========================================================================
+
+This section lays out a modular route from the classic Basic Model of Viral
+Replication (BMVR) to models with eclipse and with an explicit intracellular
+stock. Target-cell count $T$ is held constant (simplified BMVR). Free-virion
+clearance is $c$; infection rate is $\gamma$. Notation for population counts:
+$\Icell$ (productively infected cells), $\Vfree$ (free virions), and where
+needed $E$ (eclipse cells) and $Q$ (total intracellular load summed over
+infected cells).
+
+\paragraph{Modular programme.}
+\begin{enumerate}
+\item \textbf{Case 1 --- Classic BMVR.} Linear production with
+\emph{immediate} release at constant budding rate $p$ per cell. No
+intracellular stock, no delay.
+\item \textbf{Case 2 --- Eclipse + classic release.} Same as Case~1, but new
+infections enter a non-producing eclipse class before becoming productive.
+(Standard in the literature.)
+\item \textbf{Case 3 --- Intracellular stock + continuous export.} Linear
+accumulation into a compartment $Q$; continuous release from that compartment
+into $\Vfree$ (no eclipse in the main write-up; eclipse stacks as in Case~2).
+\item \textbf{Case 4 --- Intracellular stock + proportional full clear.} Same
+accumulation as Case~3, but release is by dump events that clear the pool at a
+load-proportional rate (reset catastrophe at the mean-field level). No eclipse.
+\item \textbf{Case 5 --- Eclipse + stock + proportional full clear.} Case~4
+with an eclipse class: incidence feeds $E$, only productively infected cells
+accumulate $Q$ and dump.
+\end{enumerate}
+Cases 3--5 are the ``accumulation + structured release'' layer: the
+\emph{export law} and optional eclipse distinguish them; intracellular
+production is immigration-type (mean-linear), not birth--death.
+
+% ---------------------------------------------------------------------------
+\subsection{Case 1 --- Classic BMVR}
+% ---------------------------------------------------------------------------
+
+\paragraph{Assumptions.}
+An infected cell produces virions that are released \emph{immediately} at constant
+rate $p$ (budding). No eclipse, no stored intracellular pool. Infected cells are
+removed at rate $d_{\Icell}$.
+
+\begin{empheq}[box=\fbox]{align}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\label{eq:c1-I}\\[0.3em]
+\ddt{\Vfree}
+&= p\,\Icell - c\,\Vfree.
+\label{eq:c1-V}
+\end{empheq}
+
+\paragraph{Reading the equations.}
+Infection creates productively infected cells at rate $\gamma T\Vfree$. Each such
+cell contributes $p$ virions per unit time to the free pool; free virions clear at
+rate $c$. Production and export are collapsed into the single parameter $p$.
+
+\paragraph{Basic reproduction number (linearised at $\Vfree$ small).}
+\[
+R_0=\frac{\gamma T\,p}{c\,d_{\Icell}}.
+\]
+
+% ---------------------------------------------------------------------------
+\subsection{Case 2 --- Eclipse phase + classic release}
+% ---------------------------------------------------------------------------
+
+\paragraph{Assumptions.}
+New infections enter an eclipse (or latent-productive delay) class $E$: infected
+but not yet producing. Conversion $E\to\Icell$ at rate $a$ (mean eclipse length
+$1/a$). Optional eclipse death $d_E$; productive cells as in Case~1. Release is
+still immediate constant budding $p$ from $\Icell$ only.
+
+This extension is standard in within-host HIV modelling (delay before
+production; fits to acute viremia and treatment timing).
+
+\begin{empheq}[box=\fbox]{align}
+\ddt{E}
+&= \gamma T\,\Vfree - (a+d_E)\,E,
+\label{eq:c2-E}\\[0.3em]
+\ddt{\Icell}
+&= a\,E - d_{\Icell}\,\Icell,
+\label{eq:c2-I}\\[0.3em]
+\ddt{\Vfree}
+&= p\,\Icell - c\,\Vfree.
+\label{eq:c2-V}
+\end{empheq}
+
+\paragraph{Reading the equations.}
+Incidence feeds $E$, not $\Icell$. Only after conversion do cells contribute to
+$\Vfree$ at rate $p$. Setting $a\to\infty$ (instant exit from eclipse) and
+$d_E=0$ recovers Case~1 with the same $p$.
+
+\paragraph{$R_0$.}
+A fraction $a/(a+d_E)$ of eclipse cells become productive; each then yields
+mean $p/d_{\Icell}$ virions, so
+\[
+R_0
+=\frac{\gamma T}{c}\cdot\frac{a}{a+d_E}\cdot\frac{p}{d_{\Icell}}.
+\]
+
+\paragraph{Multi-stage eclipse.}
+Replace one $E$ by a chain $E_1\to\cdots\to E_n\to\Icell$ (Erlang delay) for a
+more realistic distribution of eclipse times; the $\Vfree$ equation is unchanged.
+Hataye-type multi-compartment eclipse is this idea at finer grain.
+
+% ---------------------------------------------------------------------------
+\subsection{Case 3 --- Intracellular accumulation + continuous export}
+% ---------------------------------------------------------------------------
+
+\paragraph{Assumptions.}
+Productively infected cells accumulate an intracellular stock (total pool $Q$
+across all such cells) by \textbf{linear production} at rate $\nu$ per cell
+(immigration-type; Section~\ref{sec:hiv-mean-growth}). Virions are released
+\textbf{continuously} from that stock: each intracellular unit is exported at
+per-capita rate $\varepsilon$ (linear budding from the compartment). Cell death
+removes both the cell and its share of load (mean-field: load lost at rate
+$d_{\Icell}Q$). New infections start with empty stock.
+
+\begin{empheq}[box=\fbox]{align}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\label{eq:c3-I}\\[0.3em]
+\ddt{Q}
+&= \nu\,\Icell - \varepsilon\,Q - d_{\Icell}\,Q,
+\label{eq:c3-Q}\\[0.3em]
+\ddt{\Vfree}
+&= \varepsilon\,Q - c\,\Vfree.
+\label{eq:c3-V}
+\end{empheq}
+
+\paragraph{Reading the equations.}
+\begin{itemize}
+\item $\Icell$: same bookkeeping as Case~1.
+\item $Q$: gained by production $\nu\Icell$; lost by export $\varepsilon Q$ and
+by death of infected cells $d_{\Icell}Q$.
+\item $\Vfree$: fed only by export $\varepsilon Q$, not by a phenomenological
+$p\Icell$.
+\end{itemize}
+Mean load per productive cell is $m=Q/\Icell$ (when $\Icell>0$). In a
+quasi-steady intracellular balance ($\ddt Q\approx 0$),
+\[
+Q_*
+=\frac{\nu}{\varepsilon+d_{\Icell}}\,\Icell,
+\qquad
+p_{\mathrm{eff}}
+:=\frac{\varepsilon Q_*}{\Icell}
+=\frac{\varepsilon\nu}{\varepsilon+d_{\Icell}},
+\]
+and Case~3 collapses to Case~1 with $p=p_{\mathrm{eff}}$. Thus classic BMVR is
+the \textbf{fast-export / quasi-steady stock} limit of this model. When stock
+dynamics are not fast, $\Vfree$ lags and depends on the history of $Q$.
+
+\paragraph{Constant release rate per cell (variant).}
+If instead each productive cell exports at a fixed rate $\rho$ independent of
+load (only while $Q$ is not limiting), one may close with
+$\ddt{\Vfree}=\rho\Icell-c\Vfree$ and drain $Q$ by $\rho\Icell$, provided
+$Q$ stays non-negative --- a cruder law, closer to Case~1, with $Q$ tracking
+unused stock. The linear law $\varepsilon Q$ is the natural default for
+``release from the compartment.''
+
+\paragraph{With eclipse (Case 2$+$Case 3).}
+Incidence enters $E$; only $\Icell$ produces into $Q$:
+\begin{align}
+\ddt{E}
+&= \gamma T\,\Vfree - (a+d_E)\,E,
+\label{eq:c3e-E}\\
+\ddt{\Icell}
+&= a\,E - d_{\Icell}\,\Icell,
+\label{eq:c3e-I}\\
+\ddt{Q}
+&= \nu\,\Icell - \varepsilon\,Q - d_{\Icell}\,Q,
+\label{eq:c3e-Q}\\
+\ddt{\Vfree}
+&= \varepsilon\,Q - c\,\Vfree.
+\label{eq:c3e-V}
+\end{align}
+Eclipse cells do not contribute to $Q$ or $\Vfree$ until conversion.
+
+\paragraph{$R_0$ (Case 3 without eclipse).}
+Lifetime output per cell equals production integrated against survival,
+$\nu/d_{\Icell}$, if every produced unit is eventually either exported or lost
+at death; more carefully, the export fraction is
+$\varepsilon/(\varepsilon+d_{\Icell})$, so mean virions per cell
+$=\nu\varepsilon/(d_{\Icell}(\varepsilon+d_{\Icell}))\cdot d_{\Icell}/\varepsilon$
+simplifies to
+\[
+\frac{\nu}{d_{\Icell}}\cdot\frac{\varepsilon}{\varepsilon+d_{\Icell}},
+\qquad
+R_0
+=\frac{\gamma T\,\nu\,\varepsilon}
+{c\,d_{\Icell}\,(\varepsilon+d_{\Icell})},
+\]
+matching Case~1 with $p=\varepsilon\nu/(\varepsilon+d_{\Icell})$.
+
+% ---------------------------------------------------------------------------
+\subsection{Case 4 --- Intracellular accumulation + proportional full clear}
+% ---------------------------------------------------------------------------
+
+\paragraph{Assumptions.}
+Same linear production into the stock as Case~3 ($\nu$ per productive cell).
+Release is \textbf{not} continuous per unit. Instead, dumps occur at a rate
+proportional to load: in a cell with load $x$, dump rate $\delta x$, and the
+whole pool $x$ is transferred to $\Vfree$ while the cell's stock resets to $0$
+(cell may survive; death is still the separate rate $d_{\Icell}$).
+
+\paragraph{Mean-field closure.}
+Let $Q$ be total intracellular load and $\Icell$ the number of productive cells.
+Under a homogeneous-load closure (every cell carries $m=Q/\Icell$), the
+population dump rate of virions is
+\[
+\delta\,\E\!\sum_i X_i^2
+\approx
+\delta\,\Icell\,m^2
+=\delta\,\frac{Q^2}{\Icell},
+\]
+and the same quantity is the rate at which load leaves $Q$. (Exact stochastic
+models use $\delta\E[X^2]$ per cell; this is the standard mean-field analogue.)
+
+\begin{empheq}[box=\fbox]{align}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\label{eq:c4-I}\\[0.3em]
+\ddt{Q}
+&= \nu\,\Icell - \delta\,\frac{Q^2}{\Icell} - d_{\Icell}\,Q,
+\label{eq:c4-Q}\\[0.3em]
+\ddt{\Vfree}
+&= \delta\,\frac{Q^2}{\Icell} - c\,\Vfree,
+\label{eq:c4-V}
+\end{empheq}
+(with the convention that the nonlinear terms vanish when $\Icell=0$).
+
+\paragraph{Reading the equations.}
+\begin{itemize}
+\item Production $\nu\Icell$ as in Case~3.
+\item The term $\delta Q^2/\Icell$ is simultaneous \textbf{export into
+$\Vfree$} and \textbf{clearing of $Q$} (full dump).
+\item Cell death still removes load at rate $d_{\Icell}Q$; dumps do
+\emph{not} remove the cell from $\Icell$ (reset, not lysis). For a lytic
+variant, add a sink in $\Icell$ proportional to total dump rate.
+\end{itemize}
+
+\paragraph{Contrast with Case 3.}
+Continuous export is linear in $Q$ ($\varepsilon Q$). Full clear is
+\textbf{quadratic} in total load at fixed $\Icell$ ($\propto Q^2/\Icell$),
+i.e.\ superlinear in mean load $m$. Mature quasi-steady balance
+($\ddt Q\approx 0$, $\Icell$ slowly varying) gives
+\[
+\nu
+=\delta m^2 + d_{\Icell}\,m
+\quad\Rightarrow\quad
+m
+=\frac{-d_{\Icell}+\sqrt{d_{\Icell}^2+4\delta\nu}}{2\delta},
+\]
+and effective release per cell $p_{\mathrm{eff}}=\delta m^2$, which plays the
+role of $p$ in Case~1 only in that steady regime --- transients and early
+infection need the full $(Q,\Vfree)$ system. For the same release law
+\textbf{with eclipse}, see Case~5.
+
+\paragraph{$R_0$ (sketch).}
+In the linearised regime near zero infection, $Q$ is small, dumps are rare, and
+the first-order expansion of \eqref{eq:c4-Q}--\eqref{eq:c4-V} must be taken
+carefully (the map $Q\mapsto Q^2/\Icell$ is singular at $0$ in naive form).
+For invasion analysis it is safer to linearise the underlying single-cell
+process (expected lifetime output $V_\infty$) and set
+$R_0=\gamma T V_\infty/c$, as in the renewal framework. The ODE system
+\eqref{eq:c4-I}--\eqref{eq:c4-V} is aimed at bulk dynamics with $\Icell$ not
+near zero; use branching / renewal for establishment.
+
+% ---------------------------------------------------------------------------
+\subsection{Case 5 --- Eclipse + stock + proportional full clear}
+% ---------------------------------------------------------------------------
+
+\paragraph{Assumptions.}
+Combine Case~2 and Case~4: new infections enter a non-producing eclipse class
+$E$; only after conversion to productively infected $\Icell$ does linear
+production into the intracellular stock $Q$ begin; release from $Q$ is by
+load-proportional full clear (same mean-field dump as Case~4). Eclipse cells
+carry no stock and do not feed $\Vfree$.
+
+\begin{empheq}[box=\fbox]{align}
+\ddt{E}
+&= \gamma T\,\Vfree - (a+d_E)\,E,
+\label{eq:c5-E}\\[0.3em]
+\ddt{\Icell}
+&= a\,E - d_{\Icell}\,\Icell,
+\label{eq:c5-I}\\[0.3em]
+\ddt{Q}
+&= \nu\,\Icell - \delta\,\frac{Q^2}{\Icell} - d_{\Icell}\,Q,
+\label{eq:c5-Q}\\[0.3em]
+\ddt{\Vfree}
+&= \delta\,\frac{Q^2}{\Icell} - c\,\Vfree,
+\label{eq:c5-V}
+\end{empheq}
+(with nonlinear dump terms set to $0$ when $\Icell=0$).
+
+\paragraph{Reading the equations.}
+\begin{itemize}
+\item \eqref{eq:c5-E}--\eqref{eq:c5-I}: same eclipse bookkeeping as Case~2.
+  Incidence creates $E$; conversion at rate $a$ creates $\Icell$; optional
+  eclipse death $d_E$; productive death $d_{\Icell}$.
+\item \eqref{eq:c5-Q}--\eqref{eq:c5-V}: identical stock and release law to
+  Case~4. Only productively infected cells produce ($\nu\Icell$) and dump
+  ($\delta Q^2/\Icell$).
+\item Setting $a\to\infty$ with $d_E=0$ recovers Case~4 (instant exit from
+  eclipse). Setting the dump aside and replacing
+  $\delta Q^2/\Icell$ by continuous export would give eclipse$+$Case~3.
+\end{itemize}
+
+\paragraph{What eclipse changes relative to Case 4.}
+There is an additional delay before any contribution to $Q$ or $\Vfree$. Early
+after a pulse of infection, $E$ rises first, then $\Icell$ and $Q$, then
+$\Vfree$ --- a staged lag that Case~4 cannot produce. Quasi-steady relations
+for mean load $m=Q/\Icell$ among \emph{productive} cells are unchanged from
+Case~4 once $\Icell$ is slowly varying; the eclipse only filters how
+$\Icell(t)$ is driven by $\Vfree$.
+
+\paragraph{$R_0$ (sketch).}
+As in Case~2, a fraction $a/(a+d_E)$ of eclipse cells become productive. If
+$V_\infty$ is expected lifetime free-virus output of one productive cell under
+the Case~4 release law, then
+\[
+R_0
+=\frac{\gamma T}{c}\cdot\frac{a}{a+d_E}\cdot V_\infty
+\]
+in the linear-infection, single-cell sense. Bulk invasion near $\Icell=0$ has
+the same caveat as Case~4 regarding the $Q^2/\Icell$ closure; prefer
+single-cell / renewal linearisation for thresholds.
+
+% ---------------------------------------------------------------------------
+\subsection{Summary of the five cases}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}p{0.08\textwidth}p{0.38\textwidth}p{0.42\textwidth}@{}}
+\toprule
+Case & Intracellular story & Free-virus source term \\
+\midrule
+1 Classic & none (instant release) & $p\,\Icell$ \\
+2 Eclipse + classic & delay $E\to\Icell$, then as 1 & $p\,\Icell$ \\
+3 Stock + continuous export & $\nu$ into $Q$, export $\varepsilon Q$ & $\varepsilon\,Q$ \\
+4 Stock + full clear & $\nu$ into $Q$, dump $\propto Q^2/\Icell$ & $\delta Q^2/\Icell$ \\
+5 Eclipse + stock + full clear & $E\to\Icell$, then as 4 & $\delta Q^2/\Icell$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{What is fixed vs open.}
+\begin{itemize}
+\item \textbf{Fixed in Cases 3--5:} production into the stock (once productive)
+is \textbf{linear / immigration-type}, not birth--death exponential mean growth.
+\item \textbf{Open / chosen by case:} release law --- continuous
+($\varepsilon Q$) vs proportional full clear ($\delta Q^2/\Icell$); and whether
+eclipse is present (Cases 2 and 5, or stacked on Case~3).
+\item \textbf{Composability:} Case~5 is exactly Case~4 with Case~2's eclipse
+block in front.
+\item \textbf{Link to renewal BMVR:} each case induces kernels $S(a)$ and
+$g(a)$; the convolution form of Result~\ref{res:new-vde} remains available when
+ODE stage structure is replaced by age structure.
+\end{itemize}
+
+\paragraph{Takeaway.}
+Start from classic BMVR (Case~1), add eclipse if delay matters (Case~2), then
+--- when release timing and stock matter --- replace $p\Icell$ by an explicit
+compartment $Q$ with either continuous export (Case~3) or proportional full
+clear (Case~4). Add eclipse in front of full clear as Case~5 when both delay
+and batch-like dump matter. Classic $p$ is recovered as a quasi-steady limit of
+Case~3.
+
+% ===========================================================================
+\section{Self-excitatory release mechanisms}
+\label{sec:self-excite}
+% ===========================================================================
+
+Cases 3--5 treat release as either continuous export or load-proportional full
+clear. A further biological possibility is that release is partially
+\textbf{self-excitatory}: one budding / dump event makes further release more
+likely for a short time (Hawkes-type thinking), e.g.\ via cooperative Gag
+nucleation, local membrane platforms, or ESCRT already recruited at a site.
+
+This must be balanced against \textbf{depletion} of stock $X$ and finite
+machinery: pure open-ended self-excitation is unlikely; a hybrid
+``excitation + refill + depletion'' picture is more plausible than a classical
+Hawkes process alone.
+
+\paragraph{Two levels of BMVR.}
+\begin{itemize}
+\item \textbf{ODE BMVR:} finite system in
+$(\Icell,Q\text{ or }m,\Vfree)$ (and maybe $E$, phase variables).
+\item \textbf{Renewal BMVR:} $(\Icell,\Vfree)$ with kernels $S(a)$, $g(a)$ from
+a single-cell process --- same skeleton as Result~\ref{res:new-vde}.
+\end{itemize}
+Renewal BMVR exists whenever the single-cell model defines an expected release
+rate $g(a)$ and survival $S(a)$. ODE BMVR needs a low-dimensional Markov
+state (or a moment closure).
+
+\subsection{Menu of self-excitatory models}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+{\small
+\begin{tabular}{@{}clp{0.28\textwidth}cc@{}}
+\toprule
+\# & Model & Excitation type & ODE BMVR? & Renewal? \\
+\midrule
+1 & Classical Hawkes & event history only & poor & yes (num.\ $g$) \\
+2 & Hawkes $+$ stock $X$ & events $+$ depletion/refill & approx.\ / via 10 & \textbf{yes} \\
+3 & Marked Hawkes & size-weighted & approx. & yes (num.) \\
+4 & ETAS-style & size $+$ time kernel & approx. & yes (num.) \\
+5 & Cox $+$ latent $Z$ & latent excitability & yes if $Z$ simple & yes \\
+6 & ON/OFF telegraph & sustained high phase & \textbf{yes} & yes \\
+7 & $\lambda\propto X^2$ & cooperative rate, no history & \textbf{yes} (Cases 4--5) & yes \\
+8 & Nucleation biophysics & assembly cascade & hard & yes (num.) \\
+9 & Age since last release & renewal excitation & yes (stages) & yes \\
+10 & Jumping rate $r(t)$ & shot-noise intensity & \textbf{yes} (mean-field) & yes \\
+11 & Spatial Hawkes & local membrane & average first & after coarse-grain \\
+12 & Full clear (Cases 4--5) & instant total cascade & \textbf{yes} & yes \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\paragraph{How they nest.}
+Model 2 (Hawkes $+$ $X$) is the general event-history form. With
+$\phi\equiv 0$ and $f(x)=\varepsilon x$ it recovers continuous export
+(Case~3); with $\phi\equiv 0$, $f(x)=\delta x^2$ and full clear it recovers
+model 7 / Cases 4--5; with exponential $\phi(t)=\eta e^{-\beta t}$ it is
+equivalent to model 10 (Markov intensity). Model 6 is a coarse two-level
+approximation to high vs low release rate without continuous $r$.
+
+The four models best suited to our build are detailed next: \textbf{7},
+\textbf{6}, \textbf{10}, and \textbf{2}.
+
+% ---------------------------------------------------------------------------
+\subsection{Model 7 --- Quadratic / cooperative intensity ($\lambda\propto X^2$)}
+% ---------------------------------------------------------------------------
+
+\paragraph{Idea.}
+Release is a state-dependent Poisson process. Given load $X=x$,
+\[
+\lambda(x)=\delta x^2
+\quad\text{(or }\delta x(x-1)\text{)}.
+\]
+No explicit memory of past event times --- only current load.
+``Self-excitation'' means \textbf{cooperativity}: more material present makes
+release disproportionately more likely (nucleation / lattice / local Gag
+density). This is the single-cell version of the mean-field dump rate in
+Cases~4--5.
+
+\paragraph{Single-cell transitions (productive cell).}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Event & Effect & Rate \\
+\midrule
+Production & $X\to X+1$ & $\nu$ (linear / immigration) \\
+Optional degradation & $X\to X-1$ & $\mu X$ \\
+Dump (full clear) & $X\to 0$, release $+X$ & $\delta X^2$ \\
+Cell death & stop & $d_{\Icell}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Population BMVR.}
+ODE form is already Cases~4--5:
+\[
+\Vfree'
+=\delta\frac{Q^2}{\Icell}-c\Vfree,
+\qquad
+Q'
+=\nu\Icell-\delta\frac{Q^2}{\Icell}-d_{\Icell}Q
+\]
+(homogeneous closure $\E[X^2]\approx m^2$, $m=Q/\Icell$). Renewal form:
+$g(a)=\delta\E[X_a^2\mathbf 1_{\{\mathrm{alive}\}}]$, $S(a)=e^{-d_{\Icell}a}$,
+then the usual convolutions.
+
+\paragraph{Pros / cons.}
+ODE and renewal both available; interpretable cooperativity without Hawkes;
+homogeneous $Q^2/\Icell$ ignores load variance; full clear is an extreme
+(unit budding at rate $\varepsilon X$ is milder).
+
+\paragraph{Use when.}
+Default bulk ODE ``excitatory'' model; continuum of cooperative nucleation if
+event history is not required.
+
+% ---------------------------------------------------------------------------
+\subsection{Model 6 --- Two-state telegraph / bursting release (ON--OFF)}
+% ---------------------------------------------------------------------------
+
+\paragraph{Idea.}
+The cell (or a membrane site) switches between OFF (little or no release) and
+ON (release at a high rate). Self-excitation is \textbf{phase-based}: once ON,
+many releases occur until OFF --- a burst, not a Hawkes sum over every past
+event. Optional: OFF$\to$ON rate increases with $X$ or after a recent release.
+
+\paragraph{Single-cell sketch.}
+State $(M,X)$ with $M\in\{\mathrm{OFF},\mathrm{ON}\}$. Production at rate
+$\nu$ (always or only ON); OFF$\to$ON at rate $\alpha$ (or
+$\alpha_0+\alpha_1 X$); ON$\to$OFF at rate $\beta$; release while ON at rate
+$\varepsilon X$ or constant $\rho$; cell death $d_{\Icell}$.
+
+\paragraph{Sample path.}
+OFF: stock may build, little free virus; ON: rapid release, stock may fall;
+OFF again: rebuild. Intermittent surges without requiring full clear.
+
+\paragraph{Population ODE BMVR (simplest --- constant $\rho$ while ON).}
+\begin{empheq}[box=\fbox]{align}
+\ddt{I_{\mathrm{OFF}}}
+&= \gamma T\,\Vfree + \beta I_{\mathrm{ON}}
+- (\alpha+d_{\Icell})I_{\mathrm{OFF}},
+\label{eq:m6-off}\\[0.25em]
+\ddt{I_{\mathrm{ON}}}
+&= \alpha I_{\mathrm{OFF}}
+- (\beta+d_{\Icell})I_{\mathrm{ON}},
+\label{eq:m6-on}\\[0.25em]
+\ddt{\Vfree}
+&= \rho\,I_{\mathrm{ON}} - c\,\Vfree.
+\label{eq:m6-V}
+\end{empheq}
+(Eclipse: feed $E$ by incidence, convert into $I_{\mathrm{OFF}}$.) Quasi-steady
+switching yields effective budding
+\[
+p_{\mathrm{eff}}
+=\rho\cdot\frac{\alpha}{\alpha+\beta},
+\]
+recovering classic BMVR (Case~1) as a duty-cycle limit.
+
+\paragraph{With stock.}
+Track $Q$ with production $\nu(I_{\mathrm{ON}}+I_{\mathrm{OFF}})$ (or only ON)
+and export $\varepsilon Q$ restricted to ON cells (requires a closure for how
+load is shared). Renewal BMVR: single-cell $(M_a,X_a)$ defines $g$ and $S$.
+
+\paragraph{Pros / cons.}
+Among excitatory models, one of the \textbf{best for writable ODEs}; matches
+intermittent release; links to Tat ON/OFF intuition; extra parameters
+$(\alpha,\beta,\rho)$; not true Hawkes (no decaying event kernel).
+
+\paragraph{Use when.}
+Clustered release in time with clear ODEs and a transparent limit to constant
+$p$.
+
+% ---------------------------------------------------------------------------
+\subsection{Model 10 --- Jumping continuous release rate $r(t)$}
+% ---------------------------------------------------------------------------
+
+\paragraph{Idea.}
+Keep a continuous release-rate (intensity) process $r(t)\ge 0$: jumps up on
+excitation events, decays toward a baseline between jumps. Export flux is
+$r(t)$ or $r(t)X(t)$. This is the \textbf{Markovian form of Hawkes} when the
+excitation kernel is exponential (shot-noise representation).
+
+\paragraph{Single-cell (exponential kernel).}
+\begin{align}
+\mathrm{d}r
+&= -\beta\bigl(r-r_0\bigr)\,\mathrm{d}t + \eta\,\mathrm{d}N_t,
+\label{eq:m10-r}\\
+\lambda(t)
+&= r(t)
+\quad\text{or}\quad
+r(t)\,X_t,
+\qquad
+N\text{ has intensity }\lambda,
+\label{eq:m10-lam}
+\end{align}
+with $X$ refilled at rate $\nu$ and decremented on each release. Each event
+adds $\eta$ to $r$; memory fades at rate $\beta$.
+
+\paragraph{Population ODE BMVR (mean-field sketch).}
+Track $\Icell$, total load $Q$, total excitation $R=\sum r_i$ (mean
+$\bar r=R/\Icell$). With flux $\approx \bar r\,Q$ and jump input
+$\propto$ event rate $\approx\bar r\,Q$:
+\begin{empheq}[box=\fbox]{align}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\label{eq:m10-I}\\[0.25em]
+\ddt{Q}
+&= \nu\Icell - \bar r\,Q - d_{\Icell}Q,
+\label{eq:m10-Q}\\[0.25em]
+\ddt{R}
+&= -\beta\bigl(R-r_0\Icell\bigr) + \eta\,(\bar r\,Q)
++\text{(cell birth/death corrections)},
+\label{eq:m10-R}\\[0.25em]
+\ddt{\Vfree}
+&= \bar r\,Q - c\,\Vfree,
+\label{eq:m10-V}
+\end{empheq}
+using closures $\E[rX]\approx\bar r\,m$. Renewal BMVR: $g(a)=\E[r_a X_a]$
+(if flux $=rX$); kernels usually numerical.
+
+\paragraph{Pros / cons.}
+True self-excitation with fading memory; finite-dimensional intensity state
+allows ODE BMVR; bridges Hawkes and bulk models; needs closures and extra
+parameters $(\beta,\eta,r_0)$; hard to identify from viral load alone.
+
+\paragraph{Use when.}
+Hawkes-type memory is desired but host-level equations should remain ODEs.
+
+% ---------------------------------------------------------------------------
+\subsection{Model 2 --- Hawkes process with stock $X$}
+% ---------------------------------------------------------------------------
+
+\paragraph{Idea.}
+Release times $(t_i)$ with intensity
+\begin{equation}
+\label{eq:m2-hawkes}
+\lambda(t)
+= f\bigl(X_t\bigr)
++ \sum_{t_i<t}\phi(t-t_i),
+\end{equation}
+$f(X)$ baseline from load (e.g.\ $f(x)=\varepsilon x$ or $\delta x^2$); $\phi\ge 0$
+self-excitation kernel; on event, $X\leftarrow X-1$ (or batch / full clear);
+between events, $X$ grows at rate $\nu$; cell dies at rate $d_{\Icell}$.
+This is the most literal ``Hawkes for budding with biology.''
+
+\paragraph{Special cases.}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Choice & Recovers \\
+\midrule
+$\phi=0$, $f(x)=\varepsilon x$ & Case~3 continuous export \\
+$\phi=0$, $f=\delta x^2$, jump $X\to 0$ & Model 7 / Cases 4--5 \\
+$f=\mathrm{const}$, $\phi=\eta e^{-\beta t}$, ignore $X$ & classical Hawkes \\
+$f=\varepsilon x$, $\phi=\eta e^{-\beta t}$ & \textbf{canonical hybrid} \\
+exponential $\phi$ & equivalent to Model 10 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Population BMVR.}
+\begin{itemize}
+\item \textbf{Renewal:} always well-defined ---
+$g(a)=\E[\lambda(a)\mid\mathrm{alive}]$, $S$ from cell lifetime; same
+convolutions as BDC. Kernels typically from simulation (or from Model 10 if
+$\phi$ is exponential).
+\item \textbf{ODE:} not without reduction --- infinite event history. Restrict
+to exponential $\phi$ and use Model 10 mean-field, or apply moment closures.
+\end{itemize}
+
+\paragraph{Pros / cons.}
+Direct Hawkes language; flexible short excitation window (e.g.\ ESCRT);
+combines load, excitation, and depletion; analytics hard unless exponential
+$\phi$; ODE BMVR only after reduction to Model 10.
+
+\paragraph{Use when.}
+Conceptual / single-cell / renewal theory with true self-excitation; for host
+ODEs, specialise immediately to exponential $\phi$ and Model 10.
+
+% ---------------------------------------------------------------------------
+\subsection{Comparison of the four focal models}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+{\small
+\begin{tabular}{@{}p{0.18\textwidth}p{0.18\textwidth}p{0.18\textwidth}p{0.18\textwidth}p{0.18\textwidth}@{}}
+\toprule
+ & \textbf{7} $\lambda\propto X^2$ & \textbf{6} ON/OFF & \textbf{10} jumping $r$ & \textbf{2} Hawkes$+X$ \\
+\midrule
+Carrier & load only & discrete phase & continuous $r$ & event history ($+$ load) \\
+Memory & Markov in $X$ & Markov in phase & Markov in $r$ & non-Markov unless exp.\ $\phi$ \\
+Clusters & high $X$ $\to$ fast dumps & long ON sojourn & high-$r$ window & aftershocks \\
+ODE BMVR & yes (Cases 4--5) & yes (split $I$) & yes (mean-field $R$) & only via 10 \\
+Renewal BMVR & yes & yes & yes & yes \\
+$\to$ classic $p$ & QSS $\delta m^2$ & duty cycle & QSS $\E[rX]$ & as 10 if exp $\phi$ \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\paragraph{Biological confidence (shared caveat).}
+Cooperative assembly / nucleation (Gag lattice, scaffolds, ESCRT) makes
+\textbf{short clustered} release plausible (\textbf{medium--high} as a
+hypothesis). A classical Hawkes process with only event memory and no
+depletion is a poor standalone cell model (\textbf{low--medium}). Hybrid
+excitation $+$ stock depletion/refill is a reasonable working hypothesis; it is
+\textbf{not} established as the dominant single-cell export law for HIV.
+
+\paragraph{Practical ranking for this project.}
+\begin{enumerate}
+\item Writable ODEs inside current Cases 3--5: Model \textbf{7}.
+\item Intermittent release, simplest new ODEs: Model \textbf{6}.
+\item Self-excitation with fading memory $+$ ODEs: Model \textbf{10}.
+\item Paper language ``Hawkes-like budding'': define Model \textbf{2},
+implement ODEs as Model \textbf{10}, or renewal with numerical $g$.
+\end{enumerate}
+
+\paragraph{Takeaway.}
+Self-excitation is compatible with BMVR whenever the single cell supplies
+$(S,g)$ (renewal form always). Finite ODE BMVR needs excitation carried by a
+few Markov states --- load $X$ (Model 7), ON/OFF (Model 6), or intensity $r$
+(Model 10) --- not an unbounded event history, unless that history is reduced
+to exponential memory (Hawkes $\leftrightarrow$ Model 10).
+
+% ===========================================================================
+\section{Partial release: intermediates between continuous export and full clear}
+\label{sec:partial-release}
+% ===========================================================================
+
+Cases 3--5 sit at two extremes of \emph{how much} leaves the intracellular
+compartment when release occurs:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Extreme & Mechanism & In this document \\
+\midrule
+Continuous export & units leave steadily (flux $\varepsilon Q$) & Case 3 \\
+Full clear & event empties the whole pool & Cases 4--5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A natural intermediate is a \textbf{release event} that removes only a
+\textbf{random or fixed part} of the current load $X=n$: export $B$ units with
+$0\le B\le n$ (or $1\le B\le n$), retain $n-B$. Self-excitation
+(Section~\ref{sec:self-excite}) is optional and separate; here only the
+\textbf{release-count law} $B\mid X=n$ is at issue.
+
+\paragraph{Two ingredients.}
+\begin{enumerate}
+\item \textbf{When} an event fires --- rate $\lambda(X)$, e.g.\ constant
+$\delta$, linear $\delta X$, or cooperative $\delta X^2$.
+\item \textbf{How many} leave --- distribution of $B\mid X=n$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\subsection{Options for $B\mid X=n$}
+% ---------------------------------------------------------------------------
+
+\subsubsection*{A. Boolean / independent retention (recommended default intermediate)}
+
+When an event fires at load $n$, each of the $n$ units is released independently
+with probability $q$ and retained with probability $1-q$:
+\begin{equation}
+\label{eq:boolean-B}
+B\mid X=n \;\sim\; \mathrm{Binomial}(n,q),
+\qquad
+X \leftarrow n-B \;\sim\; \mathrm{Binomial}(n,1-q).
+\end{equation}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}ll@{}}
+\toprule
+$q$ & Behaviour \\
+\midrule
+$q\to 0$ & tiny fractional clear \\
+$q\in(0,1)$ & true intermediate \\
+$q=1$ & full clear (Cases 4--5 style) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Mean release given $n$: $\E[B\mid n]=qn$. Mechanistic reading: a release event
+``hits'' the pool; each package succeeds independently with probability $q$.
+Generating functions stay friendly (product structure over units).
+
+\paragraph{Event rate still free.} Examples: $\lambda=\delta$ (per cell);
+$\lambda=\delta X$; $\lambda=\delta X^2$.
+
+\paragraph{Mean-field BMVR (boolean, $\lambda=\delta X$).}
+Population event structure as in Case~4, but only fraction $q$ of load leaves:
+\begin{empheq}[box=\fbox]{align}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\label{eq:bool-I}\\[0.25em]
+\ddt{Q}
+&= \nu\Icell - \delta q\,\frac{Q^2}{\Icell} - d_{\Icell}Q,
+\label{eq:bool-Q}\\[0.25em]
+\ddt{\Vfree}
+&= \delta q\,\frac{Q^2}{\Icell} - c\,\Vfree.
+\label{eq:bool-V}
+\end{empheq}
+Thus $q=1$ recovers Case~4; $q\in(0,1)$ is partial clear with the same clock.
+If instead $\lambda=\delta$ (constant per cell), mean export is
+$\delta q\,Q$ and the bulk ODEs collapse to Case~3 with
+$\varepsilon_{\mathrm{eff}}=\delta q$ --- pulses remain visible in single-cell
+paths and higher moments, not in the first-moment ODE.
+
+\subsubsection*{B. Fixed fraction}
+
+On event, release $B=\lceil fn\rceil$ or $\mathrm{round}(fn)$ with fixed
+$f\in(0,1]$. Same mean as boolean with $q=f$, \textbf{less} stochasticity.
+Bulk mean-field matches boolean at equal mean fraction; single-cell burst-size
+variance is smaller.
+
+\subsubsection*{C. Random fraction (continuous thinning)}
+
+Draw $U\sim\mathrm{Beta}(a,b)$ (or $\mathrm{Uniform}(0,1)$); set
+$B=\mathrm{round}(Un)$ or thin continuously. More variable burst sizes than
+fixed $f$; boolean is the discrete ``each particle flips a coin'' analogue of
+random thinning.
+
+\subsubsection*{D. Fixed batch size (capped)}
+
+$B=\min(k,n)$ for package size $k\ge 1$. Special cases: $k=1$ is unit budding
+on an event clock (Case~3 in the frequent-event limit); $k$ large approaches
+full clear when $n$ is not huge.
+
+\subsubsection*{E. Size-biased / prefer large}
+
+$P(B=j\mid n)\propto j$, or dump probability depending strongly on $n$. Less
+natural if units are identical; more natural if one site releases a random
+assembled blob.
+
+\subsubsection*{F. Threshold then partial}
+
+Event only if $X\ge x_*$, then apply boolean $q$ or fixed $f$. Combines
+accumulation with a trigger (``surge when enough material'').
+
+\subsubsection*{G. Short high-export window}
+
+On trigger, export at high $\varepsilon$ for a short time, then stop. Partial
+clear in expectation without an explicit law for $B$; related to ON/OFF
+(Model~6) with brief ON.
+
+% ---------------------------------------------------------------------------
+\subsection{Single-cell boolean process (compact)}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Event & Rate & Jump \\
+\midrule
+Produce & $\nu$ & $X\to X+1$ \\
+Release event & $\lambda(X)$ (e.g.\ $\delta X$ or $\delta X^2$) &
+  $B\sim\mathrm{Bin}(n,q)$; $X\to n-B$; free virus $+B$ \\
+Cell death & $d_{\Icell}$ & stop \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Nested limits.}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Choice & Recovers \\
+\midrule
+$q=1$, $\lambda=\delta X^2$ & full clear, cooperative (Case 4-like) \\
+$q=1$, $\lambda=\delta X$ & full clear, linear hazard \\
+$0<q<1$, $\lambda=\delta X$ & \textbf{main partial-clear intermediate} \\
+always $B=1$ when fire, $\lambda=\varepsilon X$ & unit budding (Case 3 discrete) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------------
+\subsection{BMVR feasibility}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{0.42\textwidth}cc@{}}
+\toprule
+Setup & ODE BMVR & Renewal BMVR \\
+\midrule
+Boolean $q$, $\lambda=\delta$ (const) & yes ($\approx$ Case 3, $\varepsilon=\delta q$) & yes \\
+Boolean $q$, $\lambda=\delta X$ & yes \eqref{eq:bool-I}--\eqref{eq:bool-V} & yes \\
+Boolean $q$, $\lambda=\delta X^2$ & yes (Case 4 factor $q$, retain $1-q$) & yes \\
+General law $B\mid n$ & yes if $\E[B\mid n]$ closes under a moment assumption & yes always via $g(a)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Renewal BMVR: single-cell process defines
+$g(a)=\E[\text{release rate at age }a]$ and survival $S(a)$; population
+equations as in Result~\ref{res:new-vde}.
+
+% ---------------------------------------------------------------------------
+\subsection{Where partial clear sits relative to continuous export}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Model & Single-cell path & Mean bulk ODE \\
+\midrule
+Case 3 ($\varepsilon Q$) & smooth drip & linear export \\
+Boolean, $\lambda=\delta$, any $q$ & rare binomial pulses & $\approx$ linear $\delta q\,Q$ \\
+Boolean, $\lambda=\delta X$, $q\in(0,1)$ & pulses of mean size $qm$ & quadratic, strength $\delta q$ \\
+Case 4 ($q=1$) & full empty pulses & quadratic full clear \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Partial vs full is not always visible in mean ODEs if the event rate is
+constant (then only single-cell burst sizes and higher moments differ). It
+\textbf{is} visible in bulk dynamics when the event rate depends on load
+(e.g.\ $\lambda=\delta X$), and always in single-cell release-count
+distributions.
+
+% ---------------------------------------------------------------------------
+\subsection{Recommendation}
+% ---------------------------------------------------------------------------
+
+\textbf{Primary intermediate:} boolean (binomial) thinning with event rate
+$\lambda=\delta X$ (or $\delta X^2$) and release probability $q\in(0,1]$.
+One transparent parameter $q$ between full clear and mild partial clear;
+mechanistic; nested in Cases 3--4 at mean-field level; easy to simulate and to
+write BMVR ODEs.
+
+\textbf{Secondary:} fixed fraction $f$ if less burst-size noise than binomial is
+desired.
+
+\textbf{Later / data-driven:} Beta random fraction, capped batch $k$, threshold
+rules, or short high-export windows --- unless measurements demand them.
+
+\paragraph{Takeaway.}
+Between continuous budding and full dumping, let a release event remove a
+\textbf{distributed part} of the pool. The clean default is independent
+boolean release of each unit with probability $q$; with a load-dependent event
+clock this is Case~4 scaled by $q$, and with a constant clock it is mean-equivalent
+to Case~3 while still producing pulsed single-cell paths.
+
+% ===========================================================================
+\section{What is publishable, and how it fits together}
+% ===========================================================================
+
+\subsection{Core claims suitable for a paper}
+
+\begin{enumerate}
+\item \textbf{Closed-form single-cell theory} for the BDC, including simplified
+moments, corrected non-fixation probability, and a complete proof of the
+geometric burst-size law.
+\item \textbf{Identity:} the burst-size distribution equals the quasi-stationary
+distribution (geometric with ratio $1/a$).
+\item \textbf{Renewal BMVR} with closed-form kernels $\Ihat$ and $\delta K$,
+exact effective parameters $p_{\rm eff}(r)$ and $d_{\Icell,{\rm eff}}(r)$, and
+invariant $R_0$.
+\item \textbf{Growth-phase dependence of~$p$} as a concrete, directional
+prediction for BMVR fitting practice.
+\item \textbf{Identifiability:} three intracellular rates cannot be recovered
+from two BMVR parameters alone; three rescuing observables are named.
+\item \textbf{Flooding advantage} (Result~\ref{res:flood}): the exact condition
+under which bursting beats matched-$R_0$ budding for early establishment.
+\end{enumerate}
+
+\subsection{Suggested paper structure}
+
+Target: \textit{Journal of Theoretical Biology} or
+\textit{Bulletin of Mathematical Biology}.
+
+\begin{enumerate}
+\item Introduction --- BMVR's constant-release assumption; single-cell evidence;
+what is and is not new (renewal framework standard; closed-form kernels and
+consequences new).
+\item The intracellular process --- BDC, closed forms, QSD/burst-size identity.
+\item Renewal reformulation --- kernels and equations.
+\item Exact reduction --- $p_{\rm eff}$, $d_{\Icell,{\rm eff}}$, characteristic
+equation, $R_0$ unchanged, $p$ growth-phase dependent.
+\item Identifiability --- negative result and rescuing observables.
+\item The flooding advantage --- main theorem and the condition
+$1/\delta<1/\beta+1/\mu$.
+\item Application --- single-cell release data; lytic vs.\ budding caveat.
+\item Discussion --- limits of linear intracellular growth; two-type/eclipse
+extension as future work (or fold in if completed).
+\end{enumerate}
+
+If the two-type kernels are finished, a natural split is: (i)~one-type theory as
+above; (ii)~two-type kernel with a mechanistic eclipse phase.
+
+\subsection{What this summary deliberately omits}
+
+\begin{itemize}
+\item Full errata catalogue for thesis Chapters~1, 3--6 (recorded in the working
+notes).
+\item Open technical tasks (literature check, conceptual QSD proof, two-type
+moments, intermediate release models, nonlinear intracellular growth).
+\item The $N=2$ immediate-transfer chain model (interesting, not yet at the same
+state of completion).
+\item Detailed hypergeometric expressions for the Laplace transforms (available
+in the notes; not needed for the main story).
+\end{itemize}
+
+% ===========================================================================
+\section{Quick-reference formula sheet}
+% ===========================================================================
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Quantity & Closed form & Role \\
+\midrule
+$a,b$ & roots of the characteristic quadratic & structure \\
+$\Aa,\Bb$ & $a-1$, $1-b$ & simplify \\
+$I(t)$ & $(a\Bb+b\Aa w)/(\Bb+\Aa w)$ & no-burst survival \\
+$D(t)$ & $ab(w-1)/(aw-b)$ & internal clearance \\
+$\Ihat(t)$ & $(a-b)^2 w/[(\Bb+\Aa w)(aw-b)]$ & productive survival \\
+$J(t)$ & $(a-b)^2 w/(\Bb+\Aa w)^2$ & mean load \\
+$V(t)$ & $(1-I)[1+(\beta/\delta)(1-I)]$ & mean release \\
+$V_\infty$ & $a(1-b)/(a-1)$ & total mean output \\
+$\varphi(t)$ & $\delta J(t)$ & burst-time density \\
+$\Prob{\Kb=k}$ & $(\delta/\beta)a^{-k}$ & burst size \\
+QSD & $(a-1)a^{-n}$ & conditional load \\
+$\E[T_{\rm prod}]$ & $\beta^{-1}\log(a/(a-1))$ & productive lifetime \\
+$R_0$ & $\gamma T V_\infty/c$ & threshold (unchanged) \\
+$p_{\rm eff}(r)$ & $\delta\Lap{K}/\Lap{\Ihat}$ & effective release \\
+Flooding & $1/\delta < 1/\beta+1/\mu$ & when bursting wins \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textit{New viral dynamics (Result~\ref{res:new-vde})}} \\
+$\Icell(t)$ & $\Icell_0\Ihat(t)+(\gamma T\,\Vfree*\Ihat)(t)$ & infected cells \\
+$\Vfree'(t)$ & $\Icell_0 g(t)+(\gamma T\,\Vfree*g)(t)-c\Vfree$ & free virions \\
+$g(a)$ & $\delta K(a)=V'(a)$ & release kernel (BDC) \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textit{Reset catastrophe (Section~\ref{sec:reset-bmvr})}} \\
+$S(a)$ & $e^{-d_{\Icell}a}$ & cell survival \\
+$g(a)$ & $\delta e^{-d_{\Icell}a}\E[X_a^2]$ & multi-pulse release \\
+BMVR & same convolutions as BDC & kernels only change \\
+$p_\infty$ & $\delta\E_\pi[X^2]$ & mature-cell limit \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textit{HIV coarse grain (Section~\ref{sec:hiv-mean-growth})}} \\
+Intracellular mean & eclipse $\to$ $m'\approx\nu-\mu m$ & not $m'=rm$ \\
+Tat intermediate & rate $\le$ late ON ceiling & no systematic overshoot \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1.5em}
+\begin{center}
+\textit{End of summary. Full derivations, numerical verification tables,\\
+and open tasks live in the BMVR extension working notes.}
+\end{center}
+
+\end{document}

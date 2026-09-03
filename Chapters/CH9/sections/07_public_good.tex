@@ -1,0 +1,170 @@
+% Public good accumulation --- plan \S3.3, "\S7".
+% Sources: 10/04:1-40.  10/04:41-65 is parked as
+% _parked/public_good_closed_group_notes.tex.
+% Rename: birth rate \gamma(t) -> \lambda(t) = \lambda_0 + \alpha P(t)
+% (plan \S7.2), and the base rate \beta -> \lambda_0 (\beta is the speciation
+% rate and nothing else).
+% The epistemic hedge of 10/04:4 is carried over near-verbatim, reworded out
+% of the first person; see PHASE_A_REPORT.md item 2.
+
+\section{Public good accumulation}
+\label{var:sec:publicgood}
+
+\subsection{Where the idea comes from}
+\label{var:sec:publicgoodframing}
+
+The last two models concern \yp{}, and this one borrows its mechanism from
+work on antimicrobial resistance. That work considers populations of two
+types, one resistant to a drug and one susceptible, in which the resistant
+type produces a substance and exports it into the surrounding medium. Because
+the substance protects every cell it reaches and not only the ones that made
+it, it is a \emph{public good}: the susceptible type benefits from the
+investment of the resistant one, and the resulting dynamics are not those of a
+straightforward competitive exclusion \cite{asker2023coexistence}.
+
+Something similar may hold between \yp{} and the macrophage. \yp{} has
+evolved resistance to the toxins presented within macrophages, and were that
+resistance executed through a substance of this kind, confinement inside the
+host cell would concentrate the substance rather than disperse it --- an
+advantage available inside a cell and not outside one. This is purely
+speculative and may not at all be the case, but even if it is not, the
+dynamics may be interesting in and of themselves. Taken as a hypothesis it
+would further support the argument of \cref{path:sec:ypestis} that the
+within-macrophage environment carries a replicative advantage, and would
+supply a mechanism for that advantage rather than only an inference from
+behaviour.
+
+\begin{center}
+\small
+\captionof{table}{Reading of the public-good model in an intracellular
+\yp{} setting. The last three rows are the speculation; the first four are
+the process as written.}
+\label{var:tab:pg-map}
+\begin{tabular}{@{}p{0.32\textwidth}p{0.58\textwidth}@{}}
+\toprule
+Model component & Biological meaning under this reading \\
+\midrule
+$X_t$ & intracellular \yp{} count in one macrophage \\
+$P(t)$ & concentration of an exported protective substance \\
+$g$, $c$ & per-bacterium production, and clearance from the enclosed volume \\
+$\lambda(t)=\lambda_0+\alpha P(t)$ & replication raised by the accumulated good \\
+$\mu$ & killing by macrophage toxic products, treated as constant \\
+Enclosure & concentrates $P$ by preventing diffusion away \\
+Public-good mechanism & resistance executed through an exported substance;
+  not established for this organism \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{fig10_public_good/fig10}
+\caption{\yp{} replicating inside a macrophage, with public good $P(t)$
+accumulating in the enclosed volume. The enclosure stops the good diffusing
+away, so the same production rate $gX_t$ buys a higher concentration inside
+a cell than outside; clearance $c$ is the competing loss. Replication
+responds at $\lambda(t)=\lambda_0+\alpha P(t)$.}
+\label{var:fig:board}
+\end{figure}
+
+\subsection{The model}
+\label{var:sec:publicgoodmodel}
+
+Let $X_t$ count \yp{} within one macrophage and $P(t)$ the concentration of
+public good in it. The good is produced in proportion to the bacterial count
+and cleared at a constant rate, and its presence raises the replication rate:
+\begin{align}
+\ddt{P}&=g\,X_t-c,\notag\\
+\pr{\Delta X_t=1\mid X_t}&=\lambda(t)\,X_t\,\Delta t+o(\Delta t),
+\qquad
+\lambda(t)=\lambda_0+\alpha P(t),
+\label{var:eq:publicgood}\\
+\pr{\Delta X_t=-1\mid X_t}&=\mu\,X_t\,\Delta t+o(\Delta t),\notag
+\end{align}
+with $g$ the production rate per bacterium, $c$ the clearance rate,
+$\lambda_0$ the base birth rate and $\alpha$ the public-good advantage. The
+effect of the host cell's toxic products is folded into the constant death
+rate $\mu$, which ignores the depletion of those products that \ChPath{}
+treats explicitly; the object of interest here is the public good rather than
+the toxin.
+
+The feedback is the one this chapter is about, running for once in the
+favourable direction: a larger population makes more of the good, which
+raises the birth rate, which makes the population larger still. What stops
+that being unconditional is the clearance term $-c$. While $X_t<c/g$ the good
+is cleared faster than it is made and $P$ falls, so a small founding cohort
+may never start the loop at all, and the regime worth attention is therefore
+$\mu>\lambda_0$, where the process is subcritical on its own and turns
+supercritical only once enough public good has accumulated. Survival there is
+not a matter of luck alone but of initial numbers.
+
+\subsection{The minimum founding cohort}
+\label{var:sec:kstar}
+
+That observation can be made into a well-posed question, and it is the best
+one this model has. Suppose the process embedded in a host-to-host sequence:
+if the infection within a macrophage survives to late time the cell dies and
+delivers its load into two more cells, and if not, the lineage ends. This is
+a Galton--Watson process whose division probability is set by the within-cell
+dynamics above, and it is supercritical exactly when the probability of
+within-cell survival exceeds one half. The quantity wanted is the smallest
+founding cohort achieving that:
+\begin{equation}
+K^\ast=\inf\left\{K:\ \lim_{t\to\infty}\pr{X_t>0\mid X_0=K}>\tfrac12\right\}.
+\label{var:eq:kstar}
+\end{equation}
+In the regime $\mu>\lambda_0$ the limit is zero for every $K$ once the public
+good is removed, so $K^\ast$ is finite only on account of it and measures
+exactly what the public good is worth: it is the number of bacteria that must
+arrive together for the mechanism to pay for itself.
+
+\Cref{var:fig:kstar} computes it. At
+$(\lambda_0,\alpha,g,c)=(0.6,0.25,0.15,0.45)$, so that $P$ falls whenever
+$X_t<c/g=3$, the survival probability as a function of $K$ is a steep
+sigmoid through one half, and $K^\ast$ itself rises with the excess death
+rate $\mu-\lambda_0$. The dashed line in panel~(b) is $c/g$: $K^\ast$ sits
+above it, as it must, because a founding cohort smaller than the clearance
+threshold cannot start the loop. At $\mu-\lambda_0=1.2$ no $K\le 28$ crossed
+one half in $600$ paths, which is a statement about the parameter point
+rather than a failure of the definition.
+
+Two things about \cref{var:eq:kstar} are worth stating plainly. It is not a
+threshold in the sense of \cref{path:cor:threshold}, which is a statement
+about a budget and is available in closed form; this one is defined by a
+limit of a survival probability, and there is no reason to expect it in
+closed form. The two-offspring assumption is also doing work, though less
+than it appears to: a general offspring law with mean $m$ would replace the
+one-half in \cref{var:eq:kstar} by $1/m$, which moves $K^\ast$ without
+changing what it measures.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{fig14_kstar/fig14}
+\caption{The minimum founding cohort of \cref{var:eq:kstar}, computed by
+Gillespie simulation of \cref{var:eq:publicgood} with $P$ floored at zero
+($600$ paths per point).
+Panel~(a): estimated late-time survival against $K$ at $\mu-\lambda_0=0.5$,
+with the one-half line that defines $K^\ast$.
+Panel~(b): $K^\ast$ against excess death; the dashed line is the clearance
+threshold $c/g=3$.
+Parameters $(\lambda_0,\alpha,g,c)=(0.6,0.25,0.15,0.45)$.}
+\label{var:fig:kstar}
+\end{figure}
+
+\openqs{
+\item \textbf{Death rate rather than birth rate.} It may well make more sense
+for the public good to lower the death rate than to raise the birth rate,
+since what it protects against is killing. That is a different model ---
+$\mu(t)=\mu_0-\alpha P(t)$ with a floor at zero, which is not a linear
+birth--death process in the same way --- and it has yet to be written down.
+\item \textbf{Whether the enclosure argument survives contact.} The whole
+motivation rests on confinement concentrating the good, and making that
+quantitative wants a volume and a diffusion or export rate, neither of which
+appears in \cref{var:eq:publicgood}. As written the model assumes the
+concentrating effect rather than deriving it.
+\item \textbf{The scaling of $K^\ast$.} \Cref{var:fig:kstar} is one slice of
+parameter space. How $K^\ast$ scales with $\alpha$ and with $c/g$, and
+whether the rise with $\mu-\lambda_0$ remains roughly linear, is open.
+}
+
+\FloatBarrier

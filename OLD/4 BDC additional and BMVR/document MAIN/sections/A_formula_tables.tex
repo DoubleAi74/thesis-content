@@ -1,0 +1,96 @@
+% Appendix A --- master formula tables (Phase 5).
+% Source: new_notes3 Part J \S36--\S37, cleaned and brought into the
+% chapter's notation. Entries marked (corr.) carry the corrections of
+% Remarks ref:rem:ihat--ref:rem:EW2; (new) marks results first derived in
+% this thesis.
+
+\section{Master formula tables}
+\label{app:formula-tables}
+
+\subsection*{Single cell}
+
+Throughout: $w=\ee^{\theta t}$, $\theta=\beta(a-b)$, $A=a-1$, $B=1-b$,
+$L=a(1-b)$, $\kappa=1+\delta/(2\beta)$.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\small
+\begin{tabular}{@{}p{0.24\textwidth}p{0.62\textwidth}@{}}
+\toprule
+Quantity & Closed form \\
+\midrule
+Roots $a,b$ & $\eta\pm\sqrt{\eta^2-\mu/\beta}$, $\eta=(\beta+\mu+\delta)/(2\beta)$ \\
+$A,B,\theta$ & $a-1$, $1-b$, $\beta(a-b)$; $AB=\delta/\beta$, $A+B=a-b$ \\
+$I(t)$ & $(aB+bAw)/(B+Aw)$ \\
+$D(t)$ & $ab(w-1)/(aw-b)$ \\
+$\Ihat(t)$ & $(a-b)^2 w/[(B+Aw)(aw-b)]$ \quad(corr.) \\
+$\Ihat_k(t)$ & $I(t)^k-D(t)^k$ \quad(corr.) \\
+$J(t)$ & $(a-b)^2 w/(B+Aw)^2=-\frac{\beta}{\delta}(I-a)(I-b)$ \\
+$K(t)$ & $[1+2\beta(1-I)/\delta]J=\frac{2\beta}{\delta}(\kappa-I)J$ \\
+$V(t)$ & $(1-I)[1+\beta(1-I)/\delta]$ \\
+$V_\infty$ & $a(1-b)/(a-1)=aB/A$ \\
+$\mean{\Kb\mid\text{burst}}$ & $a/(a-1)$ \\
+$\mean{\wt^2}$ & $\frac{2(\beta-\mu)}{\delta}V-\frac{\beta+\mu}{\delta}I-K+\frac{\beta+\mu}{\delta}+1$ \quad(corr.) \\
+$\varphi(t)$ (burst time) & $\delta J(t)$, mass $1-b$ \\
+$\Prob{\Kb=k}$ & $(\delta/\beta)\,a^{-k}$, $k\ge1$ \\
+QSD$(n)$ & $(a-1)\,a^{-n}$ \quad(new) \\
+$\mean{T_{\rm prod}}$ & $\beta^{-1}\log(a/(a-1))=\beta^{-1}\log\langle X\rangle_{\rm QS}$ \quad(new) \\
+$g_k(a)$ (MOI) & $\delta[kK I^{k-1}+k(k-1)J^2I^{k-2}]$ \quad(corr.) \\
+$V_\infty^{(k)}$, $\mu=0$ & $k+\beta/\delta$ \quad(new) \\
+$r_k$ law ($\mu=0$, chain) & $\binom{n+k-2}{k-1}s^k\rho^{n-1}$, $s=\delta/(\beta+\delta)$ \\
+$\Lap{T}(k,u)$ (interval) & $\frac{sk}{k+u'}\Fhyp(k+1,1;k+1+u';\rho)$, $u'=u/(\beta+\delta)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Population}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\small
+\begin{tabular}{@{}p{0.24\textwidth}p{0.62\textwidth}@{}}
+\toprule
+Quantity & Formula \\
+\midrule
+Renewal system & $\Icell=\Icell_0\Ihat+i*\Ihat$, \ $\Vfree'=\Icell_0 g+i*g-c\Vfree$, \ $i=\gamma T\Vfree$ \\
+Release kernel & $g(a)=\delta K(a)=V'(a)$ \\
+$p_{\rm eff}(r)$ & $\delta\Lap{K}(r)/\Lap{\Ihat}(r)$ \\
+$d_{\Icell,{\rm eff}}(r)$ & $1/\Lap{\Ihat}(r)-r$ \\
+Limits $r=0$ & $p_{\rm eff}=\beta V_\infty/\log(a/(a-1))$, \ $d_{\rm eff}=\beta/\log(a/(a-1))$ \\
+Limits $r\to\infty$ & $p_{\rm eff}\to\delta$, \ $d_{\rm eff}\to\mu+\delta$ \\
+Characteristic eq. & $r+c=\gamma T\,\delta\Lap{K}(r)$ \\
+$R_0^{\rm ODE}$ & $\gamma T V_\infty/c$ \\
+Branching mean & $m=qV_\infty$, \ $q=\gamma T/(\gamma T+c)$ \\
+$G_{\rm off}(z)$ & $b+(\delta/\beta)\,y/(a-y)$, \ $y=1-q+qz$ \\
+$z_{\rm ext}^{\rm burst}$ & $[a(1-q+qb)-1+q]/q$ \\
+Flooding criterion & $1/\delta<1/\beta+1/\mu$ \ ($L>1$) \\
+$L=1$ & offspring law exactly geometric \\
+$\Delta z_{\rm ext}$ & $(L-1)(1/m-1)$ \\
+$\mathrm{Var}_{\rm bud}-\mathrm{Var}_{\rm burst}$ & $2q^2V_\infty(L-1)/(a-1)$ \\
+Growth trade-off & $r_{\rm bud}>r_{\rm burst}$ at matched $R_0$, $\mean{T_{\rm prod}}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Quick-reference specialisations}
+
+\paragraph{$\mu=0$.} $b=0$, $a=1+\delta/\beta$, $D\equiv0$, $\Ihat=I$,
+$V_\infty=1+\beta/\delta=\langle X\rangle_{\rm QS}$,
+$\mean{T_{\rm prod}}=\beta^{-1}\log(1+\beta/\delta)$,
+$V_\infty^{(k)}=k+\beta/\delta$,
+$\Prob{\Kb=k}=s\rho^{k-1}$ with $s=\delta/(\beta+\delta)$, $\rho=1-s$;
+flooding favours bursting for establishment at every $\delta>0$.
+
+\paragraph{The boundary $L=1$.} $\delta=\beta\mu/(\beta+\mu)$,
+$b=\delta/\beta$; the offspring law is geometric with mean $m$;
+$z_{\rm ext}^{\rm burst}=z_{\rm ext}^{\rm bud}$ for every $q$; offspring
+variances equal.
+
+\paragraph{Young-cell / fast-growth limit.} $p_{\rm eff}\to\delta$,
+$d_{\rm eff}\to\mu+\delta$: a newly infected cell holds one particle,
+bursts at rate $\delta$, releases one.
+
+\paragraph{Set-point / $r=0$ matching.}
+$p_{\rm eff}=V_\infty/\mean{T_{\rm prod}}$,
+$d_{\rm eff}=1/\mean{T_{\rm prod}}$: lifetime output over lifetime; the
+fairest constant-parameter comparison of \S\ref{sec:overlays}.

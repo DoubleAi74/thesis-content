@@ -1,0 +1,64 @@
+\section{Introduction}
+\label{m:sec:intro}
+
+The processes studied in this thesis describe populations small enough that their
+fate is decided by chance rather than by their mean behaviour --- a founding cohort
+of a few individuals, or the contents of a single compartment that may later
+rupture. At those counts a deterministic rate equation answers the wrong question.
+It returns a single trajectory, growing or decaying, when what one wants to know is
+whether the population establishes itself at all, and how large it is if it does.
+Both are questions about a distribution, and neither is visible in a mean.
+
+This chapter assembles the probabilistic and analytic toolkit used throughout the
+thesis. Two threads run through it. They are worth separating at the outset,
+because almost every later section belongs to one or the other.
+
+The first is \emph{conditioning on survival}. A subcritical branching process dies
+out with probability one, so its unconditional mean decays geometrically and
+records little beyond the certainty of extinction. Restrict attention to those
+realisations that happen still to be alive at generation $n$, however, and the
+picture changes entirely: the conditional population settles to a fixed
+distribution, and the mean of that distribution is a constant. For the binary
+Galton--Watson process with replication probability $p<\tfrac12$ the constant is
+$1/A(p)$, where
+\begin{equation*}
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n}
+\end{equation*}
+and $S_n$ is the probability of survival to generation $n$. This chapter defines
+$A(p)$ at the level needed to use the limiting conditional law, develops the
+continuous-time analogue $\Ac(p)$ where a closed form is available, and leaves the
+product representation, series and bounds, closed-form search, and Koenigs
+obstruction theory to \ChA.
+
+The second thread is the \emph{near-critical regime}. As $p$ rises towards
+$\tfrac12$ the process takes ever longer to die, the quasi-stationary mean $1/A(p)$
+diverges, and any numerical scheme that works by iterating to stationarity becomes
+impractical. Just above $\tfrac12$ the size of the founding cohort begins to weigh
+heavily on whether the process survives at all. The behaviour on either side of
+$p=\tfrac12$ is what makes small founding populations interesting, and it is also
+what makes them awkward to compute with.
+
+\Cref{m:sec:prelim} assembles the standard apparatus: exponential clocks and the
+races between them, continuous-time Markov chains and their generators,
+probability generating functions, and the linear birth--death process, whose
+generating-function partial differential equation is the template for everything in
+\cref{m:sec:moc}. \Cref{m:sec:gw} sets out the Galton--Watson process and establishes
+the two facts on which the rest depends --- that extinction is certain at and below
+criticality, and that at criticality the expected lifetime is nevertheless infinite.
+\Cref{m:sec:qsd} derives the limiting conditional mean and variance, and so
+introduces $A(p)$ lightly. \Cref{m:sec:small} asks what changes when the process
+starts from a cohort of $k$ individuals rather than one, treats a discrete
+birth--death process subject to catastrophe, obtains the continuous-time constant
+$\Ac(p)$ in basic detail, and defines the continuous-time birth--death--catastrophe
+process used in later chapters. \Cref{m:sec:moc} develops the method of
+characteristics for the generating-function equations of absorption models.
+
+Two remarks on how the chapter is written. First, deep analysis of $A(p)$ --- the
+infinite product, exact series and two-sided bounds, near-critical asymptotics,
+closed-form search, and identification with a value of the Koenigs linearising
+function --- is deferred to \ChA. The continuous-time closed form $\Ac(p)$ is
+developed here so that the discrete constant can be contrasted against a case where
+elementarity is available. Second, the argument is in places heuristic --- continuum
+approximations to difference equations, mean-field substitutions, asymptotic
+matching. Every such step is marked where it occurs, and where a claim can be
+checked numerically it has been.

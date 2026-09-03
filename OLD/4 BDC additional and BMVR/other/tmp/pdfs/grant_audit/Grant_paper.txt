@@ -1,0 +1,940 @@
+  RELEASE OF VIRUS AND BACTERIA FROM INFECTED CELLS:
+           MODELS OF BUDDING AND BURSTING
+     ADAM ALDRIDGE, BEVELYNN WHALER, MARTÍN LÓPEZ GARCÍA, CARMEN
+              MOLINA PARÍS, JOE GILLARD AND GRANT LYTHE∗
+
+     Abstract. When are virus or bacteria released from an infected cell? We consider two types
+of mathematical model. In the first, “budding”, infected cells are assumed to release new infectious
+particles at a constant rate (that is, constant probability per unit time). No description of the
+intracellular dynamics is needed; the mean number of new infectious particles released per infected
+cell is simply the rate of release multiplied by the mean lifetime of an infected cell. In the second,
+“bursting”, infectious particles accumulate inside a host cell until the cell dies and the intracellular
+load is released, all at once. At the level of an individual cell, the simplest stochastic budding models
+have two types of independent event: release of an infectious particle and death of the infected cell.
+In bursting, however, release of infectious particles and death of the host cell are not independent
+events: they occur simultaneously. We construct bursting models in which the death of an infected
+cell, releasing its cargo, is an event whose rate, like increase or decrease of the intracellular population,
+is proportional to the population size. Mean quantities describing release of new infectious particles
+in the bursting model satisfy simple differential equations that yield exact expressions for burst
+size distributions, and mean burst size conditioned on time of release. Even though the model has
+no imposed carrying capacity, but the mean intracellular population, given that the burst has not
+happened before time t, is an increasing function of time with a finite limiting value.
+
+
+     1. Introduction. Viruses, some bacteria, and bacteriophages use the environ-
+ment inside host cells to reproduce, then exit and spread to other host cells. In the
+case of enveloped viruses [1], once a virus is assembled inside a host cell, its membrane
+can fuse with, and then pinch off from, the cell membrane. Thus, fully-formed virus
+particles can be released, one at a time, without cell lysis. On the other hand, exit
+of non-enveloped viruses is observed to occur in bursts, associated with lysis of the
+cell provoked by the presence of the virus [2]. This process has been observed in the
+case of bacteriophages since the early days of laboratory virology [3]. Some bacteria
+also reproduce inside cells. The bacterium Francisella tularensis is phagocytosed by
+alveolar macrophages, but is able to survive and escape from the phagosome to the
+cytosol [4, 5]. After multiple rounds of division in the cytosol, the bacterial load
+eventually causes the host macrophage to rupture and die, releasing many infectious
+bacteria [6, 7]. B. anthracis spores germinate in alveolar macrophages, replicate in
+the cytosol and are released when a cell ruptures and dies. These two schemes for
+the release of virus or bacteria, budding and bursting, require two different types of
+mathematical models [8]. Newly replicated and released particles may stand a better
+chance of survival if they move to other host cells en masse, than if they are released
+one at a time [9].
+     The number of new infectious particles released per infected cell is an important
+quantity in determining whether a small number of pathogenic agents inside a human
+or animal host will grow into a detectable infection. The number is an integer-valued
+random variable whose full distribution can only be calculated from the stochastic
+intracellular dynamics, even if the mean value may be determined from ordinary
+differential equations (ODEs). Similarly, reproduction numbers are integer-valued
+random variables whose distributions are determined by the stochastic dynamics of
+release and absorption [10].
+     A simplification used in most viral infection models is that the rate of release of
+new infectious particles is proportional to the number of infected cells [11–13]. That
+   ∗ Department of applied mathematics, University of Leeds
+
+                                                     1
+is, all infected cells are treated equally, regardless of how long they have been infected
+or how many infectious particles they hold. If V represents extracellular infectious
+particles and I represents infected cells, then the rate of change of V includes a
+positive term pI, where p is a constant. If the mean lifetime of an infected cell is 1/δ,
+then the mean number of new infectious particles released per infected cell is given
+by p/δ. Because of the linearity of these relationships, they can be taken to apply
+when V and I are interpreted as concentrations per unit volume, as the average over
+a cohort of cells, or as applying to a very small number of infected cells at the early
+stage of an infection. At the level of an individual cell, however, the dynamics is
+stochastic and the assumption behind such a “continuous production” model is that
+two types of event (release of an infectious particle and death of the infected cell) are
+independent. The events are not independent in models of bursting, where infectious
+particles accumulate inside a host cell until the cell dies and the whole intracellular
+load is released at once [8, 14].
+     At the stochastic level of an individual cell, the simplest budding model is that,
+in a time interval of duration ∆t, an infected cell may release an infectious particle,
+with probability p∆t, or die, with probability δ∆t. The budding and death rates, p
+and δ, do not depend on the number of infectious particles inside the cell, as long
+as there is at least one. The assumption can be modified by assuming that not all
+cells are productively infected, that infected cells pass through an “eclipse phase”
+before they begin to release infectious particles [15], or that infectious particles are
+released in cohorts [16–18]. We must modify the assumption in a more fundamental
+way in order to model bursting: the mechanism by which multiple infectious particles
+are released, all at once, when the infected cell ruptures and dies [19]. Release of
+infectious particles and death of infected cells are not independent processes. They
+are, rather, simultaneous.
+     Including intracellular dynamics, for example letting the rate of release of viral
+particles, or the cellular death rate, depend on the time a cell has been infected [20–23],
+tends to make a model more complicated. In one case, however, where the viral RNA
+inside each cell is governed by a linear ODE, it is possible to replace an age-structured
+model by an ODE [24, 25]. To construct a mathematical model of bursting, it may
+be assumed that the number of infectious particles released when a cell dies is a
+fixed parameter N [26], but the time at which the cell dies is a random variable.
+Alternatively, if the accumulation of infectious particles in an infected cell over time
+is explicitly modelled, and the time of cell death is an independent random variable,
+then the number of infectious particles released is also a random variable [10, 27].
+     In this work, we use an explicit stochastic model of the accumulation of infectious
+particles in an infected cell over time. Our bursting model of the intracellular popula-
+tion of virus or bacteria is a birth-and-death process with an extra type of event called
+“catastrophe” or “killing” where the population is eliminated [28–30]. The greater
+the load of infectious particles, the greater is the risk of the cell-death “catastrophe”.
+Each intracellular infectious particle has division rate λ. The model also contains a
+third type of event: death or removal of an intracellular infectious particle with rate
+µ, which makes it possible that a cell may cease to be infected altogether.
+     In the birth-death-catastrophe model of the intracellular population, the number
+of intracellular particles at time t is the integer-valued random variable Xt . The
+random variables characterising the burst are
+                  R,   the burst size and       τ,   the time of release.
+In the terminology of Karlin and Taylor [29], R is the “killing position”. Starting
+                                            2
+with one intracellular infectious particle, the function I(t) is the probability that the
+catastrophe has not occurred to that cell before t. We find simple expressions for
+I as a function of time and V as a function of I. The birth-catastrophe process
+exhibits interesting properties of quasi-stationarity when we consider the properties
+of Xt conditioned on the catastrophe not having occurred.
+    2. Budding. A class of within-host infection models [11–13, 23, 31–34] is based
+around the following pair of ODEs, used to calculate the basic reproduction number:
+                                      dI
+                                         = βT V − δI
+(2.1)                                 dt
+                                     dV
+                                         = pI − cV.
+                                     dt
+The variables I and V represent infected cells and extracellular virus, respectively.
+The system of equations (2.1) may be augmented by an equation describing the dy-
+namics of the host cells T or the pre-infection steady-state value of T may be used.
+Here, we are seeking to model the early stages of infection, when only a small number
+of cells are infected. To describe the dynamics inside a single infected cell, we take
+I(0) = 1 and V (0) = 0, in which case we would interpret I(t) as “probability that the
+initially-infected cell is still alive and infected at time t” rather than “concentration
+of infected cells at time t”. With the goal of calculating how many viral particles
+are released from a single infected cell, regardless of their subsequent fate, the pair of
+ODEs is simplified to
+                                        dI
+                                           = −δI
+(2.2)                                   dt
+                                       dV
+                                           = pI.
+                                       dt
+                                                                      p
+     According to (2.2), if V (0) = 0 then I(t) = I(0)e−δt and V (t) = (1 − e−δt )I(0).
+                                                                      δ
+To evaluate the mean number of infectious particles released from a single infected
+cell, we set I(0) = 1 and let t → ∞:
+                                                 p
+                                       V (t) →     .
+                                                 δ
+It is useful to combine (2.2) into
+
+                                       dV   p
+(2.3)                                     =− .
+                                       dI   δ
+Thus, V and I are related by
+                                           p
+(2.4)                                V =     (1 − I).
+                                           δ
+In Figure 2.1, we plot I and V versus time, and use (2.4) to plot V versus I for this
+single-cell budding model.
+    When the differential equations (2.2) are interpreted as averages over many cells,
+they give no direct information about the intracellular dynamics. If we consider the
+stochastic dynamics of one cell at a time then the interpretation is that, in a short
+time interval ∆t,
+      1. an infected cell releases an infectious particle with probability p∆t;
+                                            3
+       I
+           0                            10
+               0    t
+                                    V
+       V
+
+           0                            0
+               0    t                        0                                                 1
+                                                                      I
+
+     Figure 2.1. Single-cell budding model. The variables V and I represent mean quantities as
+a function of time since infection: V (t) is the mean number of virus particles realeased from one
+infected cell, and I(t) is the probability that a cell is still infected, up to time t. To model a single
+infected cell, I(0) = 1 and V (0) = 0. Here we show both quantities in the case of the budding
+model (2.2) with p/δ = 10. Left panels: I and V as functions of time. Right: V versus I. (Because
+I is a decreasing function of time, we should imagine moving from right to left on the V -I graph.)
+
+
+
+       2. an infected cell dies with probability δ∆t .
+At any time in an infected cell, because two types of event are independent, the
+probability that the next event is release of a particle is equal to p/(δ + p). Pursuing
+this stochastic interpretation, the probability that an infected cell lives for a time
+greater that t is I(t) = e−δt and the number of infectious particles the cell releases in
+its lifetime is a random variable, R, with geometric distribution:
+
+                        P (R = k) = P (k release events before cell death)
+                                                 k
+                                       δ       p
+                                  =                       k = 0, 1, 2, . . . .
+                                    δ+p δ+p
+
+     3. Bursting. To model bursting, we construct the following explicit model of the
+intracellular population. The number of intracellular particles at time t is the discrete-
+valued random variable Xt that can take values 0, 1, 2, . . . and H. The notation
+Xt = H means that the cell has ruptured and released its intracellular content.
+Within the Markove process, the absording states 0 and H could be merged into one
+state, but we maintain the distinction for convenience when extending to models with
+natural cells death (from state 0) or reinfection of released particles.
+     If there are Xt intracellular particles at time t, and (λ + µ + α)∆t  1, then one
+of three types of event may occur before t + ∆t.
+       1. There may be one more particle at time t + ∆t, with probability λXt ∆t.
+       2. There may be one fewer at time t + ∆t, with probability µXt ∆t.
+       3. The host cell may die before Xt+∆t , releasing Xt infectious particles, with
+          probability αXt ∆t.
+We assume µ ≥ 0, α > 0, λ > 0 and X0 = 1. Five individual realisations of the
+process thus defined are shown in Figure 3.1.
+     Let
+                     pn (t) = P (Xt = n|X0 = 1),             n = H, 0, 1, 2, . . . .
+
+Then
+                                        ∞
+                                dpH    X                    dp0
+                                    =α     npn ,                = µp1 ,
+                                 dt    n=1
+                                                             dt
+                                                   4
+p1 (0) = 1 and, for n ≥ 1,
+                  dpn
+                      = µ(n + 1)pn+1 − (α + λ + µ)npn + λ(n − 1)pn−1 .
+                   dt
+     To analyse the process, we consider four functions of time. The first function is
+I(t), the probability that the catastrophe has not occurred before t:
+
+             I(t) = P (Xt 6= H|X0 = 1) = 1 − pH (t) = p0 (t) + p1 (t) + . . . .
+
+Thus pH (t) = 1 − I(t), which is the probability that the catastrophe has occurred
+before time t. An important property of I(t) is [7, 30]
+
+                              P (Xt 6= H|X0 = k) = (I(t))k .
+
+The second and third functions of time,
+
+(3.1) J(t) = p1 (t)+2p2 (t)+3p3 (t)+. . .    and     K(t) = p1 (t)+4p2 (t)+9p3 (t)+. . . ,
+
+have no analogue in the budding model. Because there is no intracellular population
+in state H, J(t) = IE(Xt |X0 = 1) and K(t) = IE(Xt 2 |X0 = 1). The fourth function
+is similar to that used in budding models: V (t) is the mean number of infectious
+particles released up to t. The initial conditions are I(0) = 1, J(0) = 1, K(0) = 1
+and V (0) = 0. The four functions I(t), J(t), K(t) and V (t) are smooth functions of
+time because they are means of time-dependent quantities.
+     In Figure 3.1, individual realisations of the bursting model are shown, along with
+the function J(t) and the ratio J(t)/I(t). Because the ultimate fate of any realisation
+is one of the absorbing states, J(t) → 0 as t → ∞ (dotted line). The dashed line, on
+the other hand, has a finite late-time limit. Because J(t) = IE(Xt |Xt 6= H)I(t), the
+ratio J(t)/I(t) is the mean population size inside cells that have not ruptured before
+time t.
+     We will use the function to anlyse the random variables characterising bursting:
+
+             R,       the burst size and     τ,     the time of catastrophe.
+
+The probability that a burst of size n occurs between t and t + ∆t is αnpn (t)∆t. The
+probability that t < τ < t + ∆t is the probability that a burst of any size occurs
+between t and t + ∆t, which is
+                                                                         
+(3.2) P (cell death in (t, t + ∆t)) = α p1 (t) + 2p2 (t) + 3p3 (t) + · · · ∆t = αJ(t)∆t.
+
+Similarly,
+
+(3.3)   mean number of particles released in (t, t + ∆t) =
+                                                                     
+                      α p1 (t) × 1 + 2p2 (t) × 2 + 3p3 (t) × 3 + · · · ∆t = αK(t)∆t.
+
+Using (3.2) and (3.3), we write three differential equations
+                                   dI
+                                      = −αJ
+                                   dt
+                                  dJ
+(3.4)                                 = (λ − µ)J − αK
+                                   dt
+                                  dV
+                                      = αK.
+                                  dt
+                                             5
+     80
+                  J(t)
+                  J(t)/I(t)
+     60
+
+
+
+Xt   40
+
+
+
+     20
+
+
+
+
+                              5                    10                   15
+                                                        t
+
+     Figure 3.1. Realizations of the birth-death process with catastrophe: bursting model of the
+intracellular dynamics of a single infected cell. The coloured lines are five individual realisations
+with X0 = 1 and parameter values λ = 0.5, µ = 0.1 and α = 0.01. The dotted line is the mean value
+of the population at time t, which is a smooth function of time that tends to zero as t → ∞. The
+dashed line, with finite limiting value reminioscent of a carrying capacity, is the conditional mean
+value of the population at time t, given that the catastrophe event has not yet occurred.
+
+
+These equations are more complicated than their budding-model equivalent (2.2).
+Nevertheless, we can find an analytical solution.
+                             dJ
+    Using αK = (λ − µ)J −        , we find an expression for V :
+                              dt
+                                       Z t            Z t
+                                                          dJ
+                      V (t) = (λ − µ)       J(s)ds −         ds
+                                         0             0 ds
+                                 λ − µ t dI
+                                                     Z t
+                                                         dJ
+                                        Z
+                            =−                  ds −        ds
+(3.5)                              α      0  ds       0 ds
+                               λ−µ
+                            =        (I(0) − I(t)) + J(0) − J(t)
+                                 α
+                               λ−µ
+                            =        (1 − I(t)) + 1 − J(t).
+                                 α
+The solution (3.5) does not yet represent a solution of the complete set of ODEs (3.4).
+Such a solution is obtained if we also use the result of Gillard et al., who showed
+that [7, 30] I satisfies the closed differential equation
+                                   dI
+(3.6)                                 = µ − (λ + α + µ)I + λI 2 .
+                                   dt
+(A short derivation is given in Appendix A.) We may rewrite (3.6), using (3.4), as
+(3.7)                             αJ = −µ + (λ + α + µ)I − λI 2 .
+We differentiate (3.7) and use (3.4) to obtain an expression for K:
+(3.8)                                 αK = (2λ + α − 2λI)J.
+                                                 6
+Thus, in Figure 3.2, we plot J and K as functions of I. In both cases, they depend
+on the parameters via the ratios λ/α and µ/α.
+
+                                                                                        J
+                                                                                        K
+              5
+
+              0
+                                            0.5                                     1
+                                                     I
+
+     Figure 3.2. J and K as functions of I, using (3.7) and (3.8). Recall that the direction of
+movement as time increases is from right to left. Solid lines: λ/α = 5 and µ = 0. As t → ∞
+(moving leftwards in the Figure), I(t) → 0 and J(t) → 0. Dashed lines: λ/α = 5 and µ/α = 0.25.
+As t → ∞, I(t) has a finite limit while J(t) → 0.
+
+    Our four functions also have interpretations via probabilities and conditional
+probabilities of the random variables τ and R. The mean burst size is IE(R) =
+lim V (t). Burst-size probabilities, conditioned on τ , are
+t→∞
+
+                                           npn (t)
+(3.9)                  P (R = n|τ = t) =                     n = 1, 2, 3, . . . .
+                                            J(t)
+Given that rupture occurs at time t, the mean burst size is given by
+                                  X                        K(t)
+(3.10)             IE(R|τ = t) =      nP (R = n|τ = t) =        .
+                                   n
+                                                           J(t)
+
+    3.1. Bursting dynamics without intracellular death. In the case µ = 0,
+the following two parameter combinations are convenient:
+                                    λ
+                               r=          and           σ = λ + α.
+                                    α
+The solution of (3.6) is written
+                                                  r+1
+(3.11)                                  I(t) =           .
+                                                 r + eσt
+We express J(t) and V (t) in terms of I(t), with µ = 0, by simplifying (3.7) and (3.5):
+(3.12)            J = (r + 1)I − rI 2      and           V = r + 1 − (2r + 1)I + rI 2 .
+As t → ∞,
+                                J(t)
+(3.13)            I(t) → 0,          →r+1                and         V (t) → r + 1.
+                                I(t)
+In Figure 3.3, we construct the equivalent of Figure 2.1, comparing V and I as func-
+tions of time.
+                                                  dV
+    It is interesting to compare the relationship     = αK (bursting) with the rela-
+                                                  dt
+          dV
+tionship      = pI (budding). We may write
+           dt
+                     dV    K
+(3.14)                  = α I = α(2r + 1 − 2rI(t))(r + 1 − rI(t))I.
+                     dt    I
+                                                 7
+             K(t)
+As t → ∞,         → (2r + 1)(r + 1). Thus, at late times, the bursting model does
+             I(t)
+                          dV
+exhibit the property that    is proportional to I.
+                          dt
+
+
+         I                                   10
+             0
+                 0        t
+                                         V
+         10
+     V 5
+             0                               0
+                 0   2    t4     6                0                                              1
+                                                                       I
+
+     Figure 3.3. Single-cell bursting model. Left panels: I and V as functions of time using (3.11)
+and (3.12). Right: V versus I using (3.12). Here λ/α = 10 and µ = 0. The corresponding graphs
+in the budding model are in Figure (2.1).
+
+    The probability density of τ is given by −I 0 (t). Using integration by parts
+and (3.11),
+                         Z ∞            Z ∞
+                               0                      1
+(3.15)        IE(τ ) = −     tI (t)dt =     I(t)dt = log (r + 1) ,
+                          0              0            λ
+
+For a comparison of our budding with bursting models, in the case µ = 0, see Table 3.1.
+
+
+                                                      budding                         bursting
+                     dI
+                                                        −δI                  −(λ + α)I + λI 2
+                     dt
+                                                                                   λ+α
+                     I(t)                               e−δt
+                                                                                λ + αe(λ+α)t
+                                                                               1
+         mean cell lifetime                             1/δ                      log(1 + λ/α)
+                                                                               λ
+                                                      p                 λ     2λ + α    λ
+                      V                                 (1 − I)           +1−        I + I2
+                                                      δ                 α       α       α
+                                                Table 3.1
+     Summary of important relationships between V and I when µ = 0. Budding parameters: p is
+rate of release of particles from,and δ is death rate of, an infected cell.
+Bursting parameters: λ is division (birth) rate of intracellular particles and α is rupture (cata-
+strophe) rate, per intracellular particle, of an infected cell.
+
+
+
+    If µ = 0 then p0 (t) = 0 at any t and pH (t) → 1 as t → ∞. In other words,
+the catastrophe happens, sooner or later, in every realisation. Until the catastrophe
+occurs, the distribution of Xt at any time is geometric [29, 30]. That is, there is a
+function g(t) such that
+
+(3.16)                         pk (t) = I(t)g(t)(1 − g(t))k−1     k = 1, 2, . . . .
+                                                         8
+The mean intracellular population size at time t, given that the catastrophe has not
+yet occurred, is equal to 1/g(t). Using the definition (3.1),
+                                                                    
+                        I(t)                               2     1
+(3.17)           J(t) =          and     K(t) = I(t)           −       .
+                        g(t)                            g 2 (t) g(t)
+
+Using(3.11) and (3.12), we write
+
+                                       I(t)   re−σt + 1
+(3.18)                        g(t) =        =           .
+                                       J(t)     r+1
+
+Note that g(t) is a decreasing function of time with g(0) = 1 and, as t → ∞, g(t) →
+  1
+r+1 . That is, we find the somewhat counter-intuitive results that the mean population
+size, given that the catastrophe has not occurred, tends to the constant r+1 as t → ∞.
+     Still with µ = 0, we may write
+                                              n−1
+                                     1 − e−σt
+                                   
+(3.19)               pn (t) = e−σt                     n = 1, 2, . . . .
+                                     1 + 1/r
+
+Given n, pn (t) is a function of time that takes its maximum value when t = tn where
+                                              log n
+(3.20)                                 tn =         .
+                                                σ
+The mean value of rupture time, for a burst of size n, is equal to tn + γ/σ, where
+γ = 0.57 . . . (Euler’s constant). Two examples are shown in Figure 3.5.
+    The probability that a burst of size n happens between t and t + ∆t is αnpn (t)∆t.
+Therefore, the distribution of burst sizes is given by [7, 30]
+                                  Z ∞
+                 P (R = n) = αn       pn (t)dt
+                                   0
+                                    n−1 Z ∞
+                                  r      1
+(3.21)                   = αn                  e−s (1 − e−s )n−1 ds
+                               r+1       σ 0
+                                   n
+                           1    r
+                         =                n = 1, 2, . . . .
+                           r r+1
+This last result can be compared to a histogram constructed from an experiment that
+measures burst sizes. Further comparisons, of conditional quantities, are possible if
+experimental measurement of rupture times is also made. For example, Figure 3.4
+shows the mean burst size conditioned on rupture time, using (3.10) and (3.17)-(3.18).
+Each experimentally-measured burst size-burst time pair can be represented as a dot
+on the Figure. Note the late-time limit of the mean burst size: 2r − 1. The right-
+hand panel of Figure 3.5 shows the mean rupture time, conditioned on rupture size.
+With (3.19), the exact expression is (see Appendix B)
+                               Z ∞
+                                    tpn (t)dt                      
+                                                1     1 1         1
+(3.22)          IE(τ |R = n) = Z0 ∞           =    1 + + + ···        .
+                                                σ     2 3         n
+                                     pn (t)dt
+                               0
+
+A useful large-n approximation to (3.22) IE(τ |R = n) ≃ σ1 (ln n + γ). In the same
+large-n limit, the distribution of the conditioned rupture time has a Gumbel form,
+                                              9
+                                 30
+
+
+                   IE(R|τ = t)
+                                 20
+                                 10
+                                  0
+                                      0                                           5                   t
+
+     Figure 3.4. The mean burst size is an increasing function of the time of rupture. Solid line:
+the dependence of conditional mean burst size, IE(R|τ = t), on t (3.10). With µ = 0, K(t)/J(t) =
+2/g(t) − 1. The plot uses (3.17) and (3.18) with r = 10 and σ = 1.1. The dashed line is the
+corresponding quantity in the budding model, IE(R|τ = t) = pt, with p = 5.
+
+
+
+                                              n = 10
+  pn (t)   0.01                                                                   4
+
+
+
+                                                                   IE(τ |R = n)
+                  0 log(n)/σ              5       t
+                                                                                  2
+                                              n = 20
+  pn (t)
+           0.002
+
+
+                                                      t                           0
+                   0             log(n)/σ 5                                                      20         40
+                                                                                                  n
+     Figure 3.5. Left panels: The probability that there are n intracellular particles, as a function
+of time, with n = 10 and n = 20. (The choice of n changes the time the maximum is attained, but
+has little effect on the shape of the curve.) Right panel: Conditional mean time, given rupture size
+n. The red dots show the exact mean rupture time as a function of rupture size, in the bursting
+model with µ = 0 and λ + α = 1.1. The dotted line is the large-n approximation (ln n + γ)/(λ + α).
+The dashed straight line is the corresponding budding expression, with δ + p = 8.
+
+
+illustrated on the left-hand side in Figure 3.5:
+                                      Z t
+                                  αn      pn (s)ds
+                                       0
+               P (τ < t|R = n) =
+                                     P (R = n)
+(3.23)                         = (1 − e−σt )n
+                                               ≃ exp(−ne−σt )                      if n  1
+                                                          −T
+                                               = exp(−e        )                  where   T = σ(t − tn ).
+    The dashed line on the right-hand side in Figure 3.5 is the expression corres-
+ponding to (3.22), assuming budding, for the mean time to cell death, with release of
+exactly n particles. Then, because there are n + 1 events, each with the same mean
+waiting time, the conditional mean time is equal to (n + 1)/(δ + p).
+    3.2. The effect of death of infectious particles. We now relax the assump-
+tion that µ = 0. Events in which an intracellular pathogen is eliminated by the cell
+are allowed, so that a cell may eliminate its intracellular population, avoiding lysis.
+That is, if µ > 0 then p0 (t) > 0 when t > 0. The probability that a cell is still alive
+and infected at time t, is equal to I(t) − p0 (t).
+                                                           10
+     Let us return to the differential equation (3.6) for the infected cell survival prob-
+ability, written as [7, 30]. Because the RHS is a quadratic function of I, we can write
+                                 dI
+(3.24)                               = −λ(b − I)(I − a).
+                                 dt
+If λ, α and µ are all greater than zero then 0 < a < 1 < b and ab = µ/λ. We may
+write J(t) = αλ (b − I(t))(I(t) − a) and, using (3.8),
+                 dV            αK      λ
+                    = (I − a)       = (I − a)(2λ(1 − I) + α)(b − I).
+                 dt           I −1     α
+                                                 dV
+As t → ∞, I(t) → a, J(t) → 0, K(t) → 0 and           is proportional to I − a. General-
+                                                 dt
+ising (3.13), the mean total burst size is obtained from (3.5):
+                                         λ−µ
+(3.25)                        lim V (t) =       (1 − a) + 1.
+                             t→∞            α
+Recall that the quantity a represents the probability that the cell eliminates the
+pathogen, avoiding lysis. Amongst cells that do release pathogen, the mean burst size
+is equal to λ−µ
+             α + 1/(1 − a).
+     With µ > 0, the pk (t) are expressed in terms of the following function:
+                                           1 − e−λ(b−a)t
+                                 h(t) =                  .
+                                          b − ae−λ(b−a)t
+Note that h(0) = 0 and h(t) → 1b as t → ∞. We write p0 (t) = µλ h(t) and [30]
+                                    2
+                           b−a
+           pk (t) =                     e−λ(b−a)t (h(t))k−1       k ≥ 1.
+                      b − ae−λ(b−a)t
+The burst size is zero (the cell survives) with finite probability: P (R = 0) = a. For
+non-zero burst sizes [29, 30],
+                                              1    α 1
+                   P (R = n) = (1 − a)(b − 1) n =            n ≥ 1.
+                                             b     λ bn
+Note the geometric form of the distribution, generalising (3.21).
+    When µ > 0, the burst time τ does not have finite mean. However, we may
+consider conditional means:
+                                   Z ∞                                   
+                               1                           1          b−a
+(3.26)       IE(τ |τ < ∞) =            (I(t) − a)dt =           log         ,
+                             1−a 0                     λ(1 − a)       b−1
+which is the generalisation of (3.15). Properties of the random variables R and τ , are
+summarised in Table 3.2, with µ = 0 and µ > 0 (right).
+     A fairly simple expression for IE(τ |R = n) exists in the limit µλ  1 and αλ  1.
+Then a ≃ µλ , b ≃ 1 + αλ and
+                                                        µ
+                               h(t) ≃ 1 − e−(σ−µ)t (1 − ).
+                                                        λ
+Consequently, pk (t) takes its maximum value at t = tmax where (σ−µ)tmax ≃ log k− µλ .
+Thus
+                                                      µ
+(3.27)                  IE(τ |R = n) ≃ (log n + γ − )/(σ − µ).
+                                                      λ
+In Figure 3.6, we show the conditional mean rupture time as a function of rupture
+size, given three values of µ. The dashed lines, barely visible below the numerical
+results, use (3.27).
+                                             11
+                                               µ=0                             µ>0
+                                             λ                           λ−µ
+              IE(R)                            +1                            (1 − a) + 1
+                                             α                            α
+                                                 n
+                                          α λ+α                               α 1
+    P (R = n), n = 1, 2, . . .
+                                          λ    α                              λ bn
+                                                                                       
+                                           1     λ                      1           b−a
+          IE(τ |τ < ∞)                       log( + 1)                        log         .
+                                           λ     α                   λ(1 − a)       b−1
+                                                  λ                        λ
+         lim IE(R|τ = t)                      2     +1                    2 (1 − a) + 1
+        t→∞                                       α                        α
+                                               Table 3.2
+     Bursting: the time of release, τ , and the burst size R. The top two lines show the mean
+burst size and distribution of burst sizes, with (µ > 0) and without (µ = 0) intracellular death.
+With probability equal to a, a cell’s intracellular population is eliminated without any release. The
+mean rupture time (third line) is conditioned on R > 0. The fourth line is the mean burst size, as a
+function of τ . The quantities a and b are the roots of the quadratic equation λI 2 −(λ+µ+α)I +µ = 0.
+
+
+
+
+    Figure 3.6. The mean burst time conditioned on burst size n, with three values of µ. The
+dashed lines use (3.27). λ = 0.5, α = 0.01
+
+
+
+
+                                                  12
+     4. Discussion. The number of new infectious particles released per infected
+cell [10] is an integer-valued random variable that is key to determining whether a
+small number of pathogenic agents inside a human or animal host will grow into a
+detectable infection. It may be possible to calculate the mean value using ODEs
+with simple assumptions, but calculating the full distribution requires considering the
+intracellular dynamics. Here, we compare two models: budding and bursting. Both
+types of models use the variables, V (t) and I(t), that represent free virus and infected
+cells. To model bursting, we use an explicit stochastic model of the accumulation
+of infectious particles in an infected cell over time. The model is a birth-and-death
+process with an extra type of event called “catastrophe” [28–30]. Despite the explicit
+stochastic representation of intracellular dynamics, and increased number of variables
+compared to the budding model, we find simple analytical expressions for burst-size
+distributions, means of time-dependent quantities and conditional probabilities.
+     Data obtained when mice were challenged with Francisella tularensis SCHU S4,
+yielded estimated λ, µ and α values of 0.15 h−1 , 0.01 h−1 , and 0.00015 h−1 [30]. The
+predicted fraction of cells that do not release any bacteria, equal to the quantity a
+in (3.24), is less than 7 percent, and the distribution of burst sizes from cells that
+rupture was predicted to be geometric with typical burst sizes of hundreds of bac-
+teria [7, 35]. A consequence is that a dose as low as 10 CFU of Francisella tularensis
+can result in infection [36]. Recently, Rawsthorne-Manning et al. (private communica-
+tion; manuscript in preparation), observed J774 cells heavily infected with Francisella
+tularensis. Video recording of bursting events with en masse bacterial release, and
+use of high-magnification confocal microscopy to count bacterial payload within cells
+that were adjudged to be close to rupturing, provide observational support to the
+burst-size prediction.
+     Very different parameter estimates are found for Bacillus anthracis. Approximate
+Bayesian Computation Sequential Monte Carlo using published experimental time-
+series data produced the estimates λ ≈ 0.64 h−1 , µ ≈ 1.64 h−1 , and α ≈ 0.04 h−1 [37].
+Consequently, more than 96percent of phagocytes are predicted to eliminate an in-
+tracellular Bacillus anthracis infection. Using (3.25), the remaining fraction of pha-
+gocytes that do rupture are predicted to release only an average of 1.6 bacteria each,
+consistent with estimates that the dose required for infection is between 8 × 103 and
+5 × 104 spores. The dynamics of coxiella burnetti, which adopts a small form outside
+a host cell and a large form inside, may be similar. Stochastic population dynamics
+has been used to model the highly variable timing and magnitude of HIV release
+from reactivated memory CD4 T cells from infected donors [14]: on some days more
+than 10000 HIV RNA copies were found in single-cell well supernatant, on other days
+nothing was detected.
+     Influenza A [?, 19]
+     The budding model is consistent with the assumption is that every infected cell be-
+haves independently, selecting one of two possible events (virion release or cell death)
+in each time interval. In bursting, on the other hand, infectious particles accumulate
+inside a host cell until the cell dies and the intracellular load is released at once. Then,
+release of infectious particles and death of the host cell are not independent events,
+but occur simultaneously. Our two scenarios of budding and bursting can be thought
+of as opposite ends of a spectrum of possibilities. Intermediate scenarios to consider
+include internal compartments that provide mechanisms for release of multiple infec-
+tious particles without immediate lysis of the host cell [38]. Such vesicles may enhance
+infectivity by allowing multiple viral genomes to enter a nearby cell [39]. A related
+challenge is producing models of viruses, including plant viruses, that are transmitted
+                                            13
+directly from cell to cell and not released into the extracellular environment.
+
+                                           REFERENCES
+
+ [1] Henrik Garoff, Roger Hewson, and Dirk-Jan E Opstelten. Virus maturation by budding. Mi-
+         crobiology and molecular biology reviews, 62(4):1171–1190, 1998.
+ [2] Sara W Bird and Karla Kirkegaard. Escape of non-enveloped virus from intact cells. Virology,
+         479:444–449, 2015.
+ [3] Max Delbrück. The growth of bacteriophage and lysis of the host. The journal of general
+         physiology, 23(5):643, 1940.
+ [4] Igor Golovliov, Vladimir Baranov, Zuzana Krocova, Hana Kovarova, and Anders Sjöstedt. An
+         attenuated strain of the facultative intracellular bacterium Francisella tularensis can escape
+         the phagosome of monocytic cells. Infection and Immunity, 71(10):5940–5950, 2003.
+ [5] C.L. Jones, B.A. Napier, T.R. Sampson, A.C. Llewellyn, M.R. Schroeder, and D.S. Weiss.
+         Subversion of host recognition and defense systems by Francisella spp. Microbiology and
+         Molecular Biology Reviews, 76(2):383–404, 2012.
+ [6] S.C. Cowley and K.L. Elkins. Immunity to Francisella. Frontiers in Microbiology, 2, 2011.
+ [7] Joseph J Gillard, Thomas R Laws, Grant Lythe, and Carmen Molina-Parı́s. Modeling early
+         events in Francisella tularensis pathogenesis. Frontiers in cellular and infection microbio-
+         logy, 4:169, 2014.
+ [8] John E Pearson, Paul Krapivsky, and Alan S Perelson. Stochastic theory of early viral infection:
+         continuous versus burst production of virions. PLoS Computational Biology, 7(2):e1001058,
+         2011.
+ [9] Natalia L Komarova. Viral reproductive strategies: How can lytic viruses be evolutionarily
+         competitive? Journal of Theoretical Biology, 249(4):766–784, 2007.
+[10] Bevelynn Williams, Jonathan Carruthers, Joseph J Gillard, Grant Lythe, Alan S Perelson,
+         Ruy M Ribeiro, Carmen Molina-Parı́s, and Martı́n López-Garcı́a. The reproduction number
+         and its probability distribution for stochastic viral dynamics. Journal of the Royal Society
+         Interface, 21(210):20230400, 2024.
+[11] A.S. Perelson, A.U. Neumann, M. Markowitz, J.M. Leonard, and D.D. Ho. HIV-1 dynamics
+         in vivo: virion clearance rate, infected cell life-span, and viral generation time. Science,
+         271(5255):1582, 1996.
+[12] A.S. Perelson and P.W. Nelson. Mathematical analysis of HIV-I: dynamics in vivo. SIAM
+         Review, 41(1):3–44, 1999.
+[13] Rob J De Boer. Which of our modeling predictions are robust? PLoS Computational Biology,
+         8(7):e1002593, 2012.
+[14] Jason M Hataye, Joseph P Casazza, Katharine Best, C Jason Liang, Taina T Immonen, David R
+         Ambrozak, Samuel Darko, Amy R Henry, Farida Laboune, Frank Maldarelli, Daniel C
+         Douek, Nicolas W Hengartner, Takuya Yamamoto, Brandon F Keele, Alan S Perelson,
+         and Richard A Koup. Principles governing establishment versus collapse of HIV-1 cellular
+         spread. Cell host and microbe, 26(6):748–763, 2019.
+[15] Catherine AA Beauchemin and Andreas Handel. A review of mathematical models of influenza
+         A infections within a host or cell culture: lessons learned and challenges ahead. BMC public
+         health, 11:1–15, 2011.
+[16] SM Ciupe, B De Bivort, DM Bortz, and PW Nelson. Estimates of kinetic parameters from
+         HIV patient data during primary infection through the eyes of three different models.
+         Mathematical Biosciences, 200(1):1–27, 2006.
+[17] Stanca M Ciupe and Jane M Heffernan. In-host modeling. Infectious Disease Modelling,
+         2(2):188–202, 2017.
+[18] Marcos A Capistrán, Mayra Núñez-López, and Grzegorz A Rempala. Extracellular dynamics
+         of early HIV infection. Mathematical Methods in the Applied Sciences, 41(18):8859–8870,
+         2018.
+[19] Teresa Repasy, Jinhee Lee, Simeone Marino, Nuria Martinez, Denise E Kirschner, Gregory
+         Hendricks, Stephen Baker, Andrew A Wilson, Darrell N Kotton, and Hardy Kornfeld.
+         Intracellular bacillary burden reflects a burst size for mycobacterium tuberculosis in vivo.
+         PLoS Pathogens, 9(2):e1003190, 2013.
+[20] Patrick W Nelson, Michael A Gilchrist, Daniel Coombs, James M Hyman, and Alan S Perelson.
+         An age-structured model of HIV infection that allows for variations in the production rate
+         of viral particles and the death rate of productively infected cells. Math. Biosci. Eng,
+         1(2):267–288, 2004.
+[21] Jeremie Guedj, Harel Dahari, Libin Rong, Natasha D Sansone, Richard E Nettles, Scott J
+
+                                                  14
+         Cotler, Thomas J Layden, Susan L Uprichard, and Alan S Perelson. Modeling shows that
+         the NS5A inhibitor daclatasvir has two modes of action and yields a shorter estimate of the
+         hepatitis C virus half-life. Proceedings of the National Academy of Sciences, 110(10):3991–
+         3996, 2013.
+[22] Laura E Liao, Jonathan Carruthers, Sophie J Smither, CL4 Virology Team, Simon A Weller,
+         Diane Williamson, Thomas R Laws, Isabel Garcı́a-Dorival, Julian Hiscox, Benjamin P
+         Holder, Catherine A. A. Beauchemin, Alan S. Perelson, Martı́n Lǿpez-Garcı́a, Grant Lythe,
+         John N. Barr, and Carmen Molina-Parı́s. Quantification of Ebola virus replication kinetics
+         in vitro. PLoS Computational Biology, 16(11):e1008375, 2020.
+[23] Stanca M Ciupe and Jessica M Conway. Incorporating intracellular processes in virus dynamics
+         models. Microorganisms, 12(5):900, 2024.
+[24] Kosaku Kitagawa, Shinji Nakaoka, Yusuke Asai, Koichi Watashi, and Shingo Iwami. A PDE
+         multiscale model of hepatitis C virus infection can be transformed to a system of ODEs.
+         Journal of theoretical biology, 448:80–85, 2018.
+[25] Tyler Cassidy, Giulia Belluccini, Sarafa A. Iyaniwura, Ruy M. Ribeiro, and Alan S. Perelson.
+         Inheritance of intracellular viral RNA in a multiscale model of hepatitis C infection, 2025.
+[26] Yuan Yuan and Linda JS Allen. Stochastic models for virus and immune system dynamics.
+         Mathematical biosciences, 234(2):84–94, 2011.
+[27] Jonathan Carruthers, Martı́n López-Garcı́a, Joseph J Gillard, Thomas R Laws, Grant Lythe,
+         and Carmen Molina-Parı́s. A novel stochastic multi-scale model of francisella tularensis
+         infection to predict risk of infection in a laboratory. Frontiers in microbiology, 9:1165,
+         2018.
+[28] Samuel Karlin and James McGregor. The classification of birth and death processes. Transac-
+         tions of the American Mathematical Society, 86(2):366–400, 1957.
+[29] Samuel Karlin and Simon Tavaré. Linear birth and death processes with killing. Journal of
+         Applied Probability, 19(3):477–487, 1982.
+[30] Jonathan Carruthers, Grant Lythe, Martı́n López-Garcı́a, Joseph Gillard, Thomas R Laws, Ro-
+         man Lukaszewski, and Carmen Molina-Parı́s. Stochastic dynamics of Francisella tularensis
+         infection and replication. PLoS Computational Biology, 16(6):e1007752, 2020.
+[31] Ruy M Ribeiro, Li Qin, Leslie L Chavez, Dongfeng Li, Steven G Self, and Alan S Perelson.
+         Estimation of the initial viral growth rate and basic reproductive number during acute
+         HIV-1 infection. Journal of Virology, 84(12):6096–6102, 2010.
+[32] Alan S Perelson and Ruy M Ribeiro. Modeling the within-host dynamics of HIV infection.
+         BMC biology, 11:1–10, 2013.
+[33] Alan S Perelson and Ruy M Ribeiro. Introduction to modeling viral infections and immunity.
+         Immunological Reviews, 285(1):5–8, 2018.
+[34] Jessica M Conway and Ruy M Ribeiro. Modeling the immune response to HIV infection.
+         Current Opinion in Systems Biology, 2018.
+[35] RM Wood, JR Egan, and IM Hall. A dose and time response markov model for the in-host
+         dynamics of infection with intracellular bacteria following inhalation: with application to
+         Francisella tularensis. Journal of the Royal Society Interface, 11(95):20140119, 2014.
+[36] Petra CF Oyston, Anders Sjöstedt, and Richard W Titball. Tularaemia: bioterrorism defence
+         renews interest in Francisella tularensis. Nature Reviews Microbiology, 2(12):967–978, 2004.
+[37] Bevelynn Williams, Martı́n López-Garcı́a, Joseph J Gillard, Thomas R Laws, Grant Lythe,
+         Jonathan Carruthers, Thomas Finnie, and Carmen Molina-Parı́s. A stochastic intracellular
+         model of anthrax infection with spore germination heterogeneity. Frontiers in Immunology,
+         12:688257, 2021.
+[38] Adeline Kerviel, Mengyang Zhang, and Nihal Altan-Bonnet. A new infectious unit: extracellular
+         vesicles carrying virus populations. Annual Review of Cell and Developmental Biology,
+         37(1):171–197, 2021.
+[39] Ying-Han Chen, WenLi Du, Marne C Hagemeijer, Peter M Takvorian, Cyrilla Pau, Ann Cali,
+         Christine A Brantner, Erin S Stempinski, Patricia S Connelly, Hsin-Chieh Ma, et al.
+         Phosphatidylserine vesicles enable efficient en bloc transmission of enteroviruses. Cell,
+         160(4):619–630, 2015.
+
+
+
+
+                                                 15
+    Appendix A. The survival function and the differential equation (3.6).
+    An important consequence of the linear form of the rates in Section 3 is that
+
+                       P (infected cell still alive at t|X0 = k) = (I(t))k .
+
+Suppose X0 = 1 and consider a time interval ∆t such that (λ + α + µ)∆t  1. Then
+
+                                 P (X∆t = 0) = µ∆t + O(∆t2 )
+                                P (X∆t = H) = α∆t + O(∆t2 )
+                                 P (X∆t = 2) = λ∆t + O(∆t2 ).
+
+Next, consider I(t + ∆t) = P (Xt+∆t 6= H) via the three possibilities at t = ∆t:
+                    
+                    If X∆t = 0 then Xt+∆t = 0
+                    
+                      If X∆t = H then Xt+∆t = H
+                    
+                      If X∆t = 2 then P (Xt+∆t 6= H) = I(t)2 .
+                    
+
+Thus [7, 30]
+
+(A.1)            I(t + ∆t) = (1 − (λ + α + µ)∆t)I(t) + µ∆t + λ∆tI(t)2 .
+
+In other words
+                       I(t + ∆t) − I(t)
+                                        = µ − (λ + α + µ)I(t) + λI(t)2 .
+                             ∆t
+The solution of (3.6), with I(0) = 1, is
+
+                                      a(b − 1) + b(1 − a)e−λ(b−a)t
+                             I(t) =                                ,
+                                        b − 1 + (1 − a)e−λ(b−a)t
+
+where
+                          1                                  1/2 
+                   a, b =     λ + α + µ ∓ (λ + α + µ)2 − 4λµ)        .
+                         2λ
+    We may also add a fourth type of event: natural death of uninfected cells with
+rate δ. Then pk (t) is unaffected for k > 0 but
+
+                                    dp0
+                                        = µp1 − δp0
+                                     dt
+                                            ∞
+                                   dpH     X
+                                        =α     npn + δp0 (t).
+                                    dt     n=1
+
+
+    Appendix B. Integrals used to calculate mean rupture time.
+    Let
+                Z ∞                               Z ∞
+       L1 (n) =     e−s (1 − e−s )n−1 ds L2 (n) =     se−s (1 − e−s )n−1 ds,
+                   0                                          0
+
+n = 1, 2, 3, . . .. Then L1 (1) = 1 and L2 (1) = 1.
+    Firstly
+                                        1            ∞  1
+                               L1 (n) =    (1 − e−s )n 0 = .
+                                        n                 n
+                                                16
+Now
+                                 Z ∞
+                  L2 (n + 1) =          se−s (1 − e−s )n ds
+                                 Z0 ∞
+                            =      se−s (1 − e−s )(1 − e−s )n−1 ds
+                                  0
+                                       Z ∞
+                            = L2 (n) −       se−2s (1 − e−s )n−1 ds
+                                         0
+                                       1 ∞ −s
+                                           Z
+                            = L2 (n) +         (e − se−s )(1 − e−s )n ds
+                                       n 0
+
+(integration by parts)
+
+                                            1             1
+                            = L2 (n) +        L1 (n + 1) − L2 (n + 1).
+                                            n             n
+    Thus
+                                                               1
+                          (n + 1)L2 (n + 1) = nL2 (n) +           .
+                                                              n+1
+The solution is                                                 
+                                     1              1        1
+                            L2 (n) =             1 + + ··· +         .
+                                     n              2        n
+Consequently, the conditional mean rupture time is given by
+                         Z ∞
+                              tpn (t)dt                               
+                          0               1 L2 (n)   1      1        1
+        IE(τ |R = n) =   Z  ∞           =          =     1 + + ··· +     .
+                                          σ L1 (n)   σ      2        n
+                              pn (t)dt
+                            0
+
+
+
+                                          1st April 2026
+
+
+
+
+                                                  17
+

@@ -1,0 +1,234 @@
+\section{The limiting conditional distribution}
+\label{m:sec:qsd}
+
+Absorption is often inevitable, as it is here for $p<\tfrac12$, and yet a process
+on its way to absorption need not be featureless. In many cases it settles, long
+before it is absorbed, into a distribution that no longer changes with time --- a
+distribution describing the population conditional on its not yet having been
+absorbed. The phenomenon is \emph{quasi-stationarity}, and the distribution is the
+quasi-stationary, or Yaglom, limit \cite{Yaglom1947}; modern accounts are given by
+Méléard and Villemonais \cite{Meleard2012} and by Collet, Martínez and San Martín
+\cite{Collet2013}. This section establishes it for the binary Galton--Watson
+process by computing the limiting conditional mean and variance.  The existence of
+the Yaglom limit is classical; the calculation here identifies its first two
+moments and introduces the constant developed fully in \ChA.
+
+\subsection{Late-time survival probability}
+\label{m:sec:lateS}
+
+Everything follows from the behaviour of $S_n$. Take $p<\tfrac12$, so that death of
+an individual is more probable than its division. Then $S_n\to0$, and as it does so
+the quadratic term in
+\begin{equation*}
+S_{n+1} = 2pS_n - pS_n^2
+\end{equation*}
+becomes negligible beside the linear one. The recursion is therefore increasingly
+well approximated by
+\begin{equation}
+\label{m:eq:attenuated}
+S_{n+1}\approx 2p\,S_n ,
+\end{equation}
+and so at late times
+\begin{equation}
+\label{m:eq:lateS}
+S_n \sim A(p)\,(2p)^n\qquad(n\to\infty),
+\qquad
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n} .
+\end{equation}
+The constant $A(p)$ absorbs the cumulative effect of the quadratic term over the
+early generations, before the linear regime takes hold. It is precisely what
+remains of the conditions imposed on $S_n$ before the recursion attenuates to
+\cref{m:eq:attenuated}, which is why no argument confined to late times will produce
+it.  Its existence, product representation, series, bounds and finer asymptotics
+are proved in \ChA; this chapter needs only the limit and the conditional moments
+that it controls.
+
+\begin{remark}
+\label{m:rem:asympnotidentity}
+The relation \cref{m:eq:lateS} is an asymptotic equivalence, not an identity. The
+limit of $S_n$ itself is $0$ for $p<\tfrac12$, and one must not write
+$\lim_n S_n = A(p)(2p)^n$, whose right-hand side still depends on $n$. What is
+asserted is that the ratio $S_n/(2p)^n$ converges.
+\end{remark}
+
+\subsection{Mean}
+\label{m:sec:condmean}
+
+Decompose the expected population size into the contributions from surviving and
+from extinct realisations:
+\begin{equation*}
+\ex{Z_n} = \pr{Z_n=0}\ex{Z_n\mid Z_n=0} + \pr{Z_n>0}\ex{Z_n\mid Z_n>0} .
+\end{equation*}
+The first term vanishes identically, since $Z_n=0$ on that event, so with
+$\pr{Z_n>0}=S_n$ and $\ex{Z_n}=(2p)^n$ from \cref{m:eq:meanZn},
+\begin{equation}
+\label{m:eq:condmeandef}
+\ex{Z_n\mid Z_n>0} = \frac{\ex{Z_n}}{S_n} = \frac{(2p)^n}{S_n} .
+\end{equation}
+The numerator is known exactly; all the content is in $S_n$, and \cref{m:eq:lateS}
+supplies it:
+\begin{equation}
+\label{m:eq:qsmean}
+\ex{Z_n\mid Z_n>0} \;\xrightarrow[n\to\infty]{}\;
+\frac{(2p)^n}{A(p)(2p)^n} = \frac{1}{A(p)} .
+\end{equation}
+The geometric factors cancel exactly. At late times the surviving population has a
+constant expected size, and that size is the reciprocal of $A(p)$; accordingly
+$1/A(p)$ is called the \emph{quasi-stationary mean} below.
+
+\Cref{m:fig:condmean} shows the convergence, and shows at the same time the
+difficulty that \ChA has to confront: the closer $p$ lies to $\tfrac12$,
+the higher the plateau and the longer the process takes to reach it.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/IMG_ch3/conditionalMean.pdf}
+\caption{The conditional mean $(2p)^n/S_n$ against generation number $n$, with
+$S_n$ obtained by iterating \cref{m:eq:SnIter}. From bottom to top,
+$p=0.3,\,0.4,\,0.45,\,0.48,\,0.49$. Each curve approaches the constant $1/A(p)$;
+the limiting values are $2.825$, $4.208$, $6.893$, $14.703$ and $27.476$, computed
+by direct high-precision iteration. The lowest three have essentially converged by
+$n=100$, but the $p=0.49$ curve has reached only $24.1$ of its limiting $27.5$ --- an
+early sign of the near-critical slowdown analysed in \ChA. The
+vertical axis is the conditional mean.}
+\label{m:fig:condmean}
+\end{figure}
+
+\subsection{Variance}
+\label{m:sec:variance}
+
+The mean alone does not establish quasi-stationarity. To show that the conditional
+\emph{distribution} settles we need at least the second moment, and computing it is
+a worthwhile exercise in its own right.
+
+\subsubsection{The second moment}
+
+For a \rv{} $X$ the moment generating function is $\ex{\ee^{tX}}$, which in terms
+of the \pgf{} is $\phi(\ee^t)$. Write $M_n(t) = \phi_n(\ee^t)$ for the moment
+generating function of $Z_n$, so that moments are recovered by
+\begin{equation}
+\label{m:eq:mgfmoments}
+\ex{Z_n^{\,\rho}} = \dda{^{\rho}}{t^{\rho}}M_n(t)\bigg|_{t=0} .
+\end{equation}
+For the binary offspring law \cref{m:eq:pgfbinary} the first-generation function is
+\begin{equation}
+\label{m:eq:mgf1}
+M_1(t) = \phi(\ee^t) = p\,\ee^{2t} + (1-p),
+\end{equation}
+whose second derivative at $t=0$ is $4p$, so $\ex{Z_1^2}=4p$. Reaching generation
+$n$ requires a little more. Since $\phi_n$ is the $n$-fold composition of $\phi$,
+\begin{equation*}
+M_n(t) = \phi\bigl(\phi(\dots\phi(\ee^t)\dots)\bigr),
+\end{equation*}
+and differentiating by the chain rule gives a product of $n+1$ factors,
+\begin{equation}
+\label{m:eq:dmgf1}
+M_n'(t) = \phi'\bigl(\phi_{n-1}(\ee^t)\bigr)\cdot\phi'\bigl(\phi_{n-2}(\ee^t)\bigr)
+\cdots\phi'\bigl(\phi_1(\ee^t)\bigr)\cdot\phi'(\ee^t)\cdot\ee^t .
+\end{equation}
+Now $\phi'(z) = 2pz$ for the binary law, so each factor collapses,
+\begin{equation*}
+\phi'\bigl(\phi_k(\ee^t)\bigr) = 2p\,\phi_k(\ee^t) = 2p\,M_k(t),
+\qquad
+\phi'(\ee^t) = 2p\,\ee^t ,
+\end{equation*}
+and \cref{m:eq:dmgf1} becomes
+\begin{equation}
+\label{m:eq:dmgf2}
+M_n'(t) = (2p)^n\,M_{n-1}(t)\,M_{n-2}(t)\cdots M_1(t)\,\ee^{2t} .
+\end{equation}
+Before differentiating again, note that every factor on the right equals one at
+$t=0$: $M_k(0)=1$ for all $k$, and $\ee^0=1$. That is what makes the second
+derivative tractable. Differentiating the product gives a sum of $n$ terms, each
+identical to \cref{m:eq:dmgf2} except that a single factor has been differentiated,
+and at $t=0$ all the undifferentiated factors become one, leaving
+\begin{equation*}
+M_n''(0) = (2p)^n\lrbs{M_{n-1}'(0) + M_{n-2}'(0) + \cdots + M_1'(0) + 2}.
+\end{equation*}
+But $M_k'(0)$ is the mean population at generation $k$, namely $(2p)^k$, so
+\begin{equation*}
+M_n''(0) = (2p)^n\lrbs{(2p)^{n-1} + \cdots + (2p) + 2}
+= (2p)^n\lrbs{\sum_{i=0}^{n-1}(2p)^i + 1}.
+\end{equation*}
+Summing the finite geometric series and rearranging,
+\begin{equation}
+\label{m:eq:secondMoment}
+\ex{Z_n^2} = (2p)^n\lrb{1+\frac{1}{1-2p}} - (2p)^{2n}\lrb{\frac{1}{1-2p}} .
+\end{equation}
+The minus sign is not optional: at $n=1$ the expression must return
+$\ex{Z_1^2}=4p$, and it does.
+
+\subsubsection{Late-time variance}
+
+From $\var{Z_n} = \ex{Z_n^2}-\ex{Z_n}^2$ and \cref{m:eq:secondMoment},
+\begin{equation*}
+\var{Z_n} = (2p)^n\lrb{1+\frac{1}{1-2p}} - (2p)^{2n}\lrb{\frac{1}{1-2p}} - (2p)^{2n},
+\end{equation*}
+and for $2p<1$ the terms in $(2p)^{2n}$ are negligible beside $(2p)^n$ at large
+$n$, so $\var{Z_n}\to(2p)^n\bigl(1+1/(1-2p)\bigr)$. It is tempting to read
+stationarity of the conditional variance straight off that, but the step is not
+available: the conditional variance is not the unconditional one divided by
+anything simple. Start instead from the conditional moments, using
+\cref{m:eq:lateS} in each:
+\begin{align*}
+\ex{Z_n^2\mid Z_n>0} &= \frac{\ex{Z_n^2}}{S_n}
+\;\xrightarrow{n\to\infty}\;
+\frac{(2p)^n\lrb{1+\frac{1}{1-2p}}}{A(p)(2p)^n}
+= \frac{1}{A(p)}\lrb{1+\frac{1}{1-2p}},\\[4pt]
+\ex{Z_n\mid Z_n>0} &= \frac{\ex{Z_n}}{S_n}
+\;\xrightarrow{n\to\infty}\;
+\frac{1}{A(p)} .
+\end{align*}
+Both limits are finite, so the conditional variance tends to a constant:
+\begin{equation}
+\label{m:eq:condvar}
+\var{Z_n\mid Z_n>0} \;\longrightarrow\;
+\frac{1}{A(p)}\lrb{1+\frac{1}{1-2p}} - \frac{1}{A(p)^2} .
+\end{equation}
+The first two moments of the conditional population therefore both stabilise.  The
+existence of the full quasi-stationary distribution follows from the classical
+Yaglom theory cited above, rather than from these two moment calculations alone.
+Note that \cref{m:eq:condvar}, like \cref{m:eq:qsmean}, is expressed
+entirely in terms of $p$ and the single unknown constant $A(p)$. Everything now
+turns on that constant.
+
+\subsection{A continuum view of the survival recursion}
+\label{m:sec:riccati}
+
+Before turning to $A(p)$ proper it is useful to record a continuum approximation
+that recurs twice below. Writing
+\begin{equation}
+\label{m:eq:epsdef}
+\varepsilon = 1-2p
+\end{equation}
+for the distance from criticality --- a symbol used in this sense throughout the
+chapter --- the recursion \cref{m:eq:SnIter} rearranges to
+\begin{equation}
+\label{m:eq:Sdiff}
+S_{n+1}-S_n = -\varepsilon S_n - pS_n^2 .
+\end{equation}
+For large $n$ the unit increment is small on the scale over which $S$ varies, and
+the left-hand side may be replaced by a derivative. As in \cref{m:sec:criticalcase}
+this replacement is heuristic; what it produces is the Riccati equation
+\begin{equation}
+\label{m:eq:riccati}
+\dda{S}{n} = -\varepsilon S - pS^2 .
+\end{equation}
+The substitution $u=1/S$ linearises it to $u' = \varepsilon u + p$, with solution
+$u(n) = K\ee^{\varepsilon n}-p/\varepsilon$ and hence
+\begin{equation}
+\label{m:eq:riccatisol}
+S(n) = \frac{\varepsilon}{K\varepsilon\,\ee^{\varepsilon n}-p},
+\end{equation}
+where $K$ is fixed by the initial condition. Setting $\varepsilon=0$ recovers the
+critical scaling $S\sim2/n$ of \cref{m:eq:twoovern}; keeping $\varepsilon>0$ recovers
+the geometric decay $S\sim A(p)(2p)^n$ of \cref{m:eq:lateS}, since
+$(2p)^n = \ee^{n\ln(1-\varepsilon)}$ agrees with $\ee^{-\varepsilon n}$ to leading
+order in $\varepsilon$. The
+constant $K$ is exactly what the continuum approximation cannot supply, because it
+is determined by the early generations, where the approximation is invalid. That is
+another way of saying that the matching constant contains the information encoded
+by $A(p)$, and that no late-time continuum argument of this kind can determine it.
+The rigorous near-critical analysis belongs to \ChA.
+
+\FloatBarrier

@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<!--
+  Two-type Birth–Death–Catastrophe survival visualiser (v2).
+  Computes S(t)=P(no catastrophe | start (1,0)) and G(t)=P(no catastrophe | start (0,1))
+  for the generalised BDC process with type-specific catastrophe rates (delta1, delta2).
+  Each curve is drawn twice — (a) exact closed form (2F1 hypergeometric / elementary) and
+  (b) independent RK4 integration of the unscaled ODEs — so their agreement is visible.
+  Usage: open in any modern browser, drag the seven rate sliders, toggle quantity groups.
+-->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BDC Survival Visualiser · S(t), G(t)</title>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
+<style>
+  :root{
+    --bg:#ffffff; --panel:#fafafa; --ink:#1a1c1f; --ink-soft:#565b62;
+    --line:#e3e6ea; --line-strong:#d0d4d9; --accent:#0b5cad;
+    --blue:#0072B2; --verm:#D55E00; --ok:#2e7d32; --warn:#b06a00; --err:#9a2820;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --serif:'Iowan Old Style','Palatino Linotype','Book Antiqua',Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --ctrl-w:280px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+
+  .wrap{max-width:1760px;margin:0 auto;padding:12px 16px 48px}
+
+  /* Compact header so key content stays above the fold */
+  header.masthead{border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:12px}
+  header.masthead h1{font-family:var(--serif);font-weight:600;font-size:20px;margin:0 0 2px;
+    letter-spacing:.2px}
+  header.masthead p{margin:0;color:var(--ink-soft);max-width:90ch;font-size:12.5px}
+  header.masthead .legendrow{margin-top:6px;display:flex;align-items:center;
+    justify-content:space-between;gap:16px;flex-wrap:wrap}
+  header.masthead .legendkey{font-size:12px;color:var(--ink-soft);
+    display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .legendkey .sw{display:inline-flex;align-items:center;gap:6px}
+  .legendkey .ln{width:22px;height:0;border-top:2.5px solid var(--blue)}
+  .legendkey .mk{width:9px;height:9px;border:2px solid var(--blue);border-radius:50%}
+  .legendkey .ln.v{border-color:var(--verm)} .legendkey .mk.v{border-color:var(--verm)}
+  .agree-top{font-size:12px;line-height:1.3;text-align:right;margin-left:auto;
+    white-space:nowrap;color:var(--ink-soft)}
+  .agree-top.ok{color:var(--ok)}
+  .agree-top.warn{color:var(--warn)}
+  .agree-top.err{color:var(--err)}
+
+  /* Two-column app: controls | main (plots + theory beneath) */
+  .app{display:grid;gap:12px;grid-template-columns:var(--ctrl-w) minmax(0,1fr);
+    grid-template-areas:"controls main";align-items:start}
+  @media(max-width:760px){
+    .app{grid-template-columns:1fr;grid-template-areas:"controls" "main"}
+  }
+  .controls{grid-area:controls}
+  .main{grid-area:main;min-width:0;display:flex;flex-direction:column;gap:12px}
+  .plotarea{min-width:0;display:flex;flex-direction:column;gap:12px}
+  .theory{min-width:0;display:flex;flex-direction:column;gap:10px}
+  /* Wider equations / multi-col constants when theory sits under plots */
+  .theory .eq{font-size:.88em}
+  .theory .decomp .eq{font-size:.82em}
+  .theory .consts{max-width:520px}
+  #eqDef{margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed var(--line-strong)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:11px 12px;margin-bottom:10px}
+  .card:last-child{margin-bottom:0}
+  .card h2{font-family:var(--serif);font-size:13.5px;font-weight:600;margin:0 0 8px;
+    letter-spacing:.2px;color:var(--ink)}
+  .card h2 .sub{font-family:var(--sans);font-weight:400;font-size:11px;color:var(--ink-soft);
+    margin-left:5px}
+  .grouplbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);
+    font-weight:600;margin:10px 0 6px;border-top:1px dashed var(--line-strong);padding-top:8px}
+  .grouplbl:first-of-type{border-top:none;margin-top:0;padding-top:0}
+
+  /* Collapsible rate sections — closed by default to keep controls above the fold */
+  details.fold{border:1px solid var(--line);border-radius:6px;background:#fff;margin-bottom:8px}
+  details.fold:last-of-type{margin-bottom:0}
+  details.fold>summary{list-style:none;cursor:pointer;padding:7px 9px;display:flex;
+    align-items:flex-start;justify-content:space-between;gap:8px;user-select:none;
+    font-size:12.5px;line-height:1.3}
+  details.fold>summary::-webkit-details-marker{display:none}
+  details.fold>summary .fold-title{font-weight:600;color:var(--ink);flex:none;min-width:52px}
+  details.fold>summary .fold-sum{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);
+    font-weight:400;text-align:right;line-height:1.35}
+  details.fold>summary .chev{flex:none;color:var(--ink);font-size:16px;font-weight:700;
+    line-height:1;margin-top:0;width:1.1em;text-align:center;
+    transition:transform .12s}
+  details.fold[open]>summary .chev{transform:rotate(90deg)}
+  details.fold[open]>summary{border-bottom:1px solid var(--line)}
+  details.fold .fold-body{padding:8px 9px 6px}
+  details.fold .fold-sum{display:block}
+  details.fold[open]>summary .fold-sum{display:none}
+
+  .slider{margin-bottom:8px}
+  .slider .row1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+  .slider .name{font-size:12.5px;display:flex;align-items:center;gap:5px}
+  .slider .name .k{min-width:20px;display:inline-block}
+  .slider .hint{color:var(--ink-soft);font-size:10.5px}
+  .slider input[type=number]{width:58px;font-family:var(--mono);font-size:12px;
+    padding:2px 4px;border:1px solid var(--line-strong);border-radius:4px;text-align:right;
+    background:#fff;color:var(--ink)}
+  .slider input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;
+    background:transparent;margin:4px 0 2px;cursor:pointer;outline:none;--fill:var(--accent);--pct:0%}
+  .slider.blue input[type=range]{--fill:var(--blue)}
+  .slider.verm input[type=range]{--fill:var(--verm)}
+  .slider input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:4px;
+    background:linear-gradient(to right,var(--fill) var(--pct),#dfe3e8 var(--pct))}
+  .slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    box-sizing:border-box;width:17px;height:17px;margin-top:-5.5px;border-radius:50%;
+    background:#565b62;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.30);cursor:pointer}
+  .slider input[type=range]::-moz-range-track{height:6px;border-radius:4px;background:#dfe3e8}
+  .slider input[type=range]::-moz-range-progress{height:6px;border-radius:4px;background:var(--fill)}
+  .slider input[type=range]::-moz-range-thumb{box-sizing:border-box;width:17px;height:17px;
+    border-radius:50%;background:#565b62;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.30);cursor:pointer}
+  input[type=number]:invalid{border-color:var(--verm)}
+
+  .checks label,.toggle label{display:flex;align-items:center;gap:8px;font-size:12.5px;
+    padding:3px 0;cursor:pointer}
+  .checks input,.toggle input{accent-color:var(--accent);width:14px;height:14px}
+  .checks .dot{width:9px;height:9px;border-radius:50%;flex:none;background:#1f5a3a}
+  .row{display:flex;gap:6px;flex-wrap:wrap}
+  .row.tight{gap:6px}
+  button{font-family:var(--sans);font-size:12.5px;padding:6px 10px;border:1px solid var(--line-strong);
+    border-radius:6px;background:#fff;color:var(--ink);cursor:pointer;
+    transition:background .12s,border-color .12s}
+  button:hover{background:#f0f2f5;border-color:var(--accent)}
+  button.wide{flex:1}
+  button.dl-png{font-size:11.5px;padding:4px 9px;flex:none;white-space:nowrap}
+  .png-tools{display:inline-flex;align-items:center;gap:6px;flex:none}
+  .png-rates-toggle{display:inline-flex;align-items:center;justify-content:center;width:16px;
+    height:26px;line-height:1;cursor:pointer;user-select:none;opacity:.78}
+  .png-rates-toggle:hover{opacity:1}
+  .png-rates-toggle input{display:block;margin:0;width:12px;height:12px;accent-color:var(--ink-soft);cursor:pointer}
+  .tnum{width:68px}
+  .fieldrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12.5px}
+  .fieldrow label{color:var(--ink-soft);min-width:48px}
+  .fieldrow input[type=number]{width:70px;font-family:var(--mono);font-size:12px;padding:3px 5px;
+    border:1px solid var(--line-strong);border-radius:4px;text-align:right;background:#fff;color:var(--ink)}
+
+  /* Graph cards: title bar + PNG download; plot fills remaining height when alone */
+  .graph-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:6px 8px 4px;display:none}
+  .graph-card.visible{display:block}
+  .graph-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:2px 4px 4px;min-height:28px}
+  .graph-head h3{font-family:var(--serif);font-size:13px;font-weight:600;margin:0;color:var(--ink)}
+  .graph-head .gsub{font-family:var(--sans);font-weight:400;font-size:11px;color:var(--ink-soft);
+    margin-left:6px}
+  /* With collapsed rate sliders, leave more vertical room for the primary plot */
+  .plot-div{width:100%;height:min(460px, calc(100vh - 148px));overflow:visible}
+  .plotarea.multi .plot-div{height:340px}
+  /* Keep Plotly legend/hover text from being clipped by the plot container */
+  .js-plotly-plot .plotly,.js-plotly-plot .main-svg,.js-plotly-plot .svg-container{overflow:visible!important}
+  .js-plotly-plot .hoverlayer text{paint-order:stroke fill}
+
+  .consts{width:100%;border-collapse:collapse;font-size:12.5px}
+  .consts td{padding:2.5px 3px;border-bottom:1px solid var(--line)}
+  .consts td.sym{width:46%;color:var(--ink)}
+  .consts td.val{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--ink)}
+  .consts tr.hl td{background:#f3f6fa}
+  .eq{margin:2px 0 6px;overflow-x:auto;overflow-y:hidden;font-size:.78em}
+  .eq .katex-display{margin:.35em 0}
+  .eq .katex{white-space:nowrap}
+  .note{font-size:11.5px;color:var(--ink-soft);margin:4px 0 0}
+  .decomp{font-size:12px}
+  .decomp .eq{font-size:.74em}
+  .decomp .blk{margin-bottom:8px}
+  .decomp .blk:last-child{margin-bottom:0}
+  .decomp .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);
+    font-weight:600;margin:0 0 2px}
+
+  footer{margin-top:20px;color:var(--ink-soft);font-size:11.5px;border-top:1px solid var(--line);
+    padding-top:10px}
+  code{font-family:var(--mono);font-size:11.5px;background:#f0f2f5;padding:1px 4px;border-radius:3px}
+
+  /* Source-code modal */
+  .src-btns{display:flex;flex-direction:column;gap:6px}
+  .src-btns button{width:100%;text-align:left;font-family:var(--mono);font-size:11.5px;
+    padding:7px 10px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;
+    color:var(--ink);cursor:pointer;transition:background .12s,border-color .12s}
+  .src-btns button:hover{background:#f0f2f5;border-color:var(--accent);color:var(--accent)}
+  .src-btns button .hint{display:block;font-family:var(--sans);font-size:10.5px;
+    color:var(--ink-soft);margin-top:2px;font-weight:400}
+
+  .modal-root{position:fixed;inset:0;z-index:1000;display:none;align-items:center;
+    justify-content:center;padding:24px 16px}
+  .modal-root.open{display:flex}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(26,28,31,.38);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .modal-panel{position:relative;z-index:1;width:min(920px,100%);max-height:min(86vh,900px);
+    display:flex;flex-direction:column;background:#fff;border:1px solid var(--line-strong);
+    border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.06);
+    overflow:hidden}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel);flex:none}
+  .modal-head h3{font-family:var(--serif);font-size:15px;font-weight:600;margin:0;color:var(--ink)}
+  .modal-head .fname{font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;
+    margin-left:8px}
+  .modal-actions{display:flex;align-items:center;gap:8px}
+  .modal-actions button{font-size:12.5px;padding:6px 12px}
+  .modal-actions #modalCopy.copied{background:#eef6ee;border-color:#cfe6d0;color:var(--ok)}
+  .modal-body{overflow:auto;flex:1;min-height:0;background:#f7f8fa}
+  .modal-body pre{margin:0;padding:16px 18px 28px;overflow:visible}
+  .modal-body code{font-family:var(--mono);font-size:12.5px;line-height:1.55;
+    background:transparent;padding:0;border-radius:0;display:block;color:var(--ink);
+    white-space:pre;tab-size:4}
+  body.modal-open{overflow:hidden}
+
+  /* Python syntax colours — light theme matching the page */
+  .tok-kw{color:#0b5cad;font-weight:600}
+  .tok-builtin{color:#0b5cad}
+  .tok-str{color:#2e7d32}
+  .tok-num{color:#D55E00}
+  .tok-com{color:#8a9199;font-style:italic}
+  .tok-def{color:#134a86;font-weight:600}
+  .tok-cls{color:#6a3d9a;font-weight:600}
+  .tok-op{color:#565b62}
+  .tok-dec{color:#b06a00}
+
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1>Two-type Birth–Death–Catastrophe survival</h1>
+    <p>Comparing derived closed form solutions with numerical solutions to the ODEs</p>
+    <div class="legendrow">
+      <div class="legendkey">
+        <span class="sw"><span class="ln"></span><span class="mk"></span>&nbsp;type-1 / S</span>
+        <span class="sw"><span class="ln v"></span><span class="mk v"></span>&nbsp;type-2 / G</span>
+        <span class="sw"><span class="ln"></span>&nbsp;solid = closed form</span>
+        <span class="sw"><span class="mk"></span>&nbsp;open markers = numerical</span>
+      </div>
+      <div class="agree-top" id="agreeLine" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- ================= CONTROLS ================= -->
+    <div class="controls">
+      <div class="card">
+        <div class="row tight">
+          <button class="wide" id="reset">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Model rates <span class="sub">per-capita · click to expand</span></h2>
+
+        <details class="fold" id="fold-type1">
+          <summary>
+            <span class="fold-title">Type 1</span>
+            <span class="fold-sum" id="sum-type1"></span>
+            <span class="chev" aria-hidden="true">▸</span>
+          </summary>
+          <div class="fold-body">
+            <div class="slider blue" data-p="lambda1"></div>
+            <div class="slider blue" data-p="mu1"></div>
+            <div class="slider blue" data-p="nu"></div>
+            <div class="slider blue" data-p="delta1"></div>
+          </div>
+        </details>
+
+        <details class="fold" id="fold-type2">
+          <summary>
+            <span class="fold-title">Type 2</span>
+            <span class="fold-sum" id="sum-type2"></span>
+            <span class="chev" aria-hidden="true">▸</span>
+          </summary>
+          <div class="fold-body">
+            <div class="slider verm" data-p="lambda2"></div>
+            <div class="slider verm" data-p="mu2"></div>
+            <div class="slider verm" data-p="delta2"></div>
+          </div>
+        </details>
+
+      </div>
+
+      <div class="card">
+        <h2>Graphs</h2>
+        <div class="checks">
+          <label><span class="dot"></span>
+            <input type="checkbox" id="g1" checked /> <b>Survival</b>&nbsp; S(t), G(t)</label>
+          <label><span class="dot"></span>
+            <input type="checkbox" id="g2" /> <b>Catastrophe prob.</b>&nbsp; 1−S, 1−G</label>
+          <label><span class="dot"></span>
+            <input type="checkbox" id="g3" /> <b>Catastrophe density</b>&nbsp; −S′, −G′</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Time axis</h2>
+        <div class="fieldrow">
+          <label>t<sub>max</sub></label>
+          <input type="number" id="tmax" class="tnum" min="0.1" step="0.1" />
+          <button id="autoT" title="Auto from slowest rate">auto</button>
+        </div>
+        <div class="toggle"><label><input type="checkbox" id="logTime" /> Logarithmic time axis</label></div>
+      </div>
+
+      <div class="card">
+        <h2>Python Code</h2>
+        <div class="src-btns">
+          <button type="button" id="btnSrcHyp" data-src="hypergeometric.py">
+            hypergeometric.py
+            <span class="hint">Standalone Gauss ₂F₁ evaluator</span>
+          </button>
+          <button type="button" id="btnSrcBdc" data-src="bdc_closed_forms.py">
+            bdc_closed_forms.py
+            <span class="hint">Closed-form S(t), G(t) evaluators</span>
+          </button>
+          <button type="button" id="btnSrcRk4" data-src="bdc_rk4.py">
+            bdc_rk4.py
+            <span class="hint">Independent RK4 solver for S(t), G(t)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MAIN: plots then theory ================= -->
+    <div class="main">
+      <div class="plotarea" id="plotarea">
+        <div class="graph-card visible" id="card-surv" data-graph="surv">
+          <div class="graph-head">
+            <h3>Survival<span class="gsub">S(t), G(t)</span></h3>
+            <div class="png-tools">
+              <button class="dl-png" data-dl="plot-surv" data-name="bdc_survival">PNG</button>
+              <label class="png-rates-toggle" title="Rates"><input class="png-rates" type="checkbox" aria-label="Include rates in downloaded PNG" checked></label>
+            </div>
+          </div>
+          <div class="plot-div" id="plot-surv"></div>
+        </div>
+
+        <div class="graph-card" id="card-cat" data-graph="cat">
+          <div class="graph-head">
+            <h3>Catastrophe probability<span class="gsub">1−S(t), 1−G(t)</span></h3>
+            <div class="png-tools">
+              <button class="dl-png" data-dl="plot-cat" data-name="bdc_catastrophe">PNG</button>
+              <label class="png-rates-toggle" title="Rates"><input class="png-rates" type="checkbox" aria-label="Include rates in downloaded PNG" checked></label>
+            </div>
+          </div>
+          <div class="plot-div" id="plot-cat"></div>
+        </div>
+
+        <div class="graph-card" id="card-dens" data-graph="dens">
+          <div class="graph-head">
+            <h3>Catastrophe density<span class="gsub">−S′(t), −G′(t)</span></h3>
+            <div class="png-tools">
+              <button class="dl-png" data-dl="plot-dens" data-name="bdc_density">PNG</button>
+              <label class="png-rates-toggle" title="Rates"><input class="png-rates" type="checkbox" aria-label="Include rates in downloaded PNG" checked></label>
+            </div>
+          </div>
+          <div class="plot-div" id="plot-dens"></div>
+        </div>
+      </div>
+
+      <!-- Theory content sits beneath the plots (order fixed) -->
+      <div class="theory">
+        <div class="card">
+          <h2>Governing ODEs <span class="sub">unscaled rates &amp; time</span></h2>
+          <div class="eq" id="eqDef"></div>
+          <div class="eq" id="eqODE"></div>
+        </div>
+
+        <div class="card">
+          <h2>Closed form solutions <span class="sub">scaled · ˆt = λ₁t</span></h2>
+          <div class="eq" id="eqCF"></div>
+        </div>
+
+        <div class="card decomp">
+          <h2>Derived parameter decompositions</h2>
+          <div class="blk">
+            <p class="lbl">Scaled rates (hats)</p>
+            <div class="eq" id="eqDecScale"></div>
+          </div>
+          <div class="blk">
+            <p class="lbl">Type-2 roots &amp; map</p>
+            <div class="eq" id="eqDecG"></div>
+          </div>
+          <div class="blk">
+            <p class="lbl">Ultimate survival &amp; hypergeometric params</p>
+            <div class="eq" id="eqDecS"></div>
+          </div>
+          <div class="blk">
+            <p class="lbl">Second solution &amp; matching</p>
+            <div class="eq" id="eqDecMatch"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Derived constants <span class="sub">scaled (hatted) system</span></h2>
+          <table class="consts">
+            <tr><td class="sym" id="s_Delta2"></td><td class="val" id="v_Delta2">—</td></tr>
+            <tr><td class="sym" id="s_r2p"></td><td class="val" id="v_r2p">—</td></tr>
+            <tr class="hl"><td class="sym" id="s_r2m"></td><td class="val" id="v_r2m">—</td></tr>
+            <tr><td class="sym" id="s_alpha2"></td><td class="val" id="v_alpha2">—</td></tr>
+            <tr><td class="sym" id="s_q2"></td><td class="val" id="v_q2">—</td></tr>
+            <tr><td class="sym" id="s_z20"></td><td class="val" id="v_z20">—</td></tr>
+            <tr><td class="sym" id="s_kappa1"></td><td class="val" id="v_kappa1">—</td></tr>
+            <tr class="hl"><td class="sym" id="s_h"></td><td class="val" id="v_h">—</td></tr>
+            <tr><td class="sym" id="s_C"></td><td class="val" id="v_C">—</td></tr>
+            <tr><td class="sym" id="s_A"></td><td class="val" id="v_A">—</td></tr>
+            <tr><td class="sym" id="s_B"></td><td class="val" id="v_B">—</td></tr>
+            <tr class="hl"><td class="sym" id="s_Sinf"></td><td class="val" id="v_Sinf">—</td></tr>
+            <tr class="hl"><td class="sym" id="s_Ginf"></td><td class="val" id="v_Ginf">—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Source code modal -->
+<div class="modal-root" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-panel">
+    <div class="modal-head">
+      <h3 id="modalTitle">Source<span class="fname" id="modalFname"></span></h3>
+      <div class="modal-actions">
+        <button type="button" id="modalCopy">Copy</button>
+        <button type="button" id="modalClose">Close</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <pre><code id="modalCode" class="language-python"></code></pre>
+    </div>
+  </div>
+</div>
+
+  <footer>
+    2026 - Adam Aldridge
+  </footer>
+</div>
+
+<script>
+/* ============================================================================
+   PART 0 — Complex arithmetic
+   ========================================================================== */
+const CX=(re,im=0)=>({re,im});
+const cadd=(a,b)=>({re:a.re+b.re,im:a.im+b.im});
+const csub=(a,b)=>({re:a.re-b.re,im:a.im-b.im});
+const cmul=(a,b)=>({re:a.re*b.re-a.im*b.im,im:a.re*b.im+a.im*b.re});
+const cdiv=(a,b)=>{const d=b.re*b.re+b.im*b.im;return{re:(a.re*b.re+a.im*b.im)/d,im:(a.im*b.re-a.re*b.im)/d};};
+const cabs=(a)=>Math.hypot(a.re,a.im);
+const cexp=(a)=>{const e=Math.exp(a.re);return{re:e*Math.cos(a.im),im:e*Math.sin(a.im)};};
+const cscale=(a,s)=>({re:a.re*s,im:a.im*s});
+const cnegate=(a)=>({re:-a.re,im:-a.im});
+
+/* ============================================================================
+   PART 1 — Gauss 2F1 for real z<=0, complex a,b, real c, via Pfaff transform
+   ========================================================================== */
+function hyp2f1(a,b,c,z){
+  if(z===0) return CX(1,0);
+  const w=z/(z-1);
+  const pref=cexp(cscale(cnegate(a),Math.log(1-z)));
+  const b2=CX(c-b.re,-b.im);
+  let term=CX(1,0), sum=CX(1,0);
+  for(let k=0;k<5000;k++){
+    const ak=CX(a.re+k,a.im), bk=CX(b2.re+k,b2.im);
+    const num=cmul(ak,bk); const denom=(c+k)*(k+1);
+    const factor=CX(num.re*w/denom,num.im*w/denom);
+    term=cmul(term,factor); sum=cadd(sum,term);
+    if(k>2 && cabs(term)<1e-16*cabs(sum)) break;
+  }
+  return cmul(pref,sum);
+}
+
+/* ============================================================================
+   PART 2 — Derive scaled constants + closed-form evaluators
+   ========================================================================== */
+function derive(p){
+  const {lambda1,mu1,nu,delta1,lambda2,mu2,delta2}=p;
+  const m1=mu1/lambda1, n=nu/lambda1, d1=delta1/lambda1;
+  const L2=lambda2/lambda1, m2=mu2/lambda1, d2raw=delta2/lambda1;
+  const flags={special:false,decoupled:false,complexAB:false,constS1:false,
+               nudged:false,cfAvailable:true,degenerate:false,maxImag:0,note:''};
+  const kappa1=1+m1+n+d1;
+
+  if(d2raw<1e-6){
+    flags.special=true;
+    if(d1<1e-9){ flags.constS1=true;
+      return{branch:'special',m1,n,d1,L2,m2,d2:0,kappa1,s_plus:NaN,s_minus:1,R0:0,constS1:true,
+             h:1,r2m:1,r2p:1,Delta2:NaN,alpha2:NaN,q2:NaN,z2_0:NaN,A:null,B:null,C:NaN,flags,lambda1};
+    }
+    const rootarg=kappa1*kappa1-4*(m1+n);
+    const sq=Math.sqrt(Math.max(0,rootarg));
+    const s_plus=(kappa1+sq)/2, s_minus=(kappa1-sq)/2, R0=(1-s_minus)/(1-s_plus);
+    return{branch:'special',m1,n,d1,L2,m2,d2:0,kappa1,s_plus,s_minus,R0,
+           h:s_minus,r2m:1,r2p:1,Delta2:NaN,alpha2:NaN,q2:NaN,z2_0:NaN,A:null,B:null,C:NaN,flags,lambda1};
+  }
+
+  if(n<1e-9){
+    flags.decoupled=true;
+    const disc2=(L2+m2+d2raw)*(L2+m2+d2raw)-4*L2*m2;
+    const Delta2=Math.sqrt(Math.max(0,disc2));
+    if(Delta2<1e-7){flags.cfAvailable=false;flags.degenerate=true;flags.note='G double root (q₂≈0)';
+      return{branch:'decoupled',m1,n,d1,L2,m2,d2:d2raw,kappa1,flags,lambda1,h:NaN,r2m:NaN};}
+    const r2p=(L2+m2+d2raw+Delta2)/(2*L2), r2m=(L2+m2+d2raw-Delta2)/(2*L2);
+    const alpha2=r2p-r2m, q2=-Delta2, z2_0=(r2m-1)/(r2p-1);
+    const evalG=(ts)=>{const z2=z2_0*Math.exp(q2*ts);return r2m-alpha2*z2/(1-z2);};
+    const base={branch:'decoupled',m1,n,d1,L2,m2,d2:d2raw,kappa1,Delta2,r2p,r2m,alpha2,q2,z2_0,
+                A:null,B:null,C:NaN,evalG,flags,lambda1};
+    if(d1<1e-9){flags.constS1=true;
+      return Object.assign(base,{constS1:true,h:1,s_plus:NaN,s_minus:1});}
+    const sq=Math.sqrt(kappa1*kappa1-4*m1);
+    const s_plus=(kappa1+sq)/2, s_minus=(kappa1-sq)/2, R0=(1-s_minus)/(1-s_plus);
+    const evalS=(ts)=>{const e=Math.exp(-(s_plus-s_minus)*ts);return(s_minus-R0*e*s_plus)/(1-R0*e);};
+    return Object.assign(base,{h:s_minus,s_plus,s_minus,R0,evalS});
+  }
+
+  let nudge=0;
+  for(let iter=0;iter<5;iter++){
+    const d2=d2raw+nudge;
+    const disc2=(L2+m2+d2)*(L2+m2+d2)-4*L2*m2;
+    const Delta2=Math.sqrt(Math.max(0,disc2));
+    const r2p=(L2+m2+d2+Delta2)/(2*L2), r2m=(L2+m2+d2-Delta2)/(2*L2);
+    const alpha2=r2p-r2m, q2=-Delta2, z2_0=(r2m-1)/(r2p-1);
+    const discS=kappa1*kappa1-4*(m1+n*r2m);
+    const h=(kappa1-Math.sqrt(Math.max(0,discS)))/2;
+    const Cc=1+(kappa1-2*h)/q2;
+    const degenerate=(Math.abs(Cc-Math.round(Cc))<1e-6)||(Math.abs(q2)<1e-7)||(Math.abs(r2p-1)<1e-9);
+    if(degenerate && iter<4){nudge+=1e-6;flags.nudged=true;continue;}
+
+    const discAB=((Cc-1)*(Cc-1))/4-(n*alpha2)/(q2*q2);
+    let A,B;
+    if(discAB>=0){const s=Math.sqrt(discAB);A=CX((Cc-1)/2+s,0);B=CX((Cc-1)/2-s,0);}
+    else{const s=Math.sqrt(-discAB);A=CX((Cc-1)/2,s);B=CX((Cc-1)/2,-s);flags.complexAB=true;}
+
+    const C1=Cc;
+    const A1p=CX(A.re+1,A.im), B1p=CX(B.re+1,B.im);
+    const A2=CX(A.re-C1+1,A.im), B2=CX(B.re-C1+1,B.im), C2=2-C1;
+    const A2p=CX(A2.re+1,A2.im), B2p=CX(B2.re+1,B2.im);
+    const AB_over_C=cscale(cmul(A,B),1/C1);
+    const A2B2_over_C2=cscale(cmul(A2,B2),1/C2);
+
+    const U =(z)=>hyp2f1(A,B,C1,z);
+    const Up=(z)=>cmul(AB_over_C,hyp2f1(A1p,B1p,C1+1,z));
+    const V =(z)=>cscale(hyp2f1(A2,B2,C2,z),Math.pow(-z,1-C1));
+    const Vp=(z)=>{
+      const prefV=Math.pow(-z,1-C1);
+      const t1=cscale(hyp2f1(A2,B2,C2,z),-(1-C1)*Math.pow(-z,-C1));
+      const t2=cscale(cmul(A2B2_over_C2,hyp2f1(A2p,B2p,C2+1,z)),prefV);
+      return cadd(t1,t2);
+    };
+
+    const L=(h-1)/(q2*z2_0);
+    const U0=U(z2_0),Up0=Up(z2_0),V0=V(z2_0),Vp0=Vp(z2_0);
+    const Dden=csub(Vp0,cscale(V0,L));
+    if(cabs(Dden)<1e-12){
+      if(iter<4){nudge+=1e-6;flags.nudged=true;continue;}
+      flags.cfAvailable=false;flags.degenerate=true;flags.note='D denominator ≈ 0';
+      return{branch:'general',m1,n,d1,L2,m2,d2,Delta2,r2p,r2m,alpha2,q2,z2_0,kappa1,discS,h,C:Cc,A,B,discAB,flags,lambda1};
+    }
+    const D=cdiv(csub(cscale(U0,L),Up0),Dden);
+
+    const Z2FLOOR=1e-150;
+    const evalSc=(ts)=>{
+      let z2=z2_0*Math.exp(q2*ts);
+      if(Math.abs(z2)<Z2FLOOR) z2=-Z2FLOOR;
+      const numer=cadd(Up(z2),cmul(D,Vp(z2)));
+      const denom=cadd(U(z2),cmul(D,V(z2)));
+      return csub(CX(h,0),cscale(cdiv(numer,denom),q2*z2));
+    };
+    const evalS=(ts)=>evalSc(ts).re;
+    const evalG=(ts)=>{const z2=z2_0*Math.exp(q2*ts);return r2m-alpha2*z2/(1-z2);};
+
+    return{branch:'general',m1,n,d1,L2,m2,d2,Delta2,r2p,r2m,alpha2,q2,z2_0,kappa1,discS,h,
+           C:Cc,A,B,discAB,D,flags,lambda1,evalS,evalSc,evalG};
+  }
+  flags.cfAvailable=false;flags.degenerate=true;flags.note='unresolved degeneracy';
+  return{branch:'general',flags,lambda1,h:NaN,r2m:NaN};
+}
+
+function cfEval(k,t){
+  const ts=k.lambda1*t;
+  if(!k.flags.cfAvailable) return{S:NaN,G:k.branch==='special'?1:NaN};
+  if(k.constS1) return{S:1,G:k.branch==='special'?1:k.evalG(ts)};
+  if(k.branch==='special'){
+    const e=Math.exp(-(k.s_plus-k.s_minus)*ts);
+    return{S:(k.s_minus-k.R0*e*k.s_plus)/(1-k.R0*e),G:1};
+  }
+  return{S:k.evalS(ts),G:k.evalG(ts)};
+}
+
+/* ============================================================================
+   PART 3 — Independent numerical solution (RK4 in real unscaled time)
+   ========================================================================== */
+function rhsG(G,p){return p.lambda2*G*G-(p.lambda2+p.mu2+p.delta2)*G+p.mu2;}
+function rhsS(S,G,p){return p.lambda1*S*S-(p.lambda1+p.mu1+p.nu+p.delta1)*S+p.mu1+p.nu*G;}
+function numericArrays(p,tgrid){
+  const N=tgrid.length, S=new Float64Array(N), G=new Float64Array(N);
+  let s=1,g=1; S[0]=1; G[0]=1;
+  for(let i=1;i<N;i++){
+    const dt=tgrid[i]-tgrid[i-1];
+    const sub=Math.max(1,Math.ceil(dt/0.004)), h=dt/sub;
+    for(let j=0;j<sub;j++){
+      const k1g=rhsG(g,p),k1s=rhsS(s,g,p);
+      const k2g=rhsG(g+h/2*k1g,p),k2s=rhsS(s+h/2*k1s,g+h/2*k1g,p);
+      const k3g=rhsG(g+h/2*k2g,p),k3s=rhsS(s+h/2*k2s,g+h/2*k2g,p);
+      const k4g=rhsG(g+h*k3g,p),k4s=rhsS(s+h*k3s,g+h*k3g,p);
+      g+=h/6*(k1g+2*k2g+2*k3g+k4g);
+      s+=h/6*(k1s+2*k2s+2*k3s+k4s);
+    }
+    S[i]=s; G[i]=g;
+  }
+  return{S,G};
+}
+
+/* ============================================================================
+   PART 4 — Assemble everything for the current parameters
+   ========================================================================== */
+function linspace(a,b,n){const o=new Float64Array(n);for(let i=0;i<n;i++)o[i]=a+(b-a)*i/(n-1);return o;}
+function logGrid(tmax,n){
+  const o=new Float64Array(n); o[0]=0;
+  const a=Math.log(tmax*1e-4), b=Math.log(tmax);
+  for(let i=1;i<n;i++) o[i]=Math.exp(a+(b-a)*(i-1)/(n-2));
+  return o;
+}
+function computeAll(p,tmax,N,logt){
+  const tgrid=logt?logGrid(tmax,N):linspace(0,tmax,N);
+  const k=derive(p);
+  const num=numericArrays(p,tgrid);
+  const Scf=new Float64Array(N),Gcf=new Float64Array(N);
+  const dScf=new Float64Array(N),dGcf=new Float64Array(N),dSnum=new Float64Array(N),dGnum=new Float64Array(N);
+  const resS=new Float64Array(N),resG=new Float64Array(N);
+  let maxResS=0,maxResG=0,maxImag=0;
+  for(let i=0;i<N;i++){
+    dSnum[i]=-rhsS(num.S[i],num.G[i],p);
+    dGnum[i]=-rhsG(num.G[i],p);
+    if(k.flags.cfAvailable){
+      const cf=cfEval(k,tgrid[i]); Scf[i]=cf.S; Gcf[i]=cf.G;
+      dScf[i]=-rhsS(cf.S,cf.G,p); dGcf[i]=-rhsG(cf.G,p);
+      resS[i]=Math.abs(cf.S-num.S[i]); resG[i]=Math.abs(cf.G-num.G[i]);
+      if(resS[i]>maxResS)maxResS=resS[i]; if(resG[i]>maxResG)maxResG=resG[i];
+      if(k.branch==='general'&&k.evalSc){const im=Math.abs(k.evalSc(k.lambda1*tgrid[i]).im); if(im>maxImag)maxImag=im;}
+    }else{Scf[i]=NaN;Gcf[i]=NaN;dScf[i]=NaN;dGcf[i]=NaN;resS[i]=NaN;resG[i]=NaN;}
+  }
+  k.flags.maxImag=maxImag;
+  if(maxImag>1e-8) k.flags.note=(k.flags.note?k.flags.note+'; ':'')+'|Im S| large';
+  let intS=0,intG=0;
+  for(let i=1;i<N;i++){const dt=tgrid[i]-tgrid[i-1];intS+=dt*(dSnum[i-1]+dSnum[i])/2;intG+=dt*(dGnum[i-1]+dGnum[i])/2;}
+  return{tgrid,k,Snum:num.S,Gnum:num.G,Scf,Gcf,dScf,dGcf,dSnum,dGnum,resS,resG,
+         maxResS,maxResG,maxImag,intS,intG};
+}
+function autoTmax(k,p){
+  const rates=[];
+  if(k.branch!=='special'&&isFinite(k.Delta2)&&k.Delta2>1e-9) rates.push(k.Delta2*p.lambda1);
+  if(k.branch==='general'){ if(isFinite(k.discS)) rates.push(Math.sqrt(Math.max(0,k.discS))*p.lambda1); }
+  else if(isFinite(k.s_plus)&&isFinite(k.s_minus)) rates.push(Math.abs(k.s_plus-k.s_minus)*p.lambda1);
+  const pos=rates.filter(r=>r>1e-6);
+  const rate=pos.length?Math.min(...pos):0.4;
+  let t=7/rate; t=Math.max(1.5,Math.min(120,t));
+  return t<20?Math.round(t*2)/2:Math.round(t/5)*5;
+}
+
+/* ============================================================================
+   PART 5 — UI state, sliders, URL
+   ========================================================================== */
+const RATES=[
+  {key:'lambda1',sym:'\\lambda_1',label:'birth',min:0.01,cls:'blue'},
+  {key:'mu1',    sym:'\\mu_1',    label:'death',min:0,   cls:'blue'},
+  {key:'nu',     sym:'\\nu',      label:'1→2 convert',min:0,cls:'blue'},
+  {key:'delta1', sym:'\\delta_1', label:'catastrophe',min:0.001,step:0.001,cls:'blue'},
+  {key:'lambda2',sym:'\\lambda_2',label:'birth',min:0.01,cls:'verm'},
+  {key:'mu2',    sym:'\\mu_2',    label:'death',min:0,   cls:'verm'},
+  {key:'delta2', sym:'\\delta_2', label:'catastrophe',min:0.001,step:0.001,cls:'verm'},
+];
+const DEFAULT={lambda1:1.0,mu1:0.5,nu:0.3,delta1:0.25,lambda2:1.2,mu2:0.4,delta2:0.15};
+
+const state={p:{...DEFAULT},tmax:7,tmaxAuto:true,logt:false,
+             g1:true,g2:false,g3:false};
+
+const el=id=>document.getElementById(id);
+const sliderEls={};
+
+function buildSliders(){
+  RATES.forEach(r=>{
+    const host=document.querySelector(`.slider[data-p="${r.key}"]`);
+    const step=r.step||0.01;
+    host.innerHTML=`<div class="row1">
+        <span class="name"><span class="k" data-sym></span><span class="hint">${r.label}</span></span>
+        <input type="number" min="${r.min}" max="99" step="${step}" />
+      </div>
+      <input type="range" min="${r.min}" max="5" step="${step}" />`;
+    const sym=host.querySelector('[data-sym]');
+    try{katex.render(r.sym,sym);}catch(e){sym.textContent=r.key;}
+    const num=host.querySelector('input[type=number]');
+    const rng=host.querySelector('input[type=range]');
+    sliderEls[r.key]={num,rng,min:r.min,step};
+    const onIn=(fromRange)=>{
+      let v=parseFloat(fromRange?rng.value:num.value);
+      if(!isFinite(v)) v=r.min;
+      v=Math.max(r.min,v);
+      setRate(r.key,v);
+    };
+    rng.addEventListener('input',()=>onIn(true));
+    num.addEventListener('input',()=>onIn(false));
+    num.addEventListener('blur',()=>{syncSlider(r.key);});
+  });
+}
+function syncSlider(key){
+  const v=state.p[key], s=sliderEls[key];
+  s.num.value=(+v).toFixed(s.step<0.01?3:2);
+  const clamped=Math.min(5,Math.max(s.min,v));
+  s.rng.value=clamped;
+  const pct=5>s.min?(clamped-s.min)/(5-s.min)*100:0;
+  s.rng.style.setProperty('--pct',pct.toFixed(2)+'%');
+}
+function rateSummary(keys){
+  const map={lambda1:'λ₁',mu1:'μ₁',nu:'ν',delta1:'δ₁',lambda2:'λ₂',mu2:'μ₂',delta2:'δ₂'};
+  return keys.map(k=>{
+    const rate=RATES.find(r=>r.key===k);
+    return `${map[k]}=${(+state.p[k]).toFixed(rate&&rate.step<0.01?3:2)}`;
+  }).join('  ');
+}
+function updateFoldSummaries(){
+  const s1=el('sum-type1'), s2=el('sum-type2');
+  if(s1) s1.textContent=rateSummary(['lambda1','mu1','nu','delta1']);
+  if(s2) s2.textContent=rateSummary(['lambda2','mu2','delta2']);
+}
+function setRate(key,v){
+  state.p[key]=v;
+  syncSlider(key);
+  updateFoldSummaries();
+  if(state.tmaxAuto) refreshAutoT();
+  scheduleUpdate();
+}
+function refreshAutoT(){
+  const k=derive(state.p);
+  state.tmax=autoTmax(k,state.p);
+  el('tmax').value=state.tmax;
+}
+function applyState(){
+  RATES.forEach(r=>syncSlider(r.key));
+  updateFoldSummaries();
+  el('logTime').checked=state.logt;
+  el('tmax').value=state.tmax;
+  el('g1').checked=state.g1; el('g2').checked=state.g2; el('g3').checked=state.g3;
+  syncGraphVisibility();
+}
+
+function encodeURLState(){
+  const q=new URLSearchParams();
+  RATES.forEach(r=>q.set(r.key,(+state.p[r.key]).toFixed(4)));
+  q.set('tmax',state.tmax); q.set('logt',state.logt?1:0);
+  q.set('g1',state.g1?1:0); q.set('g2',state.g2?1:0); q.set('g3',state.g3?1:0);
+  return q.toString();
+}
+function decodeURLState(){
+  const q=new URLSearchParams(location.search);
+  if([...q.keys()].length===0) return false;
+  RATES.forEach(r=>{const v=parseFloat(q.get(r.key));if(isFinite(v))state.p[r.key]=Math.max(r.min,v);});
+  if(q.has('tmax')){const t=parseFloat(q.get('tmax'));if(isFinite(t)&&t>0){state.tmax=t;state.tmaxAuto=false;}}
+  if(q.has('logt'))state.logt=q.get('logt')==='1';
+  if(q.has('g1'))state.g1=q.get('g1')==='1';
+  if(q.has('g2'))state.g2=q.get('g2')==='1';
+  if(q.has('g3'))state.g3=q.get('g3')==='1';
+  return true;
+}
+
+/* ============================================================================
+   PART 6 — Three separate plots
+   ========================================================================== */
+const BLUE='#0072B2', VERM='#D55E00', GRID='#e6e9ee';
+const N_GRID=2000, N_MARK=58;
+const plotInited={surv:false,cat:false,dens:false};
+
+function subsample(x,y){
+  const step=Math.max(1,Math.floor(x.length/N_MARK));
+  const xs=[],ys=[];
+  for(let i=0;i<x.length;i+=step){xs.push(x[i]);ys.push(y[i]);}
+  return{xs,ys};
+}
+function toArr(f){return Array.prototype.slice.call(f);}
+function oneMinus(f){const o=new Float64Array(f.length);for(let i=0;i<f.length;i++)o[i]=1-f[i];return o;}
+
+function lineTrace(x,y,color,name){
+  return{x:toArr(x),y:toArr(y),type:'scatter',mode:'lines',name,
+    line:{color,width:2.2},
+    // Full name + ample digits; empty <extra> so unified hover does not double-label
+    hovertemplate:name+': %{y:.6f}<extra></extra>',
+    legendgroup:name,showlegend:true,
+    // Prevent Plotly from truncating long legend/hover names (default namelength is 15)
+    hoverlabel:{namelength:-1}};
+}
+function markerTrace(x,y,color,group){
+  const s=subsample(x,y);
+  return{x:s.xs,y:s.ys,type:'scatter',mode:'markers',name:group,showlegend:false,
+    marker:{color,size:6.5,symbol:'circle-open',line:{width:1.6,color}},
+    hoverinfo:'skip',legendgroup:group};
+}
+
+function agreementStatus(data){
+  const f=data.k.flags;
+  if(!f.cfAvailable){
+    return{text:'Closed form unavailable',cls:'err'};
+  }
+  const overlap=Math.max(data.maxResS,data.maxResG);
+  if(overlap<1e-5){
+    return{text:'Closed form ≡ numerical · max residual '+fmtExp(overlap),cls:'ok'};
+  }
+  return{text:'Residual '+fmtExp(overlap)+' — check parameters',cls:'warn'};
+}
+
+function baseLayout(yTitle,yRange){
+  // Legend below the plot with ample width; hover labels never truncated
+  return{
+    autosize:true,
+    margin:{l:62,r:28,t:16,b:96},
+    paper_bgcolor:'#fff',plot_bgcolor:'#fff',
+    font:{family:'inherit',size:12,color:'#1a1c1f'},
+    hovermode:'x unified',
+    hoverlabel:{
+      namelength:-1,           // never clip trace names in the floating box
+      align:'left',
+      bgcolor:'rgba(255,255,255,0.96)',
+      bordercolor:'#c8ccd2',
+      font:{size:12,family:'inherit',color:'#1a1c1f'}
+    },
+    showlegend:true,
+    legend:{
+      orientation:'h',
+      x:0, xanchor:'left',
+      y:-0.22, yanchor:'top',
+      font:{size:12},
+      bgcolor:'rgba(255,255,255,0)',
+      borderwidth:0,
+      traceorder:'normal',
+      itemsizing:'constant',
+      // Enough width to avoid clipping, but tight spacing between items
+      entrywidthmode:'pixels',
+      entrywidth:72,
+      itemwidth:30,
+      tracegroupgap:8,
+      itemclick:'toggleothers',
+      itemdoubleclick:'toggle'
+    },
+    xaxis:{
+      type:state.logt?'log':'linear',
+      showgrid:true,gridcolor:GRID,zeroline:false,
+      ticks:'outside',ticklen:4,tickcolor:'#c8ccd2',
+      title:{text:'time  t',standoff:12,font:{size:12}},
+      automargin:true
+    },
+    yaxis:{
+      showgrid:true,gridcolor:GRID,zeroline:false,
+      ticks:'outside',ticklen:4,tickcolor:'#c8ccd2',
+      title:{text:yTitle,standoff:8,font:{size:12}},
+      range:yRange||undefined,
+      rangemode:yRange?undefined:'tozero',
+      automargin:true
+    }
+  };
+}
+
+const plotConfig={responsive:true,displaylogo:false,
+  modeBarButtonsToRemove:['lasso2d','select2d','autoScale2d','toImage'],
+  displayModeBar:true};
+// Export at 1 / 0.6 so labels return to their normal size when the figure is
+// placed at 0.6\textwidth on the page.
+const PNG_FONT_SCALE=1/0.6;
+
+function exportNumber(value,digits=4){
+  const n=Number(value);
+  if(!Number.isFinite(n))return'—';
+  const text=n.toFixed(digits).replace(/\.?0+$/,'');
+  return text==='-0'?'0':text;
+}
+function snapshotExportParameters(){
+  return{p:{...state.p}};
+}
+function exportParameterLines(params){
+  const p=params.p;
+  return[
+    `λ₁=${exportNumber(p.lambda1)}   μ₁=${exportNumber(p.mu1)}   ν=${exportNumber(p.nu)}   δ₁=${exportNumber(p.delta1)}   λ₂=${exportNumber(p.lambda2)}   μ₂=${exportNumber(p.mu2)}   δ₂=${exportNumber(p.delta2)}`
+  ];
+}
+function cloneForPngExport(value){
+  if(typeof structuredClone==='function'){
+    try{return structuredClone(value);}catch(_){/* fall through */}
+  }
+  return JSON.parse(JSON.stringify(value,(_key,item)=>
+    ArrayBuffer.isView(item)?Array.from(item):item));
+}
+function scalePngFontSizes(value,factor,seen=new WeakSet()){
+  if(!value||typeof value!=='object'||seen.has(value))return;
+  seen.add(value);
+  if(Array.isArray(value)){
+    value.forEach(item=>scalePngFontSizes(item,factor,seen));
+    return;
+  }
+  Object.entries(value).forEach(([key,item])=>{
+    if(key.toLowerCase().endsWith('font')&&item&&typeof item==='object'&&Number.isFinite(Number(item.size))){
+      item.size=Math.round(Number(item.size)*factor*10)/10;
+    }
+    scalePngFontSizes(item,factor,seen);
+  });
+}
+async function downloadPlotWithParameters(node,filename,params,options={}){
+  const includeRates=options.includeRates!==false;
+  const box=node.getBoundingClientRect();
+  const baseWidth=options.width||Math.max(1200,Math.round(box.width)||1200);
+  const baseHeight=options.height||Math.max(400,Math.round(box.height)||460);
+  const data=cloneForPngExport(node.data||[]);
+  const layout=cloneForPngExport(node.layout||{});
+  const sourceMargin={...(layout.margin||{})};
+  const margin={...sourceMargin};
+  ['l','r','t','b'].forEach(side=>{
+    margin[side]=Math.ceil((Number(sourceMargin[side])||0)*PNG_FONT_SCALE);
+  });
+  const width=baseWidth+(margin.l-(Number(sourceMargin.l)||0))+(margin.r-(Number(sourceMargin.r)||0));
+  const height=baseHeight+(margin.t-(Number(sourceMargin.t)||0))+(margin.b-(Number(sourceMargin.b)||0));
+  const annotations=Array.isArray(layout.annotations)?layout.annotations.slice():[];
+  if(includeRates){
+    annotations.push({
+      xref:'paper',yref:'paper',x:1,y:-0.22,xanchor:'right',yanchor:'top',
+      showarrow:false,align:'right',
+      text:exportParameterLines(params)[0],
+      font:{family:'Arial, Helvetica, sans-serif',size:10.5,color:'#1a1c1f'}
+    });
+  }
+  Object.assign(layout,{autosize:false,width,height,margin,annotations});
+  scalePngFontSizes(data,PNG_FONT_SCALE);
+  scalePngFontSizes(layout,PNG_FONT_SCALE);
+
+  const host=document.createElement('div');
+  host.setAttribute('aria-hidden','true');
+  Object.assign(host.style,{position:'fixed',left:'-10000px',top:'0',width:`${width}px`,height:`${height}px`});
+  document.body.appendChild(host);
+  try{
+    await Plotly.newPlot(host,data,layout,{responsive:false,displayModeBar:false,staticPlot:true});
+    const image=await Plotly.toImage(host,{format:'png',width,height,scale:options.scale||1});
+    const link=document.createElement('a');
+    link.download=`${String(filename).replace(/\.png$/i,'')}.png`;
+    link.href=image;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }finally{
+    Plotly.purge(host);
+    host.remove();
+  }
+}
+
+function syncGraphVisibility(){
+  const nVis=(state.g1?1:0)+(state.g2?1:0)+(state.g3?1:0);
+  el('card-surv').classList.toggle('visible',state.g1);
+  el('card-cat').classList.toggle('visible',state.g2);
+  el('card-dens').classList.toggle('visible',state.g3);
+  el('plotarea').classList.toggle('multi',nVis>1);
+}
+
+function drawOne(divId,key,traces,layout){
+  const node=el(divId);
+  node._bdcExportParams=snapshotExportParameters();
+  Plotly.react(node,traces,layout,plotConfig);
+  plotInited[key]=true;
+}
+
+function drawPlots(data){
+  const {tgrid,Snum,Gnum,Scf,Gcf,dScf,dGcf,dSnum,dGnum,k}=data;
+  const avail=k.flags.cfAvailable;
+  const x=tgrid;
+  syncGraphVisibility();
+
+  if(state.g1){
+    const traces=[];
+    if(avail){
+      traces.push(lineTrace(x,Scf,BLUE,'S(t)'));
+      traces.push(markerTrace(x,Snum,BLUE,'S(t)'));
+      traces.push(lineTrace(x,Gcf,VERM,'G(t)'));
+      traces.push(markerTrace(x,Gnum,VERM,'G(t)'));
+    }else{
+      traces.push(lineTrace(x,Snum,BLUE,'S(t)'));
+      traces.push(lineTrace(x,Gnum,VERM,'G(t)'));
+    }
+    drawOne('plot-surv','surv',traces,baseLayout('probability',[-0.03,1.03]));
+  }
+
+  if(state.g2){
+    const oSn=oneMinus(Snum),oGn=oneMinus(Gnum);
+    const traces=[];
+    if(avail){
+      traces.push(lineTrace(x,oneMinus(Scf),BLUE,'1−S(t)'));
+      traces.push(markerTrace(x,oSn,BLUE,'1−S(t)'));
+      traces.push(lineTrace(x,oneMinus(Gcf),VERM,'1−G(t)'));
+      traces.push(markerTrace(x,oGn,VERM,'1−G(t)'));
+    }else{
+      traces.push(lineTrace(x,oSn,BLUE,'1−S(t)'));
+      traces.push(lineTrace(x,oGn,VERM,'1−G(t)'));
+    }
+    drawOne('plot-cat','cat',traces,baseLayout('probability',[-0.03,1.03]));
+  }
+
+  if(state.g3){
+    const traces=[];
+    if(avail){
+      traces.push(lineTrace(x,dScf,BLUE,'−S′(t)'));
+      traces.push(markerTrace(x,dSnum,BLUE,'−S′(t)'));
+      traces.push(lineTrace(x,dGcf,VERM,'−G′(t)'));
+      traces.push(markerTrace(x,dGnum,VERM,'−G′(t)'));
+    }else{
+      traces.push(lineTrace(x,dSnum,BLUE,'−S′(t)'));
+      traces.push(lineTrace(x,dGnum,VERM,'−G′(t)'));
+    }
+    const layout=baseLayout('probability density',null);
+    layout.yaxis.rangemode='tozero';
+    drawOne('plot-dens','dens',traces,layout);
+  }
+}
+
+/* ============================================================================
+   PART 7 — Side panel (constants, agreement line, equations)
+   ========================================================================== */
+function fmt(x,d=4){
+  if(x==null||Number.isNaN(x))return'—';
+  if(!isFinite(x))return x>0?'∞':'−∞';
+  return (x<0?'−':'')+Math.abs(x).toFixed(d);
+}
+function fmtC(z,d=4){
+  if(!z)return'—';
+  if(Math.abs(z.im)<1e-9)return fmt(z.re,d);
+  return `${fmt(z.re,d)} ${z.im>=0?'+':'−'} ${Math.abs(z.im).toFixed(d)} i`;
+}
+function fmtExp(x){
+  if(x==null||Number.isNaN(x))return'—';
+  if(x===0)return'0';
+  return x.toExponential(2);
+}
+const SYMS={s_Delta2:'\\hat{\\Delta}_2',s_r2p:'r_{2,+}',s_r2m:'r_{2,-}=\\widehat{G}(\\infty)',
+  s_alpha2:'\\alpha_2',s_q2:'\\hat{q}_2',s_z20:'z_{2,0}',s_kappa1:'\\hat{\\kappa}_1',
+  s_h:'h=\\widehat{S}(\\infty)',s_C:'C',s_A:'A',s_B:'B',
+  s_Sinf:'S(\\infty)=\\widehat{S}(\\infty)',s_Ginf:'G(\\infty)=\\widehat{G}(\\infty)'};
+function renderSymbols(){
+  for(const id in SYMS){const e=el(id);try{katex.render(SYMS[id],e);}catch(_){e.textContent=id;}}
+}
+function updatePanel(data){
+  const k=data.k;
+  const set=(id,v)=>{el(id).textContent=v;};
+  set('v_Delta2',fmt(k.Delta2)); set('v_r2p',fmt(k.r2p)); set('v_r2m',fmt(k.r2m));
+  set('v_alpha2',fmt(k.alpha2)); set('v_q2',fmt(k.q2)); set('v_z20',fmt(k.z2_0));
+  set('v_kappa1',fmt(k.kappa1)); set('v_h',fmt(k.h)); set('v_C',fmt(k.C));
+  set('v_A',fmtC(k.A)); set('v_B',fmtC(k.B));
+  set('v_Sinf',fmt(k.h)); set('v_Ginf',fmt(k.branch==='special'?1:k.r2m));
+
+  // Single residual indicator in the masthead (top right, level with legend key)
+  const agree=agreementStatus(data);
+  const line=el('agreeLine');
+  line.className='agree-top'+(agree.cls?' '+agree.cls:'');
+  line.textContent=agree.text;
+}
+
+function renderEquations(){
+  // Notation matches BDC3_final: unhatted = unscaled; hats = scaled by λ₁
+  // (ˆt=λ₁t, scaled rates, Ŝ, Ĝ). Unscaled recovery: S(t)=Ŝ(λ₁t), G(t)=Ĝ(λ₁t).
+  const defn=String.raw`\begin{aligned}
+    S(t)&=\Pr\bigl\{(X_{t},Y_{t})\neq(R,R)\mid(X_0,Y_0)=(1,0)\bigr\},\\[12pt]
+    G(t)&=\Pr\bigl\{(X_{t},Y_{t})\neq(R,R)\mid(X_0,Y_0)=(0,1)\bigr\}.
+  \end{aligned}`;
+  const ode=String.raw`\begin{aligned}
+    \frac{dS}{dt}&=\lambda_1 S^2-(\lambda_1+\mu_1+\nu+\delta_1)\,S+\mu_1+\nu G,\\[12pt]
+    \frac{dG}{dt}&=\lambda_2 G^2-(\lambda_2+\mu_2+\delta_2)\,G+\mu_2,\\[12pt]
+    S(0)&=1,\qquad G(0)=1.
+  \end{aligned}`;
+  const cf=String.raw`\begin{aligned}
+    \widehat{G}(\hat{t})&=r_{2,-}-\alpha_2\,\frac{z_2}{1-z_2},\quad
+      z_2=z_{2,0}\,e^{\hat{q}_2\hat{t}},\\[14pt]
+    \widehat{S}(\hat{t})&=h-\hat{q}_2 z_2\,\frac{U'(z_2)+D\,V'(z_2)}{U(z_2)+D\,V(z_2)},\\[14pt]
+    U&={}_2F_1(A,B;C;z),\ \ V=(-z)^{1-C}{}_2F_1(A_2,B_2;C_2;z),\\[10pt]
+    S(t)&=\widehat{S}(\lambda_1 t),\qquad G(t)=\widehat{G}(\lambda_1 t).
+  \end{aligned}`;
+  const decScale=String.raw`\begin{aligned}
+    \hat{t}&=\lambda_1 t,\\[4pt]
+    \hat{\mu}_1&=\frac{\mu_1}{\lambda_1},\quad
+    \hat{\nu}=\frac{\nu}{\lambda_1},\quad
+    \hat{\delta}_1=\frac{\delta_1}{\lambda_1},\\[4pt]
+    \hat{\lambda}_2&=\frac{\lambda_2}{\lambda_1},\quad
+    \hat{\mu}_2=\frac{\mu_2}{\lambda_1},\quad
+    \hat{\delta}_2=\frac{\delta_2}{\lambda_1},\\[4pt]
+    \hat{\kappa}_1&=1+\hat{\mu}_1+\hat{\nu}+\hat{\delta}_1.
+  \end{aligned}`;
+  const decG=String.raw`\begin{aligned}
+    \hat{\Delta}_2&=\sqrt{(\hat{\lambda}_2+\hat{\mu}_2+\hat{\delta}_2)^2-4\hat{\lambda}_2\hat{\mu}_2},\\[4pt]
+    r_{2,\pm}&=\frac{\hat{\lambda}_2+\hat{\mu}_2+\hat{\delta}_2\pm\hat{\Delta}_2}{2\hat{\lambda}_2},\quad
+    \alpha_2=r_{2,+}-r_{2,-},\\[4pt]
+    \hat{q}_2&=-\hat{\Delta}_2,\qquad
+    z_{2,0}=\frac{r_{2,-}-1}{r_{2,+}-1}.
+  \end{aligned}`;
+  const decS=String.raw`\begin{aligned}
+    h&=\frac{\hat{\kappa}_1-\sqrt{\hat{\kappa}_1^2-4(\hat{\mu}_1+\hat{\nu}\,r_{2,-})}}{2}
+      =\widehat{S}(\infty),\\[4pt]
+    C&=1+\frac{\hat{\kappa}_1-2h}{\hat{q}_2},\\[4pt]
+    A,B&=\frac{C-1}{2}\pm\sqrt{\Bigl(\frac{C-1}{2}\Bigr)^2-\frac{\hat{\nu}\alpha_2}{\hat{q}_2^2}}.
+  \end{aligned}`;
+  const decMatch=String.raw`\begin{aligned}
+    A_2&=A-C+1,\quad B_2=B-C+1,\quad C_2=2-C,\\[4pt]
+    L&=\frac{h-1}{\hat{q}_2\,z_{2,0}},\qquad
+    D=\frac{L\,U(z_{2,0})-U'(z_{2,0})}{V'(z_{2,0})-L\,V(z_{2,0})}.
+  \end{aligned}`;
+  const render=(id,tex)=>{try{katex.render(tex,el(id),{displayMode:true});}catch(_){el(id).textContent=tex;}};
+  render('eqDef',defn);
+  render('eqODE',ode);
+  render('eqCF',cf);
+  render('eqDecScale',decScale);
+  render('eqDecG',decG);
+  render('eqDecS',decS);
+  render('eqDecMatch',decMatch);
+}
+
+/* ============================================================================
+   PART 8 — Update loop
+   ========================================================================== */
+let rafPending=false;
+function scheduleUpdate(){
+  if(rafPending)return; rafPending=true;
+  requestAnimationFrame(()=>{rafPending=false;runUpdate();});
+}
+function runUpdate(){
+  const data=computeAll(state.p,state.tmax,N_GRID,state.logt);
+  drawPlots(data);
+  updatePanel(data);
+  history.replaceState(null,'','?'+encodeURLState());
+}
+
+/* ============================================================================
+   PART 9 — Wire up controls
+   ========================================================================== */
+function wire(){
+  el('tmax').addEventListener('input',e=>{
+    const v=parseFloat(e.target.value); if(isFinite(v)&&v>0){state.tmax=v;state.tmaxAuto=false;scheduleUpdate();}
+  });
+  el('autoT').addEventListener('click',()=>{state.tmaxAuto=true;refreshAutoT();scheduleUpdate();});
+  el('logTime').addEventListener('change',e=>{state.logt=e.target.checked;scheduleUpdate();});
+  ['g1','g2','g3'].forEach(id=>el(id).addEventListener('change',e=>{
+    state[id]=e.target.checked;
+    // Keep at least one graph visible
+    if(!state.g1&&!state.g2&&!state.g3){state[id]=true;e.target.checked=true;return;}
+    scheduleUpdate();
+  }));
+  el('reset').addEventListener('click',()=>{
+    state.p={...DEFAULT};state.tmaxAuto=true;state.logt=false;
+    state.g1=true;state.g2=false;state.g3=false;
+    // Re-collapse rate sections on reset so the control column stays compact
+    const f1=el('fold-type1'), f2=el('fold-type2');
+    if(f1) f1.open=false; if(f2) f2.open=false;
+    applyState();refreshAutoT();scheduleUpdate();
+  });
+
+  document.querySelectorAll('.dl-png').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      const id=btn.getAttribute('data-dl');
+      const name=btn.getAttribute('data-name')||'bdc_plot';
+      const node=document.getElementById(id);
+      if(!node||!node.data)return;
+      const ratesToggle=btn.closest('.png-tools')?.querySelector('.png-rates');
+      const includeRates=!ratesToggle||ratesToggle.checked;
+      btn.disabled=true;
+      try{
+        await downloadPlotWithParameters(node,name,
+          node._bdcExportParams||snapshotExportParameters(),{scale:3,includeRates});
+      }catch(error){
+        console.error('PNG export failed:',error);
+      }finally{
+        btn.disabled=false;
+      }
+    });
+  });
+
+  window.addEventListener('resize',()=>{
+    if(plotInited.surv&&state.g1) Plotly.Plots.resize('plot-surv');
+    if(plotInited.cat&&state.g2) Plotly.Plots.resize('plot-cat');
+    if(plotInited.dens&&state.g3) Plotly.Plots.resize('plot-dens');
+  });
+}
+
+
+/* ============================================================================
+   PART 9b — Source code modal (Python files)
+   ========================================================================== */
+const PY_SOURCES = {
+  "bdc_closed_forms.py": "\"\"\"Closed-form survival probabilities for the two-type BDC process.\n\n``BDCClosedForm`` rescales the seven model rates, prepares the elementary or\nhypergeometric branch once, and then evaluates S(t) and G(t) in unscaled time.\nThe compact 2F1 evaluator is repeated here so that this file remains standalone.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport cmath\nimport math\nfrom dataclasses import dataclass\nfrom typing import Iterable\n\n\n# ---------------------------------------------------------------------------\n# Gauss 2F1 evaluator (also provided separately in hypergeometric.py)\n\n\nclass HypergeometricError(ArithmeticError):\n    \"\"\"Raised when the series has a pole or does not converge.\"\"\"\n\n\ndef _series(\n    a: complex,\n    b: complex,\n    c: complex,\n    z: complex,\n    tol: float,\n    max_terms: int,\n) -> complex:\n    term = total = 1.0 + 0.0j\n    for k in range(max_terms):\n        if term == 0:\n            return total\n        denominator = (c + k) * (k + 1)\n        if abs(denominator) < 1e-30:\n            raise HypergeometricError(\"the lower parameter c is at a series pole\")\n        term *= (a + k) * (b + k) * z / denominator\n        total += term\n        if abs(term) <= tol * max(1.0, abs(total)):\n            return total\n    raise HypergeometricError(f\"2F1 did not converge in {max_terms} terms\")\n\n\ndef hyp2f1(\n    a: complex | float,\n    b: complex | float,\n    c: complex | float,\n    z: complex | float,\n    *,\n    tol: float = 1e-15,\n    max_terms: int = 5000,\n) -> complex:\n    \"\"\"Evaluate 2F1, using a Pfaff transformation whenever it is advantageous.\"\"\"\n    a, b, c, z = complex(a), complex(b), complex(c), complex(z)\n    if z == 0:\n        return 1.0 + 0.0j\n    if tol <= 0 or max_terms < 1:\n        raise ValueError(\"tol and max_terms must be positive\")\n\n    w = z / (z - 1)\n    negative_real_z = z.real < 0 and abs(z.imag) < 1e-15\n    pfaff_is_better = abs(w) < 1 and (negative_real_z or abs(w) < abs(z))\n    if pfaff_is_better:\n        return (1 - z) ** (-a) * _series(a, c - b, c, w, tol, max_terms)\n    if abs(z) < 1:\n        return _series(a, b, c, z, tol, max_terms)\n    if abs(w) < 1:\n        return (1 - z) ** (-a) * _series(a, c - b, c, w, tol, max_terms)\n    raise ValueError(\"z lies outside the supported continuation region\")\n\n\n# ---------------------------------------------------------------------------\n# BDC closed forms\n\n\nclass ClosedFormError(ArithmeticError):\n    \"\"\"Raised when a degenerate closed-form representation is unreliable.\"\"\"\n\n\n@dataclass(frozen=True)\nclass Rates:\n    \"\"\"The seven unscaled, per-capita model rates.\"\"\"\n\n    lambda1: float\n    mu1: float\n    nu: float\n    delta1: float\n    lambda2: float\n    mu2: float\n    delta2: float\n\n    def __post_init__(self) -> None:\n        values = vars(self)\n        if not all(math.isfinite(value) for value in values.values()):\n            raise ValueError(\"all rates must be finite\")\n        if self.lambda1 <= 0 or self.lambda2 <= 0:\n            raise ValueError(\"lambda1 and lambda2 must be positive\")\n        if any(values[name] < 0 for name in (\"mu1\", \"nu\", \"delta1\", \"mu2\", \"delta2\")):\n            raise ValueError(\"death, conversion, and catastrophe rates cannot be negative\")\n\n\ndef _riccati(t: float, lower: float, upper: float, initial: float = 1.0) -> float:\n    \"\"\"Solve y'=(y-lower)(y-upper) from y(0)=initial.\"\"\"\n    if abs(initial - lower) < 1e-14:\n        return lower\n    if abs(initial - upper) < 1e-14:\n        return upper\n\n    gap = upper - lower\n    if abs(gap) < 1e-12:\n        offset = initial - lower\n        return lower + offset / (1 - offset * t)\n\n    ratio = (initial - lower) / (initial - upper)\n    decay = math.exp(-gap * t)\n    return (lower - ratio * decay * upper) / (1 - ratio * decay)\n\n\nclass BDCClosedForm:\n    \"\"\"Prepared evaluators for the two survival functions S(t) and G(t).\"\"\"\n\n    def __init__(self, rates: Rates) -> None:\n        self.rates = rates\n        self.notes: list[str] = []\n        self.constants: dict[str, float | complex] = {}\n        self._prepare()\n\n    @staticmethod\n    def _g_constants(L2: float, m2: float, d2: float) -> tuple[float, ...]:\n        delta = math.sqrt((L2 + m2 + d2) ** 2 - 4 * L2 * m2)\n        r_plus = (L2 + m2 + d2 + delta) / (2 * L2)\n        r_minus = (L2 + m2 + d2 - delta) / (2 * L2)\n        alpha = r_plus - r_minus\n        q = -delta\n        z0 = (r_minus - 1) / (r_plus - 1)\n        return delta, r_plus, r_minus, alpha, q, z0\n\n    def _prepare(self) -> None:\n        r = self.rates\n        m1, n, d1 = r.mu1 / r.lambda1, r.nu / r.lambda1, r.delta1 / r.lambda1\n        L2, m2, d2_raw = r.lambda2 / r.lambda1, r.mu2 / r.lambda1, r.delta2 / r.lambda1\n        kappa = 1 + m1 + n + d1\n        self._scaled = (m1, n, d1, L2, m2, d2_raw)\n\n        if d2_raw < 1e-6:\n            self.branch = \"delta2_zero\"\n            gap = math.sqrt(max(0.0, kappa * kappa - 4 * (m1 + n)))\n            self._s_lower, self._s_upper = (kappa - gap) / 2, (kappa + gap) / 2\n            s_inf = 1.0 if d1 < 1e-12 else self._s_lower\n            self.constants = {\n                \"kappa1\": kappa,\n                \"h\": s_inf,\n                \"S_inf\": s_inf,\n                \"G_inf\": 1.0,\n            }\n            self.notes.append(\"delta2 = 0: G(t) is identically 1\")\n            return\n\n        delta, r_plus, r_minus, alpha, q, z0 = self._g_constants(L2, m2, d2_raw)\n\n        if n < 1e-12:\n            self.branch = \"decoupled\"\n            s_kappa = 1 + m1 + d1\n            gap = math.sqrt(max(0.0, s_kappa * s_kappa - 4 * m1))\n            self._s_lower, self._s_upper = (s_kappa - gap) / 2, (s_kappa + gap) / 2\n            s_inf = 1.0 if d1 < 1e-12 else self._s_lower\n            self._set_g(delta, r_plus, r_minus, alpha, q, z0)\n            self.constants = {\n                \"Delta2\": delta,\n                \"r2_plus\": r_plus,\n                \"r2_minus\": r_minus,\n                \"alpha2\": alpha,\n                \"q2\": q,\n                \"z2_0\": z0,\n                \"kappa1\": s_kappa,\n                \"h\": s_inf,\n                \"S_inf\": s_inf,\n                \"G_inf\": r_minus,\n            }\n            self.notes.append(\"nu = 0: S and G are independent elementary Riccati solutions\")\n            return\n\n        # The U,V basis degenerates when C is an integer.  As in the visualiser,\n        # move d2 by an invisible amount and recompute every dependent constant.\n        nudge = 1.25e-6\n        for attempt in range(6):\n            d2 = d2_raw + attempt * nudge\n            delta, r_plus, r_minus, alpha, q, z0 = self._g_constants(L2, m2, d2)\n            disc_h = kappa * kappa - 4 * (m1 + n * r_minus)\n            if disc_h < -1e-11:\n                raise ClosedFormError(\"the discriminant defining h is negative\")\n            h = (kappa - math.sqrt(max(0.0, disc_h))) / 2\n            C = 1 + (kappa - 2 * h) / q\n\n            if abs(q) < 1e-10 or abs(r_plus - 1) < 1e-12 or abs(C - round(C)) < 1e-6:\n                continue\n\n            root = cmath.sqrt((C - 1) ** 2 / 4 - n * alpha / q**2)\n            A, B = (C - 1) / 2 + root, (C - 1) / 2 - root\n            self._A, self._B, self._C = A, B, C\n            self._A2, self._B2, self._C2 = A - C + 1, B - C + 1, 2 - C\n\n            try:\n                U0, Up0, V0, Vp0 = self._basis(z0)\n                L = (h - 1) / (q * z0)\n                a0, b0 = Up0 - L * U0, Vp0 - L * V0\n                scale = max(abs(a0), abs(b0))\n                if scale < 1e-12:\n                    continue\n\n                # These weights satisfy phi'(z0)=L*phi(z0) without dividing by\n                # either basis coefficient, so no explicit D/basis swap is needed.\n                weight_u, weight_v = b0 / scale, -a0 / scale\n                if abs(weight_u * U0 + weight_v * V0) < 1e-12:\n                    continue\n            except (ArithmeticError, ValueError, OverflowError):\n                continue\n\n            self.branch = \"hypergeometric\"\n            self._set_g(delta, r_plus, r_minus, alpha, q, z0)\n            self._h, self._weight_u, self._weight_v = h, weight_u, weight_v\n            self.constants = {\n                \"Delta2\": delta,\n                \"r2_plus\": r_plus,\n                \"r2_minus\": r_minus,\n                \"alpha2\": alpha,\n                \"q2\": q,\n                \"z2_0\": z0,\n                \"kappa1\": kappa,\n                \"h\": h,\n                \"C\": C,\n                \"A\": A,\n                \"B\": B,\n                \"S_inf\": h,\n                \"G_inf\": r_minus,\n                \"d2_effective\": d2,\n            }\n            if attempt:\n                self.notes.append(f\"integer-C guard: scaled d2 increased by {attempt * nudge:g}\")\n            if abs(A.imag) > 1e-12:\n                self.notes.append(\"A and B are a complex-conjugate pair\")\n            return\n\n        raise ClosedFormError(\"no reliable hypergeometric basis was found\")\n\n    def _set_g(\n        self,\n        delta: float,\n        r_plus: float,\n        r_minus: float,\n        alpha: float,\n        q: float,\n        z0: float,\n    ) -> None:\n        self._delta2 = delta\n        self._r_plus, self._r_minus = r_plus, r_minus\n        self._alpha2, self._q2, self._z0 = alpha, q, z0\n\n    def _basis(self, z: float) -> tuple[complex, complex, complex, complex]:\n        \"\"\"Return U, U', V, V' at a negative real z.\"\"\"\n        if not z < 0:\n            raise ValueError(\"the BDC hypergeometric argument must be negative\")\n\n        A, B, C = self._A, self._B, self._C\n        A2, B2, C2 = self._A2, self._B2, self._C2\n        U = hyp2f1(A, B, C, z)\n        Up = A * B / C * hyp2f1(A + 1, B + 1, C + 1, z)\n\n        base_v = hyp2f1(A2, B2, C2, z)\n        x = -z\n        V = x ** (1 - C) * base_v\n        Vp = -(1 - C) * x ** (-C) * base_v\n        Vp += x ** (1 - C) * A2 * B2 / C2 * hyp2f1(A2 + 1, B2 + 1, C2 + 1, z)\n        return U, Up, V, Vp\n\n    @staticmethod\n    def _time(t: float) -> float:\n        t = float(t)\n        if not math.isfinite(t) or t < 0:\n            raise ValueError(\"time must be a finite, non-negative number\")\n        return t\n\n    def G(self, t: float) -> float:\n        \"\"\"Evaluate G(t), starting from one type-2 individual.\"\"\"\n        t = self._time(t)\n        if self.branch == \"delta2_zero\":\n            return 1.0\n        z = self._z0 * math.exp(self._q2 * self.rates.lambda1 * t)\n        return self._r_minus - self._alpha2 * z / (1 - z)\n\n    def S(self, t: float) -> float:\n        \"\"\"Evaluate S(t), starting from one type-1 individual.\"\"\"\n        t = self._time(t)\n        scaled_t = self.rates.lambda1 * t\n        if self.branch in {\"delta2_zero\", \"decoupled\"}:\n            return _riccati(scaled_t, self._s_lower, self._s_upper)\n\n        z = self._z0 * math.exp(self._q2 * scaled_t)\n        if abs(z) < 1e-14:\n            return self._h\n        U, Up, V, Vp = self._basis(z)\n        phi = self._weight_u * U + self._weight_v * V\n        if abs(phi) < 1e-14:\n            raise ClosedFormError(\"the selected hypergeometric combination vanished\")\n        phi_prime = self._weight_u * Up + self._weight_v * Vp\n        value = self._h - self._q2 * z * phi_prime / phi\n        if abs(value.imag) > 1e-8:\n            raise ClosedFormError(f\"imaginary cancellation failed: |Im S|={abs(value.imag):.3e}\")\n        return value.real\n\n    def evaluate(self, times: Iterable[float]) -> tuple[list[float], list[float]]:\n        \"\"\"Return ``([S(t)], [G(t)])`` for any iterable of times.\"\"\"\n        time_list = list(times)\n        return [self.S(t) for t in time_list], [self.G(t) for t in time_list]\n\n\nif __name__ == \"__main__\":\n    default = Rates(1.0, 0.5, 0.3, 0.25, 1.2, 0.4, 0.15)\n    solution = BDCClosedForm(default)\n    for time in (0.0, 1.0, 5.0, 10.0):\n        print(f\"t={time:>4g}: S={solution.S(time):.9f}, G={solution.G(time):.9f}\")\n",
+  "hypergeometric.py": "\"\"\"A small, dependency-free evaluator for the Gauss function 2F1(a, b; c; z).\n\nThe defining power series is used where it converges quickly.  Otherwise a\nPfaff transformation maps z to z/(z - 1).  In particular, every real z < 0 is\nmapped into (0, 1), which is the regime required by the BDC closed forms.\n\"\"\"\n\nfrom __future__ import annotations\n\n\nclass HypergeometricError(ArithmeticError):\n    \"\"\"Raised when the series has a pole or does not converge.\"\"\"\n\n\ndef _series(\n    a: complex,\n    b: complex,\n    c: complex,\n    z: complex,\n    tol: float,\n    max_terms: int,\n) -> complex:\n    \"\"\"Sum the defining 2F1 series for |z| < 1.\"\"\"\n    term = total = 1.0 + 0.0j\n\n    for k in range(max_terms):\n        if term == 0:  # A or B is a non-positive integer: the series terminates.\n            return total\n\n        denominator = (c + k) * (k + 1)\n        if abs(denominator) < 1e-30:\n            raise HypergeometricError(\"the lower parameter c is at a series pole\")\n\n        term *= (a + k) * (b + k) * z / denominator\n        total += term\n        if abs(term) <= tol * max(1.0, abs(total)):\n            return total\n\n    raise HypergeometricError(f\"2F1 did not converge in {max_terms} terms\")\n\n\ndef hyp2f1(\n    a: complex | float,\n    b: complex | float,\n    c: complex | float,\n    z: complex | float,\n    *,\n    tol: float = 1e-15,\n    max_terms: int = 5000,\n) -> complex:\n    \"\"\"Return the principal value of ``2F1(a, b; c; z)``.\n\n    This covers the unit disk and every point that the Pfaff map\n    ``w = z/(z-1)`` sends into the unit disk.  That includes all real ``z < 1``.\n    Points on or beyond the usual branch cut ``[1, infinity)`` are deliberately\n    rejected rather than assigned an implicit side of the cut.\n    \"\"\"\n    a, b, c, z = complex(a), complex(b), complex(c), complex(z)\n    if z == 0:\n        return 1.0 + 0.0j\n    if tol <= 0 or max_terms < 1:\n        raise ValueError(\"tol and max_terms must be positive\")\n\n    # Pfaff: 2F1(a,b;c;z) = (1-z)^(-a) 2F1(a,c-b;c;z/(z-1)).\n    w = z / (z - 1)\n    negative_real_z = z.real < 0 and abs(z.imag) < 1e-15\n    pfaff_is_better = abs(w) < 1 and (negative_real_z or abs(w) < abs(z))\n    if pfaff_is_better:\n        return (1 - z) ** (-a) * _series(a, c - b, c, w, tol, max_terms)\n    if abs(z) < 1:\n        return _series(a, b, c, z, tol, max_terms)\n    if abs(w) < 1:\n        return (1 - z) ** (-a) * _series(a, c - b, c, w, tol, max_terms)\n\n    raise ValueError(\"z lies outside the supported continuation region\")\n\n\nif __name__ == \"__main__\":\n    # 2F1(1, 1; 2; z) = -log(1-z)/z.\n    import cmath\n\n    point = -4.0\n    computed = hyp2f1(1, 1, 2, point)\n    expected = -cmath.log(1 - point) / point\n    print(f\"2F1(1,1;2;{point:g}) = {computed.real:.12g}\")\n    print(f\"absolute error       = {abs(computed - expected):.3e}\")\n",
+  "bdc_rk4.py": "\"\"\"Independent Runge-Kutta solution of the two-type BDC survival equations.\n\nThe visualiser draws every curve twice: once from the closed forms prepared in\nbdc_closed_forms.py, and once from the solver here.  The two share no algebra,\nso their curves lying on top of one another is a genuine check on the\nhypergeometric derivation rather than a restatement of it.  This file is\ntherefore kept standalone, down to its own copy of the ``Rates`` container.\n\nThe pair being integrated, in unscaled time and from S(0) = G(0) = 1, is\n\n    S' = lambda1 S^2 - (lambda1 + mu1 + nu + delta1) S + mu1 + nu G,\n    G' = lambda2 G^2 - (lambda2 + mu2 + delta2) G + mu2,\n\nwhere S(t) is the probability that a line begun from a single type-1 individual\nhas met no catastrophe by time t, and G(t) is the same for a single type-2\nindividual.  The coupling runs one way only: G is an autonomous Riccati\nequation, and it drives S through the conversion term nu*G.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport math\nfrom dataclasses import dataclass\nfrom typing import Iterable\n\nMAX_STEP = 0.004\n\"\"\"Largest internal step, in unscaled time, taken between output samples.\"\"\"\n\n\n@dataclass(frozen=True)\nclass Rates:\n    \"\"\"The seven unscaled, per-capita model rates.\"\"\"\n\n    lambda1: float\n    mu1: float\n    nu: float\n    delta1: float\n    lambda2: float\n    mu2: float\n    delta2: float\n\n    def __post_init__(self) -> None:\n        values = vars(self)\n        if not all(math.isfinite(value) for value in values.values()):\n            raise ValueError(\"all rates must be finite\")\n        if self.lambda1 <= 0 or self.lambda2 <= 0:\n            raise ValueError(\"lambda1 and lambda2 must be positive\")\n        if any(values[name] < 0 for name in (\"mu1\", \"nu\", \"delta1\", \"mu2\", \"delta2\")):\n            raise ValueError(\"death, conversion, and catastrophe rates cannot be negative\")\n\n\n# ---------------------------------------------------------------------------\n# Right-hand sides\n\n\ndef rhs_g(G: float, r: Rates) -> float:\n    \"\"\"Return G'(t).  Type 2 evolves on its own.\"\"\"\n    return r.lambda2 * G * G - (r.lambda2 + r.mu2 + r.delta2) * G + r.mu2\n\n\ndef rhs_s(S: float, G: float, r: Rates) -> float:\n    \"\"\"Return S'(t).  Type 1 is driven by type 2 through the nu*G term.\"\"\"\n    return r.lambda1 * S * S - (r.lambda1 + r.mu1 + r.nu + r.delta1) * S + r.mu1 + r.nu * G\n\n\n# ---------------------------------------------------------------------------\n# The scheme\n\n\ndef rk4_step(S: float, G: float, h: float, r: Rates) -> tuple[float, float]:\n    \"\"\"Advance the pair (S, G) by one classical fourth-order step of size h.\n\n    Each stage of the S update uses the *same-stage* advanced value of G rather\n    than the value at the foot of the step.  Reaching for a stale G is the easy\n    mistake here, and it quietly drops the coupled system back to first order.\n    \"\"\"\n    k1g = rhs_g(G, r)\n    k1s = rhs_s(S, G, r)\n    k2g = rhs_g(G + h / 2 * k1g, r)\n    k2s = rhs_s(S + h / 2 * k1s, G + h / 2 * k1g, r)\n    k3g = rhs_g(G + h / 2 * k2g, r)\n    k3s = rhs_s(S + h / 2 * k2s, G + h / 2 * k2g, r)\n    k4g = rhs_g(G + h * k3g, r)\n    k4s = rhs_s(S + h * k3s, G + h * k3g, r)\n    return (\n        S + h / 6 * (k1s + 2 * k2s + 2 * k3s + k4s),\n        G + h / 6 * (k1g + 2 * k2g + 2 * k3g + k4g),\n    )\n\n\n@dataclass(frozen=True)\nclass Trajectory:\n    \"\"\"Survival probabilities sampled on the requested grid.\"\"\"\n\n    rates: Rates\n    times: list[float]\n    S: list[float]\n    G: list[float]\n\n    def densities(self) -> tuple[list[float], list[float]]:\n        \"\"\"Return the catastrophe densities -S'(t) and -G'(t).\n\n        These come from the right-hand sides evaluated along the trajectory, not\n        from differencing it, so they carry the accuracy of the solver instead\n        of the coarseness of the output grid.\n        \"\"\"\n        return (\n            [-rhs_s(s, g, self.rates) for s, g in zip(self.S, self.G)],\n            [-rhs_g(g, self.rates) for g in self.G],\n        )\n\n\ndef integrate(\n    rates: Rates,\n    times: Iterable[float],\n    *,\n    max_step: float = MAX_STEP,\n) -> Trajectory:\n    \"\"\"Solve the pair from S(0) = G(0) = 1 and sample it at ``times``.\n\n    The output grid is deliberately decoupled from the step actually taken.\n    Every gap between samples is subdivided until the internal step falls below\n    ``max_step``, which matters because the visualiser can ask for a\n    logarithmic grid whose late intervals are as wide as the whole run.\n    \"\"\"\n    sample_times = [float(t) for t in times]\n    if not all(math.isfinite(t) and t >= 0 for t in sample_times):\n        raise ValueError(\"sample times must be finite and non-negative\")\n    if any(b < a for a, b in zip(sample_times, sample_times[1:])):\n        raise ValueError(\"sample times must be non-decreasing\")\n    if not max_step > 0:\n        raise ValueError(\"max_step must be positive\")\n\n    S, G, reached = 1.0, 1.0, 0.0\n    out_s: list[float] = []\n    out_g: list[float] = []\n\n    for target in sample_times:\n        span = target - reached\n        if span > 0:\n            substeps = math.ceil(span / max_step)\n            h = span / substeps\n            for _ in range(substeps):\n                S, G = rk4_step(S, G, h, rates)\n            reached = target\n        out_s.append(S)\n        out_g.append(G)\n\n    return Trajectory(rates=rates, times=sample_times, S=out_s, G=out_g)\n\n\n# ---------------------------------------------------------------------------\n# Output grids, matching those offered by the visualiser\n\n\ndef linear_grid(t_max: float, count: int) -> list[float]:\n    \"\"\"Return ``count`` evenly spaced times spanning [0, t_max].\"\"\"\n    if count < 2 or t_max <= 0:\n        raise ValueError(\"count must exceed 1 and t_max must be positive\")\n    return [t_max * i / (count - 1) for i in range(count)]\n\n\ndef log_grid(t_max: float, count: int, decades: float = 4.0) -> list[float]:\n    \"\"\"Return t = 0 followed by ``count - 1`` logarithmically spaced times.\n\n    The log-spaced part covers ``decades`` decades below ``t_max``, which keeps\n    the early transient visible when the rates differ by orders of magnitude.\n    \"\"\"\n    if count < 3 or t_max <= 0:\n        raise ValueError(\"count must exceed 2 and t_max must be positive\")\n    lo, hi = math.log(t_max) - decades * math.log(10.0), math.log(t_max)\n    return [0.0] + [\n        math.exp(lo + (hi - lo) * i / (count - 2)) for i in range(count - 1)\n    ]\n\n\nif __name__ == \"__main__\":\n    default = Rates(1.0, 0.5, 0.3, 0.25, 1.2, 0.4, 0.15)\n\n    solved = integrate(default, (0.0, 1.0, 5.0, 10.0))\n    for time, s, g in zip(solved.times, solved.S, solved.G):\n        print(f\"t={time:>4g}: S={s:.9f}, G={g:.9f}\")\n\n    # Halving the step should cut the error by roughly 2^4 for a fourth-order\n    # scheme.  Measure while the solution is still moving: both step sizes reach\n    # the fixed point exactly once the transient has died, and the ratio there\n    # would be pure rounding noise.\n    probe = (1.5,)\n    exact = integrate(default, probe, max_step=1e-4).S[-1]\n    coarse = abs(integrate(default, probe, max_step=0.15).S[-1] - exact)\n    fine = abs(integrate(default, probe, max_step=0.075).S[-1] - exact)\n    print(f\"\\nstep 0.150 error = {coarse:.3e}\")\n    print(f\"step 0.075 error = {fine:.3e}\")\n    print(f\"ratio            = {coarse / fine:.1f}  (16 is fourth order)\")\n",
+};
+
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/** Lightweight Python highlighter matching the page palette. */
+function highlightPython(src){
+  const KW = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+  const BI = new Set("abs all any bool complex dict enumerate float format frozenset hasattr int isinstance len list max min next open print range set sorted str sum super tuple type vars zip self cls".split(" "));
+  let i=0, n=src.length, out="";
+  const peek=()=>src[i];
+  const startsWith=(s)=>src.startsWith(s,i);
+
+  while(i<n){
+    // comments
+    if(peek()==="#"){
+      let j=i; while(j<n && src[j]!=="\n") j++;
+      out += '<span class="tok-com">'+escapeHtml(src.slice(i,j))+'</span>';
+      i=j; continue;
+    }
+    // strings (incl. triples, prefixes r/f/b/u)
+    if(/[rRuUfFbB]/.test(peek()) && (src[i+1]==="'"||src[i+1]==='"'||(src[i+1]&&/[rRuUfFbB]/.test(src[i+1])&&(src[i+2]==="'"||src[i+2]==='"')))){
+      let j=i;
+      while(j<n && /[rRuUfFbB]/.test(src[j])) j++;
+      const q = src[j];
+      if(q==="'"||q==='"'){
+        const triple = src.startsWith(q+q+q,j);
+        if(triple){
+          j+=3; while(j<n && !src.startsWith(q+q+q,j)) j++;
+          j=Math.min(n,j+3);
+        }else{
+          j++; while(j<n && src[j]!==q && src[j]!=="\n"){ if(src[j]==="\\") j+=2; else j++; }
+          if(j<n && src[j]===q) j++;
+        }
+        out += '<span class="tok-str">'+escapeHtml(src.slice(i,j))+'</span>';
+        i=j; continue;
+      }
+    }
+    if(peek()==="'"||peek()==='"'){
+      const q=peek(); let j=i;
+      const triple=src.startsWith(q+q+q,i);
+      if(triple){
+        j+=3; while(j<n && !src.startsWith(q+q+q,j)) j++;
+        j=Math.min(n,j+3);
+      }else{
+        j++; while(j<n && src[j]!==q && src[j]!=="\n"){ if(src[j]==="\\") j+=2; else j++; }
+        if(j<n && src[j]===q) j++;
+      }
+      out += '<span class="tok-str">'+escapeHtml(src.slice(i,j))+'</span>';
+      i=j; continue;
+    }
+    // decorator
+    if(peek()==="@" && (i===0 || /[\s]/.test(src[i-1]))){
+      let j=i+1; while(j<n && /[A-Za-z0-9_.]/.test(src[j])) j++;
+      out += '<span class="tok-dec">'+escapeHtml(src.slice(i,j))+'</span>';
+      i=j; continue;
+    }
+    // numbers
+    if(/[0-9]/.test(peek()) || (peek()==="." && /[0-9]/.test(src[i+1]||""))){
+      let j=i;
+      if(startsWith("0x")||startsWith("0X")||startsWith("0b")||startsWith("0B")||startsWith("0o")||startsWith("0O")){
+        j+=2; while(j<n && /[0-9A-Fa-f_]/.test(src[j])) j++;
+      }else{
+        while(j<n && /[0-9_]/.test(src[j])) j++;
+        if(src[j]==="." && /[0-9]/.test(src[j+1]||"")){ j++; while(j<n && /[0-9_]/.test(src[j])) j++; }
+        if(src[j]==="e"||src[j]==="E"){ j++; if(src[j]==="+"||src[j]==="-") j++; while(j<n && /[0-9_]/.test(src[j])) j++; }
+        if(src[j]==="j"||src[j]==="J") j++;
+      }
+      out += '<span class="tok-num">'+escapeHtml(src.slice(i,j))+'</span>';
+      i=j; continue;
+    }
+    // identifiers / keywords
+    if(/[A-Za-z_]/.test(peek())){
+      let j=i; while(j<n && /[A-Za-z0-9_]/.test(src[j])) j++;
+      const word=src.slice(i,j);
+      // def/class name
+      if(word==="def" || word==="class"){
+        out += '<span class="tok-kw">'+escapeHtml(word)+'</span>';
+        let k=j; while(k<n && /\s/.test(src[k])) k++;
+        let m=k; while(m<n && /[A-Za-z0-9_]/.test(src[m])) m++;
+        if(m>k){
+          out += escapeHtml(src.slice(j,k));
+          out += '<span class="'+(word==="class"?"tok-cls":"tok-def")+'">'+escapeHtml(src.slice(k,m))+'</span>';
+          i=m; continue;
+        }
+        i=j; continue;
+      }
+      if(KW.has(word)) out += '<span class="tok-kw">'+escapeHtml(word)+'</span>';
+      else if(BI.has(word)) out += '<span class="tok-builtin">'+escapeHtml(word)+'</span>';
+      else out += escapeHtml(word);
+      i=j; continue;
+    }
+    // operators multi-char
+    const ops=["**=","//=",">>=","<<=","==","!=",">=","<=","->",":=","**","//","<<",">>","+=","-=","*=","/=","%=","&=","|=","^="];
+    let matched=null;
+    for(const op of ops){ if(startsWith(op)){ matched=op; break; } }
+    if(matched){
+      out += '<span class="tok-op">'+escapeHtml(matched)+'</span>';
+      i+=matched.length; continue;
+    }
+    if(/[+\-*/%&|^~<>!=:.,;()\[\]{}\\@]/.test(peek())){
+      out += '<span class="tok-op">'+escapeHtml(peek())+'</span>';
+      i++; continue;
+    }
+    // whitespace / other
+    out += escapeHtml(peek());
+    i++;
+  }
+  return out;
+}
+
+function openCodeModal(filename){
+  const src = PY_SOURCES[filename];
+  if(src==null) return;
+  const root=el("codeModal");
+  el("modalFname").textContent=filename;
+  el("modalCode").innerHTML=highlightPython(src);
+  el("modalCopy").textContent="Copy";
+  el("modalCopy").classList.remove("copied");
+  el("modalCopy").dataset.raw=src;
+  root.hidden=false;
+  root.classList.add("open");
+  document.body.classList.add("modal-open");
+  el("modalClose").focus();
+}
+function closeCodeModal(){
+  const root=el("codeModal");
+  root.classList.remove("open");
+  root.hidden=true;
+  document.body.classList.remove("modal-open");
+}
+function wireCodeModal(){
+  el("btnSrcBdc").addEventListener("click",()=>openCodeModal("bdc_closed_forms.py"));
+  el("btnSrcHyp").addEventListener("click",()=>openCodeModal("hypergeometric.py"));
+  el("btnSrcRk4").addEventListener("click",()=>openCodeModal("bdc_rk4.py"));
+  el("modalClose").addEventListener("click",closeCodeModal);
+  el("modalBackdrop").addEventListener("click",closeCodeModal);
+  el("modalCopy").addEventListener("click",()=>{
+    const raw=el("modalCopy").dataset.raw||"";
+    const btn=el("modalCopy");
+    const done=()=>{btn.textContent="Copied!";btn.classList.add("copied");
+      setTimeout(()=>{btn.textContent="Copy";btn.classList.remove("copied");},1200);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(raw).then(done).catch(()=>{
+        // fallback
+        const ta=document.createElement("textarea");ta.value=raw;document.body.appendChild(ta);
+        ta.select();try{document.execCommand("copy");done();}catch(_){}
+        document.body.removeChild(ta);
+      });
+    }else{
+      const ta=document.createElement("textarea");ta.value=raw;document.body.appendChild(ta);
+      ta.select();try{document.execCommand("copy");done();}catch(_){}
+      document.body.removeChild(ta);
+    }
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape" && el("codeModal").classList.contains("open")) closeCodeModal();
+  });
+}
+
+/* ============================================================================
+   PART 10 — Boot
+   ========================================================================== */
+function boot(){
+  buildSliders();
+  renderSymbols();
+  renderEquations();
+  wire();
+  wireCodeModal();
+  const restored=decodeURLState();
+  applyState();
+  if(!restored||state.tmaxAuto) refreshAutoT();
+  scheduleUpdate();
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+else boot();
+</script>

@@ -1,0 +1,64 @@
+\section{Probability Generating Function PDEs}
+The probability generating function (PDF),  is defned:
+$$G(z,t) = p_0(t) + p_1(t)z + p_2(t)z^2 + p_3(t)z^3 + \dots.$$
+The following ODEs can be derivd from the forward Kolmogorov associated with the two processes.
+
+\subsubsection*{Catastrophe}
+
+\begin{equation}
+\label{catEq1}
+\pdx{G(z,t)}{t} = \big(\beta z^2 - (\beta + \mu + \delta)z + \mu\big)\pdx{G}{z}
+\end{equation}
+
+\subsubsection*{Killing}
+
+\begin{equation}
+\pdx{G(z,t)}{t} = \delta J(t) +  \big(\beta z^2 - (\beta + \mu + \delta)z + \mu\big)\pdx{G}{z}
+\label{killEq1}
+\end{equation}
+
+\subsubsection*{Derivation}
+
+It will be sufficient to show a derivation of the ``killing'' equation. The ``catastrophe'' version is similar and simpler. \par
+
+Take the forward Kolmogorov equations: 
+
+$$\begin{cases}
+    \ddt{p_i} = \beta (i-1) p_{i-1} + \mu (i+1) p_{i+1} - (\beta + \mu + \delta)ip_i, & i > 0\\
+   \\
+    \ddt{p_0} = \mu p_1 +  \delta\sum^\infty_{j=1} jp_j.
+\end{cases}$$
+($p_i = \pr{\xt = i}$, probability the process is in state $i$). In the latter equation with $p_0$, the summation represents all of the possible rupture transitions; from any other state, a collapse to 0 can take place. This summation happens to express the mean; $\mean{\xt}$, which is elsewhere labelled $J(t)$.\par 
+In the catastrophe version, since rupture causes transition to a separate state, this summation term is not present, and the first equation will be valid for all $i$.\par
+\vspace{10pt}
+
+\noindent
+A derivation can be executed by manipulating the equations to fabricate terms containing the PGF, $G(z, t) = \sum^\infty_{i=0}p_i z^i$. It begins by multiplying each side of every $i$th equality by $z^i$. In the case of $i=0$, $z^0 = 1$, so there is no change. 
+
+
+$$\begin{cases}
+    \ddt{p_iz^i} = \beta (i-1) p_{i-1}z^i + \mu (i+1) p_{i+1}z^i - (\beta + \mu + \delta)ip_iz^i, & i > 0\\
+   \\
+    \ddt{p_0} = \mu p_1 +  \delta J(t).
+\end{cases}$$
+
+\noindent
+Then, each equation is combined in a sum over all values of $i$ for which there is a positive term.
+
+$$
+\sum^\infty_{i=0} \pdx{p_iz^i}{t} = \delta J(t)   + \sum^\infty_{i=0}\lrbs{ \beta (i-1) p_{i-1}z^i + \mu (i+1) p_{i+1}z^i - (\beta + \mu + \delta)ip_iz^i}$$
+
+\noindent
+Some rearrangement converts this into 
+
+$$\pdx{}{t}{\sum^\infty_{i=0} p_iz^i } = \delta J(t) + \beta z^2 \sum^\infty_{i=1} ip_iz^{i-1} + \mu\sum^\infty_{i=1}ip_iz^{i-1} - (\beta +\mu+\delta)z\sum^\infty_{i=1}ip_iz^{i-1}$$
+
+\noindent
+And since
+$$\sum^\infty_{i=1} ip_iz^{i-1}  = \pdx{}{z}\sum^\infty_{i=1} p_iz^{i} = \pdx{G(z,t)}{z},$$
+the above, becomes 
+
+$$\pdx{G(z,t)}{t} = \delta J(t) +  \beta z^2\pdx{G}{z}  + \mu\pdx{G}{z} - (\beta + \mu + \delta)z\pdx{G}{z}.$$
+
+\noindent
+Equivalent to (\ref{killEq1}).

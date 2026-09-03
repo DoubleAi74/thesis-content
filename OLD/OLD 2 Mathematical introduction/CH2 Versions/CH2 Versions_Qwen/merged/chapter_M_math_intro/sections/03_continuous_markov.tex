@@ -1,0 +1,279 @@
+\subsection{Continuous-time Markov chains}
+\label{m:sec:ctmc}
+
+\subsubsection{Exponential clocks}
+\label{m:sec:exp}
+
+Every continuous-time model in this thesis is built from events whose rate of
+occurrence does not depend on how long the system has been waiting for them.
+That single assumption forces the exponential distribution: a \rv{} $T$ is
+exponentially distributed with rate $\theta>0$, written
+$T\sim\mathrm{Exp}(\theta)$, if it has density $\theta\ee^{-\theta t}$ on
+$t\ge0$, mean $1/\theta$ and variance $1/\theta^2$. The property that matters is
+memorylessness: for $t_1,t_2>0$,
+\begin{equation}
+\label{m:eq:memoryless}
+\pr{T > t_1+t_2 \mid T > t_1}
+= \frac{\ee^{-\theta(t_1+t_2)}}{\ee^{-\theta t_1}}
+= \ee^{-\theta t_2}
+= \pr{T > t_2},
+\end{equation}
+so a clock that has already run for time $t_1$ is statistically
+indistinguishable from a fresh one. The exponential law is the only continuous
+distribution with this property, which is why a process assembled from
+constant-rate events depends on its present state alone and not on its history.
+
+When several events compete, the following result organises everything that
+follows. Let $T_1,\dots,T_m$ be independent with $T_i\sim\mathrm{Exp}(\theta_i)$,
+and let $T=\min_iT_i$ be the time of the first event.
+
+\begin{proposition}[Competing clocks]
+\label{m:prop:race}
+Writing $\Theta=\sum_i\theta_i$,
+\begin{equation}
+\label{m:eq:race}
+T \sim \mathrm{Exp}(\Theta),
+\qquad
+\pr{T_k = T} = \frac{\theta_k}{\Theta},
+\end{equation}
+and the identity of the winning clock is independent of $T$.
+\end{proposition}
+
+\begin{proof}
+For the first claim, $\pr{T>t}=\prod_i\pr{T_i>t}=\ee^{-\Theta t}$. For the
+second, condition on the value of $T_k$:
+\begin{equation*}
+\pr{T_k = T}
+= \int_0^\infty \theta_k\ee^{-\theta_k u}\prod_{i\neq k}\ee^{-\theta_i u}\,\dd u
+= \theta_k\int_0^\infty \ee^{-\Theta u}\,\dd u
+= \frac{\theta_k}{\Theta},
+\end{equation*}
+and truncating the integral at $t$ gives
+$\pr{T_k=T,\ T>t}=(\theta_k/\Theta)\ee^{-\Theta t}
+=\pr{T_k=T}\pr{T>t}$, which is the asserted independence.
+\end{proof}
+
+\Cref{m:prop:race} converts rates into probabilities as soon as one asks
+\emph{which} of several things happened rather than when, and it is the whole
+content of the direct simulation method: draw the next event time from
+$\mathrm{Exp}(\Theta)$, draw the event $k$ with probability $\theta_k/\Theta$,
+advance and repeat \cite{Gillespie1977}. Because the two draws are independent
+and the exponential law is memoryless, the resulting trajectory has exactly the
+law of the process. The scheme returns in \cref{m:sec:coupled}, where the rates
+themselves move between jumps.
+
+\subsubsection{Generators and forward equations}
+\label{m:sec:generator}
+
+Let $\{X_t:t\ge0\}$ take values in a countable state space $\mathcal S$, which
+throughout will be a set of population counts or of tuples of counts. The process
+is a \emph{continuous-time Markov chain} if, for all $s,t\ge0$,
+\begin{equation}
+\label{m:eq:markov}
+\pr{X_{t+s} = j \mid X_t = i,\ \{X_u\}_{u<t}} = \pr{X_{t+s}=j\mid X_t = i},
+\end{equation}
+and \emph{time homogeneous} when the right-hand side depends on $s$ but not on
+$t$; time-inhomogeneous chains are the subject of \cref{m:sec:inhomog}. A
+homogeneous chain is specified by its \emph{generator} $Q=(q_{ij})$, whose
+off-diagonal entries are transition rates,
+\begin{equation}
+\label{m:eq:generator}
+q_{ij} = \lim_{\Delta t\to0}\frac{p_{ij}(\Delta t)}{\Delta t}\quad(j\neq i),
+\qquad
+q_{ii} = -\sum_{j\neq i}q_{ij} =: -q_i ,
+\end{equation}
+so that every row sums to zero. Equivalently,
+\begin{equation}
+\label{m:eq:infinitesimal}
+\pr{X_{t+\Delta t} = j \mid X_t = i} = q_{ij}\,\Delta t + o(\Delta t)
+\qquad (j \neq i),
+\end{equation}
+with complementary probability $1-q_i\Delta t+o(\Delta t)$ of no transition. By
+\cref{m:prop:race} the chain leaves state $i$ after a holding time distributed
+as $\mathrm{Exp}(q_i)$ and then jumps to $j$ with probability $q_{ij}/q_i$. A
+state with $q_i=0$ is \emph{absorbing}: the chain that reaches it stays there
+forever. Extinction and rupture are both modelled as absorbing states, and the
+conditional methods of \cref{m:sec:methct} concern the behaviour of a chain
+conditioned on not yet having been absorbed.
+
+Differentiating the Chapman--Kolmogorov identity gives the \emph{forward
+Kolmogorov equations},
+\begin{equation}
+\label{m:eq:kolmogorov}
+\ddt{p_{ij}(t)} = \sum_{k} p_{ik}(t)\,q_{kj},
+\qquad\text{that is}\qquad
+\dda{P}{t} = P\,Q ,
+\end{equation}
+which for a fixed initial state and with $p_j(t)=\pr{X_t=j}$ become the master
+equation
+\begin{equation}
+\label{m:eq:master}
+\ddt{p_j(t)} = \sum_{k\neq j}q_{kj}\,p_k(t) - q_j\,p_j(t):
+\end{equation}
+probability flows into state $j$ from every state that can reach it and out of
+$j$ at total rate $q_j$. Every model in this thesis is specified by writing down
+\cref{m:eq:infinitesimal} and reading off \cref{m:eq:master}; the companion
+\emph{backward} equations and their uses are developed in
+\cref{m:sec:backward}.
+
+\subsubsection{The Poisson process}
+\label{m:sec:poisson}
+
+The Poisson process is the CTMC from which all others are built, and the
+prototype of a pure-birth process. Its state space is $\{0,1,2,\dots\}$ and its
+only transitions are $n\to n+1$ at constant rate $\lambda$, so
+$q_{n,n+1}=\lambda$ and $q_n=\lambda$ for every $n$: the holding time in every
+state is $\mathrm{Exp}(\lambda)$, independent of everything else by
+\cref{m:eq:memoryless}, and the process counts the arrivals of a stream of
+events occurring one at a time at constant rate.
+
+The master equation \cref{m:eq:master} reads
+\begin{equation*}
+\ddt{p_n(t)} = \lambda p_{n-1}(t) - \lambda p_n(t),
+\qquad
+p_n(0) = \ind_{\{n=0\}},
+\end{equation*}
+which solves inductively to the Poisson law
+\begin{equation}
+\label{m:eq:poissonlaw}
+N_t \sim \mathrm{Poisson}(\lambda t),
+\qquad
+\pr{N_t = n} = \ee^{-\lambda t}\frac{(\lambda t)^n}{n!},
+\end{equation}
+with $\ex{N_t}=\var{N_t}=\lambda t$. Two immediate readings of
+\cref{m:eq:poissonlaw} are worth keeping. The number of events in disjoint time
+intervals are independent \rv s, because the exponential holding times restart
+afresh after every event; and the jump times of any time-homogeneous CTMC whose
+exit rate happens to stay constant --- for instance a pure-birth process before
+its first death --- form a Poisson process.
+
+The Poisson process is also the limit object behind thinning and superposition:
+retaining each event of a rate-$\lambda$ process independently with probability
+$p$ leaves a Poisson process of rate $p\lambda$, and independent Poisson streams
+of rates $\lambda_1,\lambda_2$ combine to one of rate $\lambda_1+\lambda_2$ ---
+both direct consequences of \cref{m:eq:poissonlaw} and independence. These facts
+are used quietly below whenever a stream of events is split by type or merged.
+
+\subsubsection{Birth--death processes}
+\label{m:sec:linbd}
+
+The linear birth--death process is the continuous-time counterpart of the
+Galton--Watson process and the running example of \cref{m:sec:methct}. Let
+$X_t$ count individuals, each of which independently gives birth at rate
+$\lambda$ and dies at rate $\mu$. The non-zero rates out of state $n$ are
+\begin{equation}
+\label{m:eq:bdrates}
+q_{n,n+1} = \lambda n,
+\qquad
+q_{n,n-1} = \mu n ,
+\end{equation}
+so that $q_n=(\lambda+\mu)n$ and $n=0$ is absorbing: the rates are linear in the
+count, which is what makes the process exactly tractable by the methods of
+\cref{m:sec:methct}. The master equation reads
+\begin{equation}
+\label{m:eq:bdmaster}
+\ddt{p_n(t)} = \lambda(n-1)p_{n-1}(t) + \mu(n+1)p_{n+1}(t) - (\lambda+\mu)n\,p_n(t).
+\end{equation}
+With the \pgf{} $G(z,t)=\ex{z^{X_t}}$, multiplying \cref{m:eq:bdmaster} by
+$z^n$, summing over $n$ and shifting indices collapses the infinite family of
+state probabilities to a single partial differential equation,
+\begin{equation}
+\label{m:eq:bdpde}
+\pddt{G} = \bigl(\lambda z^2 - (\lambda+\mu)z + \mu\bigr)\pdd{G}{z}
+= (\lambda z-\mu)(z-1)\pdd{G}{z},
+\qquad G(z,0) = z^{N},
+\end{equation}
+for a process started from $N$ individuals. This conversion --- master equation
+to first-order generating-function equation --- is the template for every
+generating-function calculation in this thesis, and its solution by the method of
+characteristics is prepared in \cref{m:sec:moc}. The result, obtained there, is
+Kendall's formula \cite{Kendall1948}:
+\begin{equation}
+\label{m:eq:bdsolution}
+G(z,t) = \lrb{\frac{\mu(1-z) - (\mu-\lambda z)\ee^{-(\lambda-\mu)t}}
+{\lambda(1-z) - (\mu-\lambda z)\ee^{-(\lambda-\mu)t}}}^{\!N},
+\qquad \lambda\neq\mu ,
+\end{equation}
+from which the mean $\ex{X_t}=N\ee^{(\lambda-\mu)t}$ and the extinction
+probability by time $t$,
+\begin{equation}
+\label{m:eq:p0t}
+p_0(t) =
+\begin{cases}
+\displaystyle\lrb{\frac{\mu-\mu\ee^{(\mu-\lambda)t}}{\lambda-\mu\ee^{(\mu-\lambda)t}}}^{\!N},
+& \lambda\neq\mu,\\[14pt]
+\displaystyle\lrb{\frac{\lambda t}{1+\lambda t}}^{\!N},
+& \lambda=\mu,
+\end{cases}
+\end{equation}
+follow by differentiation and by setting $z=0$. Letting $t\to\infty$ recovers
+the familiar threshold: extinction is certain when $\lambda\le\mu$ and occurs
+with probability $(\mu/\lambda)^N$ when $\lambda>\mu$. The quadratic coefficient
+in \cref{m:eq:bdpde} factorises with roots $z=1$ and $z=\mu/\lambda$; the same
+factorisation, in a different variable, reappears in \cref{m:app:moc}.
+
+A useful extension, which later chapters use, lets the rates vary slowly with the
+population itself. If $\lambda,\mu$ are replaced by $\lambda(n),\mu(n)$ --- for
+instance $\lambda(n)=\lambda_0(1-n/K)$ to model crowding --- the chain remains
+Markov but is no longer exactly solvable by the closed route above; mean-field
+treatments replace $n$ by $\ex{X_t}$ and recover deterministic density-dependent
+equations \cite{Allen2010}. The time-inhomogeneous linear case, in which the
+rates are prescribed functions of $t$ alone, remains tractable and is taken up
+next.
+
+\subsubsection{Birth--death--catastrophe processes}
+\label{m:sec:ctbdc}
+
+Alongside extinction by death, several later chapters need a second absorbing
+mechanism: an abrupt event that removes the entire population at once. The
+continuous-time birth--death--catastrophe process adds that channel to
+\cref{m:sec:linbd}.
+
+\begin{definition}[Birth--death--catastrophe process]
+\label{m:def:bdc}
+Let $X_t$ count individuals in a compartment. Each individual independently gives
+birth at rate $\lambda$ and dies at rate $\mu$, and the compartment additionally
+undergoes a catastrophe --- a rupture that removes the entire population at once
+--- at a rate $\rho$ per individual, so that the total catastrophe rate in state
+$n$ is $\rho n$. Writing $\dagger$ for the post-catastrophe state, the non-zero
+transition rates out of $n\ge1$ are
+\begin{equation}
+\label{m:eq:bdcrates}
+q_{n,n+1} = \lambda n,
+\qquad
+q_{n,n-1} = \mu n,
+\qquad
+q_{n,\dagger} = \rho n ,
+\end{equation}
+and both $n=0$ and $\dagger$ are absorbing.
+\end{definition}
+
+Two features distinguish \cref{m:def:bdc} from \cref{m:sec:linbd}, and both
+matter later. The process has \emph{two} absorbing states, reached by mechanisms
+that are distinguishable and not interchangeable: extinction empties the
+compartment gradually, catastrophe empties it in one event and releases its
+contents. And the catastrophe rate is proportional to the population, so the
+compartment becomes more likely to rupture the fuller it is.
+
+Restricting attention to realisations that have not yet ruptured and writing
+$G(z,t) = \ex{z^{X_t}\ind\{X_t\neq\dagger\}}$, the master equation for
+\cref{m:eq:bdcrates} yields
+\begin{equation}
+\label{m:eq:bdcpde}
+\pddt{G} = \bigl(\lambda z^2-(\lambda+\mu+\rho)z+\mu\bigr)\pdd{G}{z},
+\qquad G(z,0) = z^{N},
+\end{equation}
+which differs from \cref{m:eq:bdpde} only in the coefficient of $z$. The
+quadratic no longer factorises with a root at $z=1$, and that single change is
+responsible for most of what is interesting about the process: probability is
+not conserved on the non-ruptured states, and $G(1,t)$ is the survival
+probability rather than one. The discrete-generation counterpart, its exact
+no-rupture identities, and the killed-generator formulation of
+quasi-stationarity for this process are developed in \cref{m:app:dbdc}; rates,
+moments and state probabilities for \cref{m:def:bdc} itself are treated
+\fwd{bdc}{in the later chapters on birth--death--catastrophe processes}, with
+the two-type extension \fwd{multitype}{in the chapter on multi-type processes}
+and the release of a ruptured compartment's contents into a shared medium
+\fwd{rupture}{in the chapter on compartment rupture}.
+
+\FloatBarrier

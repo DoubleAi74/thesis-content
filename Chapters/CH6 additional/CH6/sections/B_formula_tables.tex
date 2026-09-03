@@ -1,0 +1,70 @@
+% Appendix B --- population master formula table.  The single-cell table
+% lives in the distribution-theory chapter's Appendix A.
+
+\section{Master formula table: population level}
+\label{p:app:formulae}
+
+Throughout: $w=\ee^{\theta t}$, $\theta=\lambda(a-b)$, $A=a-1$, $B=1-b$,
+$L=a(1-b)$, $\kappa=1+\delta/(2\lambda)$. The single-cell rows are collected
+in \ChDist{}'s formula appendix; \cref{p:tab:formulae} records the
+population-level quantities of the present chapter.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{@{}p{0.24\textwidth}p{0.62\textwidth}@{}}
+\toprule
+Quantity & Formula \\
+\midrule
+Renewal system & $\Icell=\Icell_0\Ifix+i*\Ifix$, \ $\Vfree'=\Icell_0 g+i*g-c\Vfree$, \ $i=\gamma T\Vfree$ \\
+Survival kernel & $S(\alpha)=\Ifix(\alpha)$ \\
+Release kernel & $g(\alpha)=\delta K(\alpha)=V'(\alpha)$ \\
+Generation kernel & $\mathcal A(\alpha)=\gamma T(g*\ee^{-c\,\cdot})(\alpha)$, \ $\Lap{\mathcal A}(r)=\gamma T\Lap{g}(r)/(r+c)$ \\
+$p_{\rm eff}(r)$ & $\delta\Lap{K}(r)/\Lap{\Ifix}(r)$ \\
+$d_{\Icell,{\rm eff}}(r)$ & $1/\Lap{\Ifix}(r)-r$ \\
+Limits $r=0$ & $p_{\rm eff}=\lambda V_\infty/\log(a/(a-1))$, \ $d_{\rm eff}=\lambda/\log(a/(a-1))$ \\
+Limits $r\to\infty$ & $p_{\rm eff}\to\delta$, \ $d_{\rm eff}\to\mu+\delta$ \\
+Characteristic eq. & $r+c=\gamma T\,\delta\Lap{K}(r)$, \ equivalently $\Lap{\mathcal A}(r)=1$ \\
+$R_0^{\rm ODE}$ & $\gamma T V_\infty/c=\int_0^\infty\mathcal A$ \\
+Branching mean & $m=qV_\infty$, \ $q=\gamma T/(\gamma T+c)$ \\
+$G_{\rm off}(z)$ & $b+(\delta/\lambda)\,y/(a-y)$, \ $y=1-q+qz$ \\
+$z_{\rm ext}^{\rm burst}$ & $[a(1-q+qb)-1+q]/q$ \\
+$z_{\rm ext}^{\rm bud}$ & $1/m$ (geometric output, matched mean) \\
+Flooding criterion & $1/\delta<1/\lambda+1/\mu$ \ ($L>1$) \\
+$L=1$ & offspring law exactly geometric \\
+$\Delta z_{\rm ext}$ & $(L-1)(1/m-1)$ \\
+$\mathrm{Var}_{\rm bud}-\mathrm{Var}_{\rm burst}$ & $2q^2V_\infty(L-1)/(a-1)$ \\
+Growth trade-off & $r_{\rm bud}>r_{\rm burst}$ at matched $R_0$, $\mean{T_{\rm prod}}$ \\
+HIV stage model & kernels $(S_{\rm HIV},g_{\rm HIV})$; $p_{\rm eff}=\Lap{g}_{\rm HIV}/\Lap{S}_{\rm HIV}$; Allee incidence $f=\gamma T\Vfree^2/(K_A+\Vfree)$ \\
+\bottomrule
+\end{tabular}
+\caption{Population-level quantities of this chapter, in one place.}
+\label{p:tab:formulae}
+\end{table}
+\FloatBarrier
+
+\subsection*{Quick-reference specialisations}
+
+\paragraph{$\mu=0$.} $b=0$, $a=1+\delta/\lambda$, $D\equiv0$, $\Ifix=I$,
+$V_\infty=1+\lambda/\delta=\langle X\rangle_{\rm QS}$,
+$\mean{T_{\rm prod}}=\lambda^{-1}\log(1+\lambda/\delta)$,
+$\pr{\Kb=k}=s\rho^{k-1}$ with $s=\delta/(\lambda+\delta)$, $\rho=1-s$;
+flooding favours bursting for establishment at every $\delta>0$.
+
+\paragraph{The boundary $L=1$.} $\delta=\lambda\mu/(\lambda+\mu)$,
+$b=\delta/\lambda$; the offspring law is geometric with mean $m$;
+$z_{\rm ext}^{\rm burst}=z_{\rm ext}^{\rm bud}$ for every $q$; offspring
+variances equal.
+
+\paragraph{Young-cell, fast-growth limit.} $p_{\rm eff}\to\delta$,
+$d_{\rm eff}\to\mu+\delta$: a newly infected cell holds one particle, bursts
+at rate $\delta$, releases one.
+
+\paragraph{Set-point, $r=0$ matching.}
+$p_{\rm eff}=V_\infty/\mean{T_{\rm prod}}$,
+$d_{\rm eff}=1/\mean{T_{\rm prod}}$: lifetime output over lifetime; the
+fairest constant-parameter comparison, and the one used in
+\cref{p:sec:overlays}.
+
+\FloatBarrier

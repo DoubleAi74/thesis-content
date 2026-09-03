@@ -1,0 +1,1796 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[most]{empheq}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{titlesec}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!60!black,
+  pdftitle={Comprehensive corrected notes: BDC and burst-aware BMVR},
+  pdfauthor={Adam Aldridge}
+}
+
+% ---------------------------------------------------------------------------
+% Macros
+% ---------------------------------------------------------------------------
+\newcommand{\dd}{{\rm d}}
+\newcommand{\ee}{{\rm e}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}[1]{\mathbb{P}\!\left\{#1\right\}}
+\newcommand{\xt}{X_t}
+\newcommand{\wt}{W_t}
+\newcommand{\Ihat}{\widehat{I}}
+\newcommand{\Kb}{\mathcal{K}}
+\newcommand{\Icell}{\mathcal{I}}
+\newcommand{\Vfree}{\mathcal{V}}
+\newcommand{\Lap}[1]{\widetilde{#1}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\Fhyp}{{}_2F_1}
+\newcommand{\Aa}{A}
+\newcommand{\Bb}{B}
+
+\theoremstyle{plain}
+\newtheorem{result}{Result}[section]
+\newtheorem{proposition}[result]{Proposition}
+\newtheorem{lemma}[result]{Lemma}
+\newtheorem{corollary}[result]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[result]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[result]{Remark}
+\newtheorem{task}{Task}[section]
+
+\newcommand{\COR}{\textcolor{green!40!black}{\textbf{[CORRECTED]}}}
+\newcommand{\NEW}{\textcolor{blue!55!black}{\textbf{[NEW]}}}
+\newcommand{\CAVEAT}{\textcolor{orange!70!black}{\textbf{[CAVEAT]}}}
+\newcommand{\OPEN}{\textcolor{red!55!black}{\textbf{[OPEN]}}}
+\newcommand{\SOURCE}{\textcolor{gray!50!black}{\textbf{[SOURCE]}}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=0.2em}
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.15em}
+\allowdisplaybreaks
+
+\title{\textbf{Comprehensive Corrected Notes}\\[0.35em]
+\large From the single-cell birth--death--catastrophe process\\
+to a burst-aware Basic Model of Viral Replication\\[0.4em]
+\normalsize Working notes for a thesis chapter and a paper\\
+(all corrections applied; every major item in this folder represented)}
+\author{}
+\date{Compiled \today; mathematics verified independently}
+
+\begin{document}
+\maketitle
+\vspace{-1.2em}
+
+\begin{abstract}
+\noindent
+These notes consolidate \textbf{every major result} in the folder
+\texttt{4 BDC additional and BMVR} (and the co-located BDC core), with
+\textbf{all known mathematical corrections applied}. They are written so that
+a thesis chapter and a paper can be drafted from them without re-deriving or
+re-hunting errata.
+
+Tags: \COR\ replaces a thesis error;\ \NEW\ is present in spirit in the sources
+but stated cleanly here (or found on re-checking);\ \CAVEAT\ is a modelling
+subtlety;\ \OPEN\ needs more work;\ \SOURCE\ points to the origin path
+(from folder root \texttt{4 BDC additional and BMVR/}).
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{How to use these notes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}
+\item \textbf{Thesis chapter.} Sections~\ref{sec:process}--\ref{sec:moments}
+and~\ref{sec:burst}--\ref{sec:qsd} form the single-cell theory chapter.
+Sections~\ref{sec:renewal}--\ref{sec:flooding} form the population / BMVR
+chapter. Section~\ref{sec:hiv} is a short honest contrast, not the main claim.
+\item \textbf{Paper.} The publishable core is: corrected single-cell closed forms
++ burst size $=$ QSD + renewal BMVR with closed kernels + $p_{\rm eff}(r)$ +
+invariant $R_0$ + flooding theorem (with $L=1$ law match) + $r$-trade-off.
+\item \textbf{Do not claim for HIV} the pure one-type BDC terminal catastrophe;
+see Section~\ref{sec:hiv}.
+\item \textbf{Figures already generated:}
+\texttt{../figures/kernels.pdf},
+\texttt{overlay\_V.pdf}, \texttt{overlay\_I.pdf}, \texttt{overlay\_rel\_diff.pdf},
+\texttt{overlay\_growth\_phase.pdf}, \texttt{overlay\_V\_with\_naive.pdf}
+(script: \texttt{../figures/plot\_bmvr\_comparison.py}).
+\item \textbf{Result 20.1 verification:} Section~\ref{sec:verify-20-1};
+script \texttt{verify\_result\_20\_1.py} (this folder); \textbf{53/53 PASS}.
+\end{enumerate}
+
+Paths below are relative to the folder root
+\texttt{4 BDC additional and BMVR/}. This document lives in
+\texttt{new\_notes3/}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Map of materials in this folder}
+\label{sec:map}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+{\small
+\begin{tabular}{@{}p{0.48\textwidth}p{0.44\textwidth}@{}}
+\toprule
+Path (from folder root) & Content \\
+\midrule
+\texttt{3 BDC core/document MAIN/sections/} &
+  Ch.3 sources: process, moments $I,J,K,V$, variance
+  (contains errors; corrected in this document) \\
+\texttt{3 BDC core/Chapter3\_BDC\_definition\_main\_results.pdf} &
+  Compiled Ch.3 snapshot \\
+\texttt{document MAIN/sections/} &
+  Ch.4 sources: PGF PDEs, $p_n$, QSD, burst size,
+  BMVR attempt \S9 (replaced here) \\
+\texttt{Chapter4\_BDC\_further\_results.pdf} &
+  Compiled Ch.4 snapshot \\
+\texttt{new\_notes/BMVR\_extension\_notes.tex} &
+  Working notes: consolidation, renewal BMVR, flooding,
+  Part~IV errata catalogue \\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex} &
+  Earlier clean summary: overlays, HIV, reset, Cases 1--5,
+  boolean partial release \\
+\texttt{new\_notes3/Comprehensive\_Corrected\_Notes.tex} &
+  \textbf{This document} (corrected master notes) \\
+\texttt{new\_notes3/verify\_result\_20\_1.py} &
+  Numerical suite for Result~\ref{res:new-vde} \\
+\texttt{new\_notes3/verify\_result\_20\_1\_report.txt} &
+  Machine log (53/53 PASS) \\
+\texttt{new\_notes3/verify\_figures/} &
+  Verification plots (D, E, F, H) \\
+\texttt{N=2 Immediate Transfer content/N\_eq\_2.tex} &
+  Chained immediate-transfer model; rupture size laws \\
+\texttt{figures/} &
+  Kernel and NEW vs CLASSICAL BMVR overlays;
+  \texttt{plot\_bmvr\_comparison.py} \\
+\texttt{paper.pdf} &
+  Compiled paper snapshot \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\paragraph{Source-tag convention.}
+Inline \SOURCE\ tags cite paths from the folder root. Prefer reading
+\texttt{new\_notes3/} (this file) and \texttt{new\_notes2/} for cleaned
+statements; raw chapter \texttt{.tex} files remain the historical source of
+errors listed in Part~I.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Canonical notation (use everywhere)}
+\label{sec:notation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}llp{0.42\textwidth}@{}}
+\toprule
+Symbol & Meaning & Notes / collisions to avoid \\
+\midrule
+$\beta,\mu,\delta$ & birth, death, catastrophe (per capita) &
+  thesis also uses $\lambda$ for birth --- drop $\lambda$ \\
+$\xt$ & intracellular count (CTMC) & \\
+$R$ & absorbing rupture state & thesis Ch.3 uses $H$ --- use $R$ only \\
+$\wt$ & released count from one cell & $0$ until burst; was also $Y_t$ \\
+$\tau$ & burst time (may be $\infty$) & \\
+$\Kb$ & burst size (random) & never use bare $K$ for this \\
+$I(t)$ & $\Prob{\text{no burst by }t}$ & not infected-cell count \\
+$D(t)$ & $\Prob{\text{cleared internally, no burst}}$ & $=p_0(t)$ in Ch.4 \\
+$\Ihat(t)$ & still productively infected $=I-D$ & thesis formula wrong for $\mu>0$ \\
+$J(t),K(t)$ & $\E[\xt]$, $\E[\xt^2]$ & $K$ is second moment only \\
+$V(t)$ & $\E[\wt]$ cumulative mean release & not free-virion count \\
+$a,b$ & characteristic roots, $b<1<a$ & \\
+$\Aa,\Bb$ & $a-1$, $1-b$ & simplify almost everything \\
+$\theta$ & $\beta(a-b)$ & growth exponent \\
+$T$ & target-cell count (held fixed) & BMVR \\
+$\gamma$ & infection rate & \textbf{not} $\beta$ \\
+$\Icell,\Vfree$ & infected cells, free virions & BMVR population counts \\
+$c$ & virion clearance & BMVR \\
+$d_{\Icell}$ & infected-cell removal (phenomenological) & not $\delta$ \\
+$p$ & constant release rate (classical BMVR) & \\
+$p_{\rm eff}(r)$ & effective release rate at growth rate $r$ & \\
+$g(a)$ & release kernel (expected flux at age $a$) & \\
+$S(a)$ & survival / productive kernel & $\Ihat$ for BDC \\
+$q$ & $\gamma T/(\gamma T+c)$ infection success (branching) & \\
+$L$ & $a(1-b)=a-\mu/\beta$ flooding parameter & \\
+\bottomrule
+\end{tabular}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part A --- Single-cell BDC (corrected)}
+\addcontentsline{toc}{section}{\textbf{Part A --- Single-cell BDC (corrected)}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Process definition}
+\label{sec:process}
+\SOURCE\
+\texttt{3 BDC core/document MAIN/sections/04\_process\_definition.tex};
+corrected statement also in
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex} \S``The single-cell process'',
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~I.
+
+Starting from $\xt=1$ (one founder) unless stated, the process jumps
+\begin{align*}
+n &\to n+1 &&\text{at rate }\beta n,\\
+n &\to n-1 &&\text{at rate }\mu n,\\
+n &\to R &&\text{at rate }\delta n.
+\end{align*}
+On the jump to $R$ the cell bursts: $\wt$ is set to the pre-burst load and stays
+there. Classical references: Brockwell--Gani--Resnick; Karlin--Tavar\'e.
+What matters for applications is the closed-form family below.
+
+\SOURCE\
+joint process $(\xt,\wt)$: same file
+\texttt{04\_process\_definition.tex} (``Post catastrophe count'');
+before $\tau$, $\wt=0$; at catastrophe, $\wt\leftarrow \xt$ and $\xt\leftarrow R$.
+
+\section{Root algebra}
+\label{sec:roots}
+\SOURCE\
+\texttt{3 BDC core/document MAIN/sections/03\_reference\_values.tex},
+\texttt{05\_analytical\_quantities.tex};
+$A,B$ notation and $\Aa\Bb=\delta/\beta$ emphasised in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~I.
+
+\begin{equation}
+\eta=\frac{\beta+\mu+\delta}{2\beta},\qquad
+a=\eta+\sqrt{\eta^2-\tfrac{\mu}{\beta}},\qquad
+b=\eta-\sqrt{\eta^2-\tfrac{\mu}{\beta}}.
+\end{equation}
+Write $\Aa:=a-1>0$, $\Bb:=1-b>0$, $\theta:=\beta(a-b)$.
+
+\begin{result}[Vieta and the workhorse identity]
+\begin{equation}
+\label{eq:AB}
+ab=\frac{\mu}{\beta},\qquad
+a+b=\frac{\beta+\mu+\delta}{\beta},\qquad
+\Aa\Bb=\frac{\delta}{\beta},\qquad
+\Aa+\Bb=a-b.
+\end{equation}
+In particular $b<1<a$ always, and $\beta(1-a)(1-b)=-\delta$.
+Also $\theta=\sqrt{(\beta+\mu+\delta)^2-4\beta\mu}$.
+\end{result}
+
+\NEW\ Identity $\Aa\Bb=\delta/\beta$ is elementary and should sit in every
+reference table; it cancels prefactors throughout Ch.3.
+
+\section{Three fixation functions}
+\label{sec:fixation}
+\SOURCE\
+$I$ in Ch.3 \texttt{05\_analytical\_quantities.tex};
+$D=p_0$ in \texttt{document MAIN/sections/05\_state\_probabilities.tex};
+correct $\Ihat=I-D$ in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~I
+(thesis $\Ihat$ formula wrong for $\mu>0$).
+
+\begin{definition}
+\begin{align}
+I(t)&=\Prob{\text{no burst by }t},\\
+D(t)&=\Prob{\text{internal extinction by }t,\ \text{no burst}},\\
+\Ihat(t)&=\Prob{\xt\notin\{0,R\}}=I(t)-D(t).
+\end{align}
+\end{definition}
+
+Both $I$ and $D$ satisfy the Riccati equation
+\begin{equation}
+\label{eq:riccati}
+f'=\beta(f-a)(f-b)=\mu-(\beta+\mu+\delta)f+\beta f^2,
+\end{equation}
+with $I(0)=1$ and $D(0)=0$. Writing $w:=\ee^{\theta t}\ge 1$:
+
+\begin{result}[Closed forms for $I$, $D$, $\Ihat$]
+\label{res:IDIhat}
+\begin{empheq}[box=\fbox]{align}
+I(t)&=\frac{a\Bb+b\Aa w}{\Bb+\Aa w},\\[0.25em]
+D(t)&=\frac{ab\,(w-1)}{aw-b},\\[0.25em]
+\Ihat(t)&=\frac{(a-b)^2\,w}{(\Bb+\Aa w)(aw-b)}.
+\end{empheq}
+Limits: $I(\infty)=D(\infty)=b$, $\Ihat(\infty)=0$, $\Ihat(0)=1$,
+$\Ihat'(0)=-(\mu+\delta)$.
+\end{result}
+
+\begin{remark}[\COR\ thesis $\Ihat$ formula]
+Ch.3 gives
+$\Ihat(t)=\hat\eta\big/\bigl(1-(1-\hat\eta)\ee^{\hat\eta\beta t}\bigr)$ with
+$\hat\eta=(\beta+\mu+\delta)/\beta$, from the wrong ODE
+$\Ihat'=-(\beta+\mu+\delta)\Ihat+\beta\Ihat^2$.
+The branching term on a birth must be $I^2-D^2$, not $\Ihat^2$.
+Error is invisible when $\mu=0$ ($D\equiv 0$).
+At $(\beta,\mu,\delta)=(1,0.2,0.05)$, $t=1$: correct $\Ihat\approx 0.8088$,
+thesis formula $\approx 0.6675$.
+Ch.4 state probabilities $p_n$ sum over $n\ge 1$ to the correct $\Ihat$.
+\end{remark}
+
+\begin{result}[\COR\ multiplicity of infection --- survival]
+For $X_0=k$ independent founders (one cell, linear rates, shared catastrophe):
+\begin{equation}
+I_k(t)=I(t)^k,\qquad
+D_k(t)=D(t)^k,\qquad
+\Ihat_k(t)=I(t)^k-D(t)^k.
+\end{equation}
+Thesis claim $\Ihat_k=\Ihat^{\,k}$ is false.
+\end{result}
+
+\section{Moments and mean release}
+\label{sec:moments}
+\SOURCE\
+\texttt{3 BDC core/document MAIN/sections/05\_analytical\_quantities.tex},
+\texttt{07\_expected\_number\_of\_units\_j\_t.tex},
+\texttt{08\_variance\_and\_standard\_deviation\_of.tex}
+(and duplicate \texttt{10\_\ldots});
+simplifications/corrections in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~I,
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex} \S moments.
+
+From $I'=-\delta J$ and the Riccati:
+
+\begin{result}[First and second moments; mean release]
+\begin{empheq}[box=\fbox]{align}
+J(t)&=\E[\xt]
+=\frac{(a-b)^2\,w}{(\Bb+\Aa w)^2}
+=-\frac{\beta}{\delta}(I-a)(I-b),
+\label{eq:J}\\[0.35em]
+K(t)&=\E[\xt^2]
+=\Bigl[1+\tfrac{2\beta}{\delta}(1-I)\Bigr]J
+=\frac{2\beta}{\delta}(\kappa-I)J,
+\quad \kappa=1+\frac{\delta}{2\beta},
+\label{eq:K}\\[0.35em]
+V(t)&=\E[\wt]
+=(1-I)\Bigl[1+\tfrac{\beta}{\delta}(1-I)\Bigr].
+\label{eq:V}
+\end{empheq}
+\end{result}
+
+\begin{remark}[Simplifications]
+\begin{itemize}
+\item Thesis $J$ carries a cluttered prefactor; $\Aa\Bb=\delta/\beta$ cancels it
+  and $J(0)=1$ is manifest.
+\item Thesis $V=\frac{\beta-\mu}{\delta}(1-I)-J+1$ equals \eqref{eq:V}, a
+  \textbf{quadratic in $(1-I)$ alone} --- no separate $J$ or $\mu$.
+\item Consequently $V'=\delta K$, so $g:=\delta K$ is the release flux.
+\item Alternative: $V=\frac{\beta}{\delta}\bigl[(I-\kappa)^2-(1-\kappa)^2\bigr]$.
+\end{itemize}
+\end{remark}
+
+\begin{result}[Lifetime-time release and conditional mean burst size]
+\begin{equation}
+V_\infty=\frac{a(1-b)}{a-1}=\frac{a\Bb}{\Aa}
+=\frac{\beta-\mu}{\delta}(1-b)+1,
+\qquad
+\E[\Kb\mid\text{burst}]=\frac{V_\infty}{1-b}=\frac{a}{a-1}.
+\end{equation}
+$V_\infty$ \emph{includes} realisations that clear internally and release nothing
+(mass $b$ at $0$). The conditional mean removes them.
+When $\mu=0$: $b=0$, $a=1+\delta/\beta$, $V_\infty=1+\beta/\delta=\langle X\rangle_{\rm QS}$.
+When $\mu>0$ they differ (e.g.\ $(1,0.2,0.05)$: $17.23$ vs $13.99$).
+\end{result}
+
+\section{Second moment of release \COR}
+\label{sec:EW2}
+\SOURCE\
+raw (wrong signs):
+\texttt{3 BDC core/document MAIN/sections/08\_variance\_and\_standard\_deviation\_of.tex};
+corrected formula:
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~I \S``Second moment of the release''.
+
+Starting from $\dd\E[\wt^2]/\dd t=\delta\E[\xt^3]$ and eliminating the third
+moment via the $K$ ODE, with correct initial data
+$(I,J,K,V,\E[W^2])(0)=(1,1,\mathbf{1},0,0)$:
+
+\begin{result}[Second moment of cumulative release]
+\begin{empheq}[box=\fbox]{equation}
+\E[\wt^2]
+=\frac{2(\beta-\mu)}{\delta}V
+-\frac{\beta+\mu}{\delta}I
+-K
++\frac{\beta+\mu}{\delta}
++1.
+\label{eq:EW2}
+\end{empheq}
+$\mathrm{Var}(\wt)=\E[\wt^2]-V^2$.
+\end{result}
+
+\begin{remark}[\COR\ thesis errors]
+Thesis had wrong signs on $I$ and $K$, and omitted $+1$ (from $K(0)=1$, not $0$).
+Cause: prose used $J=+\delta^{-1}I'$ instead of $J=-\delta^{-1}I'$.
+Independent check $\mu=0$, $t\to\infty$: geometric on $\{1,2,\ldots\}$ with
+success $s=\delta/(\beta+\delta)$ gives
+$\E[W^2]=(2-s)/s^2=2\beta^2/\delta^2+3\beta/\delta+1$, matching \eqref{eq:EW2}.
+\end{remark}
+
+\begin{remark}[\COR\ $K$ as function of $I$]
+Correct form (Ch.3 \S11, not \S9):
+$K=\frac{2\beta}{\delta}(\kappa-I)J$ with $J=-\frac{\beta}{\delta}(I-a)(I-b)$.
+The \S9 version has wrong power of $\delta$ and a sign error. Prefer the
+$(I,J)$ form \eqref{eq:K} over expanded polynomials.
+\end{remark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part B --- Burst time, size, and the QSD}
+\addcontentsline{toc}{section}{\textbf{Part B --- Burst time, size, and the QSD}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Burst time}
+\label{sec:burst}
+\SOURCE\
+implicit in
+\texttt{3 BDC core/document MAIN/sections/05\_analytical\_quantities.tex}
+($I'=-\delta J$);
+named in
+\texttt{new\_notes/BMVR\_extension\_notes.tex},
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex};
+alluded to but not written in
+\texttt{document MAIN/sections/09\_potential\_application\_in\_bmvr.tex}.
+
+\begin{result}
+$\Prob{\tau>t}=I(t)$, so the (defective) density of burst time is
+\[
+\varphi(t)=-I'(t)=\delta J(t),\qquad
+\int_0^\infty\varphi(t)\,\dd t=1-b.
+\]
+Mass $b$ sits at $\tau=\infty$ (internal clearance without burst).
+\end{result}
+
+\section{State probabilities are geometric at every time}
+\label{sec:pn}
+\SOURCE\
+\texttt{document MAIN/sections/05\_state\_probabilities.tex};
+QSD discussion:
+\texttt{document MAIN/sections/06\_quasi\_stationary\_distribution.tex}.
+
+For $n\ge 1$,
+\begin{equation}
+\label{eq:pn}
+p_n(t)=\Bigl(\frac{a-b}{b-aw}\Bigr)^{\!2}w\;P(t)^{\,n-1},
+\qquad P(t)=\frac{1-w}{b-aw},\qquad w=\ee^{\theta t}.
+\end{equation}
+Conditional on $\xt\ge 1$, the load is geometric with ratio $P(t)$ at every $t$,
+and $P(t)\to 1/a$.
+
+\section{Burst size equals the quasi-stationary distribution}
+\label{sec:qsd}
+\NEW\ ingredients in
+\texttt{document MAIN/sections/05\_state\_probabilities.tex},
+\texttt{06\_quasi\_stationary\_distribution.tex},
+\texttt{07\_burst\_size\_distribution.tex};
+identity stated in
+\texttt{new\_notes/BMVR\_extension\_notes.tex},
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}.
+
+\begin{result}[Burst size $=$ QSD]
+Both are geometric on $\{1,2,\ldots\}$ with ratio $1/a$:
+\begin{align}
+\mathrm{QSD}(n)
+&=\lim_{t\to\infty}\Prob{\xt=n\mid \xt\notin\{0,R\}}
+=(a-1)\,a^{-n},\\
+\Prob{\Kb=k\mid\text{burst}}
+&=(a-1)\,a^{-k}.
+\end{align}
+Unconditionally (including no-burst realisations),
+$\Prob{\Kb=k}=(\delta/\beta)\,a^{-k}$ for $k\ge 1$, with mass $b$ at $0$.
+\end{result}
+
+\begin{result}[Proof of the burst-size law --- no simulation required]
+With $P(t)=(1-w)/(b-aw)$,
+\[
+\frac{\dd}{\dd t}\Bigl[\frac{P^k}{k\beta}\Bigr]=p_k(t).
+\]
+Hence
+\[
+\Prob{\Kb=k}
+=\delta k\int_0^\infty p_k(t)\,\dd t
+=\frac{\delta}{\beta}\bigl[P^k\bigr]_0^\infty
+=\frac{\delta}{\beta}\,a^{-k}.
+\]
+Checks: (i) $\sum_{k\ge 1}(\delta/\beta)a^{-k}=1-b$;
+(ii) $\sum_{k\ge 1}k(\delta/\beta)a^{-k}=V_\infty$.
+\end{result}
+
+Immediate QSD moments:
+\begin{equation}
+\langle X\rangle_{\rm QS}=\frac{a}{a-1},\qquad
+\mathrm{Var}_{\rm QS}(X)=\frac{a}{(a-1)^2},\qquad
+\langle X^2\rangle_{\rm QS}=\frac{a(a+1)}{(a-1)^2}.
+\end{equation}
+
+\begin{remark}[\OPEN\ conceptual proof]
+Algebra is complete. A structural argument (size-biasing composed with burst
+intensity, or Yaglom-type limit) would make the identity quotable rather than
+coincidental.
+\end{remark}
+
+\section{Size-biasing and late bursts}
+
+A cell bursts at rate $\delta\xt$, so given burst at time $t$ the size is
+size-biased:
+\[
+\Prob{\Kb=k\mid\tau=t}=\frac{k\,p_k(t)}{J(t)},\qquad
+\E[\Kb\mid\tau=t]=\frac{K(t)}{J(t)}
+\;\xrightarrow[t\to\infty]\;
+1+\frac{2\beta}{\delta}(1-b).
+\]
+A very late burst is roughly twice the size of an average one.
+
+\section{Resolving Ch.4 \S8 ``curious circularity''}
+\COR\
+\SOURCE\
+\texttt{document MAIN/sections/08\_further\_considerations.tex};
+resolution in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~I.
+
+Ch.4 computes $\E[\Kb\mid\tau>t]=(\E[\Kb]-V(t))/I(t)$, finds the $t\to\infty$
+limit returns $\E[\Kb]$, and records confusion.
+
+With consistent definitions:
+\begin{equation}
+\E\bigl[\Kb\mathbf 1\{\text{burst}\}\mid\tau>t\bigr]
+=\frac{V_\infty-V(t)}{I(t)}
+\;\xrightarrow{}\;0,
+\end{equation}
+correct: conditioning on ``has not burst yet'' converges to ``never bursts''.
+
+The interesting limit conditions on eventual burst:
+\begin{equation}
+\E[\Kb\mid \tau>t,\ \text{burst eventually}]
+=\frac{V_\infty-V(t)}{I(t)-b}
+\;\xrightarrow{}\;
+\frac{\langle X^2\rangle_{\rm QS}}{\langle X\rangle_{\rm QS}},
+\end{equation}
+by l'H\^opital ($V'=\delta K$, $I'=-\delta J$).
+
+\section{Mean productive lifetime}
+\label{sec:lifetime}
+
+\begin{result}
+\begin{equation}
+\E[T_{\rm prod}]
+=\int_0^\infty\Ihat(t)\,\dd t
+=\frac{1}{\beta}\log\!\Bigl(\frac{a}{a-1}\Bigr)
+=\frac{1}{\beta}\log\langle X\rangle_{\rm QS}.
+\end{equation}
+When $\mu=0$: $\beta^{-1}\log(1+\beta/\delta)$.
+Interpretation: time for exponential growth at rate $\beta$ to reach the
+quasi-stationary level.
+\end{result}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part C --- Multiplicity of infection and chained transfer}
+\addcontentsline{toc}{section}{\textbf{Part C --- MOI and chained transfer}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{MOI kernels \COR}
+\label{sec:moi}
+\SOURCE\
+$\Ihat_k$ wrong form flagged in
+\texttt{3 BDC core/document MAIN/sections/05\_analytical\_quantities.tex};
+corrected kernels and $V_\infty^{(k)}$ developed in this document
+(and partially in \texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex};
+note MOI $g_k$ there lacked $I$-powers --- use formulas here).
+
+For one cell founded by $k$ particles (shared catastrophe clock):
+
+\begin{result}[Correct MOI moments and release kernel]
+\begin{empheq}[box=\fbox]{align}
+\Ihat_k(a)&=I(a)^k-D(a)^k,\\[0.25em]
+J_k(a)&=k\,I(a)^{k-1}\,J(a),\\[0.25em]
+K_k(a)&=k\,K(a)\,I(a)^{k-1}+k(k-1)J(a)^2\,I(a)^{k-2},\\[0.25em]
+g_k(a)&=\delta K_k(a).
+\end{empheq}
+\end{result}
+
+\begin{remark}[\COR\ what was wrong]
+Earlier notes wrote $g_k=\delta[kK+k(k-1)J^2]$ (free sum of independent
+counts). That omits the $I$-powers from the shared survival indicator.
+Master-equation check at $(1,0.2,0.05)$, $t=1$, $k=2$: wrong $K_2\approx 23.39$;
+correct $K_2=22.264$ matches ME exactly.
+\end{remark}
+
+\begin{result}[Lifetime mean release from $k$ founders]
+\begin{align}
+V_\infty^{(1)}&=V_\infty=\frac{a(1-b)}{a-1},\\[0.3em]
+V_\infty^{(k)}
+&=(1-b^k)
++\frac{2\beta}{\delta}\Biggl[\frac{1}{k+1}-b^k+\frac{k\,b^{k+1}}{k+1}\Biggr]
+\nonumber\\
+&\quad
++k(k-1)\frac{\beta}{\delta}\int_1^b (x-a)(x-b)\,x^{k-2}\,\dd x
+\quad(k\ge 2).
+\label{eq:Vk}
+\end{align}
+Special case $\mu=0$:
+\begin{equation}
+\boxed{\;V_\infty^{(k)}=k+\frac{\beta}{\delta}\;}
+\end{equation}
+(e.g.\ $\beta=1,\delta=0.1$: $11,12,13,14,15,\ldots$).
+
+Lifetime yield is \textbf{not} $k V_\infty$ (shared first-catastrophe dumps the
+whole cell once). Conditional mean given eventual burst \emph{increases} with $k$.
+\end{result}
+
+\NEW\ Superlinearity of $g_k$ in $k$ is a testable single-cell / low-MOI
+prediction; classical BMVR cannot express it.
+
+\section{Chained immediate-transfer model ($N=2$ and general $M$)}
+\label{sec:chain}
+\SOURCE\
+\texttt{N=2 Immediate Transfer content/N\_eq\_2.tex}
+(PDF: \texttt{N=2 Immediate Transfer content/N\_eq\_2.pdf}).
+
+\paragraph{Setup.}
+$M$ host cells. One starts with a single particle. On rupture, the entire load
+is transferred immediately into a new empty cell (no extracellular phase).
+Process continues until $M$ ruptures. Extreme caricature of serial infection;
+useful for tractable multi-cell burst statistics.
+
+\paragraph{Notation.}
+$r_i$ = load at the $i$th rupture; $t_i$ = time of $i$th rupture;
+$T_i=t_i-t_{i-1}$ = inter-rupture interval. Birth rate $\lambda$ in source
+text $=$ our $\beta$.
+
+\paragraph{Rupture-size laws ($\mu=0$).}
+With $s=\delta/(\delta+\beta)$ and $\rho=\beta/(\delta+\beta)$,
+\begin{equation}
+\Prob{r_k=n}
+=\mathcal{A}^{(n)}_{k}\, s^{k}\,\rho^{n-1},
+\qquad
+\mathcal{A}^{(n)}_{k}
+=\frac{(n+k-2)!}{(k-1)!\,(n-1)!}
+=\binom{n+k-2}{k-1}.
+\end{equation}
+Special cases:
+\begin{align*}
+\Prob{r_1=n}&=s\,\rho^{n-1}
+&&\text{(geometric --- matches one-cell BDC, $\mu=0$)},\\
+\Prob{r_2=n}&=n\,s^2\,\rho^{n-1},\\
+\Prob{r_3=n}&=\tfrac{n(n+1)}{2}s^3\,\rho^{n-1}.
+\end{align*}
+Recurrence: $\mathcal{A}^{(n)}_{k}=\sum_{i=1}^{n}\mathcal{A}^{(i)}_{k-1}$ with
+$\mathcal{A}^{(i)}_{1}=1$.
+
+\paragraph{First rupture time from $m$ founders.}
+If $S(t)=I(t)$ is the no-burst probability from one founder, then
+\[
+\Prob{t_1>t}=S(t)^m,\qquad
+\text{density }\mathcal{F}_m(t)=-m S(t)^{m-1}S'(t).
+\]
+\OPEN\ Full joint laws of $(t_2,r_2)$ and higher; interval distributions for
+general $\mu$; link of chained $r_k$ laws to MOI kernel $g_k$ under immediate
+transfer.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part D --- From one cell to a population: renewal BMVR}
+\addcontentsline{toc}{section}{\textbf{Part D --- Renewal BMVR}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Why constant-$p$ substitution fails}
+\label{sec:why-fail}
+\SOURCE\
+\texttt{document MAIN/sections/09\_potential\_application\_in\_bmvr.tex};
+diagnosis and replacement in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~II,
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``From one cell to a population''.
+
+Ch.4 proposed replacing BMVR release rate $p$ by $\langle X\rangle_{\rm QS}$.
+
+\begin{framed}
+\textbf{Obstruction is dimensional.} $p$ has units particles/time;
+$\langle X\rangle_{\rm QS}$ is a pure count. When $\mu=0$,
+$\langle X\rangle_{\rm QS}=V_\infty$, so the proposal substitutes total lifetime
+output for a rate.
+
+Candidate integrals also fail:
+\begin{itemize}
+\item $\int\varphi(t)\,\E[\Kb\mid\tau=t]\,\dd t=V_\infty$ --- a count, not a rate.
+\item Weighting by the burst-time density is wrong; the correct weight is the
+  \textbf{age distribution of currently infected cells}.
+\end{itemize}
+Further: $\Vfree(t)=N_0 V(t)$ only for synchronously infected cells. Asynchrony
+is the whole problem --- and the whole solution (renewal).
+\end{framed}
+
+\section{Classical BMVR (comparator)}
+\label{sec:classical}
+\SOURCE\
+standard literature (Nowak--Bangham; Perelson et al.);
+written for comparison in
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Classical BMVR'';
+erroneous infection term $\propto I$ flagged in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~IV (Ch.1).
+
+Simplified (target-cell constant) Basic Model of Viral Replication:
+\begin{equation}
+\label{eq:BMVR-classical}
+\begin{aligned}
+\ddt{\Icell}
+&= \gamma T\,\Vfree - d_{\Icell}\,\Icell,\\[0.25em]
+\ddt{\Vfree}
+&= p\,\Icell - c\,\Vfree.
+\end{aligned}
+\end{equation}
+Both $p$ and $d_{\Icell}$ are phenomenological.
+
+\CAVEAT\ Ch.1 thesis draft sometimes wrote infection as $\beta S I$ (driven by
+infected cells). Correct driving variable is free virus: $\gamma T\Vfree$.
+
+\section{The two BDC kernels}
+\SOURCE\
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~II \S kernels;
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``The two kernels from the BDC'';
+closed forms from Part~A of this document.
+
+\begin{equation}
+\label{eq:kernels}
+\begin{aligned}
+\Ihat(a)
+&=\frac{(a-b)^2\,w}{(\Bb+\Aa w)(aw-b)},
+\quad w=\ee^{\theta a},\\[0.3em]
+g(a)
+&=\delta K(a)=V'(a)
+=\text{expected release flux at cell-age }a.
+\end{aligned}
+\end{equation}
+Release kernel: burst rate $\delta\xt$ times size $\xt$ gives expected flux
+$\delta\E[\xt^2]=\delta K$.
+
+\section{Burst-aware (renewal) viral dynamics}
+\label{sec:renewal}
+\SOURCE\
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~II \S``The correct object'';
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+(Result ``New viral dynamics --- burst-aware BMVR'').
+Numerical verification: \texttt{new\_notes3/verify\_result\_20\_1.py}
+(Section~\ref{sec:verify-20-1}).
+
+\begin{result}[New viral dynamics --- burst-aware BMVR]
+\label{res:new-vde}
+With incidence $i(t)=\gamma T\,\Vfree(t)$,
+\begin{empheq}[box=\fbox]{align}
+\Icell(t)
+&= \Icell_0\,\Ihat(t)
++\int_0^t i(t-\alpha)\,\Ihat(\alpha)\,\dd\alpha
+= \Icell_0\,\Ihat+(i*\Ihat),
+\label{eq:Icell-full}\\[0.4em]
+\ddt{\Vfree}
+&= \Icell_0\,g(t)
++\int_0^t i(t-\alpha)\,g(\alpha)\,\dd\alpha
+-c\,\Vfree(t)
+= \Icell_0 g+(i*g)-c\Vfree.
+\label{eq:Vfree-full}
+\end{empheq}
+\end{result}
+
+\paragraph{What each equation replaces.}
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}p{0.42\textwidth}p{0.48\textwidth}@{}}
+\toprule
+Classical \eqref{eq:BMVR-classical} & New \eqref{eq:Icell-full}--\eqref{eq:Vfree-full} \\
+\midrule
+$\Icell'=i-d_{\Icell}\Icell$ (constant removal)
+& $\Icell=\Icell_0\Ihat+i*\Ihat$ (age-structured survival) \\[0.5em]
+$\Vfree'=p\Icell-c\Vfree$ (constant release)
+& $\Vfree'=\Icell_0 g+i*g-c\Vfree$ (age-structured release) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Novelty claim --- state honestly]
+The renewal/age-structured framework is standard (McKendrick--von Foerster;
+Nelson--Gilchrist--Perelson-type models). The novelty is that $\Ihat$ and $g$
+are \textbf{derived in closed form from a mechanistic intracellular CTMC}, plus
+the consequences below ($p_{\rm eff}$, flooding, etc.).
+\end{remark}
+
+\paragraph{Optional differential form for $\Icell$.}
+\[
+\Icell'
+=i+\Icell_0\Ihat'+i*\Ihat'.
+\]
+No constant $d_{\Icell}$ reproduces this for all histories of $i$; reduction to
+classical form holds only for pure exponentials (next section).
+
+\section{Numerical verification of Result~\ref{res:new-vde}}
+\label{sec:verify-20-1}
+
+A dedicated suite (this folder)
+\texttt{new\_notes3/verify\_result\_20\_1.py} checks
+Result~\ref{res:new-vde} end-to-end. Full machine log:
+\texttt{new\_notes3/verify\_result\_20\_1\_report.txt}; figures in
+\texttt{new\_notes3/verify\_figures/}. \textbf{Score: 53/53 checks passed}
+(wall time $\sim 17\,\mathrm{s}$ on a laptop).
+
+\subsection{What is being verified}
+
+Result~\ref{res:new-vde} is a linear age-structured mean-field system. The suite
+tests four layers:
+\begin{enumerate}
+\item \textbf{Kernel integrity} --- inputs $\Ihat$, $g=\delta K$ obey single-cell
+  identities.
+\item \textbf{IDE self-consistency} --- numerical solutions satisfy the integral
+  equations to discretisation error.
+\item \textbf{Structural limits} --- exponential kernels $\Rightarrow$ classical
+  BMVR; $\gamma T=0$ $\Rightarrow$ pure single-cell convolution; $R_0$ threshold
+  and characteristic growth rate.
+\item \textbf{Stochastic ground truth (cohort)} --- Gillespie ensemble of
+  independent BDC cells with free-virus clearance, $\gamma T=0$, matches the
+  renewal means.
+\end{enumerate}
+
+\CAVEAT\ With reinfection ($\gamma T>0$) the renewal system is the
+\emph{exact mean-field} for independent cells and linear incidence; a full
+stochastic multi-generation Gillespie check of means is left as a heavier
+extension. Tests E--G already constrain the reinfection case through the
+characteristic equation, which any correct linear theory must satisfy.
+
+\subsection{Test catalogue and outcomes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+{\small
+\begin{tabular}{@{}clp{0.48\textwidth}c@{}}
+\toprule
+ID & Name & What is checked & Result \\
+\midrule
+A & Kernel self-consistency &
+  $V'=g$, $\int g=V_\infty$, $\int\Ihat=\E[T_{\rm prod}]$, $I'=-\delta J$
+  (5 param.\ sets) &
+  \textbf{5/5 PASS} \\
+B & $\gamma T=0$ cohort &
+  $\Icell=\Icell_0\Ihat$;
+  $\Vfree'=\Icell_0 g-c\Vfree$ vs exact convolution;
+  $c=0\Rightarrow\Vfree=\Icell_0 V(t)$ &
+  \textbf{15/15 PASS} \\
+C & $V$-equation residual &
+  $\Vfree'-\Icell_0 g-\gamma T(\Vfree*g)+c\Vfree\approx 0$
+  on supercritical / subcritical / $V_0$-seed solutions &
+  \textbf{5/5 PASS} \\
+D & Exp.\ kernels $\equiv$ classical &
+  $S=e^{-da}$, $g=p e^{-da}$ $\Rightarrow$ renewal matches BMVR ODE
+  (rel.\ err.\ $<5\times 10^{-5}$) &
+  \textbf{3/3 PASS} \\
+E & Growth $=$ char.\ root &
+  late $\log\Vfree$ slope $=r_*$ solving
+  $r+c=\gamma T\,\Lap{g}(r)$ (rel.\ err.\ $\sim 10^{-6}$--$10^{-7}$) &
+  \textbf{5/5 PASS} \\
+F & $R_0$ threshold &
+  $R_0\in\{0.5,\ldots,3\}$: decay iff $R_0<1$, growth iff $R_0>1$ &
+  \textbf{8/8 PASS} \\
+G & $p_{\rm eff}(r_*)$ match &
+  classical ODE with $(p,d)=(p_{\rm eff}(r_*),d_{\rm eff}(r_*))$ shares $r_*$
+  with renewal &
+  \textbf{4/4 PASS} \\
+H & Gillespie cohort &
+  independent BDC cells + clearance; ensemble mean vs renewal
+  (rel.\ $L^2$ $\sim 1$--$2\%$) &
+  \textbf{2/2 PASS} \\
+I & $V_0$-only seed &
+  early $\Vfree\approx V_0 e^{-ct}$; $\Icell(0)=0$ then rises &
+  \textbf{1/1 PASS} \\
+J & Lifetime output &
+  $\gamma T=c=0$: $\Vfree(\infty)=V_\infty$ (rel.\ err.\ $<10^{-6}$) &
+  \textbf{5/5 PASS} \\
+K & Well-posedness &
+  non-negative finite trajectories under matched comparison &
+  \textbf{1/1 PASS} \\
+\midrule
+ & \textbf{Total} & & \textbf{53/53 PASS} \\
+\bottomrule
+\end{tabular}}
+\end{center}
+
+\subsection{Headline quantitative findings}
+
+\paragraph{A --- Kernels.}
+Across $(\beta,\mu,\delta)\in\{(1,0,0.1),(1,0.2,0.05),(1,0,0.5),(1,0.9,0.1),
+(1,0.5,1/3)\}$:
+$\max|V'-g|/\max g \le 2\times 10^{-4}$,
+$|\int g-V_\infty|/V_\infty \le 10^{-8}$,
+$|\int\Ihat-\E[T_{\rm prod}]|/\E[T_{\rm prod}] \le 2\times 10^{-8}$.
+
+\paragraph{B --- No reinfection.}
+$\Icell$ matches $\Icell_0\Ihat$ to machine precision ($0$).
+$\Vfree$ matches the forced linear ODE / convolution to $\le 4\times 10^{-6}$
+relative; with $c=0$, $\Vfree=\Icell_0 V_{\mathrm{single}}(t)$ to $\sim 10^{-6}$.
+
+\paragraph{C --- Residuals with reinfection.}
+On five scenarios (including subcritical and free-virion seed),
+max relative $V$-equation residual $\le 3.4\times 10^{-4}$;
+$\Icell$ definition residual $\le 10^{-16}$ (by construction of the solver).
+
+\paragraph{D --- Exponential reduction (structural correctness).}
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+$(p,d)$ & $\max|\Vfree^{\rm ren}-\Vfree^{\rm cls}|/\max$ & same for $\Icell$ \\
+\midrule
+$(2.0,0.5)$ & $1.8\times 10^{-5}$ & $1.8\times 10^{-5}$ \\
+$(4.5,0.4)$ & $4.7\times 10^{-5}$ & $4.8\times 10^{-5}$ \\
+$(1.0,1.0)$ & $1.3\times 10^{-5}$ & $9.9\times 10^{-6}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+When kernels are pure exponentials, Result~\ref{res:new-vde} \emph{is} classical
+BMVR. Figure: \texttt{new\_notes3/verify\_figures/D\_exponential\_reduction.pdf}.
+
+\paragraph{E --- Characteristic growth rate.}
+\begin{center}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Case & $R_0$ & $r_*$ (char.\ eq.) & $r_{\mathrm{fit}}$ (from $\Vfree$) & rel.\ err.\ \\
+\midrule
+A ($\mu=0$) & $1.760$ & $0.08775$ & $0.08775$ & $3\times 10^{-7}$ \\
+B ($\mu>0$) & $2.098$ & $0.09040$ & $0.09040$ & $2\times 10^{-7}$ \\
+C (fast $\delta$) & $2.500$ & $0.24446$ & $0.24446$ & $1\times 10^{-6}$ \\
+E (high $\mu$) & $2.632$ & $0.17021$ & $0.17021$ & $7\times 10^{-7}$ \\
+F ($V_0$ seed) & $2.750$ & $0.15132$ & $0.15132$ & $5\times 10^{-7}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Figure: \texttt{new\_notes3/verify\_figures/E\_growth\_rate\_match.pdf}.
+
+\paragraph{F --- Threshold.}
+For fixed $(\beta,\mu,\delta,c)=(1,0,0.1,0.25)$ and $R_0$ scanned through $1$:
+subcritical trajectories decay ($r_{\mathrm{fit}}<0$); supercritical grow with
+$r_{\mathrm{fit}}=r_*>0$. At $R_0=1.05$, $r_*=0.00694$ already resolved.
+Figure: \texttt{new\_notes3/verify\_figures/F\_R0\_threshold.pdf}.
+
+\paragraph{G --- Effective-parameter projection.}
+Classical BMVR with $p=p_{\rm eff}(r_*)$, $d=d_{\rm eff}(r_*)$ reproduces the
+renewal growth rate to relative error $\sim 10^{-6}$--$10^{-7}$ (as theory
+requires). Transients still differ --- only the exponential phase is matched.
+
+\paragraph{H --- Gillespie vs mean-field ($\gamma T=0$).}
+\begin{center}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & $n_{\mathrm{reps}}\times \Icell_0$ & rel.\ $L^2(\Icell)$ & rel.\ $L^2(\Vfree)$ \\
+\midrule
+$\mu=0$, $\delta=0.1$, $c=0.25$ & $400\times 20$ & $0.89\%$ & $1.81\%$ \\
+$\mu=0.2$, $\delta=0.05$, $c=0.2$ & $500\times 30$ & $0.61\%$ & $1.34\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ensemble means of productive infected count and free virus (impulse releases at
+burst times + exponential clearance) track the renewal solution within sampling
+error. Figures:
+\texttt{new\_notes3/verify\_figures/H\_gillespie\_mu0.pdf},
+\texttt{new\_notes3/verify\_figures/H\_gillespie\_mu\_pos.pdf}.
+
+\paragraph{I--K --- Seeds, lifetime, positivity.}
+Early free-virion seed: $\max|\Vfree-V_0 e^{-ct}|/V_0 \approx 10^{-3}$ on
+$[0,0.5]$. Lifetime output $\Vfree(\infty)=V_\infty$ to $<10^{-6}$ relative.
+Solutions remain non-negative and finite.
+
+\subsection{Verdict on Result~\ref{res:new-vde}}
+
+\begin{framed}
+\textbf{Result~\ref{res:new-vde} is numerically verified} at the level appropriate
+to a linear renewal mean-field model:
+\begin{itemize}[leftmargin=1.2em]
+\item kernels are consistent with single-cell theory;
+\item the IDE is solved accurately and satisfies its own residual tests;
+\item every structural limit that can be checked in closed form holds
+  (exponential kernels, $\gamma T=0$, $R_0$ threshold, $r=r_*$, $p_{\rm eff}$);
+\item independent stochastic simulation of a finite cohort reproduces the
+  mean-field curves for $\Icell$ and $\Vfree$ when there is no reinfection.
+\end{itemize}
+Remaining (optional) extension: multi-generation Gillespie with reinfection to
+confirm mean trajectories for $\gamma T>0$ at large population size --- expected
+to agree by linearity, but not yet coded.
+\end{framed}
+
+\subsection{How to reproduce}
+\begin{verbatim}
+cd "4 BDC additional and BMVR/new_notes3"
+python3 verify_result_20_1.py
+# writes verify_result_20_1_report.txt, metrics.json, verify_figures/*.pdf
+\end{verbatim}
+
+\section{Numerical overlays (already generated)}
+\label{sec:overlays}
+\SOURCE\
+script \texttt{figures/plot\_bmvr\_comparison.py};
+outputs \texttt{figures/kernels.pdf}, \texttt{overlay\_*.pdf};
+described in
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Numerical overlays of the two systems''.
+
+Script \texttt{figures/plot\_bmvr\_comparison.py}. Reading code for all plots:
+\begin{itemize}
+\item \textbf{Solid navy} $=$ NEW (renewal / burst-aware).
+\item \textbf{Dashed orange with circles} $=$ CLASSICAL matched at $r=0$:
+  \[
+  p=p_{\rm eff}(0)=\frac{\beta V_\infty}{\log\bigl(a/(a-1)\bigr)},
+  \quad
+  d_{\Icell}=\frac{\beta}{\log\bigl(a/(a-1)\bigr)}.
+  \]
+\item Dotted green (optional) $=$ classical with naive $p=\langle X\rangle_{\rm QS}$
+  (dimensionally wrong; systematically wrong scale).
+\end{itemize}
+Even with fair matching, classical ODEs miss early lag, peak timing, and late
+growth under strong age-structure. Relative free-virion discrepancy is often
+order-one in supercritical regimes.
+
+\section{Effective parameters, $R_0$, phase-dependent $p$}
+\label{sec:peff}
+\SOURCE\
+\texttt{new\_notes/BMVR\_extension\_notes.tex}
+Part~II \S``Effective BMVR parameters'',
+\S``Characteristic equation, $R_0$'';
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Effective parameters, $R_0$, and growth-phase dependence''.
+
+\begin{result}[Effective BMVR parameters]
+Writing $\Lap{f}(r)=\int_0^\infty\ee^{-r\alpha}f(\alpha)\,\dd\alpha$:
+\begin{equation}
+p_{\rm eff}(r)=\frac{\delta\,\Lap{K}(r)}{\Lap{\Ihat}(r)},
+\qquad
+d_{\Icell,{\rm eff}}(r)=\frac{1}{\Lap{\Ihat}(r)}-r.
+\end{equation}
+Exact for exponential solutions $i\propto\ee^{rt}$; not for full transients.
+Substituting into the classical eigenvalue relation recovers the renewal
+characteristic equation.
+\end{result}
+
+Limits:
+\begin{align}
+r=0:&\quad
+p_{\rm eff}=\frac{\beta\,V_\infty}{\log\bigl(a/(a-1)\bigr)},
+\quad
+d_{\Icell,{\rm eff}}=\frac{\beta}{\log\bigl(a/(a-1)\bigr)};\\
+r\to\infty:&\quad
+p_{\rm eff}\to\delta,\qquad
+d_{\Icell,{\rm eff}}\to\mu+\delta
+\quad\text{(young-cell: one particle, burst rate $\delta$)}.
+\end{align}
+$p_{\rm eff}(r)$ is decreasing in $r$ (checked across representative parameters).
+At $(1,0,0.1)$: $p_{\rm eff}(0)\approx 4.59$ vs $p_{\rm eff}(\infty)=0.1$.
+
+\paragraph{Closed Laplace transforms \NEW\ (hypergeometric).}
+With $s:=r/\theta$, $z:=-\Bb/\Aa$:
+\begin{align}
+\Lap{\Ihat}(r)&=\frac{1}{\beta(s+1)}
+\Biggl[
+\frac{\Bb}{\Aa}\,\Fhyp\Bigl(1,s+1;s+2;-\frac{\Bb}{\Aa}\Bigr)
++\frac{b}{a}\,\Fhyp\Bigl(1,s+1;s+2;\frac{b}{a}\Bigr)
+\Biggr],\\[0.35em]
+\delta\Lap{K}(r)&=\frac{\delta}{\beta}
+\Biggl[
+\frac{\Fhyp(1,s;s+2;z)}{\Aa(s+1)}
++\frac{2\,\Fhyp(2,s;s+3;z)}{\Aa^2(s+1)(s+2)}
+\Biggr].
+\end{align}
+At $s=0$ both recover $\int\Ihat=\beta^{-1}\log(a/(a-1))$ and
+$\delta\Lap{K}(0)=V_\infty$.
+
+\begin{result}[$R_0$ unchanged by bursting at fixed total output]
+Characteristic equation:
+\[
+r+c=\gamma T\,\delta\Lap{K}(r),
+\qquad\text{hence}\qquad
+R_0^{\mathrm{ODE}}=\frac{\gamma T\,V_\infty}{c}.
+\]
+At fixed $V_\infty$, bursting changes generation times (hence $r$ and
+extinction) but not this threshold.
+\end{result}
+
+\begin{result}[Prediction for fitting practice]
+BMVR fits to acute-phase data and set-point data should yield systematically
+different $p$, in a direction and amount the theory specifies. The
+eclipse-like delay usually inserted by hand emerges here from intracellular
+dynamics with no extra parameter.
+\end{result}
+
+\begin{result}[Identifiability --- negative result]
+Three rates $(\beta,\mu,\delta)$ map to two BMVR parameters $(p,d_{\Icell})$ at
+any fixed $r$. Not invertible. Third observables that over-determine the map:
+\begin{enumerate}
+\item burst-size dispersion (geometric ratio $1/a$);
+\item fraction of cells that clear without bursting ($b$);
+\item shape of release-time density $\varphi=\delta J$.
+\end{enumerate}
+Ch.4 \S9's aim --- recover intracellular rates from $p$ alone --- is impossible.
+\end{result}
+
+\CAVEAT[\textbf{Two $R_0$ notions}]
+\begin{itemize}
+\item ODE / renewal continuum: $R_0^{\mathrm{ODE}}=\gamma T V_\infty/c$
+  (one virion can contribute mean $\gamma T/c$ infections).
+\item Discrete branching with virion absorption:
+  $m=q V_\infty$, $q=\gamma T/(\gamma T+c)$.
+\end{itemize}
+They agree when $\gamma T\ll c$. Flooding calculations use the branching mean
+$m=q V_\infty$; write ``$R_0$'' carefully in each context.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part E --- Flooding advantage and growth-rate trade-off}
+\addcontentsline{toc}{section}{\textbf{Part E --- Flooding and growth trade-off}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Offspring of one infected cell}
+\label{sec:offspring}
+\SOURCE\
+\texttt{new\_notes/BMVR\_extension\_notes.tex}
+Part~II \S``Offspring distribution of one infected cell'';
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Offspring of one infected cell''.
+
+Each released particle infects with probability $q=\gamma T/(\gamma T+c)$.
+With $y=1-q+qz$:
+\begin{equation}
+G_{\rm off}(z)=b+\frac{\delta}{\beta}\,\frac{y}{a-y},
+\qquad
+G_{\rm off}(1)=1,
+\qquad
+m=G_{\rm off}'(1)=q V_\infty.
+\end{equation}
+Variance:
+\[
+\mathrm{Var}_{\rm burst}
+=\frac{2q^2 V_\infty}{a-1}+q V_\infty-q^2 V_\infty^2.
+\]
+
+\section{Extinction probability in closed form}
+
+$G_{\rm off}(z)=z$ is quadratic in $y$; the non-trivial root is
+\begin{equation}
+z_{\rm ext}^{\rm burst}
+=\frac{a(1-q+qb)-1+q}{q}
+=\frac{a-1}{q}+1-a(1-b).
+\end{equation}
+
+\section{Flooding advantage --- main theorem}
+\label{sec:flooding}
+\SOURCE\
+\texttt{new\_notes/BMVR\_extension\_notes.tex}
+Part~II \S``The flooding advantage, answered exactly'';
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``The flooding advantage'';
+$L=1$ law-match and $r$-trade-off strengthened in this document.
+
+Comparator: BMVR cell with $\mathrm{Exp}(d_{\Icell})$ lifetime, constant rate
+$p$, matched so $p/d_{\Icell}=V_\infty$ and same $q$. Offspring is geometric with
+mean $m=q V_\infty$, so $z_{\rm ext}^{\rm bud}=1/m$ when $m>1$.
+
+Write $L:=a(1-b)=a-\mu/\beta$, so $V_\infty=L/(a-1)$.
+
+\begin{result}[Flooding advantage]
+\label{res:flood}
+For $m>1$,
+\begin{equation}
+\label{eq:flood}
+z_{\rm ext}^{\rm burst}-z_{\rm ext}^{\rm bud}
+=\bigl(L-1\bigr)\Bigl(\frac{1}{m}-1\Bigr).
+\end{equation}
+Hence bursting strictly lowers extinction probability relative to matched-mean
+budding iff $L>1$, i.e.
+\begin{equation}
+\boxed{\;
+\frac{1}{\delta}\;<\;\frac{1}{\beta}+\frac{1}{\mu}\;}
+\quad
+\bigl(\text{when }\mu=0\text{: always, for all }\delta>0\bigr).
+\end{equation}
+When $L=1$ the extinction probabilities are identical for every $q$.
+\end{result}
+
+\begin{result}[\NEW\ strengthening at $L=1$]
+When $L=1$ (equivalently $b=\delta/\beta$), the offspring law is
+\textbf{exactly geometric} with mean $m$ --- not merely same extinction
+probability. Hence variances match as well.
+Equivalence chain:
+\[
+L=1
+\;\Longleftrightarrow\;
+a=1+\frac{\mu}{\beta}
+\;\Longleftrightarrow\;
+\delta(\beta+\mu)=\beta\mu
+\;\Longleftrightarrow\;
+\frac{1}{\delta}=\frac{1}{\beta}+\frac{1}{\mu}.
+\]
+\end{result}
+
+\begin{result}[\NEW\ variance ordering]
+At matched mean $m$, $\mathrm{Var}_{\rm burst}<\mathrm{Var}_{\rm bud}$ iff
+$L>1$, with equality at $L=1$ (geometric case), and the reverse when $L<1$.
+\end{result}
+
+\paragraph{Numerical checks (exact).}
+\begin{center}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+$(\beta,\mu,\delta)$ & $q$ & $z^{\rm burst}$ & $z^{\rm bud}$ & Winner \\
+\midrule
+$(1,0,0.1)$ & $0.2$ & $0.400$ & $0.455$ & bursting ($L>1$) \\
+$(1,0.9,0.1)$ & $0.9$ & $0.935$ & $0.844$ & budding ($L<1$) \\
+$(1,0.5,1/3)$ & $0.6$ & $0.833$ & $0.833$ & tie ($L=1$, laws equal) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Interpretation.}
+Bursting concentrates output (lower offspring variance when $L>1$) but carries
+all-or-nothing risk of internal clearance (probability $b$). Advantage survives
+when the burst timescale $1/\delta$ is shorter than the harmonic-type combination
+of birth and death timescales.
+
+\CAVEAT\ Comparison holds the offspring \emph{mean} fixed --- branching
+structure only. Nonlinear effects (immune saturation, local depletion, Allee)
+are separate; name both mechanisms in any write-up (Komarova-type discussion).
+
+\section{Deterministic growth-rate trade-off \NEW}
+\label{sec:r-tradeoff}
+\SOURCE\
+numerical comparison developed for this document
+(not in Ch.3/4; related discussion of $R_0$ vs $r$ in
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~II).
+
+At matched $R_0^{\mathrm{ODE}}$ (or matched $m$) \textbf{and} matched mean
+productive lifetime $d=1/\E[T_{\rm prod}]$, $p=V_\infty d$:
+
+\begin{result}[Budding is faster in the exponential phase]
+In all regimes checked ($L>1$, $L=1$, $L<1$),
+\[
+r_{\mathrm{bud}} > r_{\mathrm{burst}}.
+\]
+Example: $(\beta,\mu,\delta)=(1,0,0.1)$, $R_0=2$:
+$r_{\mathrm{burst}}\approx 0.18$, $r_{\mathrm{bud}}\approx 0.25$.
+\end{result}
+
+\textbf{Biological headline for a paper:} at fixed total output per cell,
+bursting can \emph{lower early extinction} (when $L>1$) while \emph{slowing
+deterministic invasion speed} (generation-time delay). $R_0$ fixed; $z_{\rm ext}$
+and $r$ can move in opposite directions.
+
+\section{Optimal burst rate at fixed mean offspring \NEW}
+
+At fixed $m=R_0$ (adjust $q=m/V_\infty$) and $\mu=0$: faster bursting
+(larger $\delta$) lowers $z_{\rm ext}$ until $V_\infty$ becomes too small to
+support the target $m$ with $q\le 1$.
+
+At fixed $m$ and $\mu>0$: bursting beats budding only once $\delta$ crosses the
+$L=1$ threshold $\delta_*=\beta\mu/(\beta+\mu)$; below that threshold, budding
+wins on extinction.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part F --- Spectrum of BMVR equation variations}
+\addcontentsline{toc}{section}{\textbf{Part F --- BMVR equation spectrum}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Universal renewal skeleton}
+\label{sec:skeleton}
+
+Any intracellular model that supplies a survival kernel $S(a)$ and release
+kernel $g(a)$ induces
+\begin{empheq}[box=\fbox]{align}
+i(t)&=\gamma T\,\Vfree(t)
+\quad\text{(or a nonlinear incidence $f(\Vfree,T)$)},\\[0.25em]
+\Icell(t)&=\Icell_0\,S(t)+(i*S)(t),\\[0.25em]
+\Vfree'(t)&=\Icell_0\,g(t)+(i*g)(t)-c\,\Vfree(t).
+\end{empheq}
+Effective parameters: $p_{\rm eff}(r)=\Lap{g}(r)/\Lap{S}(r)$,
+$R_0=(\gamma T/c)\int_0^\infty g$ (linear incidence).
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Model & $S(a)$ & $g(a)$ \\
+\midrule
+Classical BMVR & $e^{-d a}$ & $p\,e^{-d a}$ \\
+Absorbing BDC & $\Ihat(a)$ & $\delta K(a)$ \\
+MOI-$k$ BDC & $I^k-D^k$ & $\delta K_k$ (corrected) \\
+Reset catastrophe & $e^{-d a}$ & $\delta e^{-d a}\E[X_a^2]$ \\
+HIV multi-stage & stage survival & $p\times$ productive occupancy \\
+Two-type / GATE & two-type $\Ihat$ & two-type second-moment flux \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Five modular ODE cases (mean-field ladder)}
+\label{sec:cases}
+\SOURCE\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Building BMVR piece by piece: five cases''.
+
+\paragraph{Case 1 --- Classic BMVR.}
+\[
+\Icell'=\gamma T\Vfree-d_{\Icell}\Icell,\qquad
+\Vfree'=p\Icell-c\Vfree.
+\qquad
+R_0=\frac{\gamma T\,p}{c\,d_{\Icell}}.
+\]
+
+\paragraph{Case 2 --- Eclipse + classic release.}
+\[
+E'=\gamma T\Vfree-(a+d_E)E,\quad
+\Icell'=aE-d_{\Icell}\Icell,\quad
+\Vfree'=p\Icell-c\Vfree.
+\]
+$R_0=\frac{\gamma T}{c}\cdot\frac{a}{a+d_E}\cdot\frac{p}{d_{\Icell}}$.
+Multi-stage (Erlang) eclipse: chain $E_1\to\cdots\to E_n\to\Icell$.
+
+\paragraph{Case 3 --- Intracellular stock + continuous export
+(mean-linear accumulation).}
+\[
+\Icell'=\gamma T\Vfree-d_{\Icell}\Icell,\quad
+Q'=\nu\Icell-\varepsilon Q-d_{\Icell}Q,\quad
+\Vfree'=\varepsilon Q-c\Vfree.
+\]
+Quasi-steady stock: $p_{\mathrm{eff}}=\varepsilon\nu/(\varepsilon+d_{\Icell})$;
+Case~1 is the fast-export limit. Prefer immigration-type $\nu$ for HIV-like
+biology (Section~\ref{sec:hiv-growth}).
+
+\paragraph{Case 4 --- Stock + load-proportional full dump (mean-field reset).}
+Dump flux $\propto Q^2/\Icell$ (from $\delta\E[X^2]$ with $X\sim$ load per cell
+closure $Q/\Icell$). Recovers constant-$p$ only in mature-cell limit.
+
+\paragraph{Case 5 --- Eclipse + stock + proportional dump.}
+Incidence $\to E\to\Icell$; only productive cells accumulate $Q$ and dump.
+
+\section{Reset-catastrophe process (intermediate between budding and BDC)}
+\label{sec:reset}
+\SOURCE\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Reset-catastrophe process and its renewal BMVR''.
+
+While the cell is alive: birth $\beta n$, death $\mu n$, optional immigration
+$\nu$, and \textbf{dump that resets} $n\to 0$ releasing $+n$ at rate $\delta n$.
+Cell dies at separate rate $d_{\Icell}$. Unlike absorbing BDC, one cell can dump
+many times.
+
+\begin{equation}
+S(a)=e^{-d_{\Icell}a},\qquad
+g(a)=\delta\,e^{-d_{\Icell}a}\,\E[X_a^2]
+\end{equation}
+with $\E[X_a^2]$ for the non-absorbing reset process (linear rates $\Rightarrow$
+closed moment ODEs). Mature-cell limit: $p_\infty=\delta\E_\pi[X^2]$.
+Same renewal BMVR skeleton as Result~\ref{res:new-vde}.
+
+\section{Boolean / partial-release continuum}
+\label{sec:boolean}
+\SOURCE\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+(boolean / partial-release and batch options near end of document).
+
+On a release event at load $n$, each unit released independently with
+probability $\phi$ (boolean thinning):
+$B\mid n\sim\mathrm{Binomial}(n,\phi)$. Limits: $\phi\to 0$ tiny export;
+$\phi=1$ full clear (Cases 4--5 / absorbing dump). Event rate free
+($\delta$, $\delta X$, $\delta X^2$, \ldots).
+
+Mean-field sketch ($\lambda=\delta X$):
+\[
+Q'=\nu\Icell-\delta\phi\,\frac{Q^2}{\Icell}-d_{\Icell}Q,\qquad
+\Vfree'=\delta\phi\,\frac{Q^2}{\Icell}-c\Vfree.
+\]
+\OPEN\ Flooding boundary as function of $\phi$; whether closed-form kernels
+survive for intermediate $\phi$.
+
+\section{Self-excitation / Hawkes-type intracellular models}
+\SOURCE\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+(Hawkes / self-excitation models and BMVR feasibility tables, later sections).
+
+Compatible with BMVR whenever the single cell supplies $(S,g)$ (renewal always).
+Finite ODE BMVR needs excitation carried by a low-dimensional Markov state
+(ON/OFF, mean-field $R$, etc.). Treat as optional extensions; not required for
+the core lytic BDC paper.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part G --- HIV contrast and single-cell assays}
+\addcontentsline{toc}{section}{\textbf{Part G --- HIV and assays}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{What Hataye et al.\ (2019) imply}
+\label{sec:hiv}
+\SOURCE\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Distinction with HIV'';
+primary literature: Hataye et al., \textit{Cell Host \& Microbe} 26:748--763, 2019.
+
+HIV \textbf{buds}; it is not a pure load-proportional terminal catastrophe.
+Data support: multi-stage eclipse; short productive pulse; high silent fraction;
+Allee-like establishment near threshold. They reject pure memoryless constant-$p$
+from $t=0$ and pure one-shot BDC as literal HIV.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{0.46\textwidth}p{0.46\textwidth}@{}}
+\toprule
+Supported for HIV & Not supported as literal HIV \\
+\midrule
+Multi-stage eclipse & Pure one-type BDC terminal catastrophe \\
+Short productive pulse then death & Memoryless constant-$p$ BMVR from $t=0$ \\
+High stochasticity; many silent lineages & QSD $=$ geometric burst as HIV law \\
+Renewal / stage structure for free virus & Independent branching alone near threshold \\
+Allee / synergistic establishment & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Candidate HIV stage equations (compact)}
+
+Two eclipse pathways (high/low release potential); multi-stage Erlang on the
+high path; division/death in eclipse ($\rho\approx\mu_E\approx 0.5/\mathrm{day}$
+in Hataye fits); short productive $I$ with rates $p_A,p_B,\delta_I$.
+
+Coupling: same renewal free-virus layer with kernels
+$(S_{\mathrm{HIV}},g_{\mathrm{HIV}})$ extracted from the stage model.
+
+Allee incidence option near threshold:
+\[
+f(\Vfree,T)=\gamma T\,\Vfree\cdot\frac{\Vfree}{K_A+\Vfree}.
+\]
+
+\section{HIV intracellular mean growth: linear vs exponential}
+\label{sec:hiv-growth}
+\SOURCE\
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``HIV intracellular mean growth: linear vs exponential''.
+
+HIV does not amplify infectious units by intracellular branching of virion-like
+particles (fixed provirus template; Pol~II transcription; Gag not self-replicating).
+Recommended coarse regime:
+\begin{equation}
+\textbf{eclipse}\;\longrightarrow\;
+\textbf{mean-linear (immigration-type) accumulation of }X.
+\end{equation}
+Tat positive feedback raises the production rate up to a late ceiling; it does
+not systematically overshoot the fully-ON rate. Pure $m'=rm$ BDC is a poor
+literal HIV intracellular model (fine for phage genome races / intracellular
+bacteria).
+
+\section{Single-cell assay predictions (lytic BDC)}
+\label{sec:assay}
+\SOURCE\
+\texttt{new\_notes/BMVR\_extension\_notes.tex}
+Part~II \S``Confrontation with single-cell data'';
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Single-cell assay predictions (lytic BDC)''.
+
+For genuinely lytic systems (\textit{Y.~pestis}, \textit{F.~tularensis}, lytic phage),
+limiting-dilution / Hataye-type assays:
+\begin{enumerate}
+\item fraction $b$ of wells show no release ever;
+\item cumulative release is a step: zero, then one terminal jump;
+\item jump times $\sim\delta J(t)/(1-b)$;
+\item jump sizes geometric with ratio $1/a$ (same as QSD);
+\item between-well variance $=\mathrm{Var}(W_\infty)$ from \eqref{eq:EW2}.
+\end{enumerate}
+Too strong for HIV as literally stated; use for lytic hosts, or as the bursting
+endpoint of the spectrum.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part H --- Two-type process and eclipse}
+\addcontentsline{toc}{section}{\textbf{Part H --- Two-type / eclipse}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{GATE as a mechanistic eclipse}
+\label{sec:twotype}
+\SOURCE\
+Chapter~5 of the thesis (outside this folder);
+tasks and GATE observation in
+\texttt{new\_notes/BMVR\_extension\_notes.tex}
+Part~II \S``Two-type extension and the eclipse phase'',
+Part~III Tasks (two-type moments / $D$);
+summary in
+\texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}
+\S``Two-type process and the eclipse phase''.
+
+Two-type BDC with conversion rate $\nu$ and type-specific catastrophe rates
+$(\delta_1,\delta_2)$. Backward system:
+\begin{align}
+S'&=\lambda_1 S^2-(\lambda_1+\mu_1+\nu+\delta_1)S+\mu_1+\nu G,\\
+G'&=\lambda_2 G^2-(\lambda_2+\mu_2+\delta_2)G+\mu_2,\qquad S(0)=G(0)=1.
+\end{align}
+
+\begin{remark}[\NEW\ observation]
+Regime $\delta_1=0<\delta_2$ (no burst before conversion): $S'(0)=0$ --- zero
+initial hazard, then rising. That is the eclipse-phase signature usually
+inserted by hand; here it emerges mechanistically with duration set by $\nu$.
+\end{remark}
+
+\OPEN\ Need for two-type renewal BMVR:
+\begin{itemize}
+\item release kernel
+  $g=\delta_1\E[X^2\mathbf 1_{\tau_c>a}]+(\delta_1+\delta_2)\E[XY\mathbf 1]+\delta_2\E[Y^2\mathbf 1]$;
+\item analogue of $D$ (extinction without catastrophe) and two-type $\Ihat$.
+\end{itemize}
+Moment hierarchy does not close upward; differentiate the backward system
+(analogue of obtaining $K$ from the Riccati in one type).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part I --- Verification summary and condensed errata}
+\addcontentsline{toc}{section}{\textbf{Part I --- Verification and errata}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Independent numerical checks performed}
+\label{sec:verify}
+
+Parameters used repeatedly: $(1,0.2,0.05)$, $(1,0,0.1)$, $(1,0.9,0.1)$,
+$(1,0.5,1/3)$.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Identity & Result \\
+\midrule
+Vieta / $\Aa\Bb=\delta/\beta$ / $\theta$ & exact \\
+$\Ihat=I-D$; Riccati for $I,D$ & exact \\
+$J=-I'/\delta$; $V'=\delta K$ & exact \\
+$V_\infty$ forms; burst mean $\sum k(\delta/\beta)a^{-k}$ & exact \\
+$\int\Ihat=\beta^{-1}\log(a/(a-1))$ & trapz error $\sim 10^{-9}$ \\
+Flooding difference formula; $G(z_{\rm ext})=z_{\rm ext}$ & machine precision \\
+$L>1\Leftrightarrow 1/\delta<1/\beta+1/\mu$ & exact (quadratic test) \\
+$L=1\Rightarrow G_{\rm off}$ geometric & exact \\
+MOI $K_k$ vs master equation & match \\
+$V_\infty^{(k)}$ integral formula vs closed form & match \\
+$\mu=0$: $V_\infty^{(k)}=k+\beta/\delta$ & exact \\
+$p_{\rm eff}(r)$ decreasing; limits $r=0,\infty$ & numerical \\
+$r_{\mathrm{bud}}>r_{\mathrm{burst}}$ at matched $R_0$, lifetime & numerical \\
+\midrule
+\multicolumn{2}{@{}l@{}}{\textit{Result~\ref{res:new-vde} (renewal BMVR) --- suite
+  \texttt{verify\_result\_20\_1.py}}} \\
+Kernel inputs to renewal system & 5/5 PASS \\
+$\gamma T=0$ reduction to single-cell convolutions & 15/15 PASS \\
+$V$-equation residual under reinfection & 5/5 PASS \\
+Exponential kernels $\equiv$ classical BMVR & 3/3 PASS (err.\ $<5\times 10^{-5}$) \\
+Asymptotic growth $=r_*$ of char.\ eq. & 5/5 PASS (err.\ $\sim 10^{-7}$) \\
+$R_0$ threshold scan & 8/8 PASS \\
+$p_{\rm eff}(r_*)$ classical shares $r_*$ & 4/4 PASS \\
+Gillespie cohort vs renewal ($\gamma T=0$) & 2/2 PASS (rel.\ $L^2\sim 1$--$2\%$) \\
+$V_0$ seed, lifetime output, positivity & 7/7 PASS \\
+\textbf{Result~\ref{res:new-vde} total} & \textbf{53/53 PASS} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+See Section~\ref{sec:verify-20-1} for full tables, figures, and verdict.
+
+\section{Condensed errata (must-fix before thesis submission)}
+\label{sec:errata}
+\SOURCE\
+full tagged catalogue:
+\texttt{new\_notes/BMVR\_extension\_notes.tex} Part~IV
+(Chapters 1, 3, 4, 5, 6). Paths below are the files to edit.
+
+\paragraph{Chapter 1.}
+Infection terms must be driven by $V$, not $I$. Fix notation collisions
+($\beta,\delta,\lambda,I,V$) before joining intracellular and population models.
+(Thesis intro folder, outside this directory; see extension-notes Part~IV.)
+
+\paragraph{Chapter 3 --- major.}
+Files under \texttt{3 BDC core/document MAIN/sections/}.
+\begin{enumerate}
+\item $\Ihat$ formula and ODE wrong for $\mu>0$; use Result~\ref{res:IDIhat}.
+  (\texttt{05\_analytical\_quantities.tex}, \texttt{06\_derivation\_\ldots.tex})
+\item $\Ihat_k=\Ihat^k$ wrong; use $I^k-D^k$
+  (\texttt{05\_analytical\_quantities.tex}).
+\item $\E[W^2]$ signs and $+1$; use \eqref{eq:EW2}
+  (\texttt{08\_variance\_and\_standard\_deviation\_of.tex}).
+\item $K(I)$: keep \S11 form / \eqref{eq:K}; discard \S9 polynomial
+  (\texttt{09\_} vs \texttt{11\_variable\_dependencies\_on.tex}).
+\item Delete duplicated section pairs 08/10 and 09/11.
+\item Unify $\lambda\to\beta$, $Y_t\to W_t$, $H\to R$, $\mathcal{K}$ vs $K$.
+\end{enumerate}
+
+\paragraph{Chapter 4 --- major.}
+Files under \texttt{document MAIN/sections/}.
+\begin{enumerate}
+\item \S9 $p=\langle X\rangle_{\rm QS}$ is irreparable as written; replace by
+  renewal BMVR (Part~D)
+  (\texttt{09\_potential\_application\_in\_bmvr.tex}).
+\item State QSD $=$ geometric$(1/a)$; prove burst law analytically (done)
+  (\texttt{06\_quasi\_stationary\_distribution.tex},
+  \texttt{07\_burst\_size\_distribution.tex}).
+\item Resolve ``circularity'' with consistent conditioning (done)
+  (\texttt{08\_further\_considerations.tex}).
+\item Write $\varphi=\delta J$ wherever ``known pdf'' is mentioned.
+\end{enumerate}
+
+\paragraph{Earlier notes that this document supersedes on corrections.}
+\begin{enumerate}
+\item \texttt{new\_notes2/Core\_Publishable\_Work\_Summary.tex}:
+  MOI $g_k$ lacked $I$-powers --- use Part~C here.
+\item Distinguish ODE $R_0$ from branching $m=q V_\infty$ in any write-up.
+\item Prefer this file (\texttt{new\_notes3/}) as the corrected master.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part*{Part J --- Formula tables and roadmaps}
+\addcontentsline{toc}{section}{\textbf{Part J --- Tables and roadmaps}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Master formula table (single cell)}
+\label{sec:table-sc}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}p{0.28\textwidth}p{0.58\textwidth}@{}}
+\toprule
+Quantity & Closed form \\
+\midrule
+$a,b$ & $\eta\pm\sqrt{\eta^2-\mu/\beta}$, $\eta=(\beta+\mu+\delta)/(2\beta)$ \\
+$\Aa,\Bb,\theta$ & $a-1$, $1-b$, $\beta(a-b)$ \\
+$I(t)$ & $(a\Bb+b\Aa w)/(\Bb+\Aa w)$ \\
+$D(t)$ & $ab(w-1)/(aw-b)$ \\
+$\Ihat(t)$ & $(a-b)^2 w/[(\Bb+\Aa w)(aw-b)]$ \COR \\
+$\Ihat_k$ & $I^k-D^k$ \COR \\
+$J(t)$ & $(a-b)^2 w/(\Bb+\Aa w)^2$ \\
+$K(t)$ & $[1+2\beta(1-I)/\delta]J$ \\
+$V(t)$ & $(1-I)[1+\beta(1-I)/\delta]$ \\
+$V_\infty$ & $a(1-b)/(a-1)$ \\
+$\E[\Kb\mid\text{burst}]$ & $a/(a-1)$ \\
+$\E[\wt^2]$ & \eqref{eq:EW2} \COR \\
+$\varphi(t)$ & $\delta J(t)$, mass $1-b$ \\
+$\Prob{\Kb=k}$ & $(\delta/\beta)a^{-k}$ ($k\ge 1$) \\
+QSD$(n)$ & $(a-1)a^{-n}$ \NEW \\
+$\E[T_{\rm prod}]$ & $\beta^{-1}\log(a/(a-1))$ \NEW \\
+$g_k$ (MOI) & $\delta[kKI^{k-1}+k(k-1)J^2 I^{k-2}]$ \COR \\
+$V_\infty^{(k)}$ ($\mu=0$) & $k+\beta/\delta$ \NEW \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Master formula table (population)}
+\label{sec:table-pop}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}p{0.3\textwidth}p{0.56\textwidth}@{}}
+\toprule
+Quantity & Formula \\
+\midrule
+Renewal system & $\Icell=\Icell_0\Ihat+i*\Ihat$, $\Vfree'=\Icell_0 g+i*g-c\Vfree$ \\
+$g$ & $\delta K$ \\
+$p_{\rm eff}(r)$ & $\delta\Lap{K}/\Lap{\Ihat}$ \\
+$d_{\rm eff}(r)$ & $1/\Lap{\Ihat}-r$ \\
+Char.\ eq. & $r+c=\gamma T\,\delta\Lap{K}(r)$ \\
+$R_0^{\mathrm{ODE}}$ & $\gamma T V_\infty/c$ \\
+$G_{\rm off}(z)$ & $b+(\delta/\beta)\,y/(a-y)$, $y=1-q+qz$ \\
+$z_{\rm ext}^{\rm burst}$ & $[a(1-q+qb)-1+q]/q$ \\
+Flooding criterion & $1/\delta<1/\beta+1/\mu$ ($L>1$) \\
+$L=1$ & offspring law $=$ geometric \NEW \\
+$r$ trade-off & $r_{\mathrm{bud}}>r_{\mathrm{burst}}$ at matched means \NEW \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Suggested thesis-chapter structure}
+\label{sec:thesis-plan}
+
+\begin{enumerate}
+\item Introduction --- BMVR's constant-release assumption; lytic vs budding;
+  research questions.
+\item Single-cell BDC --- definition; roots; $I,D,\Ihat$ (corrected); moments;
+  $V$ simplified; $\E[W^2]$ corrected.
+\item Burst time, size, QSD --- identity burst $=$ QSD; size-biasing; lifetime.
+\item MOI and chained transfer --- corrected kernels; $N=2$ size laws.
+\item Renewal BMVR --- why \S9 fails; kernels; equations; overlays.
+\item Effective parameters --- $p_{\rm eff}(r)$; $R_0$; identifiability.
+\item Flooding and trade-offs --- main theorem; $L=1$ law match; $r$ comparison.
+\item Spectrum --- Cases 1--5; reset; boolean partial release (brief).
+\item HIV contrast --- what not to claim; Hataye-aligned stage model (brief).
+\item Discussion --- single-cell predictions; open tasks; literature.
+\end{enumerate}
+
+\section{Suggested paper structure (core publishable unit)}
+\label{sec:paper-plan}
+
+\begin{enumerate}
+\item Intro --- constant $p$ vs lysis; closed-form kernels as contribution.
+\item Single-cell results --- compact catalogue + burst $=$ QSD.
+\item Renewal embedding --- equations; $p_{\rm eff}(r)$; $R_0$ invariant.
+\item Flooding theorem --- criterion; $L=1$ geometric coincidence; variance.
+\item Growth-rate trade-off --- $r_{\mathrm{bud}}>r_{\mathrm{burst}}$.
+\item Numerics --- kernel plots; NEW vs CLASSICAL overlays.
+\item Discussion --- fitting prediction (acute vs set-point $p$); assay
+  predictions for lytic systems; HIV caveat; open two-type eclipse.
+\end{enumerate}
+
+\textbf{Do not claim:} novelty of age-structure itself; pure BDC as HIV mechanism;
+recovery of $(\beta,\mu,\delta)$ from $p$ alone.
+
+\section{Ordered open tasks}
+\label{sec:tasks}
+
+\begin{task}[Literature positioning]
+Carruthers (\textit{F.~tularensis}); Pearson--Krapivsky--Perelson; Nelson--Gilchrist--Perelson;
+Gilchrist--Coombs nested models; Heffernan--Wahl burst size; BMVR attribution
+(Nowak--Bangham 1996; Perelson et al.\ 1996 vs McLean 1993).
+\end{task}
+
+\begin{task}[Conceptual proof of QSD $=$ burst size]
+\end{task}
+
+\begin{task}[Two-type killed second moments and $D$]
+Main obstacle to eclipse-aware renewal BMVR from Ch.5.
+\end{task}
+
+\begin{task}[Flooding boundary vs real pathogen parameters]
+Map $\delta(\beta+\mu)>\beta\mu$ for \textit{Y.~pestis} in macrophages; size of
+advantage via \eqref{eq:flood} style difference.
+\end{task}
+
+\begin{task}[Figure: $p_{\rm eff}(r)$ and $d_{\rm eff}(r)$ over physiological $r$]
+Sells the ``$p$ is not a constant of the pathogen'' claim.
+\end{task}
+
+\begin{task}[Population-level variance from $\mathrm{Var}(W)$]
+\end{task}
+
+\begin{task}[Partial-release continuum and flooding in $\phi$]
+\end{task}
+
+\begin{task}[Logistic intracellular birth --- sensitivity of kernels]
+Referee defence: load-proportional burst already regulates; QSD is the
+conditional stabilisation.
+\end{task}
+
+\section{One-page story (for introductions)}
+
+Many within-host models treat infected cells as black boxes releasing virions at
+constant rate $p$ (BMVR). Lytic pathogens grow inside a cell and dump their load
+in a single burst. Model one cell as a classical BDC process; derive closed forms
+for survival, load, release, burst timing and size; embed those formulas in a
+renewal BMVR so the population model is forced by the intracellular process.
+
+At fixed total output per cell, $R_0$ is unchanged by bursting, but generation
+times change. Bursting lowers establishment extinction relative to matched-mean
+budding if and only if $1/\delta<1/\beta+1/\mu$ (always when $\mu=0$); at the
+boundary the offspring laws coincide. Deterministic growth is typically faster
+under budding. Effective release rate $p_{\rm eff}$ falls as epidemic growth rate
+rises (young cells dominate). Three intracellular rates cannot be recovered from
+two BMVR parameters alone.
+
+The cleanest single-cell fact: the burst-size distribution is exactly the
+quasi-stationary load distribution --- both geometric with ratio $1/a$.
+
+\clearpage
+\appendix
+\section{Quick reference: common specialisations}
+
+\paragraph{$\mu=0$.}
+$b=0$, $a=1+\delta/\beta$, $D\equiv 0$, $\Ihat=I$,
+$V_\infty=1+\beta/\delta=\langle X\rangle_{\rm QS}$,
+$\E[T_{\rm prod}]=\beta^{-1}\log(1+\beta/\delta)$,
+$V_\infty^{(k)}=k+\beta/\delta$,
+flooding always favours burst for establishment,
+$\Prob{\Kb=k}=s\rho^{k-1}$ with $s=\delta/(\beta+\delta)$, $\rho=1-s$.
+
+\paragraph{$L=1$ boundary.}
+$\delta=\beta\mu/(\beta+\mu)$, $b=\delta/\beta$, offspring law geometric,
+$z_{\rm ext}^{\rm burst}=z_{\rm ext}^{\rm bud}$, equal variances.
+
+\paragraph{Young-cell / fast-growth limit.}
+$p_{\rm eff}\to\delta$, $d_{\rm eff}\to\mu+\delta$.
+
+\paragraph{Set-point / $r=0$ matching.}
+$p_{\rm eff}=V_\infty/\E[T_{\rm prod}]$, $d_{\rm eff}=1/\E[T_{\rm prod}]$.
+
+\end{document}

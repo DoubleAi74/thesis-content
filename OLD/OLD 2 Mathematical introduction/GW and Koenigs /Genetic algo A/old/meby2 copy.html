@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <title>Symbolic Regression: Evolutionary Discovery</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+      :root {
+        --text-color: #1a1a1a;
+        --border-color: #e0e0e0;
+        --accent-color: #c0392b;
+        --bg-color: #ffffff;
+        --panel-bg: #fcfcfc;
+        --font-serif: "Georgia", "Times New Roman", serif;
+        --font-mono: "Menlo", "Consolas", "Monaco", monospace;
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .layout-container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+        border-right: 1px solid var(--border-color);
+        border-left: 1px solid var(--border-color);
+      }
+
+      .sidebar {
+        width: 320px;
+        background: var(--panel-bg);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 25px;
+        overflow-y: auto;
+        flex-shrink: 0;
+        z-index: 10;
+      }
+
+      h1 {
+        font-family: var(--font-serif);
+        font-size: 1.4rem;
+        margin: 0 0 5px 0;
+        color: #000;
+        letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+      }
+
+      .control-section {
+        margin-bottom: 25px;
+      }
+
+      label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #888;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        color: #444;
+      }
+
+      .eqn-container {
+        position: relative;
+        margin-top: 5px;
+      }
+
+      .equation-box {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 12px;
+        border-radius: 3px;
+        white-space: nowrap;
+        overflow-x: auto;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+      }
+
+      .equation-box:hover {
+        border-color: #888;
+        background: #fdfdfd;
+      }
+
+      .equation-box::-webkit-scrollbar {
+        height: 4px;
+      }
+      .equation-box::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+      }
+
+      .copy-hint {
+        position: absolute;
+        top: -8px;
+        right: 8px;
+        font-size: 0.65rem;
+        background: #333;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 2px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .eqn-container:hover .copy-hint {
+        opacity: 1;
+      }
+
+      button {
+        background: #222;
+        color: #fff;
+        border: none;
+        width: 100%;
+        padding: 14px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #444;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        user-select: none;
+        margin-bottom: 12px;
+      }
+
+      .checkbox-group input {
+        accent-color: var(--accent-color);
+      }
+
+      .slider-group {
+        margin-bottom: 15px;
+      }
+      .slider-group label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .slider-group .slider-value {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--accent-color);
+        font-weight: normal;
+        text-transform: none;
+      }
+      .slider-group input[type="range"] {
+        width: 100%;
+        height: 4px;
+        -webkit-appearance: none;
+        background: #ddd;
+        border-radius: 2px;
+        outline: none;
+        margin-top: 8px;
+      }
+      .slider-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        background: #222;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .helper-text {
+        font-size: 0.75rem;
+        color: #999;
+        font-style: italic;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+
+      .plot-wrapper {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 20px;
+        overflow: hidden;
+      }
+
+      #plot {
+        width: 100%;
+        height: 100%;
+      }
+
+      #toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s ease;
+        z-index: 1000;
+      }
+      #toast.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @media (max-width: 900px) {
+        body {
+          height: auto;
+          display: block;
+        }
+
+        .layout-container {
+          flex-direction: column-reverse;
+          height: auto;
+          border: none;
+        }
+
+        .plot-wrapper {
+          height: 50vh;
+          min-height: 350px;
+          padding: 10px;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar {
+          width: 100%;
+          border-right: none;
+          height: auto;
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout-container">
+      <aside class="sidebar">
+        <h1>Symbolic Regression</h1>
+        <div class="subtitle">Evolutionary Equation Discovery</div>
+
+        <div class="control-section">
+          <label>Metrics</label>
+          <div class="stat-row">
+            <span>Generation</span>
+            <span id="genDisplay">0</span>
+          </div>
+          <div class="stat-row">
+            <span>Population</span>
+            <span>500</span>
+          </div>
+          <div class="stat-row">
+            <span>Best MSE</span>
+            <span
+              id="mseDisplay"
+              style="color: var(--accent-color); font-weight: bold"
+              >---</span
+            >
+          </div>
+        </div>
+
+        <div class="control-section">
+          <label>Best Solution Model</label>
+          <div class="eqn-container" onclick="copyEquation()">
+            <div class="copy-hint">Click to Copy</div>
+            <div id="eqDisplay" class="equation-box">
+              <span style="color: #aaa; font-style: italic"
+                >Ready to start...</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section" style="margin-top: auto">
+          <label>Settings</label>
+
+          <div
+            class="checkbox-group"
+            onclick="
+              event.stopPropagation();
+              document.getElementById('chkIntMode').click();
+            "
+          >
+            <input
+              type="checkbox"
+              id="chkIntMode"
+              onchange="
+                restartSimulation();
+                event.stopPropagation();
+              "
+            />
+            <span>Integer / Rational Mode</span>
+          </div>
+
+          <div
+            class="checkbox-group"
+            onclick="
+              event.stopPropagation();
+              document.getElementById('chkTrails').click();
+            "
+          >
+            <input
+              type="checkbox"
+              id="chkTrails"
+              onchange="
+                updateSettings();
+                event.stopPropagation();
+              "
+            />
+            <span>Show Population Trials</span>
+          </div>
+
+          <p class="helper-text">
+            Integer mode forces clean numbers.<br />
+            Trials show the population cloud.
+          </p>
+
+          <div class="slider-group">
+            <label>
+              <span>Simplicity Pressure</span>
+              <span class="slider-value" id="penaltyVal">0.0001</span>
+            </label>
+            <input
+              type="range"
+              id="penaltySlider"
+              min="0"
+              max="0.0001"
+              step="0.000001"
+              value="0.0001"
+              oninput="updateSettings()"
+            />
+          </div>
+
+          <div class="slider-group">
+            <label>
+              <span>Mutation Rate</span>
+              <span class="slider-value" id="mutVal">0.25</span>
+            </label>
+            <input
+              type="range"
+              id="mutSlider"
+              min="0"
+              max="0.6"
+              step="0.01"
+              value="0.25"
+              oninput="updateSettings()"
+            />
+          </div>
+
+          <button id="btnStart" onclick="toggleSimulation()">
+            Start Evolution
+          </button>
+        </div>
+      </aside>
+
+      <main class="plot-wrapper">
+        <div id="plot"></div>
+      </main>
+    </div>
+
+    <div id="toast">Equation copied to clipboard</div>
+
+    <script>
+      /**
+       * DATA
+       */
+      const rawData = `
+0.00,0.5
+0.01,0.49744950892200523
+0.02,0.4947961454086841
+0.03,0.49203568028781275
+0.04,0.4891655063931692
+0.05,0.4861804681386442
+0.06,0.4830774611793251
+0.07,0.4798516728499167
+0.08,0.4764965649930478
+0.09,0.4730092271000399
+0.1,0.46938333702446194
+0.11,0.46561045412689755
+0.12,0.46168780095224604
+0.13,0.45760728178648097
+0.14,0.45335797129833433
+0.15,0.44893751974883506
+0.16,0.44433208243911365
+0.17,0.43953758533578097
+0.18,0.43454255921952245
+0.19,0.4293311822253738
+0.2,0.42390081850381817
+0.21,0.4182300784035889
+0.22,0.4123108180947064
+0.23,0.40613172436516815
+0.24,0.399669551694508
+0.25,0.3929162754078347
+0.26,0.38584326351619247
+0.27,0.3784359299789587
+0.28,0.370672189995087
+0.29,0.3625279290473855
+0.3,0.35397672110443756
+0.31,0.3449895164077589
+0.32,0.33553428875892377
+0.33,0.3255756349223103
+0.34,0.31506734776888573
+0.35,0.3039779337611788
+0.36,0.2922446697896221
+0.37,0.2798182518473617
+0.38,0.2666353397344354
+0.39,0.252615526498267
+0.4,0.23768332022995975
+0.41,0.22173411227463893
+0.42,0.20466312830238828
+0.43,0.1863198446038385
+0.44,0.16655284045247842
+0.45,0.1451501913600998
+0.46,0.1218716445414851
+0.47,0.09638121630669728
+0.48,0.06824513327478827
+0.49,0.03687714681581637
+0.5,0.00`;
+
+      const X_train = [];
+      const Y_train = [];
+      rawData
+        .trim()
+        .split("\n")
+        .forEach((row) => {
+          const [x, y] = row.split(",").map(Number);
+          X_train.push(x);
+          Y_train.push(y);
+        });
+
+      /**
+       * CONFIG
+       */
+      const CONFIG = {
+        popSize: 500,
+        maxDepth: 5,
+        maxEvolveDepth: 8,
+        mutationRate: 0.25,
+        penaltyCoef: 0.001,
+        tournamentSize: 5,
+        integerMode: false,
+        showTrails: false,
+      };
+
+      /**
+       * SYMBOLIC ENGINE
+       */
+      const OPS = {
+        "+": (a, b) => a + b,
+        "-": (a, b) => a - b,
+        "*": (a, b) => a * b,
+        "/": (a, b) => (Math.abs(b) < 1e-4 ? 1 : a / b),
+        sin: (a) => Math.sin(a),
+        cos: (a) => Math.cos(a),
+        exp: (a) => Math.exp(Math.min(a, 15)),
+        log: (a) => Math.log(Math.abs(a) + 1e-6),
+        sqrt: (a) => Math.sqrt(Math.abs(a)),
+        abs: (a) => Math.abs(a),
+      };
+
+      const ARITY = {
+        "+": 2,
+        "-": 2,
+        "*": 2,
+        "/": 2,
+        sin: 1,
+        cos: 1,
+        exp: 1,
+        log: 1,
+        sqrt: 1,
+        abs: 1,
+      };
+
+      const OP_KEYS = Object.keys(OPS);
+
+      class Node {
+        constructor(type, value, left = null, right = null) {
+          this.type = type;
+          this.value = value;
+          this.left = left;
+          this.right = right;
+        }
+
+        eval(x) {
+          if (this.type === "const") return this.value;
+          if (this.type === "special") return this.value;
+          if (this.type === "var") return x;
+          const v1 = this.left ? this.left.eval(x) : 0;
+          const v2 = this.right ? this.right.eval(x) : 0;
+          return OPS[this.value](v1, v2);
+        }
+
+        clone() {
+          return new Node(
+            this.type,
+            this.value,
+            this.left?.clone(),
+            this.right?.clone(),
+          );
+        }
+
+        size() {
+          return 1 + (this.left?.size() || 0) + (this.right?.size() || 0);
+        }
+
+        depth() {
+          return (
+            1 + Math.max(this.left?.depth() || 0, this.right?.depth() || 0)
+          );
+        }
+
+        toString() {
+          if (this.type === "special") {
+            if (Math.abs(this.value - Math.PI) < 1e-5) return "π";
+            if (Math.abs(this.value - Math.E) < 1e-5) return "e";
+          }
+          if (this.type === "const") {
+            return CONFIG.integerMode
+              ? Math.round(this.value)
+              : parseFloat(this.value.toFixed(3));
+          }
+          if (this.type === "var") return "P";
+          if (ARITY[this.value] === 1)
+            return `${this.value}(${this.left.toString()})`;
+          return `(${this.left.toString()} ${this.value} ${this.right.toString()})`;
+        }
+      }
+
+      function generateConst() {
+        if (CONFIG.integerMode) {
+          const r = Math.random();
+          if (r < 0.05) return new Node("special", Math.PI);
+          if (r < 0.1) return new Node("special", Math.E);
+          const val = Math.floor(Math.random() * 21) - 10;
+          return new Node("const", val);
+        } else {
+          return new Node("const", Math.random() * 6 - 3);
+        }
+      }
+
+      function generateTree(depth, maxDepth) {
+        if (depth >= maxDepth || (depth > 1 && Math.random() < 0.4)) {
+          return Math.random() < 0.6 ? new Node("var", "P") : generateConst();
+        }
+        const op = OP_KEYS[Math.floor(Math.random() * OP_KEYS.length)];
+        const node = new Node("op", op);
+        node.left = generateTree(depth + 1, maxDepth);
+        if (ARITY[op] === 2) node.right = generateTree(depth + 1, maxDepth);
+        return node;
+      }
+
+      function getSubtrees(node, list = []) {
+        list.push(node);
+        if (node.left) getSubtrees(node.left, list);
+        if (node.right) getSubtrees(node.right, list);
+        return list;
+      }
+
+      function mutate(tree) {
+        const t = tree.clone();
+        const rand = Math.random();
+        if (rand < 0.15) {
+          replaceRandomNode(t, generateTree(0, 3));
+        } else if (rand < 0.6) {
+          jitterConstants(t);
+        } else {
+          swapOp(t);
+        }
+        return t;
+      }
+
+      function jitterConstants(node) {
+        if (node.type === "const") {
+          if (CONFIG.integerMode) {
+            node.value += Math.random() < 0.5 ? 1 : -1;
+          } else {
+            node.value += (Math.random() - 0.5) * 0.5;
+          }
+        }
+        if (node.left) jitterConstants(node.left);
+        if (node.right) jitterConstants(node.right);
+      }
+
+      function swapOp(node) {
+        const list = getSubtrees(node).filter((n) => n.type === "op");
+        if (list.length === 0) return;
+        const target = list[Math.floor(Math.random() * list.length)];
+        const compatible = OP_KEYS.filter(
+          (k) => ARITY[k] === ARITY[target.value],
+        );
+        target.value =
+          compatible[Math.floor(Math.random() * compatible.length)];
+      }
+
+      function replaceRandomNode(root, newPart) {
+        if (!root.left && !root.right) return newPart;
+        let curr = root;
+        let parent = null;
+        let isLeft = false;
+
+        while (curr.left || curr.right) {
+          parent = curr;
+          if (curr.right && Math.random() < 0.5) {
+            curr = curr.right;
+            isLeft = false;
+          } else if (curr.left) {
+            curr = curr.left;
+            isLeft = true;
+          } else {
+            break;
+          }
+          if (Math.random() < 0.3) break;
+        }
+
+        if (parent) {
+          if (isLeft) parent.left = newPart;
+          else parent.right = newPart;
+        }
+      }
+
+      function crossover(p1, p2) {
+        const c1 = p1.clone();
+        const list2 = getSubtrees(p2);
+        const sub2 = list2[Math.floor(Math.random() * list2.length)].clone();
+        replaceRandomNode(c1, sub2);
+        return c1.depth() > CONFIG.maxEvolveDepth ? p1 : c1;
+      }
+
+      /**
+       * EVALUATION
+       */
+      function evaluate(tree) {
+        const preds = X_train.map((x) => tree.eval(x));
+        if (preds.some((v) => !isFinite(v)))
+          return { score: Infinity, mse: Infinity };
+
+        let slope = 1;
+        let intercept = 0;
+
+        if (!CONFIG.integerMode) {
+          let sumX = 0,
+            sumY = 0,
+            sumXY = 0,
+            sumXX = 0;
+          const n = preds.length;
+          for (let i = 0; i < n; i++) {
+            sumX += preds[i];
+            sumY += Y_train[i];
+            sumXY += preds[i] * Y_train[i];
+            sumXX += preds[i] * preds[i];
+          }
+          const denominator = n * sumXX - sumX * sumX;
+          if (Math.abs(denominator) > 1e-9) {
+            slope = (n * sumXY - sumX * sumY) / denominator;
+            intercept = (sumY - slope * sumX) / n;
+          }
+        }
+
+        let mse = 0;
+        for (let i = 0; i < preds.length; i++) {
+          const finalPred = slope * preds[i] + intercept;
+          const diff = Y_train[i] - finalPred;
+          mse += diff * diff;
+        }
+        mse /= preds.length;
+
+        const score = mse + tree.size() * CONFIG.penaltyCoef;
+        return { score, mse, slope, intercept, tree };
+      }
+
+      // --- STATE ---
+      let population = [];
+      let generation = 0;
+      let isRunning = false;
+      let animationId;
+      let bestSolution = null;
+
+      function updateSettings() {
+        CONFIG.penaltyCoef = parseFloat(
+          document.getElementById("penaltySlider").value,
+        );
+        CONFIG.mutationRate = parseFloat(
+          document.getElementById("mutSlider").value,
+        );
+        CONFIG.integerMode = document.getElementById("chkIntMode").checked;
+        CONFIG.showTrails = document.getElementById("chkTrails").checked;
+
+        document.getElementById("penaltyVal").textContent =
+          CONFIG.penaltyCoef.toFixed(6);
+        document.getElementById("mutVal").textContent =
+          CONFIG.mutationRate.toFixed(2);
+      }
+
+      function initPopulation() {
+        population = [];
+        for (let i = 0; i < CONFIG.popSize; i++) {
+          population.push(generateTree(0, CONFIG.maxDepth));
+        }
+        generation = 0;
+      }
+
+      function runGeneration() {
+        if (!isRunning) return;
+
+        const results = population.map(evaluate);
+        results.sort((a, b) => a.score - b.score);
+        bestSolution = results[0];
+
+        document.getElementById("genDisplay").innerText = generation;
+        document.getElementById("mseDisplay").innerText =
+          bestSolution.mse.toFixed(8);
+
+        let eqString = bestSolution.tree.toString();
+        if (!CONFIG.integerMode) {
+          eqString = `${bestSolution.slope.toFixed(4)} × [ ${eqString} ] + ${bestSolution.intercept.toFixed(4)}`;
+        }
+        document.getElementById("eqDisplay").innerHTML = eqString;
+
+        updatePlot(results);
+
+        const newPop = [];
+        for (let i = 0; i < 5; i++) newPop.push(results[i].tree.clone());
+
+        while (newPop.length < CONFIG.popSize) {
+          const tournament = () => {
+            let best = results[Math.floor(Math.random() * results.length)];
+            for (let k = 0; k < 4; k++) {
+              let cand = results[Math.floor(Math.random() * results.length)];
+              if (cand.score < best.score) best = cand;
+            }
+            return best.tree;
+          };
+
+          if (Math.random() < CONFIG.mutationRate) {
+            newPop.push(mutate(tournament()));
+          } else {
+            newPop.push(crossover(tournament(), tournament()));
+          }
+        }
+
+        population = newPop;
+        generation++;
+        animationId = requestAnimationFrame(runGeneration);
+      }
+
+      function toggleSimulation() {
+        const btn = document.getElementById("btnStart");
+        if (isRunning) {
+          isRunning = false;
+          cancelAnimationFrame(animationId);
+          btn.innerText = "Resume / Continue";
+        } else {
+          if (population.length === 0) initPopulation();
+          isRunning = true;
+          btn.innerText = "Stop";
+          runGeneration();
+        }
+      }
+
+      function restartSimulation() {
+        isRunning = false;
+        cancelAnimationFrame(animationId);
+        updateSettings();
+        initPopulation();
+        toggleSimulation();
+      }
+
+      function copyEquation() {
+        if (!bestSolution) return;
+        let txt = bestSolution.tree.toString();
+        if (!CONFIG.integerMode) {
+          txt = `${bestSolution.slope.toFixed(6)} * [ ${txt} ] + ${bestSolution.intercept.toFixed(6)}`;
+        }
+        navigator.clipboard.writeText(txt).then(() => {
+          const toast = document.getElementById("toast");
+          toast.classList.add("visible");
+          setTimeout(() => toast.classList.remove("visible"), 2000);
+        });
+      }
+
+      // --- PLOTTING ---
+      const layout = {
+        font: { family: "-apple-system, sans-serif" },
+        margin: { l: 50, r: 20, t: 20, b: 50 },
+        autosize: true,
+        showlegend: false,
+        xaxis: {
+          title: "P (Input)",
+          range: [0, 0.55],
+          fixedrange: true,
+          zeroline: true,
+          zerolinecolor: "#333",
+          zerolinewidth: 1,
+          gridcolor: "#f0f0f0",
+          linecolor: "#ccc",
+          dtick: 0.1,
+        },
+        yaxis: {
+          title: "A (Observed)",
+          range: [0, 0.55],
+          fixedrange: true,
+          zeroline: true,
+          zerolinecolor: "#333",
+          zerolinewidth: 1,
+          gridcolor: "#f0f0f0",
+          linecolor: "#ccc",
+          scaleanchor: "x",
+          scaleratio: 1,
+          dtick: 0.1,
+        },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+      };
+
+      const plotConfig = {
+        responsive: true,
+        displayModeBar: false,
+        staticPlot: false,
+      };
+
+      function initPlot() {
+        Plotly.newPlot(
+          "plot",
+          [
+            {
+              x: X_train,
+              y: Y_train,
+              mode: "markers",
+              marker: { color: "#222", size: 6 },
+              type: "scatter",
+            },
+          ],
+          layout,
+          plotConfig,
+        );
+      }
+
+      function updatePlot(results) {
+        if (!bestSolution) return;
+
+        const xRange = [];
+        for (let x = 0; x <= 0.55; x += 0.005) xRange.push(x);
+
+        const traces = [];
+
+        // Data points
+        traces.push({
+          x: X_train,
+          y: Y_train,
+          mode: "markers",
+          marker: { color: "#000", size: 6, opacity: 0.8 },
+          name: "Data",
+        });
+
+        // Population trials
+        if (CONFIG.showTrails) {
+          const allX = [];
+          const allY = [];
+          const step = 5;
+
+          for (let i = 1; i < results.length; i += step) {
+            const sol = results[i];
+            for (let k = 0; k < xRange.length; k++) {
+              const val = sol.tree.eval(xRange[k]);
+              const yVal = sol.slope * val + sol.intercept;
+              if (isFinite(yVal) && yVal >= -0.5 && yVal <= 1.0) {
+                allX.push(xRange[k]);
+                allY.push(yVal);
+              } else {
+                allX.push(xRange[k]);
+                allY.push(null);
+              }
+            }
+            allX.push(null);
+            allY.push(null);
+          }
+
+          traces.push({
+            x: allX,
+            y: allY,
+            mode: "lines",
+            line: { color: "#999", width: 1 },
+            opacity: 0.15,
+            hoverinfo: "skip",
+            type: "scatter",
+          });
+        }
+
+        // Best fit
+        const best = results[0];
+        const yBest = xRange.map((x) => {
+          const raw = best.tree.eval(x);
+          return best.slope * raw + best.intercept;
+        });
+
+        traces.push({
+          x: xRange,
+          y: yBest,
+          mode: "lines",
+          line: { color: "#c0392b", width: 3 },
+          name: "Best Fit",
+        });
+
+        Plotly.react("plot", traces, layout, plotConfig);
+      }
+
+      // Initialize
+      updateSettings();
+      initPlot();
+
+      window.onresize = function () {
+        Plotly.Plots.resize(document.getElementById("plot"));
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[makeroom]{cancel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{calc,arrows,arrows.meta,shapes.misc,positioning,patterns}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{changepage}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible
+}
+
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{8pt plus 2fil}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\allowdisplaybreaks
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+
+% Thesis-compatible macros (from Thesis.tex)
+\newcommand{\pgf}{probability generating function}
+\newcommand{\intinf}{\displaystyle\int_0^{\infty}}
+\newcommand{\pr}[1]{{\text{Pr}\left\{#1\right\}}}
+\newcommand{\mean}[1]{{\rm I}\!{\rm E}(#1)}
+\newcommand{\rr}{{\bf R}}
+\newcommand{\xx}{{\bf X}}
+\newcommand{\xt}{{\xx_t}}
+\newcommand{\yy}{{\bf Y}}
+\newcommand{\yt}{{\yy_t}}
+\newcommand{\ww}{{\bf W}}
+\newcommand{\wt}{{\ww_t}}
+\newcommand{\xs}{{\xx_s}}
+\newcommand{\vv}{{\bf V}}
+\newcommand{\vt}{{\vv_t}}
+\newcommand{\dd}{{\rm d}}
+\newcommand{\dt}{{\rm d}t}
+\newcommand{\ee}{{\rm e}}
+\newcommand{\ddt}[1]{\displaystyle\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\displaystyle\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\displaystyle\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+\newcommand{\dds}[1]{\displaystyle\frac{\dd #1}{\dd s}}
+\newcommand{\ex}[1]{\mathbb{E}\left(#1\right)}
+\newcommand{\de}{differential equation}
+\newcommand{\rv}{random variable}
+\newcommand{\delt}{\Delta t}
+\newcommand{\ft}{\textit{F.~tularensis}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+\newcommand{\Vt}{_{\text{total}} V}
+\newcommand{\Ic}{ I_{\text{const}}}
+\newcommand{\lb}{\left(}
+\newcommand{\rb}{\right)}
+\newcommand{\lrb}[1]{\lb#1\rb}
+\newcommand{\lbs}{\left[}
+\newcommand{\rbs}{\right]}
+\newcommand{\lrbs}[1]{\lbs#1\rbs}
+\newcommand{\xdt}{{\xx_{t+\delt}}}
+\newcommand{\zz}{{\bf Z}}
+\newcommand{\ydt}{{\yy_{t+\delt}}}
+\newcommand{\lbc}{\left\{ }
+\newcommand{\rbc}{\right\} }
+\newcommand{\lrbc}[1]{\lbc#1\rbc}
+\newcommand{\lrbq}[1]{\hspace{-2pt}\lb#1\rb}
+\newcommand{\Id}{{I_{\text{death}}}}
+\newcommand{\pdx}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+\newcommand{\pdxn}[3]{\displaystyle\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+\newcommand{\eec}{{\ee^{\lambda(a-b)t}}}
+\newcommand{\Eqref}[1]{Eq.~\eqref{#1}}
+\newcommand{\Figref}[1]{Figure~\ref{#1}}
+\newcommand{\Tabref}[1]{Table~\ref{#1}}
+\newcommand{\Chapref}[1]{Chapter~\ref{#1}}
+\newcommand{\Secref}[1]{Section~\ref{#1}}
+
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={Variability in evolution},
+  pdfauthor={Adam Aldridge}
+}
+
+\title{Variability in evolution}
+\author{Adam Aldridge}
+\date{Extracted from AA Thesis (Chapter~7)\\University of Leeds, November 2024}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.5em}
+
+\tableofcontents
+\clearpage
+
+\input{sections/01_opening.tex}
+\input{sections/02_push_of_the_past_and_pull_of_the_present.tex}
+\input{sections/03_logistic_speciation.tex}
+\input{sections/04_model_specification_and_results_no_death_case_analytic_solou.tex}
+\input{sections/05_pimental.tex}
+\input{sections/06_allegorical_model_of_rise_run_ruin_rejuvenation.tex}
+\input{sections/07_bardo_thodol.tex}
+\input{sections/08_birth_plague_model.tex}
+\input{sections/09_density_dependent_vitallity_birth_plague_model.tex}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

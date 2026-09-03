@@ -1,0 +1,45 @@
+\section{Introduction}
+\label{a:sec:intro}
+
+For the binary Galton--Watson process with division probability
+$p\in[0,\tfrac12)$, the survival probability satisfies
+$S_n\sim A(p)(2p)^n$, so the limiting mean population size conditional on
+non-extinction is $1/A(p)$. \ChM{} introduced this constant, derived the
+conditional mean and variance it controls, and recorded its continuous-time
+counterpart $\Ac(p)=(1-2p)/(1-p)$, which is elementary. The discrete constant is
+not elementary, and this chapter is devoted to everything that can nevertheless be
+said about it exactly.
+
+The results of this chapter are original to this thesis. They comprise an exact
+infinite-product representation of $A(p)$ (\cref{a:sec:product}); an exact series
+with two-sided bounds that pin $A(p)$ between $\tfrac12\Ac(p)$ and
+$2\varepsilon/(1+2\varepsilon)$ (\cref{a:sec:bounds}); a rigorous near-critical
+asymptotic with remainder, $A(p)=2\varepsilon\lrb{1+O(\varepsilon\ln(1/\varepsilon))}$
+for $\varepsilon=1-2p$ (\cref{a:sec:asymptotic}); the resolution of the
+discrepancy between the discrete and continuous constants
+(\cref{a:sec:compare}); an account of symbolic-regression searches for an
+elementary formula, and of why they failed (\cref{a:sec:GA}); the identification
+of $A(p)$ with twice the Koenigs linearising function of the logistic map at
+$w=\tfrac12$ and multiplier $r=2p$ (\cref{a:sec:koenigs}); and the dynamical
+obstruction that explains the failure of the searches
+(\cref{a:sec:ht,a:sec:scope}). Drawing on the classification of differentially
+algebraic Schr\"oder functions due to Becker and Bergweiler
+\cite{Becker1995}, \cref{a:sec:ht} proves that for every $r\in(0,1)$ the Koenigs
+function $\psi_r$ is hypertranscendental in its own variable --- with no
+exceptional parameters at all in the attracting window, since differentially
+algebraic Schr\"oder functions exist only over repelling fixed points. The
+classical elementary cases $r=2$ and $r=4$, both repelling and both outside the
+branching range, are derived in \cref{a:app:integrable} and located inside the
+classification.
+
+The scope of the obstruction is stated with care in \cref{a:sec:scope}, because
+it is easy to overstate. The theorem constrains the conjugacy as a function of its
+dynamical variable $z$, and licenses no conclusion about individual values
+$A(p_0)$ --- transcendence, and even irrationality, remain open --- nor about the
+map $p\mapsto A(p)$, whose elementarity and differential algebraicity in $p$ are
+likewise open. High-precision integer-relation searches at eleven rational
+parameters, described in \cref{a:sec:scope}, supply the numerical evidence for the
+conjecture that no closed form exists under any reading; they are finite evidence,
+and are presented as such. \Cref{a:sec:practical} closes with the hybrid
+product/asymptotic scheme used to evaluate $A(p)$ and $1/A(p)$ throughout the rest
+of this thesis.

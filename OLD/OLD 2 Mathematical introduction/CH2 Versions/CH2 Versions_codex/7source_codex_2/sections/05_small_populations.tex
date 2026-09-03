@@ -1,0 +1,170 @@
+\section{Founding populations and catastrophe}
+\label{sec:small}
+
+Criticality controls long-time behaviour, but a small population experiences most
+of its immediate extinction risk before that asymptotic distinction is visible.
+At \(p=\tfrac12\), for example, the extinction probabilities in the first four
+generations are
+\begin{equation}
+  u_1=0.500,
+  \qquad u_2=0.625,
+  \qquad u_3=0.695,
+  \qquad u_4=0.742
+  \quad\text{(three significant figures)}.
+  \label{eq:early-extinction-values}
+\end{equation}
+Survival to generation two has probability \(1-u_2=0.375\): the founder must
+divide, and at least one of its two daughters must then divide.  Small movements
+of \(p\) around one half have little time to accumulate over these first updates,
+so early extinction remains substantial on both sides of the critical point.
+
+\subsection{A cohort of \texorpdfstring{\(k\)}{k} founders}
+\label{sec:cohort}
+
+Suppose \(Z_0=k\).  The descendants of the \(k\) founders form independent
+lineages.  If \(u_n\) is the extinction probability by generation \(n\) from one
+founder, all \(k\) lineages are extinct with probability \(u_n^k\), and therefore
+\begin{equation}
+  S_n^{(k)}=\Prb(Z_n>0\mid Z_0=k)=1-u_n^k.
+  \label{eq:Snk}
+\end{equation}
+This formula separates the effect of founding count from the dynamics of one
+lineage.  Taking the long-time limit gives
+\begin{equation}
+  S_\infty^{(k)}=
+  \begin{cases}
+    0,&0\leq p\leq\tfrac12,\\[3pt]
+    \displaystyle
+    1-\left(\frac{1-p}{p}\right)^k,
+    &\tfrac12<p\leq1.
+  \end{cases}
+  \label{eq:cohort-ultimate-survival}
+\end{equation}
+A larger cohort cannot prevent eventual extinction at or below criticality.  In
+the supercritical range it instead supplies repeated independent opportunities
+for one lineage to establish.
+
+The finite-time effect is also explicit.  For fixed \(k\), expansion of
+\(1-(1-S_n)^k\) at small \(S_n\) gives
+\begin{equation}
+  S_n^{(k)}\sim
+  \begin{cases}
+    kA(p)(2p)^n,&p<\tfrac12,\\[3pt]
+    2k/n,&p=\tfrac12.
+  \end{cases}
+  \label{eq:cohort-late-asymptotics}
+\end{equation}
+The cohort multiplies the late survival probability by \(k\), to leading order,
+but it does not change the subcritical Yaglom scale.  Indeed,
+\begin{equation}
+  \E[Z_n\mid Z_n>0,Z_0=k]
+  =\frac{k(2p)^n}{S_n^{(k)}}
+  \longrightarrow\frac1{A(p)}.
+  \label{eq:cohort-yaglom-mean}
+\end{equation}
+At late times, conditioning selects a surviving lineage; the number of failed
+founders no longer affects the conditional population size.
+
+Conditioning on survival can also bias the history that is reconstructed from
+successful populations.  Budd and Mann's analysis of phylogenetic clades shows
+that clades retained because they survive to the present are enriched for high
+early origination rates even under homogeneous birth--death dynamics
+\cite{Budd2018}.  This ``push of the past'' is related to
+\eqref{eq:cohort-yaglom-mean}: selection acts on realised trajectories, so an
+apparently exceptional early expansion need not imply a change in the underlying
+per-capita rates.  The parallel is a modelling warning rather than an assertion
+that phylogenetic and within-compartment mechanisms are the same.
+
+\subsection{A discrete catastrophe mechanism}
+\label{sec:bdc}
+
+The later compartment models add a second absorbing outcome: rupture or
+catastrophe.  A minimal discrete construction is useful because it distinguishes
+three quantities that are otherwise easily conflated: the hazard of catastrophe
+at the next update, the probability of catastrophe at an exact update, and the
+probability of remaining both unruptured and non-extinct.
+
+Let each individual present at the beginning of a generation trigger catastrophe
+independently with probability \(\kappa\in[0,1]\), and put
+\(c=1-\kappa\).  Conditional on a population of size \(z\), the probability that
+no individual triggers catastrophe is \(c^z\).  If catastrophe is avoided, each
+individual then follows the binary offspring law \eqref{eq:pgfbinary}; catastrophe
+terminates the process.
+
+First take pure division, \(p=1\).  Conditional on reaching update \(j\), the
+population has size \(2^j\), so the catastrophe hazard is
+\begin{equation}
+  h_j=1-c^{2^j}.
+  \label{eq:pure-cat-hazard}
+\end{equation}
+Avoiding catastrophe for \(n\) complete updates requires every individual in
+generations \(0,\ldots,n-1\) to avoid triggering it, and hence
+\begin{equation}
+  C_n=c^{\sum_{j=0}^{n-1}2^j}=c^{2^n-1}.
+  \label{eq:bdcS}
+\end{equation}
+The unconditional probability that catastrophe first occurs at update \(j\) is
+therefore
+\begin{equation}
+  \Prb(K=j)=C_jh_j
+  =c^{2^j-1}\bigl(1-c^{2^j}\bigr).
+  \label{eq:pure-cat-mass}
+\end{equation}
+The factor \(C_j\) is indispensable: \(h_j\) alone is a conditional hazard, not an
+exact-time probability.
+
+When death is restored, the census before an update is random.  The process can
+still be described exactly by a weighted PGF.  For an underlying binary branching
+tree starting from one individual, define
+\begin{equation}
+  F_n(s)=
+  \E\!\left[
+    s^{Z_n}c^{\sum_{j=0}^{n-1}Z_j}
+  \right],
+  \qquad F_0(s)=s.
+  \label{eq:cat-weighted-pgf}
+\end{equation}
+Conditioning on the founder's reproduction gives the closed recursion
+\begin{equation}
+  F_{n+1}(s)
+  =c\,\phi(F_n(s))
+  =c\bigl[1-p+pF_n(s)^2\bigr].
+  \label{eq:cat-weighted-recursion}
+\end{equation}
+Its evaluations have distinct meanings:
+\begin{align}
+  F_n(1)
+  &=\Prb(\text{no catastrophe in the first }n\text{ updates}),
+  \label{eq:cat-no-rupture}\\
+  F_n(1)-F_n(0)
+  &=\Prb(Z_n>0\ \text{and no catastrophe in the first }n\text{ updates}).
+  \label{eq:cat-alive-unruptured}
+\end{align}
+For \(p=1\), \eqref{eq:cat-weighted-recursion} reduces to
+\eqref{eq:bdcS}; for \(\kappa=0\), it reduces to the ordinary
+Galton--Watson iteration.
+
+A tempting approximation replaces the accumulated random census in
+\eqref{eq:cat-weighted-pgf} by its mean:
+\begin{equation}
+  F_n(1)\approx
+  c^{\sum_{j=0}^{n-1}\E[Z_j]}
+  =c^{\sum_{j=0}^{n-1}(2p)^j}.
+  \label{eq:bdcguess}
+\end{equation}
+For \(0<c\leq1\), the map \(x\mapsto c^x\) is convex, so Jensen's inequality
+shows that the right-hand side is a lower bound for
+\emph{non-catastrophe alone}.  It is not a lower bound for
+\eqref{eq:cat-alive-unruptured}, because extinction then contributes to
+\(F_n(1)\) but not to survival.  The exact recursion
+\eqref{eq:cat-weighted-recursion} is cheap enough that the approximation is not
+needed here; its value is to show why a mean census cannot generally be inserted
+into a path-dependent catastrophe law without specifying the event being bounded.
+
+Whether a process conditioned jointly on non-extinction and non-catastrophe has a
+quasi-stationary limit is a separate spectral question.  No such limit follows
+from the Galton--Watson result alone, because the factor \(c^{Z_j}\) reweights the
+population paths.  Later catastrophe models define their absorbing states and
+conditioning events explicitly before making that inference.
+
+\FloatBarrier

@@ -1,0 +1,63 @@
+\section{Introduction}
+\label{a:sec:intro}
+
+For the binary Galton--Watson process with division probability $p\in[0,\tfrac12)$
+the survival probability decays geometrically, $S_n\sim A(p)(2p)^n$, and the mean
+population conditional on non-extinction converges to $1/A(p)$. That much was
+established in \ChM. Everything the limiting conditional law does --- its mean, its
+variance, its dependence on how close the process sits to criticality --- passes
+through the single constant
+\begin{equation}
+\label{a:eq:Apdef}
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n},
+\qquad p\in[0,\tfrac12) .
+\end{equation}
+This chapter is about that constant: what it is, how to compute it, why no
+elementary formula for it has been found despite a determined search, and exactly
+what can and cannot be proved about the failure of that search. The results are
+original to this thesis except where attributed.
+
+Approximate values are easy enough to obtain. Iterate
+$S_{n+1}=2pS_n-pS_n^2$ until $S_n$ is very nearly stationary, then form
+$S_n/(2p)^n$. Repeating over a range of $p$ traces the curve of
+\cref{a:fig:dtct}, and this works well over most of the interval. It fails as
+$p\to\tfrac12^-$, because the number of generations needed for $S_n$ to reach
+near-stationarity grows without bound --- from around $10^2$ at $p=0.2$ to nearly
+$5\times10^5$ at $p=0.4999$.
+
+The argument descends from the concrete to the structural, and each stage
+constrains the one after it. After a short recapitulation of the setup inherited
+from \ChM{} (\cref{a:sec:setup}), two exact representations come first. Rewriting
+the survival recursion as a telescoping product (\cref{a:sec:product}) proves that
+the limit \cref{a:eq:Apdef} exists and is strictly positive; converting that
+product into a series (\cref{a:sec:series}) isolates the geometric decay in a
+factor carrying no dynamics at all, so that two-sided bounds can be read off by
+inspection. Those bounds trap $A(p)$ between half the continuous-time constant
+$\Ac(p)$ and a companion upper bound, and a parity argument caps it at $\tfrac12$.
+The same series then yields the near-critical behaviour
+$A(p) = 2\varepsilon[1+O(\varepsilon\log(1/\varepsilon))]$, with
+$\varepsilon = 1-2p$ (\cref{a:sec:nearcritical}), locating the logarithm that makes
+convergence to the leading term slow, and with it the exact relationship between
+$A$ and $\Ac$ (\cref{a:sec:compare}).
+
+What none of that yields is a formula. \Cref{a:sec:GA} records the search for one
+and the manner of its failure, which turns out to be diagnostic rather than merely
+discouraging: what gave way was not the ingenuity of the search but the assumption
+that there was a formula to be found. The explanation is dynamical. Under the
+substitution $S_n = 2w_n$ the survival
+recursion becomes the logistic map, and $A(p)$ is twice a value of that map's
+Koenigs linearising function (\cref{a:sec:koenigs}); for every multiplier in the
+subcritical window that function is hypertranscendental (\cref{a:sec:ht}), so no
+elementary expression in its own variable can be evaluated to produce $A(p)$.
+\Cref{a:sec:scope} delimits what this does and does not settle and reports the
+inverse-symbolic evidence bearing on what it leaves open, and
+\cref{a:sec:practical,a:sec:conclusion} draw the practical and the residual
+conclusions.
+
+A word on why the scope section exists. There are at least four inequivalent things
+one might mean by ``$A(p)$ has no closed form'', and a theorem about one of them is
+not a theorem about another. What is proved here concerns the conjugacy as a
+function of its own dynamical variable. It does not decide the arithmetic nature of
+the individual numbers $A(p_0)$, nor whether the map $p\mapsto A(p)$ is elementary.
+Both remain open, and the chapter says so wherever the distinction could otherwise
+be blurred.

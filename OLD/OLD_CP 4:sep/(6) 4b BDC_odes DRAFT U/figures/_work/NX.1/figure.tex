@@ -1,0 +1,137 @@
+\documentclass[11pt,tikz,border=4pt]{standalone}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds}
+
+\input{../../../../style/tikz_style.tex}
+
+\newcommand{\Ifix}{I_{\mathrm{fix}}}
+\newcommand{\Kb}{\mathcal{K}}
+\newcommand{\Icell}{\mathcal{I}}
+\newcommand{\Vfree}{\mathcal{V}}
+
+\definecolor{roleblue}{HTML}{1F77B4}
+\definecolor{roleorange}{HTML}{FF7F0E}
+\definecolor{rolepurple}{HTML}{6B4C9A}
+\definecolor{failred}{HTML}{C0392B}
+
+\tikzset{
+  chapter card/.style={
+    draw=black!72,
+    line width=0.85pt,
+    rounded corners=3pt,
+    minimum width=50mm,
+    minimum height=58mm,
+    text width=44mm,
+    align=left,
+    inner sep=3mm,
+    font=\footnotesize
+  },
+  chapter head/.style={font=\small\bfseries,align=left},
+  object band/.style={
+    draw=black!28,
+    fill=white,
+    line width=0.55pt,
+    rounded corners=2pt,
+    text width=38mm,
+    minimum height=10mm,
+    align=center,
+    inner sep=1.7mm,
+    font=\footnotesize
+  },
+  handoff label/.style={
+    font=\scriptsize,
+    align=center,
+    fill=white,
+    inner sep=1.5pt
+  },
+  equation board/.style={
+    draw=black!65,
+    fill=black!2,
+    line width=0.75pt,
+    rounded corners=3pt,
+    minimum width=170mm,
+    minimum height=14mm,
+    text width=163mm,
+    align=center,
+    inner sep=2.2mm,
+    font=\small
+  }
+}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+
+\node[font=\bfseries\normalsize] at (8.75,7.25)
+  {One thesis pipeline: each chapter hands a proved object to the next};
+
+% Chapter 3 card.
+\node[chapter card,fill=roleblue!7,anchor=north west] (c3) at (0.15,6.65) {};
+\node[chapter head,anchor=north west,text=roleblue!72!black]
+  at ($(c3.north west)+(0.30,-0.28)$)
+  {Chapter 3\\closed single-cell theory};
+\node[object band,anchor=north] (c3a) at ($(c3.north)+(0,-1.55)$)
+  {fixation functions\\$I(t),\ D(t),\ \Ifix(t)$};
+\node[object band,below=2.2mm of c3a] (c3b)
+  {closed moments and release\\$J(t),\ K(t),\ V(t)$};
+\node[object band,below=2.2mm of c3b] (c3c)
+  {proved identities\\$I'(t)=-\delta J(t)$,\quad $V'(t)=\delta K(t)$};
+\node[font=\scriptsize,text=black!65,align=center,anchor=south]
+  at ($(c3.south)+(0,0.25)$) {closed formulae replace simulation-only inputs};
+
+% Chapter 4a card.
+\node[chapter card,fill=rolepurple!7,anchor=north] (c4a) at (8.75,6.65) {};
+\node[chapter head,anchor=north west,text=rolepurple!82!black]
+  at ($(c4a.north west)+(0.30,-0.28)$)
+  {Chapter 4a\\distributional laws and MOI};
+\node[object band,anchor=north] (c4aa) at ($(c4a.north)+(0,-1.55)$)
+  {joint event description\\burst time $\tau$ and burst size $\Kb$};
+\node[object band,below=2.2mm of c4aa] (c4ab)
+  {geometric burst law and QSD\\$\Pr\{\Kb=k\}=\dfrac{\delta}{\lambda}a^{-k}$};
+\node[object band,below=2.2mm of c4ab] (c4ac)
+  {multiple founders\\$I^k$, $K_k$, and $g_k(t)=\delta K_k(t)$};
+\node[font=\scriptsize,text=black!65,align=center,anchor=south]
+  at ($(c4a.south)+(0,0.25)$) {timing, size, and MOI are retained as laws};
+
+% Chapter 4b card.
+\node[chapter card,fill=roleorange!8,anchor=north east] (c4b) at (17.35,6.65) {};
+\node[chapter head,anchor=north west,text=roleorange!78!black]
+  at ($(c4b.north west)+(0.30,-0.28)$)
+  {Chapter 4b\\burst-aware population renewal};
+\node[object band,anchor=north] (c4ba) at ($(c4b.north)+(0,-1.55)$)
+  {mechanistic kernels\\$S(a)=\Ifix(a)$,\quad $g(a)=\delta K(a)$};
+\node[object band,below=2.2mm of c4ba] (c4bb)
+  {cohort sums\\$\Icell=\Icell_0S+i*S$\\$\Vfree'=\Icell_0g+i*g-c\Vfree$};
+\node[object band,below=2.2mm of c4bb] (c4bc)
+  {population feedback\\$i(t)=\gamma T\,\Vfree(t)$};
+\node[font=\scriptsize,text=black!65,align=center,anchor=south]
+  at ($(c4b.south)+(0,0.25)$) {cell-age structure enters incidence dynamics};
+
+% The two logical handoffs.
+\draw[-{Stealth[length=2.4mm,width=1.7mm]},line width=0.95pt]
+  (c3.east) -- (c4a.west)
+  node[midway,handoff label,above=4pt] {distributional lift}
+  node[midway,handoff label,below=4pt] {$J,K,V\ \longrightarrow\ (\tau,\Kb)$};
+
+\draw[-{Stealth[length=2.4mm,width=1.7mm]},line width=0.95pt]
+  (c4a.east) -- (c4b.west)
+  node[midway,handoff label,above=4pt] {kernel handoff}
+  node[midway,handoff label,below=4pt] {$\Ifix,\ K\ \longrightarrow\ S,\ g$};
+
+% Bottom synthesis board.
+\node[equation board,anchor=north] (board) at (8.75,-0.05) {
+  \textbf{Closed moments}
+  $\ \longrightarrow\ $
+  \textbf{laws of $(\tau,\Kb)$ and MOI}
+  $\ \longrightarrow\ $
+  \textbf{renewal kernels}
+  $\ \longrightarrow\ $
+  \textbf{population feedback}
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,inner=32mm,outer=27mm,top=28mm,bottom=30mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\urlstyle{same}
+
+\graphicspath{{figures/}}
+\captionsetup{font=small,labelfont=bf}
+\setlist{nosep,leftmargin=2em}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\numberwithin{equation}{section}
+\allowdisplaybreaks
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+\setlength{\emergencystretch}{1.5em}
+\raggedbottom
+
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\pgf}{probability generating function}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\crefname{equation}{equation}{equations}
+\crefname{figure}{figure}{figures}
+\crefname{table}{table}{tables}
+\crefname{proposition}{proposition}{propositions}
+\crefname{theorem}{theorem}{theorems}
+
+\definecolor{linkblue}{RGB}{22,67,115}
+\definecolor{citegreen}{RGB}{28,96,70}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  citecolor=citegreen,
+  urlcolor=linkblue,
+  pdftitle={Mathematical background: branching processes and generating-function methods},
+  pdfauthor={Adam Aldridge},
+  pdfsubject={Thesis chapter on branching processes, quasi-stationarity, and multivariate probability generating functions}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Mathematical background}
+\fancyhead[R]{\small Branching processes and PGF methods}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+
+\title{\textbf{Mathematical background}\\[0.35em]
+  \large Branching processes and generating-function methods}
+\author{Adam Aldridge}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{plain}
+\vspace{-1.5em}
+
+\begin{abstract}
+This chapter develops the generating-function methods used later to analyse small replicating populations and intracellular pathogen dynamics.  After a short common vocabulary of Markov chains, probability generating functions, branching criticality, and forward (master) equations, a binary Galton--Watson process provides an exact account of extinction, establishment from a finite cohort, critical survival and total progeny, and the subcritical limiting law conditioned on survival.  Its late-generation survival amplitude is identified with the classical Kolmogorov constant, represented both by a convergent product and by a Koenigs linearisation.  The discrete model is then compared with the continuous-time linear birth--death process, for which the corresponding conditional limit is explicit.  Finally, the same probabilistic structure is extended to bivariate absorption, death, and replication models.  Their forward equations lead to first-order partial differential equations for multivariate probability generating functions; independence and characteristics yield exact, normalised solutions and reliable coefficient formulae.
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+\input{sections/01_opening.tex}
+\input{sections/02_limiting_conditional_distribution.tex}
+\input{sections/03_survivability_of_small_populations.tex}
+\input{sections/04_method_of_characteristics.tex}
+
+\FloatBarrier
+\begingroup
+\small
+\bibliographystyle{plainurl}
+\bibliography{references}
+\thispagestyle{fancy}
+\endgroup
+
+\end{document}

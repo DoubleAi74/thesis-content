@@ -1,0 +1,427 @@
+\section{The discrete survival constant \texorpdfstring{\(A(p)\)}{A(p)}}
+\label{sec:Ap}
+
+For \(0<p<\tfrac12\), every late conditional moment in
+\cref{sec:qsd} depends on
+\[
+  A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n}.
+\]
+The recursion for \(S_n\) makes numerical evaluation straightforward away from
+criticality, but it does not produce an elementary formula.  This section first
+extracts what can be proved directly: existence, exact product and series
+representations, bounds and a sharp near-critical asymptotic.  Only then do we
+turn to the question of closed form and to practical evaluation.
+
+The endpoint \(p=0\) is excluded from the defining ratio, which would be \(0/0\)
+after the first generation.  We shall use \(A(0)=\tfrac12\) only for the continuous
+extension established below.  At the other endpoint \(A(\tfrac12)=0\) is likewise
+an extension from the subcritical interval.
+
+\subsection{Logistic iteration and an infinite product}
+\label{sec:product}
+
+Put
+\begin{equation}
+  m=2p,
+  \qquad
+  w_n=\frac{S_n}{2}.
+  \label{eq:logistic-change}
+\end{equation}
+Then \eqref{SnIter} becomes the logistic iteration
+\begin{equation}
+  w_{n+1}=f_m(w_n),
+  \qquad
+  f_m(w)=mw(1-w),
+  \qquad
+  w_0=\frac12,
+  \label{eq:logistic}
+\end{equation}
+in the parameter range \(0<m<1\).  The origin is attracting throughout this
+range; the period-doubling behaviour of the logistic family at larger \(m\) is not
+involved.
+
+Define \(x_n=w_n/m^n\).  From \eqref{eq:logistic},
+\begin{equation}
+  x_{n+1}=x_n(1-w_n),
+  \qquad
+  x_n=\frac12\prod_{k=0}^{n-1}(1-w_k).
+  \label{eq:xn-product}
+\end{equation}
+Since \(A(p)=2\lim_nx_n\), this gives the exact product
+\begin{equation}
+  A(p)=\prod_{k=0}^{\infty}(1-w_k)
+  =\frac12\prod_{k=1}^{\infty}
+  \left(1-\frac{S_k}{2}\right).
+  \label{eq:prodFormula}
+\end{equation}
+The convergence is not merely formal.  For \(0<w_n<1\),
+\(w_{n+1}<mw_n\), so \(w_n\leq m^n/2\) and
+\(\sum_nw_n<\infty\).  The infinite product therefore converges to a strictly
+positive value.  This proves existence of \(A(p)\) and the asymptotic
+\(S_n\sim A(p)m^n\).
+
+Equation \eqref{eq:xn-product} also corrects a possible computational
+misunderstanding.  The raw ratios are themselves the partial products:
+\begin{equation}
+  \frac{S_n}{m^n}=\prod_{k=0}^{n-1}
+  \left(1-\frac{S_k}{2}\right).
+  \label{eq:ratio-is-product}
+\end{equation}
+They decrease monotonically to \(A(p)\), and hence every finite ratio is already
+a rigorous upper bound.
+
+\subsection{An exact series and two-sided bounds}
+\label{sec:Abounds}
+
+The reciprocal constant has an additive representation that exposes the
+near-critical scale.  Let \(v_n=m^n/S_n\).  Using
+\(S_{n+1}=mS_n(1-S_n/2)\),
+\begin{align}
+  v_{n+1}-v_n
+  &=\frac{m^n}{S_n}
+    \left(\frac{1}{1-S_n/2}-1\right)
+    =\frac{m^n}{2-S_n}.
+  \label{eq:vn-increment}
+\end{align}
+Since \(v_0=1\) and \(v_n\to1/A(p)\), summation gives the following exact
+identity.
+
+\begin{proposition}[Series representation]
+For \(0<p<\tfrac12\),
+\begin{equation}
+  \frac{1}{A(p)}
+  =1+\sum_{n=0}^{\infty}\frac{(2p)^n}{2-S_n}.
+  \label{eq:Aseries}
+\end{equation}
+\end{proposition}
+
+The survival probability lies in \((0,1]\), so the denominator in every summand
+lies in \([1,2)\).  This simple observation gives bounds that remain informative
+at both ends of the subcritical interval.
+
+\begin{proposition}[Two-sided bounds]
+Let \(\varepsilon=1-2p\).  For \(0<p<\tfrac12\),
+\begin{equation}
+  \frac{\varepsilon}{1+\varepsilon}
+  <A(p)<
+  \frac{2\varepsilon}{1+2\varepsilon},
+  \label{eq:Abounds}
+\end{equation}
+or, in terms of \(p\),
+\begin{equation}
+  \frac{1-2p}{2(1-p)}
+  <A(p)<
+  \frac{2(1-2p)}{3-4p}.
+  \label{eq:Aboundsexplicit}
+\end{equation}
+In particular,
+\begin{equation}
+  \frac12A_{\mathrm c}(p)<A(p)<A_{\mathrm c}(p).
+  \label{eq:Ac-comparison-bound}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+For every \(n\),
+\[
+  \frac12m^n<\frac{m^n}{2-S_n}\leq m^n,
+\]
+with strictness somewhere on both sides.  Substitution into
+\eqref{eq:Aseries} and summation of the geometric series yield
+\[
+  1+\frac{1}{2\varepsilon}
+  <\frac1{A(p)}<
+  1+\frac1{\varepsilon}.
+\]
+Inverting proves \eqref{eq:Abounds}.  The first expression in
+\eqref{eq:Aboundsexplicit} is \(A_{\mathrm c}(p)/2\), while its upper bound is
+strictly below \(A_{\mathrm c}(p)=2\varepsilon/(1+\varepsilon)\).
+\end{proof}
+
+Binary reproduction supplies a second constraint.  For every \(n\geq1\), a
+surviving population has even size and is therefore at least two.  Hence
+\begin{equation}
+  \E[Z_n\mid Z_n>0]\geq2,
+  \qquad
+  A(p)\leq\frac12.
+  \label{eq:parity-bound}
+\end{equation}
+The inequality is strict for \(p>0\), but the lower bound in
+\eqref{eq:Aboundsexplicit} tends to \(1/2\) as \(p\downarrow0\).  It follows by
+squeezing that
+\begin{equation}
+  A(p)\longrightarrow\frac12
+  \qquad (p\downarrow0).
+  \label{eq:A-at-zero}
+\end{equation}
+This limit defines the endpoint value \(A(0)\).
+
+\subsection{The near-critical limit}
+\label{sec:asymptotic}
+
+The bounds determine the order of \(A(p)\) near criticality but leave a factor of
+two unresolved.  The exact series fixes that factor.  The argument is short, but
+the uniform comparison it uses is important: a pointwise approximation of
+\(S_n\) would not by itself justify summation over \(n\) of order
+\(1/\varepsilon\).
+
+\begin{theorem}[Near-critical survival amplitude]
+As \(p\uparrow\tfrac12\),
+\begin{equation}
+  A(p)\sim2(1-2p).
+  \label{eq:Aasym}
+\end{equation}
+Equivalently, the quasi-stationary mean satisfies
+\(
+  1/A(p)\sim[2(1-2p)]^{-1}.
+\)
+\end{theorem}
+
+\begin{proof}
+Write \(m=1-\varepsilon\), and make the dependence of the survival sequence on
+\(m\) explicit as \(S_n(m)\).  The map
+\(mS(1-S/2)\) is increasing in \(m\) and in \(S\in[0,1]\); induction therefore
+gives
+\begin{equation}
+  0\leq S_n(m)\leq S_n(1)
+  \qquad (0<m\leq1).
+  \label{eq:Sn-critical-domination}
+\end{equation}
+By \eqref{twoovrn_sn}, \(S_n(1)\to0\).  Given \(\eta>0\), choose \(N\) such
+that \(S_N(1)<\eta\).  Monotonicity in \(n\) and
+\eqref{eq:Sn-critical-domination} then imply
+\[
+  \frac12
+  \leq\frac{1}{2-S_n(m)}
+  \leq\frac{1}{2-\eta}
+  \qquad(n\geq N).
+\]
+Multiply \eqref{eq:Aseries} by \(\varepsilon\).  The initial \(1\) and the first
+\(N\) summands contribute \(o(1)\), whereas
+\(
+  \varepsilon\sum_{n=N}^{\infty}m^n=m^N\to1.
+\)
+Thus
+\[
+  \frac12
+  \leq\liminf_{\varepsilon\downarrow0}\frac{\varepsilon}{A(p)}
+  \leq\limsup_{\varepsilon\downarrow0}\frac{\varepsilon}{A(p)}
+  \leq\frac{1}{2-\eta}.
+\]
+Letting \(\eta\downarrow0\) gives
+\(
+  \varepsilon/A(p)\to1/2
+\), which is \eqref{eq:Aasym}.
+\end{proof}
+
+The continuum Riccati equation in \cref{sec:riccati} reaches the same leading
+scale by matching its exponential tail to the critical \(2/n\) decay.  It is a
+useful interpretation, but the preceding proof shows exactly why the matching is
+valid.  Numerically, \(A(p)/[2(1-2p)]\) approaches one slowly.  With
+\(\varepsilon=1-2p\), high-precision calculations fit the deficit as
+\begin{equation}
+  1-\frac{A(p)}{2\varepsilon}
+  \approx \varepsilon\bigl[\log(1/\varepsilon)+0.78\bigr].
+  \label{eq:A-empirical-remainder}
+\end{equation}
+This is an empirical rate observation, not a proved remainder estimate.
+
+\subsection{Discrete and continuous time}
+\label{sec:compare}
+
+The continuous-time constant from \eqref{eq:Acts} is
+\[
+  A_{\mathrm c}(p)=\frac{1-2p}{1-p}.
+\]
+At strong subcriticality, \eqref{eq:A-at-zero} gives
+\(A(p)\to1/2\), whereas \(A_{\mathrm c}(p)\to1\).  This factor of two is a
+state-space effect.  A late survivor in the discrete binary process must contain
+at least two individuals; in the continuous-time process it may be a single
+individual whose death clock has not yet fired.  Their limiting conditional means
+therefore approach two and one, respectively.
+
+Near criticality, by contrast,
+\[
+  A_{\mathrm c}(p)
+  =\frac{2\varepsilon}{1+\varepsilon}
+  \sim2\varepsilon
+  \sim A(p).
+\]
+Consequently
+\begin{equation}
+  \frac{A(p)}{A_{\mathrm c}(p)}\longrightarrow\frac12
+  \quad(p\downarrow0),
+  \qquad
+  \frac{A(p)}{A_{\mathrm c}(p)}\longrightarrow1
+  \quad(p\uparrow\tfrac12).
+  \label{eq:ratiolimits}
+\end{equation}
+Numerical values increase smoothly between these limits, but no monotonicity
+theorem is needed or claimed here.  The rigorous comparison throughout the
+interval is \eqref{eq:Ac-comparison-bound}.
+
+\subsection{Closed forms and the Koenigs function}
+\label{sec:koenigs}
+
+Several direct searches suggest simple approximations to \(A(p)\).  For example,
+a rational symbolic-regression fit obtained from high-precision values was
+\begin{equation}
+  \widehat A_1(p)=
+  \frac{\tfrac12(1-2p)(1+2p)}
+  {1+\tfrac12p-\tfrac52p^2-\tfrac65p^3+\tfrac65p^4}.
+  \label{eq:A1hat}
+\end{equation}
+It passes through the two endpoint values, yet
+\[
+  \frac{\widehat A_1(p)}{2(1-2p)}
+  \longrightarrow \frac{10}{11}
+  \qquad (p\uparrow\tfrac12),
+\]
+rather than the limit \(1\) required by \eqref{eq:Aasym}.  Broader tree-based
+searches over elementary functions produce many similarly convincing curves
+and the same failure of exact constraints.  Near criticality, an error that is
+visually negligible on a plot of \(A\) can be substantial after inversion, so
+curve fit alone cannot settle the closed-form question.
+
+The structural object behind \(A(p)\) is the linearising coordinate of the
+logistic map.  Let \(0<m<1\) and \(f_m(w)=mw(1-w)\).  Koenigs' theorem
+\cite{Koenigs1884} gives a unique analytic germ \(\psi_m\) at the attracting
+fixed point \(0\) such that
+\begin{equation}
+  \psi_m(f_m(w))=m\psi_m(w),
+  \qquad
+  \psi_m(0)=0,
+  \qquad
+  \psi_m'(0)=1.
+  \label{eq:schroder}
+\end{equation}
+Although this definition is local, the orbit of \(w_0=1/2\) eventually enters
+the local neighbourhood.  Equation \eqref{eq:schroder} therefore defines the
+required value at \(w_0\) by continuation backwards along that orbit; no claim of
+global univalence is required.
+
+\begin{proposition}[Koenigs representation]
+For \(0<p<\tfrac12\), with \(m=2p\),
+\begin{equation}
+  A(p)=2\psi_m\!\left(\frac12\right).
+  \label{eq:AeqKoenigs}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Let \(w_n=f_m^{\circ n}(1/2)\).  Iterating
+\eqref{eq:schroder} gives
+\[
+  \psi_m\!\left(\frac12\right)
+  =\frac{\psi_m(w_n)}{m^n}.
+\]
+As \(n\to\infty\), \(w_n\to0\) and the normalisation at the origin gives
+\(\psi_m(w_n)/w_n\to1\).  Hence
+\[
+  \psi_m\!\left(\frac12\right)
+  =\lim_{n\to\infty}\frac{w_n}{m^n}
+  =\frac{A(p)}{2}.
+\]
+\end{proof}
+
+This representation also locates the limit of elementary methods.  A theorem of
+Becker and Bergweiler classifies differentially algebraic solutions of Schr\"oder,
+B\"ottcher and Abel equations for rational maps.  In the Schr\"oder case, a
+differentially algebraic linearising function can occur only at a repelling fixed
+point and then belongs to a restricted family of monomial, Chebyshev or elliptic
+types \cite{Becker1995}.  The fixed point here is attracting, because
+\(0<m<1\).  Differential algebraicity is preserved under local functional
+inversion, so the choice of conjugacy convention does not change the conclusion:
+\(w\mapsto\psi_m(w)\) is hypertranscendental, and in particular non-elementary,
+for every fixed parameter in the branching range.
+
+The familiar solvable logistic parameters lie outside that range.  At \(m=2\),
+the change \(u=1-2w\) converts the iteration into \(u\mapsto u^2\), giving
+\begin{equation}
+  \psi_2(w)=-\frac12\log(1-2w).
+  \label{eq:psi2}
+\end{equation}
+At \(m=4\), writing \(w=\sin^2\theta\) turns the update into angle doubling and
+gives
+\begin{equation}
+  \psi_4(w)=\bigl(\arcsin\sqrt w\bigr)^2.
+  \label{eq:psi4}
+\end{equation}
+Both concern a repelling origin and serve only as contrasts with \(0<m<1\).
+
+The affine coordinate \(z=m/2-mw\) conjugates the logistic family to
+\begin{equation}
+  z\longmapsto z^2+c,
+  \qquad
+  c=\frac{2m-m^2}{4}.
+  \label{eq:cofr}
+\end{equation}
+Hence the branching interval \(m\in(0,1)\) maps to
+\(c\in(0,1/4)\), the real centre-to-cusp radius of the main cardioid of the
+Mandelbrot set \cite{Milnor2006}.  The parameter map gives useful dynamical
+context, but it does not strengthen the closed-form conclusion.
+
+One logical boundary is essential.  Hypertranscendence has been established for
+the function \(w\mapsto\psi_m(w)\) with \(m\) fixed.  It does not prove that the
+parameter function
+\(p\mapsto2\psi_{2p}(1/2)=A(p)\) has no elementary expression.  The supported
+conclusion is narrower: no such expression is known; fixed-parameter
+linearisation is non-elementary; and numerical searches are consistent with,
+but cannot prove, the absence of a simple parameter formula.
+
+\subsection{Certified numerical evaluation}
+\label{sec:practical}
+
+The identity \eqref{eq:ratio-is-product} gives a stable calculation and a simple
+error certificate.  Let
+\[
+  R_n=\frac{S_n}{m^n}
+  =\prod_{k=0}^{n-1}\left(1-\frac{S_k}{2}\right).
+\]
+Because \(S_{k+1}<mS_k\),
+\(
+  \sum_{k=n}^{\infty}S_k/2\leq S_n/[2(1-m)].
+\)
+The elementary product inequality
+\(\prod_k(1-a_k)\geq1-\sum_ka_k\) then gives, whenever the lower endpoint is
+positive,
+\begin{equation}
+  R_n\left(1-\frac{S_n}{2(1-m)}\right)
+  \leq A(p)\leq R_n.
+  \label{eq:A-certified-interval}
+\end{equation}
+Thus iteration may stop when the width of this interval meets the required
+tolerance.  Accumulating logarithms of the factors avoids underflow.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Representative values obtained from the monotone ratios and the
+  certificate \eqref{eq:A-certified-interval}.  The increasing cost near
+  \(p=1/2\) reflects the critical slowdown; the displayed iteration counts use a
+  tail target of approximately \(10^{-45}\), not a claim of sixty-digit accuracy.}
+  \label{tab:Avals}
+  \begin{tabular}{@{}rrrr@{}}
+    \toprule
+    \(p\) & \(A(p)\) & \(1/A(p)\) & iterations \\
+    \midrule
+    0.05   & 0.486180336821 & 2.05684994695 & 45 \\
+    0.20   & 0.423894537870 & 2.35907734274 & 112 \\
+    0.30   & 0.353967177237 & 2.82512070132 & 202 \\
+    0.40   & 0.237646658970 & 4.20792787214 & 463 \\
+    0.45   & 0.145068746263 & 6.89328353462 & 981 \\
+    0.49   & 0.036394897530 & 27.4763790497 & 5\,125 \\
+    0.499  & 0.003944476201 & 253.519085680 & 51\,750 \\
+    0.4999 & 0.000399257804 & 2504.64734704 & 518\,021 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+For exploratory work extremely close to criticality,
+\(2(1-2p)\) is an inexpensive leading approximation.  It should not be joined to
+the product at an arbitrary fixed crossover when precision matters: the empirical
+logarithmic correction makes its relative error decay slowly.  A reliable hybrid
+scheme uses \eqref{eq:A-certified-interval} wherever iteration is feasible and
+switches to the asymptotic only after its error has been calibrated at the required
+parameter and tolerance.
+
+\FloatBarrier

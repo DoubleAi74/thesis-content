@@ -1,0 +1,54 @@
+% Appendix A (Chapter 4a) --- single-cell master formula table.
+% Population table lives in Chapter 4b's Appendix A.
+
+\section{Master formula table: single cell}
+\label{app:formula-tables}
+
+Throughout: $w=\ee^{\theta t}$, $\theta=\lambda(a-b)$, $A=a-1$, $B=1-b$,
+$\kappa=1+\delta/(2\lambda)$.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\small
+\begin{tabular}{@{}p{0.24\textwidth}p{0.62\textwidth}@{}}
+\toprule
+Quantity & Closed form \\
+\midrule
+Roots $a,b$ & $\eta\pm\sqrt{\eta^2-\mu/\lambda}$, $\eta=(\lambda+\mu+\delta)/(2\lambda)$, $b<1<a$ \\
+$A,B,\theta$ & $a-1$, $1-b$, $\lambda(a-b)$; $AB=\delta/\lambda$, $A+B=a-b$ \\
+$I(t)$ & $(aB+bAw)/(B+Aw)$ \\
+$D(t)$ & $ab(w-1)/(aw-b)$ \\
+$\Ifix(t)$ & $(a-b)^2 w/[(B+Aw)(aw-b)]$ \\
+$\Ifix[,{k}](t)$ & $I(t)^k-D(t)^k$ \\
+$J(t)$ & $(a-b)^2 w/(B+Aw)^2=-\frac{\lambda}{\delta}(I-a)(I-b)$ \\
+$K(t)$ & $[1+2\lambda(1-I)/\delta]J=\frac{2\lambda}{\delta}(\kappa-I)J$ \\
+$V(t)$ & $(1-I)[1+\lambda(1-I)/\delta]$ \\
+$V_\infty$ & $a(1-b)/(a-1)=aB/A$ \\
+$\mean{\Kb\mid\text{burst}}$ & $a/(a-1)$ \\
+$\mean{\wt^2}$ & $\frac{2(\lambda-\mu)}{\delta}V-\frac{\lambda+\mu}{\delta}I-K+\frac{\lambda+\mu}{\delta}+1$ \\
+$\varphi(t)$ (burst time) & $\delta J(t)$, mass $1-b$ \\
+$\Prob{\Kb=k}$ & $(\delta/\lambda)\,a^{-k}$, $k\ge1$ \\
+$\Prob{\Kb=k\mid\text{burst}}$ & $(a-1)\,a^{-k}$, $k\ge1$ \\
+QSD$(n)$ & $(a-1)\,a^{-n}$ \\
+$\mean{T_{\rm prod}}$ & $\lambda^{-1}\log(a/(a-1))=\lambda^{-1}\log\langle X\rangle_{\rm QS}$ \\
+$\mean{\tau\mid\Kb=n}$ ($\mu=0$) & $\theta^{-1}\sum_{k=1}^n 1/k$, $\theta=\lambda+\delta$ \\
+$\mean{\tau\mid\text{burst}}$ ($\mu>0$) & $\frac{1}{\lambda(1-b)}\log\frac{a-b}{a-1}$ \\
+$J_k(t)$ (MOI) & $kJ I^{k-1}$ \\
+$K_k(t)$ (MOI) & $kK I^{k-1}+k(k-1)J^2I^{k-2}$ \\
+$g_k(t)$ (MOI) & $\delta K_k(t)$ \\
+$V_\infty^{(k)}$, $\mu=0$ & $k+\lambda/\delta$ \\
+$r_k$ law ($\mu=0$, chain) & $\binom{n+k-2}{k-1}s^k\rho^{n-1}$, $s=\delta/(\lambda+\delta)$ \\
+$\mean{r_k}$, $\mathrm{Var}(r_k)$ & $1+k\lambda/\delta$, \ $k\rho/s^2$ \\
+$\Lap{T}(k,u)$ (interval) & $\frac{sk}{k+u'}\Fhyp(k+1,1;k+1+u';\rho)$, $u'=u/(\lambda+\delta)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The $\mu=0$ specialisation.} $b=0$, $a=1+\delta/\lambda$,
+$D\equiv0$, $\Ifix=I$,
+$V_\infty=1+\lambda/\delta=\langle X\rangle_{\rm QS}$,
+$\mean{T_{\rm prod}}=\lambda^{-1}\log(1+\lambda/\delta)$,
+$V_\infty^{(k)}=k+\lambda/\delta$, and
+$\Prob{\Kb=k}=s\rho^{k-1}$ with $s=\delta/(\lambda+\delta)$, $\rho=1-s$:
+the burst size is geometric on $\{1,2,\ldots\}$ with success probability
+$s$, and every realisation bursts.

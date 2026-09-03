@@ -1,0 +1,99 @@
+% --- Chapter appendices: numbered A.A, A.B ----------------------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+\section{Elementary Koenigs functions at \texorpdfstring{$r=2$}{r=2} and \texorpdfstring{$r=4$}{r=4}}
+\label{a:app:integrable}
+
+These cases lie outside subcritical branching ($r=2p<1$) but complete the
+classical picture of integrable logistic linearisations. Both are recorded in full
+because they show concretely what a solvable case looks like, and because they sit
+exactly where the Becker--Bergweiler classification, \cref{a:thm:BB}, says all
+differentially algebraic Schr\"oder functions must sit: over repelling fixed
+points.
+
+\subsection{Case \texorpdfstring{$r=2$}{r=2} (logarithmic)}
+\label{a:app:r2}
+
+For $r=2$, $f_2(x)=2x(1-x)$. The fixed point $0$ has multiplier $\lambda=2$
+(repelling); the linearisation is of Poincar\'e type rather than an
+attracting-Koenigs function, but an elementary closed form still exists.
+
+The affine change $u=1-2x$ conjugates the dynamics to $u\mapsto u^2$, since
+\begin{equation*}
+u_{n+1} = 1-2\bigl(2x_n(1-x_n)\bigr) = 1-4x_n+4x_n^2 = (1-2x_n)^2 = u_n^2 .
+\end{equation*}
+Linearising $u\mapsto u^2$ by the logarithm, since $\ln(u^2)=2\ln u$, and
+returning to $x$ gives the candidate
+\begin{equation}
+\label{a:eq:psi2}
+\psi_2(x) = -\tfrac12\ln(1-2x),
+\end{equation}
+normalised so that $\psi_2(0)=0$ and $\psi_2'(0)=1$. Indeed,
+\begin{equation*}
+\psi_2\bigl(f_2(x)\bigr)
+= -\tfrac12\ln\bigl(1-4x+4x^2\bigr)
+= -\tfrac12\ln\bigl((1-2x)^2\bigr)
+= 2\,\psi_2(x) .
+\end{equation*}
+
+\subsection{Case \texorpdfstring{$r=4$}{r=4} (inverse trigonometric)}
+\label{a:app:r4}
+
+For $r=4$, $f_4(x)=4x(1-x)$. The fixed point $0$ has multiplier $f_4'(0)=4$
+(repelling); as with $r=2$, this is a Poincar\'e-type linearisation, not an
+attracting Koenigs function. With $x=\sin^2\theta$ one finds
+\begin{equation*}
+f_4(x) = 4\sin^2\theta\cos^2\theta = (2\sin\theta\cos\theta)^2 = \sin^2(2\theta),
+\end{equation*}
+so the map is a doubling $\theta\mapsto2\theta$ in the $\theta$ coordinate. The
+candidate
+\begin{equation}
+\label{a:eq:psi4}
+\psi_4(x) = \bigl(\arcsin\sqrt{x}\bigr)^2
+\end{equation}
+satisfies $\psi_4(f_4(x))=4\psi_4(x)$ on a suitable real domain: using
+$\arcsin\bigl(2u\sqrt{1-u^2}\bigr)=2\arcsin u$ with $u=\sqrt{x}$,
+\begin{equation*}
+\psi_4\bigl(f_4(x)\bigr)
+= \bigl(\arcsin\sqrt{4x(1-x)}\bigr)^2
+= \bigl(2\arcsin\sqrt{x}\bigr)^2
+= 4\,\psi_4(x) .
+\end{equation*}
+And as $x\to0$, $\arcsin\sqrt{x}\approx\sqrt{x}$, so $\psi_4(x)\approx x$ and
+$\psi_4'(0)=1$.
+
+\subsection{Location inside the classification}
+\label{a:app:location}
+
+Under the affine conjugacy of \cref{a:lem:affine}, $r=2\Leftrightarrow c=0$
+(monomial $z^2$) and $r=4\Leftrightarrow c=-2$ (Chebyshev type; the value $c=-2$
+is also reached at $r=-2$). Neither exceptional value lies in the image of
+$r\in(0,1)$, which is $c\in(0,\tfrac14)$. As explained in \cref{a:rem:empty},
+this parameter count is a consistency check rather than the proof: the decisive
+point is that both exceptional cases sit over \emph{repelling} fixed points, which
+the attracting window excludes structurally.
+
+The two derivations above realise the first two families of \cref{a:thm:BB}
+exactly. For $r=2$, inverting \cref{a:eq:psi2}: $t=-\tfrac12\ln(1-2x)$ gives
+\begin{equation*}
+\varphi_2(t) = \psi_2^{-1}(t) = \frac{1-\ee^{-2t}}{2},
+\end{equation*}
+an affine (hence M\"obius) image of $\ee^{-2t}$ --- the family
+$\exp(\alpha t^{\rho})$ with $\rho=1$, $\alpha=-2$. Correspondingly the
+substitution $u=1-2x$ conjugates $f_2$ to the monomial $u\mapsto u^2$, and the
+linearised fixed point has multiplier $2$ (repelling), as \cref{a:thm:BB}(i)
+requires. For $r=4$, inverting \cref{a:eq:psi4}: $t=(\arcsin\sqrt{x})^2$ gives
+\begin{equation*}
+\varphi_4(t) = \psi_4^{-1}(t) = \sin^2\!\sqrt{t}
+= \frac{1-\cos\bigl(2\sqrt{t}\bigr)}{2},
+\end{equation*}
+a M\"obius image of $\cos(\alpha t^{\rho}+\beta)$ with $\rho=\tfrac12$,
+$\alpha=2$, $\beta=0$ --- the fractional exponent is admissible precisely because
+$\cos(2\sqrt{t})$ is an entire function of $t$. Correspondingly $u=1-2x$ conjugates
+$f_4$ to $T_2(u)=2u^2-1$, the second Chebyshev polynomial, and the multiplier at
+the linearised fixed point is $4$ (repelling).
+
+For $r\in(0,1)$ the fixed point is attracting, no member of the classification is
+available, and \cref{a:thm:mainht} gives hypertranscendence of $\psi_r$ --- which
+underpins the claims of this thesis for $A(p)=2\Psi_{2p}(\tfrac12)$.

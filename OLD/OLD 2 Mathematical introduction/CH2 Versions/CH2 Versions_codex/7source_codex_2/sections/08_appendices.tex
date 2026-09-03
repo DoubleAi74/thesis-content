@@ -1,0 +1,125 @@
+\appendix
+
+\section{A hypergeometric antiderivative}
+\label{app:hyp}
+
+The quotient that appears when the \(x\)-characteristic is inserted directly into
+the \(y\)-equation has the form
+\begin{equation}
+  I(\tau)=\int\frac{\e^{h\tau}}
+  {a+b\e^{k\tau}}\,\dd\tau.
+  \label{eq:Iform}
+\end{equation}
+An Euler-integral proof would require a sign condition that excludes the
+subcritical application.  A local power-series proof gives the correct identity
+first, after which analytic continuation supplies the wider domain.
+
+\begin{proposition}
+Suppose \(a,h,k\neq0\) and \(h+nk\neq0\) for every integer \(n\geq0\).  On a
+simply connected domain where a consistent branch is chosen and
+\(a+b\e^{k\tau}\neq0\),
+\begin{equation}
+  I(\tau)=
+  \frac{\e^{h\tau}}{ah}
+  {}_2F_1\!\left(
+    1,\frac{h}{k};\frac{h}{k}+1;
+    -\frac{b}{a}\e^{k\tau}
+  \right)+C,
+  \label{eq:hypIden}
+\end{equation}
+where the right-hand side is understood by analytic continuation from its power
+series whenever necessary.
+\end{proposition}
+
+\begin{proof}
+First suppose
+\(\lvert(b/a)\e^{k\tau}\rvert<1\).  The geometric series gives
+\begin{align}
+  \frac{\e^{h\tau}}{a+b\e^{k\tau}}
+  &=\frac1a\sum_{n=0}^{\infty}
+    \left(-\frac ba\right)^n\e^{(h+nk)\tau},\\
+  I(\tau)
+  &=\frac1a\sum_{n=0}^{\infty}
+    \left(-\frac ba\right)^n
+    \frac{\e^{(h+nk)\tau}}{h+nk}+C.
+  \label{eq:hyp-series-antiderivative}
+\end{align}
+Put \(\nu=h/k\).  Since
+\[
+  {}_2F_1(1,\nu;\nu+1;z)
+  =\sum_{n=0}^{\infty}\frac{\nu}{\nu+n}z^n,
+\]
+the series in \eqref{eq:hyp-series-antiderivative} is precisely
+\eqref{eq:hypIden}.  Both sides are analytic away from their poles and chosen
+branch cuts, so equality extends throughout any connected domain on which the
+same continuation is used.
+\end{proof}
+
+If \(h+n_0k=0\) for an integer \(n_0\geq0\), the corresponding term in
+\eqref{eq:hyp-series-antiderivative} integrates to
+\(
+  a^{-1}(-b/a)^{n_0}\tau
+\)
+rather than an exponential quotient.  This is the secular term that appears at
+the resonance \eqref{eq:abd-resonance}; the original finite integral remains
+regular.
+
+\section{Recovering state probabilities from a PGF}
+\label{app:extract}
+
+A PGF is analytic in the open unit disc, or in the unit polydisc for several
+counts.  Its Taylor coefficients are therefore the state probabilities.  For the
+bivariate PGF \eqref{pgfDef},
+\begin{equation}
+  p_{ij}(t)=
+  \frac{1}{i!j!}
+  \left.
+  \frac{\partial^{i+j}G}
+  {\partial x^i\partial y^j}
+  \right|_{x=y=0}.
+  \label{eq:stateProb}
+\end{equation}
+Analyticity, rather than repeated differentiability alone, is the property that
+justifies equality with the full Taylor series.
+
+For the finite-state absorption models,
+\begin{equation}
+  G(x,y,t)=\bigl[c(t)+f(t)x+g(t)y\bigr]^N.
+  \label{eq:multilinear}
+\end{equation}
+Repeated differentiation gives
+\begin{equation}
+  \frac{\partial^{i+j}G}{\partial x^i\partial y^j}
+  =\frac{N!}{(N-i-j)!}
+  f(t)^ig(t)^j
+  \bigl[c(t)+f(t)x+g(t)y\bigr]^{N-i-j}
+  \label{eq:multilinear-derivative}
+\end{equation}
+for \(i+j\leq N\), and zero otherwise.  Substitution into
+\eqref{eq:stateProb} yields the trinomial law
+\begin{equation}
+  p_{ij}(t)=
+  \frac{N!}{i!j!(N-i-j)!}
+  f(t)^ig(t)^jc(t)^{N-i-j},
+  \qquad i+j\leq N.
+  \label{eq:stateProbSpec}
+\end{equation}
+
+For pure absorption, \(c=0\),
+\(f=1-\e^{-\alpha t}\) and \(g=\e^{-\alpha t}\), so only states with
+\(i+j=N\) have positive probability.  For absorption--death,
+\(c=q_{\mathrm d}\), \(f=q_{\mathrm i}\) and \(g=q_{\mathrm o}\), giving the
+three independent fates in \eqref{eq:Gabsdeath}.
+
+The absorption--birth--death PGF is not a finite polynomial in \(x\).  Its
+coefficients may still be obtained from \eqref{eq:stateProb}; numerically, a
+stable alternative is the bivariate Cauchy formula
+\begin{equation}
+  p_{ij}(t)=\frac{1}{(2\pi\mathrm i)^2}
+  \oint_{|x|=r_x}\oint_{|y|=r_y}
+  \frac{G(x,y,t)}{x^{i+1}y^{j+1}}\,\dd y\,\dd x,
+  \qquad 0<r_x,r_y<1.
+  \label{eq:cauchy-coefficient}
+\end{equation}
+Using the integral representation \eqref{eq:abd-integral-solution} inside these
+contours avoids the branch bookkeeping of the hypergeometric form.

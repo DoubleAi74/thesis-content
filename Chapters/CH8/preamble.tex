@@ -1,0 +1,123 @@
+% ===========================================================================
+%  preamble.tex --- packages and macros for the pathogenesis chapter.
+%  When this chapter is dropped into the thesis, merge the contents of this
+%  file into the thesis preamble; duplicates may simply be deleted.
+%
+%  Derived from CH2/preamble.tex, the house preamble.  Where this chapter's
+%  own main.tex disagreed with Chapter 2, Chapter 2 wins.
+% ===========================================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{needspace}
+\usepackage{booktabs}
+\usepackage[hypcap=false,font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\graphicspath{{figures/}}
+
+% --- Equation cross-references as bare parenthesised numbers -----------------
+\crefformat{equation}{(#2#1#3)}
+\Crefformat{equation}{(#2#1#3)}
+\crefrangeformat{equation}{(#3#1#4)--(#5#2#6)}
+\crefmultiformat{equation}{(#2#1#3)}{ and (#2#1#3)}{, (#2#1#3)}{ and (#2#1#3)}
+
+% --- Notation ---------------------------------------------------------------
+% Scalars are set in italic; bold is reserved for vector-valued states, which
+% appear only in the multi-type work of later chapters.  Vectors of unknowns
+% in a linear system are the one exception, and are set upright bold.
+%
+% Symbols specific to this chapter, and the collisions that fixed them:
+%   \varsigma   suppression rate per replicator-granule pair.  \alpha is the
+%               Gompertz decay rate of the parked material and cell age in
+%               the population chapter.
+%   \vartheta   fixed removal count.  \theta is the exponential rate
+%               \lambda(a-b) of the birth--death--catastrophe chapter.
+%   \pi_{i,j}   extinction probability from (i,j).  \theta_{i,j} would
+%               collide with \vartheta above.
+%   Q_t         remaining granule count.  Y_t is the released count.
+%   W_t         released count, matching the core chapters.
+%   \mathcal{R} the per-cell replication ratio under removal.  R_0 is a
+%               different object in the population chapter, where a theorem
+%               proves it invariant under bursting.
+%   \mathcal{M} truncated first moment.  \mathcal{K} is the burst size in the
+%               three preceding chapters.
+%   F(\vartheta) the burst-size c.d.f.  G is a generating function elsewhere.
+% \delta (catastrophe rate) and \kappa are frozen thesis-wide and untouched.
+\newcommand{\pgf}{probability generating function}
+\newcommand{\rv}{random variable}
+\newcommand{\pr}[1]{\mathbb{P}\!\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\!\left(#1\right)}
+\newcommand{\var}[1]{\operatorname{Var}\!\left(#1\right)}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\lrb}[1]{\left(#1\right)}
+\newcommand{\lrbs}[1]{\left[#1\right]}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\ft}{\textit{F.~tularensis}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+
+% --- Cross-chapter references -----------------------------------------------
+% Redefining these macros is all that thesis integration requires: they become
+% "Chapter~\ref{...}" once the chapter order is fixed.  No chapter number
+% appears in body prose.
+\newcommand{\ChM}{the mathematical introduction}
+\newcommand{\ChCore}{the chapter on the birth--death--cata\-strophe process}
+\newcommand{\ChCorecap}{The chapter on the birth--death--cata\-strophe process}
+\newcommand{\ChDist}{the chapter on its distribution theory}
+\newcommand{\ChDistcap}{The chapter on its distribution theory}
+\newcommand{\ChPop}{the chapter on population dynamics}
+\newcommand{\ChPopcap}{The chapter on population dynamics}
+\newcommand{\ChTwoType}{the two-type chapter}
+\newcommand{\ChEvo}{the chapter on variability in evolution}
+
+% --- Forward references to later modelling chapters -------------------------
+% Every forward reference is routed through \fwd, whose first argument is a
+% stable key and whose second is the prose actually typeset.
+\newcommand{\fwd}[2]{#2}
+
+% --- Theorem environments ---------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\allowdisplaybreaks
+
+% --- Figure colours (house palette, matching Chapters 5 and 7) -------------
+% Used by the state-space, fate-region and level-diagonal diagrams.
+\definecolor{gray1}{HTML}{d9d9d9}
+\definecolor{na1}{HTML}{0072B2}      % birth / cool
+\definecolor{nb1}{HTML}{F0E442}      % contested (Okabe yellow)
+\definecolor{mut1}{HTML}{D55E00}     % suppression / vermillion
+\definecolor{Rec2}{HTML}{009E73}     % spent store / certain (teal)
+\definecolor{Rup2}{HTML}{9A2820}     % extinction / catastrophe
+\definecolor{blu}{HTML}{1A1C1F}      % ink
+\definecolor{inksoft}{HTML}{565B62}
+\definecolor{na1fill}{HTML}{E9F1F8}
+\definecolor{Rec2fill}{HTML}{E6F4EE}
+\definecolor{Rup2fill}{HTML}{F4E6E4}

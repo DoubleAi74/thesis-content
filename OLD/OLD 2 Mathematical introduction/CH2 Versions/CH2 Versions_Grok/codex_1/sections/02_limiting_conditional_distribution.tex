@@ -1,0 +1,356 @@
+\section{Galton--Watson survival and the limiting conditional law}
+\label{sec:gw}
+
+\subsection{Offspring PGFs and functional iteration}
+
+Let $\xi$ be a non-negative integer-valued random variable with offspring probabilities
+\begin{equation}
+  \Prob(\xi=j)=p_j,
+  \qquad
+  f(s)=\E[s^\xi]=\sum_{j=0}^{\infty}p_j s^j,
+  \qquad 0\le s\le 1.
+  \label{eq:offspring-pgf}
+\end{equation}
+The Galton--Watson process with $Z_0=k$ is defined recursively by
+\begin{equation}
+  Z_{n+1}=\sum_{i=1}^{Z_n}\xi_{n,i},
+  \label{eq:gw-definition}
+\end{equation}
+where the $\xi_{n,i}$ are independent copies of $\xi$ and an empty sum is zero.  Its mean offspring number is
+\[
+  m=f'(1)=\E[\xi].
+\]
+This model is subcritical, critical, or supercritical according as $m<1$, $m=1$, or $m>1$ \cite{Athreya1972}.
+
+Write $f_0(s)=s$ and $f_{n+1}(s)=f(f_n(s))$ for the functional iterates of $f$.  The branching property gives the basic identity
+\begin{equation}
+  \E[s^{Z_n}\mid Z_0=k]=[f_n(s)]^k.
+  \label{eq:iterated-pgf}
+\end{equation}
+Indeed, one ancestor has PGF $f_n$, while the $k$ ancestral lineages evolve independently.  Differentiation at $s=1$ then gives
+\begin{equation}
+  \E[Z_n\mid Z_0=k]=k m^n.
+  \label{eq:gw-mean}
+\end{equation}
+
+For one ancestor, let
+\begin{equation}
+  q_n=\Prob(Z_n=0)=f_n(0),
+  \qquad
+  S_n=\Prob(Z_n>0)=1-q_n.
+  \label{eq:survival-definitions}
+\end{equation}
+Thus $q_0=0$, $S_0=1$, and $q_{n+1}=f(q_n)$.  Since extinction is absorbing, $(q_n)$ is non-decreasing and has a limit $q$.  The continuity of $f$ shows that $f(q)=q$; more precisely, $q$ is the smallest fixed point of $f$ in $[0,1]$ \cite{Athreya1972}.
+
+\subsection{The binary death-or-division process}
+\label{sec:binary-gw}
+
+The working model assigns either zero or two descendants to each individual:
+\begin{equation}
+  p_0=1-p,\qquad p_2=p,\qquad
+  f(s)=1-p+p s^2.
+  \label{eq:binary-offspring}
+\end{equation}
+Its mean and variance are
+\begin{equation}
+  m=2p,
+  \qquad
+  \sigma_\xi^2=4p(1-p)=m(2-m).
+  \label{eq:binary-moments}
+\end{equation}
+Substitution of $q_n=1-S_n$ into $q_{n+1}=f(q_n)$ yields the exact logistic recurrence
+\begin{equation}
+  q_{n+1}=1-p+p q_n^2,
+  \qquad
+  S_{n+1}=mS_n-pS_n^2
+             =mS_n\left(1-\frac{S_n}{2}\right).
+  \label{eq:binary-survival-recurrence}
+\end{equation}
+
+The fixed-point equation factors as
+\[
+  f(q)-q=(q-1)\{pq-(1-p)\}.
+\]
+Consequently,
+\begin{equation}
+  q=
+  \begin{cases}
+    1, & 0\le p\le \tfrac12,\\[2mm]
+    \dfrac{1-p}{p}, & \tfrac12<p\le 1,
+  \end{cases}
+  \qquad
+  \Prob(Z_n>0\text{ for all }n)=
+  \begin{cases}
+    0, & p\le \tfrac12,\\[2mm]
+    \dfrac{2p-1}{p}, & p>\tfrac12.
+  \end{cases}
+  \label{eq:binary-ultimate-survival}
+\end{equation}
+The factor $1/p$ in the supercritical survival probability is essential.  A positive expected growth rate does not itself give the establishment probability.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.88\textwidth]{gw_survival_regimes.pdf}
+  \caption{Exact survival probabilities obtained from \cref{eq:binary-survival-recurrence}.  Subcritical survival decays geometrically at late generations, critical survival decays algebraically, and supercritical survival approaches the positive limit in \cref{eq:binary-ultimate-survival}.}
+  \label{fig:gw-survival-regimes}
+\end{figure}
+
+\subsection{Critical survival and extinction time}
+\label{sec:critical-gw}
+
+At criticality, $p=\tfrac12$ and $m=1$, so
+\begin{equation}
+  S_{n+1}=S_n\left(1-\frac{S_n}{2}\right).
+  \label{eq:critical-survival-recurrence}
+\end{equation}
+Ultimate extinction is certain, hence $S_n\downarrow0$.  The recurrence nevertheless decays slowly enough to give an infinite mean extinction time.
+
+\begin{proposition}[Critical survival asymptotic]
+For the binary process with $p=\tfrac12$ and $Z_0=1$,
+\begin{equation}
+  S_n\sim \frac{2}{n}
+  \qquad (n\to\infty).
+  \label{eq:critical-survival-asymptotic}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+From \cref{eq:critical-survival-recurrence},
+\[
+  \frac{1}{S_{n+1}}-\frac{1}{S_n}
+  =\frac{1}{2(1-S_n/2)}
+  \longrightarrow \frac12.
+\]
+Since $1/S_n\to\infty$, the Stolz--Ces\`aro theorem gives
+\[
+  \lim_{n\to\infty}\frac{1/S_n}{n}
+  =\lim_{n\to\infty}
+   \left(\frac{1}{S_{n+1}}-\frac{1}{S_n}\right)
+  =\frac12,
+\]
+which is equivalent to \cref{eq:critical-survival-asymptotic}.
+\end{proof}
+
+Let
+\[
+  T=\inf\{n\ge0:Z_n=0\}
+\]
+be the extinction generation.  The tail-sum identity gives
+\begin{equation}
+  \E[T]=\sum_{n=0}^{\infty}\Prob(T>n)
+       =\sum_{n=0}^{\infty}S_n.
+  \label{eq:extinction-tail-sum}
+\end{equation}
+By \cref{eq:critical-survival-asymptotic}, the tail of this series is asymptotic to twice the harmonic series.  Thus extinction occurs almost surely but $\E[T]=\infty$.  Moreover,
+\[
+  \Prob(T=n+1)=S_n-S_{n+1}=\frac{S_n^2}{2}
+  \sim \frac{2}{n^2},
+\]
+which makes explicit the heavy extinction-time tail.
+
+\subsection{Critical total progeny}
+\label{sec:critical-total-progeny}
+
+The extinction generation records how long a lineage remains active; the total progeny
+\[
+  \mathcal{T}:=\sum_{n=0}^{\infty}Z_n
+\]
+records how many individuals it contains over its entire lifetime.  Critical binary branching gives an exact power law, without a continuum approximation.
+
+\begin{proposition}[Critical total-progeny law]
+For $p=\tfrac12$ and $Z_0=1$,
+\begin{equation}
+  \Prob(\mathcal{T}=2k+1)
+  =\frac{C_k}{2^{2k+1}},
+  \qquad
+  C_k=\frac{1}{k+1}\binom{2k}{k},
+  \qquad k\ge0,
+  \label{eq:critical-total-progeny}
+\end{equation}
+and, along the odd support,
+\begin{equation}
+  \Prob(\mathcal{T}=r)
+  \sim \sqrt{\frac{2}{\pi}}\,r^{-3/2}
+  \qquad (r\to\infty,\ r\text{ odd}).
+  \label{eq:critical-total-progeny-asymptotic}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+A finite binary family tree with total size $2k+1$ has $k$ dividing individuals and $k+1$ leaves.  There are $C_k$ rooted ordered full binary trees with this composition, and each has probability $2^{-(2k+1)}$ because every individual independently divides or dies with probability $1/2$.  This proves \cref{eq:critical-total-progeny}.  Stirling's formula gives $C_k\sim4^k/(\sqrt{\pi}\,k^{3/2})$; substituting $r=2k+1$ yields \cref{eq:critical-total-progeny-asymptotic}.
+\end{proof}
+
+The exponent in \cref{eq:critical-total-progeny-asymptotic} is a lattice local limit: the even probabilities are exactly zero.  A numerical histogram must therefore respect the odd support, and a family still alive at a finite simulation horizon is right-censored rather than observed to become extinct at that horizon.
+
+\subsection{Subcritical survival and the Kolmogorov constant}
+\label{sec:kolmogorov-constant}
+
+Now take $0<p<\tfrac12$, so $m=2p\in(0,1)$.  The linearisation of \cref{eq:binary-survival-recurrence} near $S=0$ suggests $S_n$ should be proportional to $m^n$.  The proportionality constant exists exactly and has a convergent product representation.
+
+\begin{theorem}[Kolmogorov constant for binary offspring]
+For $0<p<\tfrac12$,
+\begin{equation}
+  A(p):=\lim_{n\to\infty}\frac{S_n}{m^n}
+  =\prod_{j=0}^{\infty}\left(1-\frac{S_j}{2}\right)
+  =\frac12\prod_{j=1}^{\infty}
+       \left(1-\frac{S_j}{2}\right)
+  \in(0,\tfrac12).
+  \label{eq:kolmogorov-product}
+\end{equation}
+Consequently,
+\begin{equation}
+  S_n\sim A(p)m^n.
+  \label{eq:subcritical-survival-asymptotic}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Set $a_n=S_n/m^n$.  Equation \eqref{eq:binary-survival-recurrence} gives
+\[
+  a_{n+1}=a_n\left(1-\frac{S_n}{2}\right),
+\]
+and iteration from $a_0=S_0=1$ gives
+\[
+  a_n=\prod_{j=0}^{n-1}\left(1-\frac{S_j}{2}\right).
+\]
+Every factor is positive.  In addition, $S_{n+1}\le mS_n$, so $S_n\le m^n$ and $\sum_n S_n<\infty$.  The standard criterion for infinite products therefore shows that the product converges to a strictly positive limit.  Finally, its first factor is $1-S_0/2=1/2$.
+\end{proof}
+
+\begin{corollary}[Endpoint behaviour]
+The Kolmogorov constant has the one-sided limits
+\begin{equation}
+  \lim_{p\downarrow0}A(p)=\frac12,
+  \qquad
+  \lim_{p\uparrow1/2}A(p)=0.
+  \label{eq:kolmogorov-endpoints}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+For $j\ge1$, \cref{eq:binary-survival-recurrence} gives $S_j\le p(2p)^{j-1}$, and hence
+\[
+  \sum_{j=1}^{\infty}S_j\le\frac{p}{1-2p}.
+\]
+The product inequality $0\le1-\prod_j(1-x_j)\le\sum_j x_j$, applied with $x_j=S_j/2$, now shows that the product after the first factor in \cref{eq:kolmogorov-product} tends to one as $p\downarrow0$.
+
+For the other endpoint, fix $N$ and let
+\[
+  A_N(p)=\prod_{j=0}^{N}\left(1-\frac{S_j(p)}{2}\right).
+\]
+Then $0<A(p)\le A_N(p)$, while continuity of the finite recurrence gives $A_N(p)\to A_N(1/2)$ as $p\uparrow1/2$.  At criticality the product recurrence yields $A_N(1/2)=S_{N+1}(1/2)$, which tends to zero by \cref{eq:critical-survival-asymptotic}.  Letting $N\to\infty$ proves the second limit.
+\end{proof}
+
+The constant $A(p)$ is the classical \emph{Kolmogorov constant} for this subcritical Galton--Watson process \cite{Pakes2026}.  Its defining survival ratio applies on $0<p<\tfrac12$; at $p=0$ that ratio is degenerate, while \cref{eq:kolmogorov-endpoints} supplies the continuous endpoint values and shows that the conditional population scale diverges as $p\uparrow\tfrac12$.
+
+\subsection{Yaglom limit and conditional moments}
+\label{sec:yaglom}
+
+For $0<p<\tfrac12$, conditioning on the rare event $\{Z_n>0\}$ produces a non-degenerate limiting conditional law.  Its finite-generation PGF is
+\begin{equation}
+  B_n(s)
+  =\E[s^{Z_n}\mid Z_n>0]
+  =\frac{f_n(s)-f_n(0)}{1-f_n(0)}.
+  \label{eq:conditional-pgf}
+\end{equation}
+The Yaglom limit $B(s)=\lim_{n\to\infty}B_n(s)$ exists for the present finite-support offspring law and is the unique finite-mean PGF satisfying
+\begin{equation}
+  1-B(f(s))=m\{1-B(s)\},
+  \qquad B(0)=0,\quad B(1)=1.
+  \label{eq:yaglom-functional}
+\end{equation}
+This limiting law is independent of the finite, positive initial cohort size \cite{Athreya1972,Pakes2026}.
+
+The conditional mean follows without first finding $B$.  Since $Z_n=0$ on extinction,
+\begin{equation}
+  \E[Z_n\mid Z_n>0]
+  =\frac{\E[Z_n]}{S_n}
+  =\frac{m^n}{S_n}
+  \longrightarrow \frac{1}{A(p)}.
+  \label{eq:conditional-mean-limit}
+\end{equation}
+Thus the inverse Kolmogorov constant is the mean of the limiting conditional law.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.88\textwidth]{gw_conditional_mean.pdf}
+  \caption{Finite-generation conditional mean $m^n/S_n$ for representative subcritical division probabilities.  Each curve increases to the Yaglom mean $1/A(p)$.  Convergence becomes slow near $p=1/2$, where the conditional scale is large.}
+  \label{fig:conditional-mean}
+\end{figure}
+
+The second moment supplies a useful consistency check.  The law-of-total-variance recursion gives
+\[
+  \Var(Z_{n+1})
+  =m^2\Var(Z_n)+\sigma_\xi^2\E[Z_n],
+\]
+and $\Var(Z_0)=0$, one obtains
+\begin{equation}
+  \Var(Z_n)
+  =\sigma_\xi^2 m^{n-1}\frac{1-m^n}{1-m}
+  =(2-m)m^n\frac{1-m^n}{1-m}.
+  \label{eq:gw-variance}
+\end{equation}
+It follows that
+\begin{align}
+  \lim_{n\to\infty}\E[Z_n^2\mid Z_n>0]
+    &=\frac{2-m}{A(p)(1-m)}, \label{eq:conditional-second-moment}\\
+  \lim_{n\to\infty}\Var(Z_n\mid Z_n>0)
+    &=\frac{2-m}{A(p)(1-m)}-\frac{1}{A(p)^2}.
+  \label{eq:conditional-variance}
+\end{align}
+The same result follows by differentiating \cref{eq:yaglom-functional}.  In particular, $B''(1)=\{A(p)(1-m)\}^{-1}$.
+
+\subsection{Koenigs linearisation and certified computation}
+\label{sec:koenigs}
+
+The survival recurrence becomes a standard logistic map after the rescaling
+\[
+  w_n=\frac{S_n}{2},
+  \qquad
+  w_{n+1}=L_m(w_n):=m w_n(1-w_n),
+  \qquad w_0=\frac12.
+\]
+For $0<m<1$, the origin is attracting.  Its normalised Koenigs function $\psi_m$ satisfies
+\begin{equation}
+  \psi_m(L_m(w))=m\psi_m(w),
+  \qquad
+  \psi_m(0)=0,\quad \psi_m'(0)=1,
+  \label{eq:koenigs-equation}
+\end{equation}
+and, by Koenigs' linearisation theorem \cite{Koenigs1884}, may be represented on this real basin by
+\begin{equation}
+  \psi_m(w)=\lim_{n\to\infty}\frac{L_m^{\circ n}(w)}{m^n}.
+  \label{eq:koenigs-limit}
+\end{equation}
+Since $L_m^{\circ n}(1/2)=w_n$, comparison with \cref{eq:kolmogorov-product} gives the exact identity
+\begin{equation}
+  A(p)=2\psi_{2p}\left(\frac12\right).
+  \label{eq:kolmogorov-koenigs}
+\end{equation}
+This identity explains why direct functional iteration and the infinite product compute the same quantity.
+
+No general explicit expression for the Kolmogorov constant is currently known \cite{Pakes2026}.  For each fixed $0<m<1$, the non-linear logistic Koenigs function is differentially transcendental as a function of its complex state variable \cite{Becker1995}.  This fixed-map result does not, by itself, prove that the scalar parameter map $p\mapsto A(p)$ has no elementary expression.  Equation \eqref{eq:kolmogorov-koenigs} should therefore be read as an exact representation, not as an impossibility theorem.
+
+For numerical work, define
+\[
+  M_n=\frac{m^n}{S_n}.
+\]
+The sequence $(M_n)$ increases to $M_\infty=1/A(p)$.  Specialising a rigorous branching-process bound to $f(s)=1-p+ps^2$ gives, for $n\ge1$,
+\begin{equation}
+  0<M_\infty-M_n
+  \le
+  \frac{m^n}{2(1-m)q_n},
+  \qquad q_n=1-S_n.
+  \label{eq:conditional-mean-error-bound}
+\end{equation}
+Thus recurrence iteration can be stopped against a requested absolute error rather than an arbitrary population threshold \cite{Pakes2026}.  This control matters near criticality, where a fixed iteration cap or a rule based only on $S_n$ can substantially overestimate $A(p)$.
+
+\FloatBarrier
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.88\textwidth]{kolmogorov_constant.pdf}
+  \caption{The Kolmogorov constant $A(p)$, computed from the exact product in \cref{eq:kolmogorov-product} with tail control, and its reciprocal Yaglom mean.  The endpoint at $p=0$ is the continuous extension $A(0+)=1/2$; the defining survival ratio is used only for $0<p<1/2$.}
+  \label{fig:kolmogorov-constant}
+\end{figure}
+
+\FloatBarrier

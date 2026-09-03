@@ -1,0 +1,85 @@
+\section{Introduction}
+\label{sec:intro}
+
+The population models developed in this thesis begin where deterministic rate
+equations are least reliable: with a small founding count, a compartment that may
+rupture, or a released cohort whose members are subsequently absorbed elsewhere.
+At that scale, birth and death do not merely perturb a smooth trajectory.  A few
+early events decide whether a lineage disappears, establishes, or reaches a state
+from which a later catastrophe can release a substantial population.  The relevant
+questions are consequently distributional.  We need the probability of survival,
+the law of a population conditional on survival, and the joint distribution of
+counts before and after transfer between compartments.
+
+This chapter develops the common mathematical language for those questions.  It is
+selective rather than encyclopaedic.  Conditional probability, probability
+generating functions (PGFs), exponential clocks and continuous-time Markov chains
+(CTMCs) are introduced only to the depth required by the models that follow.  The
+same notation is then carried through discrete branching, linear birth--death
+dynamics, catastrophe hazards and absorption.  This gives later single- and
+multi-type models a consistent starting point: states are integer-valued, event
+rates are explicit, extinction is an absorbing boundary, and model output remains
+separate from the assumptions used to obtain it.
+
+Two mathematical effects recur throughout the thesis.  The first is conditioning
+on non-extinction.  A subcritical branching process dies out almost surely, and its
+unconditional mean decays to zero, yet the realisations that remain alive at a late
+time have a non-degenerate limiting law.  For the binary Galton--Watson process,
+in which an individual divides with probability \(p<\tfrac12\) and otherwise dies,
+write
+\[
+  S_n=\Prb(Z_n>0),
+  \qquad
+  A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n}.
+\]
+The conditional mean then converges to \(1/A(p)\).  Thus a process may become
+progressively less likely to survive while the typical size of a surviving
+realisation approaches a positive constant.  This distinction between frequency
+of survival and size given survival is central whenever later observations select
+only compartments or lineages that have persisted.
+
+The second effect is the approach to criticality.  As \(p\uparrow\tfrac12\),
+extinction remains certain on the subcritical side, but it occurs on an increasingly
+long time scale and the quasi-stationary mean diverges.  At the critical point the
+survival probability has the power-law tail \(S_n\sim2/n\), so extinction is almost
+sure while the expected lifetime is infinite.  Immediately above criticality,
+long-run survival has positive probability, but a small founder population can
+still be lost in its first few generations.  The initial count therefore matters
+most in precisely the parameter regime where numerical convergence is slowest.
+
+The constant \(A(p)\) provides a particularly useful thread through these ideas.  It
+has an exact infinite product, an exact series, rigorous two-sided bounds and the
+near-critical asymptotic
+\[
+  A(p)\sim 2(1-2p)
+  \qquad (p\uparrow\tfrac12),
+\]
+but no elementary expression is known.  Its relation to the Koenigs linearisation
+of the logistic map explains why the iteration is structurally more complicated
+than its quadratic form first suggests.  The result is not merely a detour into
+dynamical systems: \(A(p)\) fixes the late conditional population size and provides
+a controlled way to compare discrete generations with continuous-time
+birth--death dynamics.
+
+The final part of the chapter turns from survival to transfer.  When a compartment
+ruptures, particles released into a shared medium need not enter another
+compartment instantaneously.  An absorption period can instead be modelled as a
+CTMC for the counts inside and outside a receiving compartment.  Bivariate PGFs
+compress the corresponding master equations into first-order partial differential
+equations.  Pure absorption and absorption with death admit direct probabilistic
+solutions; adding interior birth leads naturally to the method of characteristics
+and, in the general non-critical case, to a hypergeometric representation.  This
+sequence supplies the analytical template used by the more structured rupture and
+multi-compartment models later in the thesis.
+
+The order of development follows the argument rather than a catalogue of standard
+probability.  \Cref{sec:framework} establishes the PGF and CTMC machinery and solves
+the linear birth--death baseline.  \Cref{sec:gw} develops the binary
+Galton--Watson process, its extinction transition and its limiting conditional law.
+\Cref{sec:Ap} studies \(A(p)\), including its bounds, asymptotics, dynamical
+interpretation and numerical evaluation.  \Cref{sec:small} then separates the
+effects of founding count and catastrophe.  Finally, \cref{sec:moc} derives the
+absorption models and the characteristic solution required when birth, death and
+uptake interact.  Exact identities, asymptotic statements, numerical observations
+and modelling approximations are labelled as such throughout; later chapters can
+therefore reuse the machinery without inheriting hidden assumptions.

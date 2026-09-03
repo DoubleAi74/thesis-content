@@ -1,0 +1,61 @@
+\section{Reference values}
+
+
+
+
+\newcommand\indentA{3cm}
+
+\noindent
+\textbf{Key parameters}
+\begin{itemize}[leftmargin=\indentA]
+\item[$\lambda$ :]birth rate 
+\item[$\mu$: ]death rate
+\item[$\delta$ :]catastrophe rate
+\end{itemize}
+
+\noindent
+\textbf{Defining quantities}
+\begin{itemize}[leftmargin=\indentA]
+\item[$\xt$ :]process state
+\item[$\xt=0$ :]extinction state (by death)
+\item[$\xt=H$ :]catastrophe state
+\item[$\wt$ :]post-catastrophe quantity
+\item[$\tau$ :] catastrophe time
+\item[$\mathcal{K}$ :]burst size
+\end{itemize}
+
+\noindent
+\textbf{Measures of stochasticity}
+\begin{itemize}[leftmargin=\indentA]
+\item[$I(t)$ :]$\pr{\xt\neq H}$, non-catastrophe probability
+\item[$J(t)$ :]$\mean{\xt}$, expected process state 
+\item[$K(t)$ :]$\mean{\xt^2}$, second moment
+\item[$V(t)$ :]$\mean{\wt}$, expected release
+\item[$I_{\text{fix}}(t)$ :]$\pr{\xt\notin \{0,H\}}$, non-fixation probability (neither catastrophe nor death)
+\item[$I_{\text{death}}$ :]$\pr{\xt\neq0}$, non-death probability
+\item[$p_k(t)$ :]$\pr{\xt = i}$, process state probability distribution
+\item[$P_k$ :]$\pr{\mathcal{K} = i}$, burst size distribution 
+\item[$\phi_k$ :]$\pr{\tau = i}$, burst time distribution 
+\end{itemize}
+
+\noindent
+\textbf{Parameter combinations}
+\begin{itemize}[leftmargin=\indentA]
+\item[$\eta$ =]$\frac{\lambda+\mu+\delta}{2\lambda}$
+\item[$a$ =]$\eta+\sqrt{\eta^2-\frac{\mu}{\lambda}}$
+\item[$b$ =]$\eta-\sqrt{\eta^2-\frac{\mu}{\lambda}}$
+\end{itemize}
+
+
+\noindent
+\textbf{Key ODEs}
+\begin{itemize}[leftmargin=\indentA]
+\item[$\ddt{I}$]$ = \mu - (\lambda + \mu + \delta) I + \lambda I^2$ \\(first step equation for non-rupture probability)
+\item[$\ddt{I}$]$= -\delta J$ \\(forward Kolmogorov, $p_{H}(t)$)
+\item[$\ddt{J} $]$= (\lambda - \mu)J - \delta K$ \\(changing expectation of $\xt$, $J(t)$)
+\item[$\ddt{V}$]$= \delta K $ \\(changing expectation of $\wt$, $V(t)$)
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

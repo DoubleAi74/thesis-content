@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pure Symbolic Regression (Integer Mode)</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --accent-color: #e67e22; /* Orange for "Construction" */
+        --bg-color: #f4f6f7;
+        --card-bg: #ffffff;
+      }
+
+      body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--bg-color);
+        color: #333;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        background: var(--primary-color);
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: 1px;
+      }
+
+      .dashboard {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+        padding: 15px;
+        gap: 15px;
+      }
+
+      .sidebar {
+        flex: 0 0 340px;
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+        background: #fcfcfc;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+      }
+
+      .stat-item label {
+        display: block;
+        font-size: 11px;
+        color: #95a5a6;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      .stat-item div {
+        font-family: "Courier New", monospace;
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+
+      .control-group {
+        margin-bottom: 20px;
+      }
+      .control-group label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #555;
+      }
+      .control-group input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+      }
+
+      /* Toggle Switch */
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        background: #f0f3f4;
+        padding: 10px;
+        border-radius: 6px;
+      }
+      .toggle-row span {
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: var(--accent-color);
+      }
+      input:checked + .slider:before {
+        transform: translateX(22px);
+      }
+
+      button {
+        padding: 14px;
+        cursor: pointer;
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 700;
+        transition:
+          transform 0.1s,
+          box-shadow 0.2s;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      button:hover {
+        filter: brightness(110%);
+      }
+      button:active {
+        transform: scale(0.98);
+      }
+
+      .equation-box {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        min-height: 80px;
+        word-break: break-all;
+        margin-top: auto;
+        position: relative;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        border-left: 5px solid var(--accent-color);
+      }
+      .equation-box .label {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        font-size: 10px;
+        opacity: 0.5;
+      }
+
+      .plot-wrapper {
+        flex: 1;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        padding: 10px;
+        position: relative;
+      }
+      #plot {
+        width: 100%;
+        height: 100%;
+      }
+
+      @media (max-width: 900px) {
+        .dashboard {
+          flex-direction: column;
+        }
+        .sidebar {
+          flex: none;
+          width: auto;
+        }
+        .plot-wrapper {
+          height: 400px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Evolved Physics Engine</h1>
+    </div>
+
+    <div class="dashboard">
+      <div class="sidebar">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <label>Generation</label>
+            <div id="genDisplay">0</div>
+          </div>
+          <div class="stat-item">
+            <label>Population</label>
+            <div>500</div>
+          </div>
+          <div class="stat-item" style="grid-column: span 2">
+            <label>Best MSE (Error)</label>
+            <div id="mseDisplay" style="color: #e74c3c">---</div>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <span>Integer / Rational Mode</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              id="chkIntMode"
+              onchange="restartSimulation()"
+            />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p
+          style="
+            font-size: 11px;
+            color: #777;
+            margin-top: -15px;
+            margin-bottom: 20px;
+          "
+        >
+          Forces clean numbers (e.g. 2, 1/2, &pi;).<br />Disables linear fitting
+          cheat.
+        </p>
+
+        <div class="control-group">
+          <label
+            ><span>Simplicity Pressure</span>
+            <span id="penaltyVal">0.001</span></label
+          >
+          <input
+            type="range"
+            id="penaltySlider"
+            min="0"
+            max="0.005"
+            step="0.0001"
+            value="0.001"
+            oninput="updateSettings()"
+          />
+        </div>
+
+        <div class="control-group">
+          <label
+            ><span>Mutation Rate</span> <span id="mutVal">0.25</span></label
+          >
+          <input
+            type="range"
+            id="mutSlider"
+            min="0"
+            max="0.6"
+            step="0.01"
+            value="0.25"
+            oninput="updateSettings()"
+          />
+        </div>
+
+        <button id="btnStart" onclick="toggleSimulation()">
+          Start Evolution
+        </button>
+
+        <br />
+        <div class="equation-box" id="eqDisplay">
+          <span class="label">BEST FIT EQUATION</span>
+          Waiting to start...
+        </div>
+      </div>
+
+      <div class="plot-wrapper">
+        <div id="plot"></div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * 1. DATA PREPARATION
+       */
+      const rawData = `
+0.00,0.5
+0.01,0.49744950892200523
+0.02,0.4947961454086841
+0.03,0.49203568028781275
+0.04,0.4891655063931692
+0.05,0.4861804681386442
+0.06,0.4830774611793251
+0.07,0.4798516728499167
+0.08,0.4764965649930478
+0.09,0.4730092271000399
+0.1,0.46938333702446194
+0.11,0.46561045412689755
+0.12,0.46168780095224604
+0.13,0.45760728178648097
+0.14,0.45335797129833433
+0.15,0.44893751974883506
+0.16,0.44433208243911365
+0.17,0.43953758533578097
+0.18,0.43454255921952245
+0.19,0.4293311822253738
+0.2,0.42390081850381817
+0.21,0.4182300784035889
+0.22,0.4123108180947064
+0.23,0.40613172436516815
+0.24,0.399669551694508
+0.25,0.3929162754078347
+0.26,0.38584326351619247
+0.27,0.3784359299789587
+0.28,0.370672189995087
+0.29,0.3625279290473855
+0.3,0.35397672110443756
+0.31,0.3449895164077589
+0.32,0.33553428875892377
+0.33,0.3255756349223103
+0.34,0.31506734776888573
+0.35,0.3039779337611788
+0.36,0.2922446697896221
+0.37,0.2798182518473617
+0.38,0.2666353397344354
+0.39,0.252615526498267
+0.4,0.23768332022995975
+0.41,0.22173411227463893
+0.42,0.20466312830238828
+0.43,0.1863198446038385
+0.44,0.16655284045247842
+0.45,0.1451501913600998
+0.46,0.1218716445414851
+0.47,0.09638121630669728
+0.48,0.06824513327478827
+0.49,0.03687714681581637
+0.5,0.00`;
+
+      const X_train = [];
+      const Y_train = [];
+      rawData
+        .trim()
+        .split("\n")
+        .forEach((row) => {
+          const [x, y] = row.split(",").map(Number);
+          X_train.push(x);
+          Y_train.push(y);
+        });
+
+      /**
+       * 2. CONFIGURATION
+       */
+      const CONFIG = {
+        popSize: 500,
+        maxDepth: 5,
+        maxEvolveDepth: 8,
+        mutationRate: 0.25,
+        penaltyCoef: 0.001,
+        tournamentSize: 5,
+        integerMode: false, // Toggled by UI
+      };
+
+      /**
+       * 3. SYMBOLIC ENGINE
+       */
+      const OPS = {
+        "+": (a, b) => a + b,
+        "-": (a, b) => a - b,
+        "*": (a, b) => a * b,
+        "/": (a, b) => (Math.abs(b) < 1e-4 ? 1 : a / b),
+        sin: (a) => Math.sin(a),
+        cos: (a) => Math.cos(a),
+        exp: (a) => Math.exp(Math.min(a, 15)),
+        log: (a) => Math.log(Math.abs(a) + 1e-6),
+        sqrt: (a) => Math.sqrt(Math.abs(a)),
+        abs: (a) => Math.abs(a),
+      };
+
+      const ARITY = {
+        "+": 2,
+        "-": 2,
+        "*": 2,
+        "/": 2,
+        sin: 1,
+        cos: 1,
+        exp: 1,
+        log: 1,
+        sqrt: 1,
+        abs: 1,
+      };
+
+      const OP_KEYS = Object.keys(OPS);
+
+      class Node {
+        constructor(type, value, left = null, right = null) {
+          this.type = type; // 'op', 'var', 'const', 'special'
+          this.value = value;
+          this.left = left;
+          this.right = right;
+        }
+
+        eval(x) {
+          if (this.type === "const") return this.value;
+          if (this.type === "special") return this.value; // Pi or E
+          if (this.type === "var") return x;
+          const v1 = this.left ? this.left.eval(x) : 0;
+          const v2 = this.right ? this.right.eval(x) : 0;
+          return OPS[this.value](v1, v2);
+        }
+
+        clone() {
+          return new Node(
+            this.type,
+            this.value,
+            this.left?.clone(),
+            this.right?.clone(),
+          );
+        }
+
+        size() {
+          return 1 + (this.left?.size() || 0) + (this.right?.size() || 0);
+        }
+
+        depth() {
+          return (
+            1 + Math.max(this.left?.depth() || 0, this.right?.depth() || 0)
+          );
+        }
+
+        toString() {
+          if (this.type === "special") {
+            if (Math.abs(this.value - Math.PI) < 1e-5) return "π";
+            if (Math.abs(this.value - Math.E) < 1e-5) return "e";
+          }
+          if (this.type === "const") {
+            // If integer mode, print as int, else float
+            return CONFIG.integerMode
+              ? Math.round(this.value)
+              : parseFloat(this.value.toFixed(3));
+          }
+          if (this.type === "var") return "P";
+          if (ARITY[this.value] === 1)
+            return `${this.value}(${this.left.toString()})`;
+          return `(${this.left.toString()} ${this.value} ${this.right.toString()})`;
+        }
+      }
+
+      function generateConst() {
+        if (CONFIG.integerMode) {
+          // Chance for Special Constants
+          const r = Math.random();
+          if (r < 0.05) return new Node("special", Math.PI);
+          if (r < 0.1) return new Node("special", Math.E);
+          // Otherwise Integer between -10 and 10, favoring small numbers
+          const val = Math.floor(Math.random() * 21) - 10;
+          return new Node("const", val);
+        } else {
+          // Standard Float
+          return new Node("const", Math.random() * 6 - 3);
+        }
+      }
+
+      function generateTree(depth, maxDepth) {
+        if (depth >= maxDepth || (depth > 1 && Math.random() < 0.4)) {
+          return Math.random() < 0.6 ? new Node("var", "P") : generateConst();
+        }
+        const op = OP_KEYS[Math.floor(Math.random() * OP_KEYS.length)];
+        const node = new Node("op", op);
+        node.left = generateTree(depth + 1, maxDepth);
+        if (ARITY[op] === 2) node.right = generateTree(depth + 1, maxDepth);
+        return node;
+      }
+
+      // --- GENETIC OPERATORS ---
+
+      function getSubtrees(node, list = []) {
+        list.push(node);
+        if (node.left) getSubtrees(node.left, list);
+        if (node.right) getSubtrees(node.right, list);
+        return list;
+      }
+
+      function mutate(tree) {
+        const t = tree.clone();
+        const rand = Math.random();
+
+        if (rand < 0.15) {
+          // Re-generate branch
+          replaceRandomNode(t, generateTree(0, 3));
+        } else if (rand < 0.6) {
+          // Jitter / Modify Constants
+          jitterConstants(t);
+        } else {
+          // Op Swap
+          swapOp(t);
+        }
+        return t;
+      }
+
+      function jitterConstants(node) {
+        if (node.type === "const") {
+          if (CONFIG.integerMode) {
+            // Integer Step: +1 or -1
+            node.value += Math.random() < 0.5 ? 1 : -1;
+          } else {
+            // Float Jitter
+            node.value += (Math.random() - 0.5) * 0.5;
+          }
+        }
+        // Don't mutate 'special' nodes (Pi/E)
+        if (node.left) jitterConstants(node.left);
+        if (node.right) jitterConstants(node.right);
+      }
+
+      function swapOp(node) {
+        const list = getSubtrees(node).filter((n) => n.type === "op");
+        if (list.length === 0) return;
+        const target = list[Math.floor(Math.random() * list.length)];
+        const compatible = OP_KEYS.filter(
+          (k) => ARITY[k] === ARITY[target.value],
+        );
+        target.value =
+          compatible[Math.floor(Math.random() * compatible.length)];
+      }
+
+      function replaceRandomNode(root, newPart) {
+        if (!root.left && !root.right) return newPart;
+
+        let curr = root;
+        let parent = null;
+        let isLeft = false;
+
+        while (curr.left || curr.right) {
+          parent = curr;
+          if (curr.right && Math.random() < 0.5) {
+            curr = curr.right;
+            isLeft = false;
+          } else if (curr.left) {
+            curr = curr.left;
+            isLeft = true;
+          } else {
+            break;
+          }
+          if (Math.random() < 0.3) break;
+        }
+
+        if (parent) {
+          if (isLeft) parent.left = newPart;
+          else parent.right = newPart;
+        }
+      }
+
+      function crossover(p1, p2) {
+        const c1 = p1.clone();
+        const list2 = getSubtrees(p2);
+        const sub2 = list2[Math.floor(Math.random() * list2.length)].clone();
+        replaceRandomNode(c1, sub2);
+        return c1.depth() > CONFIG.maxEvolveDepth ? p1 : c1;
+      }
+
+      /**
+       * 4. EVALUATION
+       * If IntegerMode is ON, we disable the Linear Regression solver.
+       * The tree must fit the data exactly on its own.
+       */
+      function evaluate(tree) {
+        const preds = X_train.map((x) => tree.eval(x));
+
+        if (preds.some((v) => !isFinite(v)))
+          return { score: Infinity, mse: Infinity };
+
+        let slope = 1;
+        let intercept = 0;
+
+        // ONLY use linear scaling if Integer Mode is OFF
+        if (!CONFIG.integerMode) {
+          let sumX = 0,
+            sumY = 0,
+            sumXY = 0,
+            sumXX = 0;
+          const n = preds.length;
+          for (let i = 0; i < n; i++) {
+            sumX += preds[i];
+            sumY += Y_train[i];
+            sumXY += preds[i] * Y_train[i];
+            sumXX += preds[i] * preds[i];
+          }
+          const denominator = n * sumXX - sumX * sumX;
+          if (Math.abs(denominator) > 1e-9) {
+            slope = (n * sumXY - sumX * sumY) / denominator;
+            intercept = (sumY - slope * sumX) / n;
+          }
+        }
+
+        let mse = 0;
+        for (let i = 0; i < preds.length; i++) {
+          const finalPred = slope * preds[i] + intercept;
+          const diff = Y_train[i] - finalPred;
+          mse += diff * diff;
+        }
+        mse /= preds.length;
+
+        // Penalize complexity
+        const score = mse + tree.size() * CONFIG.penaltyCoef;
+
+        return { score, mse, slope, intercept, tree };
+      }
+
+      // --- MAIN LOOP ---
+
+      let population = [];
+      let generation = 0;
+      let isRunning = false;
+      let animationId;
+      let bestSolution = null;
+
+      function updateSettings() {
+        CONFIG.penaltyCoef = parseFloat(
+          document.getElementById("penaltySlider").value,
+        );
+        CONFIG.mutationRate = parseFloat(
+          document.getElementById("mutSlider").value,
+        );
+        CONFIG.integerMode = document.getElementById("chkIntMode").checked;
+
+        document.getElementById("penaltyVal").textContent =
+          CONFIG.penaltyCoef.toFixed(4);
+        document.getElementById("mutVal").textContent =
+          CONFIG.mutationRate.toFixed(2);
+      }
+
+      function initPopulation() {
+        population = [];
+        for (let i = 0; i < CONFIG.popSize; i++)
+          population.push(generateTree(0, CONFIG.maxDepth));
+        generation = 0;
+      }
+
+      function runGeneration() {
+        if (!isRunning) return;
+
+        const results = population.map(evaluate);
+        results.sort((a, b) => a.score - b.score);
+        bestSolution = results[0];
+
+        document.getElementById("genDisplay").innerText = generation;
+        document.getElementById("mseDisplay").innerText =
+          bestSolution.mse.toFixed(8);
+
+        // Display Logic
+        let eqString = bestSolution.tree.toString();
+
+        // If Linear Scaling was used (Integer Mode OFF), show the scale factors
+        if (!CONFIG.integerMode) {
+          eqString = `${bestSolution.slope.toFixed(4)} * [ ${eqString} ] + ${bestSolution.intercept.toFixed(4)}`;
+        }
+
+        document.getElementById("eqDisplay").innerHTML =
+          `<span class="label">BEST EQUATION</span>` + eqString;
+
+        updatePlot(bestSolution);
+
+        const newPop = [];
+        // Elitism: Keep Top 5
+        for (let i = 0; i < 5; i++) newPop.push(results[i].tree.clone());
+
+        while (newPop.length < CONFIG.popSize) {
+          const tournament = () => {
+            let best = results[Math.floor(Math.random() * results.length)];
+            for (let k = 0; k < 4; k++) {
+              // Increased pressure
+              let cand = results[Math.floor(Math.random() * results.length)];
+              if (cand.score < best.score) best = cand;
+            }
+            return best.tree;
+          };
+
+          if (Math.random() < CONFIG.mutationRate) {
+            newPop.push(mutate(tournament()));
+          } else {
+            newPop.push(crossover(tournament(), tournament()));
+          }
+        }
+
+        population = newPop;
+        generation++;
+        animationId = requestAnimationFrame(runGeneration);
+      }
+
+      function toggleSimulation() {
+        const btn = document.getElementById("btnStart");
+        if (isRunning) {
+          isRunning = false;
+          cancelAnimationFrame(animationId);
+          btn.innerText = "Resume";
+          btn.style.background = "#2c3e50";
+        } else {
+          if (population.length === 0) initPopulation();
+          isRunning = true;
+          btn.innerText = "Stop Optimization";
+          btn.style.background = "#e74c3c";
+          runGeneration();
+        }
+      }
+
+      function restartSimulation() {
+        isRunning = false;
+        cancelAnimationFrame(animationId);
+        updateSettings();
+        initPopulation();
+        toggleSimulation();
+      }
+
+      // --- PLOTTING ---
+
+      function initPlot() {
+        const trace = {
+          x: X_train,
+          y: Y_train,
+          mode: "markers",
+          name: "Observed",
+          marker: { color: "#333", size: 6 },
+        };
+        const layout = {
+          margin: { t: 20, l: 40, r: 20, b: 40 },
+          xaxis: { title: "P" },
+          yaxis: { title: "A" },
+          showlegend: true,
+        };
+        Plotly.newPlot("plot", [trace], layout, {
+          responsive: true,
+          displayModeBar: false,
+        });
+      }
+
+      function updatePlot(sol) {
+        const xLine = [],
+          yLine = [];
+        for (let x = 0; x <= 0.55; x += 0.005) {
+          xLine.push(x);
+          const raw = sol.tree.eval(x);
+          yLine.push(sol.slope * raw + sol.intercept);
+        }
+
+        const traceFit = {
+          x: xLine,
+          y: yLine,
+          mode: "lines",
+          name: "Fit",
+          line: { color: CONFIG.integerMode ? "#e67e22" : "#27ae60", width: 3 },
+        };
+
+        const plotDiv = document.getElementById("plot");
+        Plotly.react("plot", [plotDiv.data[0], traceFit], plotDiv.layout);
+      }
+
+      updateSettings();
+      initPlot();
+    </script>
+  </body>
+</html>

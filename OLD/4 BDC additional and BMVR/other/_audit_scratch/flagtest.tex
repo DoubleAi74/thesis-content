@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\newcommand{\figureflag}[3]{\par\medskip\noindent
+\fcolorbox{orange!70!black}{orange!6}{\parbox{0.94\linewidth}{%
+\textbf{\textcolor{orange!50!black}{FIGURE FLAG #1 --- #2}}\\[2pt]#3}}%
+\par\medskip}
+\begin{document}
+\section{Padding}
+\noindent Filler paragraph to push the flag near a page boundary.
+\vspace{16cm}
+\figureflag{F3.3}{Fixation functions}{%
+\textit{Purpose.} Show the three fixation functions together so the reader
+sees $I_{\mathrm{fix}}=I-D$ as a difference of two curves.
+\textit{Type.} Python analytic plot.
+\textit{Exact content.} Three curves $I(t)$, $D(t)$, $I_{\mathrm{fix}}(t)$
+evaluated from the closed forms of \S6 at $(\lambda,\mu,\delta)=(1,0.2,0.05)$
+on $t\in[0,15]$, with $w=\mathrm{e}^{\theta t}$, $\theta=\lambda(a-b)$;
+horizontal dashed asymptotes at $b$, $b$ and $0$; an annotation marking the
+initial slope $I_{\mathrm{fix}}'(0)=-(\mu+\delta)$.
+\textit{Axes and labels.} $x$: $t$, range $[0,15]$; $y$: probability, range
+$[0,1]$; legend entries $I(t)$, $D(t)$, $I_{\mathrm{fix}}(t)$.
+\textit{Style.} Default matplotlib, \texttt{tab:} colours, grid alpha 0.25,
+\texttt{tight\_layout}, PDF output, fonts matching the chapter.
+\textit{Data source.} Analytic formulas of \S6; no simulation required.
+\textit{Placement.} Section \emph{Analytical quantities}, in a
+\texttt{figure} environment with \texttt{[ht]}.
+Extra padding sentence to lengthen the box so it cannot fit on the page.
+Extra padding sentence to lengthen the box so it cannot fit on the page.
+Extra padding sentence to lengthen the box so it cannot fit on the page.
+}
+\end{document}

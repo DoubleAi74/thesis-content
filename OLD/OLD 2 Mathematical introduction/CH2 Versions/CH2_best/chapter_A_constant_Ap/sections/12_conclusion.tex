@@ -1,0 +1,63 @@
+\section{Conclusion}
+\label{a:sec:conclusion}
+
+The constant $A(p)$ organises the quasi-stationary behaviour of subcritical binary
+Galton--Watson branching: the limiting conditional mean is $1/A(p)$, the limiting
+conditional variance is \cref{a:eq:condvar}, and both are functions of $p$ and
+$A(p)$ alone. This chapter has shown that the constant is well defined
+(\cref{a:prop:product}), exactly representable as an infinite product
+\cref{a:eq:prodFormula} and as a series \cref{a:eq:Aseries}, confined by
+\cref{a:prop:bounds} between $\tfrac12\Ac(p)$ and $2\varepsilon/(1+2\varepsilon)$
+and by \cref{a:prop:parity} below $\tfrac12$, asymptotically equal to $2\varepsilon$
+near criticality with a relative correction of order $\varepsilon\log(1/\varepsilon)$
+(\cref{a:thm:nearcritical}), and computable to arbitrary accuracy with a
+certificate by the hybrid scheme \cref{a:eq:Apractical}. For every purpose this
+thesis has, $A(p)$ is a usable object.
+
+What it is not is elementary, and the reason is structural rather than a failure of
+ingenuity. By \cref{a:prop:AisKoenigs} the constant is twice the basin value at
+$\tfrac12$ of the Koenigs linearising function of the logistic map at multiplier
+$r=2p$, and by \cref{a:thm:ht} that function is hypertranscendental in its own
+variable for every $r$ in the subcritical window --- with no exceptional parameters
+to exclude, since differentially algebraic Schröder functions exist only over
+repelling fixed points, and the window is entirely attracting. This explains the
+failure of every closed-form search recorded in \cref{a:sec:GA}, and it explains the
+characteristic form of that failure: an object defined only by the dynamics that
+generate it will be approximated well by many unrelated expressions and captured by
+none.
+
+What the theorem does not decide has been flagged with equal care in
+\cref{a:sec:scope}. Transcendence --- even irrationality --- of the individual
+values $A(p_0)$ is open, because the 1993 Becker--Bergweiler values theorem is
+confined to equal-degree Böttcher pairs and does not transfer, the degree structure
+of the Schröder equation being wrong and Mahler's method running the wrong way in
+the attracting case. Whether the map $p\mapsto A(p)$ is elementary, or
+differentially algebraic in $p$, is open too, and appears to be unaddressed: the
+obvious machinery of parametrised difference Galois theory does not apply because
+the parameter derivation does not commute with a substitution operator that itself
+moves with the parameter. Eleven rational values nonetheless resist all
+inverse-symbolic identification against standard constant bases at over $200$-digit
+rigour, which is evidence for the conjecture that no closed form exists under any
+reading, and is not a proof of it.
+
+Two problems are therefore left open by this chapter, and they are worth separating
+from the modelling questions raised in \ChM.
+
+\begin{enumerate}[leftmargin=*]
+\item \emph{The value problem.} Is $A(p_0)$ irrational for some, or every, rational
+      $p_0\in(0,\tfrac12)$? A positive answer for a single parameter would be the
+      first arithmetic result about this constant. The PSLQ battery of
+      \cref{a:sec:pslq} bounds the difficulty from one side without touching the
+      question.
+\item \emph{The parameter problem.} Is $p\mapsto A(p)$ differentially algebraic in
+      $p$? This is the reading under which a ``formula for $A(p)$'' would most
+      naturally be sought, and it is precisely the reading \cref{a:thm:ht} does not
+      address. A negative answer would close the matter; a positive one would be
+      more surprising still.
+\end{enumerate}
+
+The exceptional elementary linearisations at $r=2$ and $r=4$, both over repelling
+fixed points and both outside the branching window, are derived in
+\cref{a:app:integrable} and located inside the Becker--Bergweiler classification
+there. They are recorded to show what a solvable case looks like, not because they
+bear on $A(p)$.

@@ -1,0 +1,18 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\newcommand{\figureflag}[3]{\par\medskip\noindent
+\fcolorbox{orange!70!black}{orange!6}{\parbox{0.94\linewidth}{%
+\textbf{\textcolor{orange!50!black}{FIGURE FLAG #1 --- #2}}\\[2pt]#3}}%
+\par\medskip}
+\begin{document}
+\section{Display math and list inside a flag}
+\figureflag{F4a.4}{Burst-time density}{%
+\textit{Exact content.} Plot the defective density
+$$\varphi(t)=\delta J(t),\qquad J(t)=\frac{(a-b)^2w}{(B+Aw)^2},$$
+together with the conditional density $\varphi/(1-b)$.
+\begin{itemize}\item panel (a): $(1,0.2,0.05)$\item panel (b): $(1,0,0.1)$\end{itemize}
+\textit{Placement.} Section 7.}
+\end{document}

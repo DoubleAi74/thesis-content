@@ -1,0 +1,206 @@
+\section{Discrete birth--death--catastrophe}
+\label{m:app:dbdc}
+
+This appendix develops the discrete-generation counterpart of the
+birth--death--catastrophe process of \cref{m:def:bdc}: exact probabilities for
+rupture and survival in discrete time, the weighted generating-function
+recursion that carries the joint law, and the killed-generator formulation of
+quasi-stationarity used by the continuous-time analysis.
+
+\subsection*{Probability of catastrophe at step \texorpdfstring{$n$}{n}}
+
+Let $\kappa$ be the probability that a given individual initiates catastrophe at
+a step, and write $c = 1-\kappa$. A single individual fails to do so with
+probability $c$, two with $c^2$, and a cohort of size $N$ with $c^N$.
+
+Consider first birth and catastrophe alone, with no death, so $p=1$. Then the
+census of the living population at any generation is known with certainty: from
+a single progenitor the population simply doubles at each step prior to
+catastrophe. Conditional on reaching step $n$, where $2^{n-1}$ individuals are
+exposed, the process therefore comes to its abrupt halt at that step with
+probability
+\begin{equation}
+\label{m:eq:bdchalt}
+h_n = 1-c^{2^{\,n-1}},
+\end{equation}
+one minus the probability that none of the $2^{n-1}$ individuals present caused
+it. This is a \emph{conditional} hazard: it assumes step $n$ is reached. The
+unconditional probability that catastrophe first occurs at step $n$ is smaller,
+because every earlier step must also have been passed.
+
+\subsection*{Probability of process survival}
+
+Still with no death, define $S_n$ as the probability that the process survives
+to generation $n$. Survival to generation $0$ is certain, $S_0=1$. Survival to
+generation $1$ requires only that the founder divided without catastrophe,
+$S_1=c$. Persistence to step $2$ requires that the founder divided and that each
+of its two offspring did too, so $S_2 = c\,c^2$. The pattern is clear: survival
+to generation $n$ requires every prior step to have been passed, and therefore
+\begin{equation}
+\label{m:eq:bdcS}
+S_n = \prod_{i=0}^{n-1}c^{2^i}
+= c^{\sum_{i=0}^{n-1}2^i}
+= c^{2^n-1} .
+\end{equation}
+The unconditional mass function of the first-catastrophe time follows at once:
+\begin{equation}
+\label{m:eq:bdcfirst}
+\pr[\big]{K = n} = S_n\,h_n = c^{2^n-1}\lrb{1-c^{2^n}} .
+\end{equation}
+The factor $S_n$ is indispensable; $h_n$ alone is a conditional hazard, not an
+exact-time probability, and conflating the two is the standard error of
+mean-field hazard reasoning, which substitutes the current expected census into a
+rate as though the census were deterministic.
+
+\subsection*{Death included}
+
+The difficulty comes once death is allowed, because the size of the living
+population is then no longer known with certainty from one generation to the
+next. Let $\widetilde Z_i$ denote the underlying binary Galton--Watson
+population with the catastrophe mechanism switched off, and write
+\begin{equation}
+\label{m:eq:Hn}
+H_n = \sum_{i=0}^{n-1}\widetilde Z_i
+\end{equation}
+for the cumulative exposure over the first $n$ steps. Conditioning on the whole
+catastrophe-free genealogy gives the exact identity
+\begin{equation}
+\label{m:eq:noruptureexact}
+\pr[\big]{\text{no catastrophe before }n}
+= \ex{c^{H_n}} .
+\end{equation}
+The natural guess is that the probabilities shake out when the expected
+population is used in place of the actual one:
+\begin{equation}
+\label{m:eq:bdcguess}
+\ex{c^{H_n}} \overset{?}{=} c^{\sum_{i=0}^{n-1}\ex{\widetilde Z_i}} .
+\end{equation}
+This is a heuristic substitution and not an identity; the direction of the error
+can be pinned down exactly. The map $N\mapsto c^N$ is convex, so Jensen's
+inequality gives $\ex{c^{\widetilde Z_i}}\ge c^{\ex{\widetilde Z_i}}$: replacing
+the random census by its mean systematically understates the chance of getting
+through a step. With $m=2p$,
+\begin{equation}
+\label{m:eq:meanexposure}
+\ex{H_n} = \sum_{i=0}^{n-1}m^i
+= \begin{cases}
+\dfrac{1-m^n}{1-m}, & m\neq1,\\[2mm]
+n, & m=1,
+\end{cases}
+\end{equation}
+and \cref{m:eq:bdcguess} is better read as the lower bound
+$\pr[\big]{\text{no catastrophe before }n}\ge c^{\ex{H_n}}$ than as an equality.
+Nor are the steps independent, since surviving one is evidence of a smaller
+population, which raises the chance of surviving the next; both effects push the
+same way. How tight a bound remains a question for numerical work.
+
+Non-rupture should not be confused with population survival. If the requirement
+is that the population be both unruptured and non-zero at generation $n$, the
+exact probability is
+\begin{equation}
+\label{m:eq:jointsurvival}
+\ex{\ind_{\{\widetilde Z_n>0\}}\,c^{H_n}},
+\end{equation}
+for which the Jensen bound does not directly provide an estimate. The
+distinction removes an ambiguity in the elementary approximation and indicates
+why the joint quasi-stationary problem is better posed through the
+killed-chain generator developed below.
+
+The process can nevertheless be described exactly by a weighted generating
+function. Define
+\begin{equation}
+\label{m:eq:catweightedpgf}
+F_n(s) = \ex{s^{\widetilde Z_n}\,c^{H_n}},
+\qquad F_0(s) = s .
+\end{equation}
+Conditioning on the founder's reproduction --- death with probability $1-p$, or
+division with probability $p$, after which two independent subtrees each
+contribute a factor $F_n$ and the founder's own step contributes $c$ --- gives
+the closed recursion
+\begin{equation}
+\label{m:eq:catweightedrec}
+F_{n+1}(s) = c\,\phi\bigl(F_n(s)\bigr)
+= c\lrb{1-p+pF_n(s)^2} .
+\end{equation}
+Its evaluations at special points have distinct meanings: $F_n(1)$ is the
+probability of no catastrophe in the first $n$ updates, agreeing with
+\cref{m:eq:noruptureexact}, while $F_n(1)-F_n(0)$ is the probability of being
+both unruptured and non-extinct at generation $n$, the quantity of
+\cref{m:eq:jointsurvival}. The recursion \cref{m:eq:catweightedrec} is exact,
+and it is the natural object to iterate when the Jensen bound is too crude.
+
+\subsection*{The killed-chain viewpoint}
+
+The continuous-time analysis of birth--death--catastrophe processes proceeds
+through the generator restricted to the living states, and it is useful to fix
+the language here. Allow general state-dependent rates for the moment: from
+state $i\ge1$, birth at rate $\lambda_i$, ordinary death at rate $\mu_i$, and
+catastrophe at rate $\kappa_i$, with both absorbing outcomes lumped into a
+single cemetery state. On bounded test functions the generator is
+\begin{multline*}
+(\mathcal Lf)(i)
+= \lambda_i\{f(i+1)-f(i)\} + \mu_i\{f(i-1)-f(i)\}
++ \kappa_i\{f(0)-f(i)\},
+\qquad i\ge1,
+\end{multline*}
+with $(\mathcal Lf)(0)=0$. Linear birth--death with per-capita catastrophe
+corresponds to $\lambda_i=i\lambda$, $\mu_i=i\mu$, $\kappa_i=i\rho$, recovering
+\cref{m:def:bdc} once the cemetery is split into extinction and rupture.
+
+Restricting $\mathcal L$ to the positive states gives the \emph{killed
+subgenerator} $K$, with
+\begin{equation*}
+K_{i,i+1}=\lambda_i,\qquad K_{i,i-1}=\mu_i\quad(i\ge2),
+\qquad
+K_{i,i}=-(\lambda_i+\mu_i+\kappa_i) .
+\end{equation*}
+The missing row mass is exactly the instantaneous absorption rate: $\kappa_i$
+for $i\ge2$, and $\mu_1+\kappa_1$ for $i=1$, since from a single individual
+ordinary death is also absorption. Writing
+$T_0=\inf\{t\ge0:X_t=0\}$ and summing the positive-state forward equations gives
+the survival-loss balance
+\begin{equation}
+\label{m:eq:survivalloss}
+\dda{}{t}\pr{T_0>t}
+= -\mu_1\pr{X_t=1} - \sum_{i\ge1}\kappa_i\pr{X_t=i},
+\end{equation}
+where ordinary death removes survival mass only from state $1$, while
+catastrophe can remove it from every positive state.
+
+The balance sharpens the connection with quasi-stationarity. If a distribution
+$\nu=(\nu_i)_{i\ge1}$ on the positive states is quasi-stationary and the
+relevant sums are finite, then for some $\theta>0$,
+\begin{equation}
+\label{m:eq:qsdeigen}
+\nu K = -\theta\,\nu,
+\qquad
+\pr[\big]{_\nu}{T_0>t} = \ee^{-\theta t} .
+\end{equation}
+Indeed, quasi-stationarity writes the unnormalised positive-state law as
+$a(t)\nu$; the semigroup property forces $a(s+t)=a(s)a(t)$, and
+right-continuity gives $a(t)=\ee^{-\theta t}$; differentiating at zero yields
+the left-eigenvector relation. Summing its coordinates and comparing with
+\cref{m:eq:survivalloss} identifies the decay rate as
+\begin{equation}
+\label{m:eq:thetarate}
+\theta = \mu_1\nu_1 + \sum_{i\ge1}\kappa_i\nu_i .
+\end{equation}
+
+One limiting case is worth isolating. If the catastrophe clock is constant,
+$\kappa_i\equiv\kappa$ on the positive states, it may be taken independent of
+the underlying birth--death process, and the killed semigroup factorises as
+\begin{equation*}
+P_t^{K} = \ee^{-\kappa t}\,P_t^{\mathrm{BD},K} .
+\end{equation*}
+The extra clock shifts the survival decay rate by $\kappa$ but leaves the law
+conditional on survival unchanged. A state-dependent sequence such as
+$\kappa_i=i\rho$, by contrast, weights paths according to their accumulated
+population exposure and generally changes the quasi-stationary law itself.
+Rates, means and variances, state probabilities and the associated
+generating-function equations for \cref{m:def:bdc} are developed \fwd{bdc}{in
+the later chapters on birth--death--catastrophe processes}, with the two-type
+extension treated \fwd{multitype}{in the chapter on multi-type processes} and
+the release of a ruptured compartment's contents into a shared medium
+\fwd{rupture}{in the chapter on compartment rupture}.
+
+\FloatBarrier

@@ -1,0 +1,79 @@
+\subsection{The near-critical limit}
+\label{a:sec:A-near-critical}
+
+The bounds in \cref{a:eq:Abounds} place \(A(p)\) on the scale of
+\(\varepsilon\) but leave a factor of two unresolved.  The exact series determines
+both the leading constant and the order of the first relative correction.
+
+\begin{theorem}[Near-critical survival amplitude]
+\label{a:thm:A-near-critical}
+As \(p\uparrow1/2\), with \(\varepsilon=1-2p\downarrow0\),
+\begin{equation}
+  A(p)=2\varepsilon
+  \left[1+O\!\left(\varepsilon\log\frac1\varepsilon\right)\right].
+  \label{a:eq:A-near-critical}
+\end{equation}
+In particular,
+\begin{equation}
+  A(p)\sim2(1-2p),
+  \qquad
+  \frac{1}{A(p)}\sim\frac{1}{2(1-2p)}.
+  \label{a:eq:A-leading-asymptotic}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write \(r=1-\varepsilon\).  The identity
+\begin{equation}
+  \frac{1}{2-S_n}=\frac12+\frac{S_n}{2(2-S_n)}
+\end{equation}
+turns \cref{a:eq:Aseries} into
+\begin{equation}
+  \frac1{A(p)}
+  =1+\frac1{2\varepsilon}+D_\varepsilon,
+  \qquad
+  D_\varepsilon
+  :=\sum_{n=0}^{\infty}
+     r^n\frac{S_n}{2(2-S_n)}.
+  \label{a:eq:A-series-decomposition}
+\end{equation}
+Only a logarithmic bound on the remainder is needed.  On the relevant range, the
+map \(s\mapsto ps(2-s)\) is increasing in both \(p\) and \(s\), so the subcritical
+survival probability is bounded by its critical counterpart,
+\(S_n(p)\leq S_n(1/2)\).  At criticality, the recurrence gives
+\begin{equation}
+  \frac1{S_{n+1}(1/2)}-\frac1{S_n(1/2)}
+  =\frac{1}{2\{1-S_n(1/2)/2\}}\geq\frac12,
+\end{equation}
+and hence \(S_n(1/2)\leq2/(n+2)\).  Since \(2-S_n\geq1\),
+\begin{align}
+  0\leq D_\varepsilon
+  &\leq\frac12\sum_{n=0}^{\infty}r^nS_n(p)
+   \leq\sum_{n=0}^{\infty}\frac{r^n}{n+2}
+  \notag\\
+  &=\frac{-\log(1-r)-r}{r^2}
+   =O\!\left(\log\frac1\varepsilon\right).
+  \label{a:eq:D-epsilon-bound}
+\end{align}
+Factoring \(1/(2\varepsilon)\) from \cref{a:eq:A-series-decomposition} gives
+\begin{equation}
+  \frac1{A(p)}
+  =\frac1{2\varepsilon}
+   \left[1+2\varepsilon\{1+D_\varepsilon\}\right].
+\end{equation}
+The quantity after the leading one is
+\(O(\varepsilon\log(1/\varepsilon))\); inversion proves
+\cref{a:eq:A-near-critical}.
+\end{proof}
+
+The proof identifies the logarithmic term that slows convergence to the leading
+asymptotic.  Numerically, the ratios \(A/(2\varepsilon)\) are approximately
+\(0.90987,0.98612,0.99814,0.99977,0.999972\) as \(\varepsilon\) decreases from
+\(2\times10^{-2}\) to \(2\times10^{-6}\).  An exploratory fit gives
+\begin{equation}
+  1-\frac{A}{2\varepsilon}
+  \approx\varepsilon\left(\log\frac1\varepsilon+0.78\right),
+  \label{a:eq:A-empirical-correction}
+\end{equation}
+The constant \(0.78\) is empirical and is not used subsequently; the result needed
+below is the proved order estimate in \cref{a:eq:A-near-critical}.

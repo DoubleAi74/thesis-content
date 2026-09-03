@@ -1,0 +1,90 @@
+\section{Probability Generating Function PDEs}
+\label{sec:pgf-pdes}
+
+The probability generating function (\pgf) of the intracellular count is
+defined by
+$$G(z,t) = p_0(t) + p_1(t)z + p_2(t)z^2 + p_3(t)z^3 + \dots,$$
+where $p_i(t)=\pr{\xt=i}$. The following PDEs are derived from the forward
+Kolmogorov equations associated with the two rupture conventions.
+
+\subsubsection*{Catastrophe}
+
+\begin{equation}
+\label{catEq1}
+\pdx{G(z,t)}{t} = \big(\lambda z^2 - (\lambda + \mu + \delta)z + \mu\big)\pdx{G}{z}
+\end{equation}
+
+\subsubsection*{Killing}
+
+\begin{equation}
+\pdx{G(z,t)}{t} = \delta J(t) +  \big(\lambda z^2 - (\lambda + \mu + \delta)z + \mu\big)\pdx{G}{z}
+\label{killEq1}
+\end{equation}
+
+A word of warning before we proceed. In the catastrophe convention, ruptured
+realisations are absorbed into the separate state $H$ and no longer
+contribute to the count, so $G(1,t)=I(t)\le1$: the \pgf{} is
+\emph{defective}, and its total mass decays as cells burst. In the killing
+convention the rupture transition lands in state $0$ and is counted, so the
+\pgf{} remains proper: $G(1,t)=1$ for all $t$. We will keep track of which
+is which.
+
+\subsubsection*{Derivation}
+
+It will be sufficient to show a derivation of the ``killing'' equation; the
+``catastrophe'' version is similar and simpler. \par
+
+Take the forward Kolmogorov equations:
+
+$$\begin{cases}
+    \ddt{p_i} = \lambda (i-1) p_{i-1} + \mu (i+1) p_{i+1} - (\lambda + \mu + \delta)ip_i, & i > 0\\
+   \\
+    \ddt{p_0} = \mu p_1 +  \delta\sum^\infty_{j=1} jp_j.
+\end{cases}$$
+($p_i = \pr{\xt = i}$, the probability the process is in state $i$). In the
+latter equation, the summation represents all of the possible rupture
+transitions: from any positive state, a collapse to $0$ can take place. This
+summation happens to express the mean, $\mean{\xt}$, which is elsewhere
+labelled $J(t)$.\par
+In the catastrophe version, since rupture causes transition to a separate
+state, this summation term is not present: the first equation holds for all
+$i\ge0$ (with $p_{-1}=0$), and at $i=0$ it reads
+$\ddt{p_0}=\mu p_1$ --- internal extinction by death still feeds state $0$,
+while ruptures leave the count altogether.\par
+\vspace{10pt}
+
+\noindent
+The derivation proceeds by manipulating the equations to produce terms
+containing the \pgf, $G(z, t) = \sum^\infty_{i=0}p_i z^i$. It begins by
+multiplying each side of every $i$th equality by $z^i$. In the case of
+$i=0$, $z^0 = 1$, so there is no change.
+
+$$\begin{cases}
+    \ddt{p_iz^i} = \lambda (i-1) p_{i-1}z^i + \mu (i+1) p_{i+1}z^i - (\lambda + \mu + \delta)ip_iz^i, & i > 0\\
+   \\
+    \ddt{p_0} = \mu p_1 +  \delta J(t).
+\end{cases}$$
+
+\noindent
+Then, each equation is combined in a sum over all values of $i$ for which
+there is a positive term:
+
+$$
+\sum^\infty_{i=0} \pdx{p_iz^i}{t} = \delta J(t)   + \sum^\infty_{i=0}\lrbs{ \lambda (i-1) p_{i-1}z^i + \mu (i+1) p_{i+1}z^i - (\lambda + \mu + \delta)ip_iz^i}$$
+
+\noindent
+Some index-shifting converts this into
+
+$$\pddt{G(z,t)} = \delta J(t) + \lambda z^2 \sum^\infty_{i=1} ip_iz^{i-1} + \mu\sum^\infty_{i=1}ip_iz^{i-1} - (\lambda +\mu+\delta)z\sum^\infty_{i=1}ip_iz^{i-1}$$
+
+\noindent
+and since
+$$\sum^\infty_{i=1} ip_iz^{i-1}  = \pdx{}{z}\sum^\infty_{i=1} p_iz^{i} = \pdx{G(z,t)}{z},$$
+the above becomes
+
+$$\pdx{G(z,t)}{t} = \delta J(t) +  \lambda z^2\pdx{G}{z}  + \mu\pdx{G}{z} - (\lambda + \mu + \delta)z\pdx{G}{z},$$
+
+\noindent
+equivalent to (\ref{killEq1}). Dropping the $\delta J(t)$ term --- no
+rupture flux enters any state of the count in the catastrophe convention ---
+leaves (\ref{catEq1}).

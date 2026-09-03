@@ -1,0 +1,81 @@
+\section{An integral identity for the hypergeometric function}
+\label{m:app:hyp}
+
+The route to \cref{m:eq:Psidef} taken in \cref{m:app:absbirthdeath} expands the
+characteristic $x(\tau)$ in a geometric series and integrates term by term. An
+alternative is to integrate the quotient \cref{m:eq:xabd} directly, splitting the
+numerator into two pieces, each of the form
+\begin{equation}
+\label{m:eq:Iform}
+I(\tau) = \int\frac{\ee^{h\tau}}{P+Q\,\ee^{k\tau}}\,\dd\tau
+\end{equation}
+with $h,k,P,Q$ constant. That route is longer and easier to get wrong --- the two
+pieces carry different prefactors, and dropping one produces a formula that still
+satisfies the initial condition while violating $G(1,1,t)=1$ --- but the identity it
+rests on is useful in its own right, so it is recorded and proved here.
+
+\begin{proposition}
+\label{m:prop:hypIden}
+For $h/k>0$ and $-\tfrac{Q}{P}\ee^{k\tau}\notin[1,\infty)$,
+\begin{equation}
+\label{m:eq:hypIden}
+\int\frac{\ee^{h\tau}}{P+Q\ee^{k\tau}}\,\dd\tau
+= \frac{\ee^{h\tau}}{Ph}\,{}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1;\,-\frac{Q}{P}\ee^{k\tau}}
++ \text{const} .
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+We use the Euler integral representation of the hypergeometric function
+\cite{Olver2010},
+\begin{equation}
+\label{m:eq:idenHyp}
+{}_2F_1(a,b;c;z)
+= \frac{\Gamma(c)}{\Gamma(b)\Gamma(c-b)}\int_0^1 u^{b-1}(1-u)^{c-b-1}(1-zu)^{-a}\,\dd u ,
+\end{equation}
+$\Gamma$ being the gamma function.
+
+Start from \cref{m:eq:Iform} and substitute $v = \ee^{k\tau}$, so that
+$\dd\tau = k^{-1}v^{-1}\dd v$:
+\begin{equation*}
+I = \frac1k\int\frac{v^{h/k}}{P+Qv}\,v^{-1}\dd v
+= \frac{1}{Pk}\int\frac{v^{h/k-1}}{1+\frac{Q}{P}v}\,\dd v .
+\end{equation*}
+Fix the antiderivative by writing this as a definite integral from $0$ to $v$ in a
+dummy variable $w$; the integral converges at the lower limit precisely because
+$h/k>0$:
+\begin{equation*}
+I = \frac{1}{Pk}\int_0^v\frac{w^{h/k-1}}{1+\frac{Q}{P}w}\,\dd w .
+\end{equation*}
+Now rescale, $w = vu$, so that $\dd w = v\,\dd u$ with $v$ held fixed:
+\begin{equation}
+\label{m:eq:backat}
+I = \frac{1}{Pk}\int_0^1\frac{(vu)^{h/k-1}}{1+\frac{Q}{P}vu}\,v\,\dd u
+= \frac{v^{h/k}}{Pk}\int_0^1\frac{u^{h/k-1}}{1+\frac{Q}{P}vu}\,\dd u .
+\end{equation}
+The remaining integrand matches that of \cref{m:eq:idenHyp} with $b = h/k$,
+$c = h/k+1$, $a=1$ and $z = -\tfrac{Q}{P}v$, since then $(1-u)^{c-b-1} = 1$ and
+$(1-zu)^{-a} = \bigl(1+\tfrac{Q}{P}vu\bigr)^{-1}$. Hence, using
+$\Gamma(z+1) = z\Gamma(z)$,
+\begin{equation*}
+\int_0^1\frac{u^{h/k-1}}{1+\frac{Q}{P}vu}\,\dd u
+= \frac{\Gamma\!\lrb{\frac hk}\Gamma(1)}{\Gamma\!\lrb{\frac hk+1}}\,
+{}_2F_1\lrb{1,\frac hk;\frac hk+1;-\frac QP v}
+= \frac kh\,{}_2F_1\lrb{1,\frac hk;\frac hk+1;-\frac QP v}.
+\end{equation*}
+Substituting into \cref{m:eq:backat} gives
+\begin{equation*}
+I = \frac{v^{h/k}}{Ph}\,{}_2F_1\lrb{1,\frac hk;\frac hk+1;-\frac QP v},
+\end{equation*}
+and restoring $v = \ee^{k\tau}$ gives \cref{m:eq:hypIden}.
+\end{proof}
+
+\begin{remark}
+Applied to the two pieces of \cref{m:eq:xabd} --- the first with $h=\alpha$, the
+second with $h = \alpha+b_1$, and both with $k=b_1$, $P = \sigma-x_-$ and
+$Q = -(\sigma-x_+)$ --- \cref{m:prop:hypIden} reproduces \cref{m:eq:Psihyp} once the
+prefactors $\alpha x_+(\sigma-x_-)$ and $-\alpha x_-(\sigma-x_+)$ are carried
+through correctly. The factor $(\sigma-x_+)/(\sigma-x_-)$ attached to the second
+piece is easily lost, and its loss is invisible at $t=0$; checking $G(1,1,t)=1$
+catches it immediately.
+\end{remark}

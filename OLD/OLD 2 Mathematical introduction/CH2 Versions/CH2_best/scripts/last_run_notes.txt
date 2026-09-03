@@ -1,0 +1,1 @@
+no collisions, no symlinks, no integrity failures

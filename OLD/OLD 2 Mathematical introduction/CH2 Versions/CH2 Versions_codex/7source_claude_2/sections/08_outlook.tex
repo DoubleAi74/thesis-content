@@ -1,0 +1,36 @@
+\section{What carries forward}
+\label{sec:outlook}
+
+Three things assembled here are used repeatedly in the chapters that follow.
+
+The first is a working method rather than a result. A model is specified by rates; the
+rates give a generator and a master equation; multiplying by $z^i$ (or by $x^iy^j$) and
+summing converts that master equation into a single first-order partial \de{} for a
+generating function; and the method of characteristics of \cref{sec:mocabsdeath} solves
+equations of that type. \Cref{eq:Gabd} shows the route completed on a problem for which no
+shortcut exists, and the same route is followed in later chapters when a catastrophe
+channel is added to the rates of \cref{eq:lbdrates}. \Cref{app:extract} supplies the last
+step, recovering time-dependent state probabilities from a generating function given by a
+formula rather than a series.
+
+The second is the behaviour of small populations near criticality. Conditioning on survival
+converts a process whose mean is uninformative into one with a stable conditional
+distribution, and for the binary Galton--Watson process the whole of that distribution's
+first two moments is controlled by $A(p)$. The constant admits an exact product
+\cref{eq:prodFormula}, an exact series \cref{eq:Aseries}, two-sided bounds
+\cref{eq:Abounds} that place it between $\tfrac12A_{\text{c}}(p)$ and
+$2\varepsilon/(1+2\varepsilon)$, and the near-critical asymptotic $A(p)\sim2(1-2p)$. It
+does not appear to admit an elementary closed form, and \cref{sec:koenigs} gives the
+structural reason to expect none. What it does admit is a cheap and accurate hybrid scheme,
+\cref{eq:Apractical}, which is what the numerics of later chapters use.
+
+The third is a set of specific questions left open here and taken up later. Whether a
+quasi-stationary distribution survives when a birth--death--catastrophe process is
+conditioned on \emph{neither} extinction nor rupture is not settled by the argument of
+\cref{sec:bdc}, and is best approached by simulation. How tight the Jensen bound
+\cref{eq:bdcguess} is remains a numerical question, and a sharp answer would make the
+discrete catastrophe calculation usable in its own right. And whether the map
+$p\mapsto A(p)$, as opposed to the Koenigs function $\psi_r$ in its argument, is elementary
+is a transcendence question about values that \cref{sec:koenigs} does not answer.
+
+\FloatBarrier

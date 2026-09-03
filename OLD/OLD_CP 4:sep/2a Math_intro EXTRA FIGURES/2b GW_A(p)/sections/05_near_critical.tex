@@ -1,0 +1,131 @@
+\section{Behaviour as \texorpdfstring{$p\to\tfrac12^-$}{p to 1/2}}
+\label{a:sec:nearcritical}
+
+The bounds \cref{a:eq:Abounds} show that $A(p)$ is of order $\varepsilon$ near
+criticality but leave a factor of two unresolved. The series \cref{a:eq:Aseries}
+settles it. It also identifies the order of the first relative correction,
+which turns out to carry a logarithm and is the reason the leading asymptotic is a
+poor surrogate except very close to $p=\tfrac12$.
+
+\begin{theorem}[Near-critical amplitude]
+\label{a:thm:nearcritical}
+As $p\uparrow\tfrac12$, with $\varepsilon = 1-2p\downarrow0$,
+\begin{equation}
+\label{a:eq:Anearcritical}
+A(p) = 2\varepsilon\lrbs{1+O\lrb{\varepsilon\log\frac1\varepsilon}} .
+\end{equation}
+In particular
+\begin{equation}
+\label{a:eq:Aasym}
+A(p)\sim2(1-2p),
+\qquad
+\frac{1}{A(p)}\sim\frac{1}{2(1-2p)} .
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write $r = 1-\varepsilon$. The identity
+\begin{equation}
+\label{a:eq:denomsplit}
+\frac{1}{2-S_n} = \frac12 + \frac{S_n}{2(2-S_n)}
+\end{equation}
+turns the exact series \cref{a:eq:Aseries} into
+\begin{equation}
+\label{a:eq:seriesdecomp}
+\frac{1}{A(p)} = 1 + \frac{1}{2\varepsilon} + D_\varepsilon,
+\qquad
+D_\varepsilon := \sum_{n=0}^{\infty}r^n\,\frac{S_n}{2(2-S_n)} ,
+\end{equation}
+the geometric sum $\sum_nr^n = 1/\varepsilon$ having been evaluated. Only a
+logarithmic bound on the remainder $D_\varepsilon$ is needed.
+
+The map $s\mapsto ps(2-s)$ is increasing in $p$ and in $s$ on $s\in[0,1]$, so
+comparing \cref{a:eq:SnIter} at parameter $p$ with the same recursion at $p=\tfrac12$
+from the common initial value $S_0=1$ gives, by induction,
+$S_n(p)\le S_n(\tfrac12)$ for every $n$. At criticality the reciprocal increments
+satisfy
+\begin{equation}
+\label{a:eq:recipincrement}
+\frac{1}{S_{n+1}(\tfrac12)}-\frac{1}{S_n(\tfrac12)}
+= \frac{1}{2\bigl(1-S_n(\tfrac12)/2\bigr)}\;\ge\;\frac12 ,
+\end{equation}
+so $1/S_n(\tfrac12)\ge1+n/2$ and hence $S_n(\tfrac12)\le2/(n+2)$. Since
+$2-S_n\ge1$, these two facts combine to give
+\begin{align}
+0\le D_\varepsilon
+&\le \frac12\sum_{n=0}^{\infty}r^nS_n(p)
+ \;\le\; \frac12\sum_{n=0}^{\infty}r^n\,\frac{2}{n+2}
+ \;=\; \sum_{n=0}^{\infty}\frac{r^n}{n+2}
+\notag\\
+&= \frac{-\log(1-r)-r}{r^2}
+ \;=\; O\lrb{\log\frac1\varepsilon} .
+\label{a:eq:Dbound}
+\end{align}
+Factoring $1/(2\varepsilon)$ out of \cref{a:eq:seriesdecomp},
+\begin{equation*}
+\frac{1}{A(p)} = \frac{1}{2\varepsilon}
+\Bigl[1 + 2\varepsilon\bigl(1+D_\varepsilon\bigr)\Bigr],
+\end{equation*}
+and the quantity following the leading $1$ is $O(\varepsilon\log(1/\varepsilon))$.
+Inverting gives \cref{a:eq:Anearcritical}.
+\end{proof}
+
+The proof locates the logarithm precisely: it comes from the near-critical decay
+$S_n\lesssim2/(n+2)$ persisting across the whole range $n\lesssim1/\varepsilon$ over
+which the geometric factor $r^n$ still carries weight. The
+summand $r^n/(2-S_n)$ involves two decays on very different scales: the geometric
+factor $r^n = (1-\varepsilon)^n$ decays on the scale $n\sim1/\varepsilon$, which is
+large, whereas $S_n$ is close to its critical behaviour $2/n$ and has already
+fallen to near zero after $O(1)$ generations. For the overwhelming majority of the
+terms that carry weight, therefore, $S_n\approx0$ and the summand is approximately
+$r^n/2$; summing gives $1/A\approx1/(2\varepsilon)$ at once. The rigorous argument
+above is that estimate with the neglected mass bounded rather than discarded.
+
+\begin{remark}[The critical gradient]
+\label{a:rem:gradient}
+By \cref{a:eq:Aasym}, $A(p)$ meets the axis at $p=\tfrac12$ with gradient $-4$:
+\begin{equation}
+\label{a:eq:gradient}
+A(p) = 2-4p+o(1-2p)\qquad(p\to\tfrac12^-).
+\end{equation}
+This is the single most useful diagnostic in \cref{a:sec:GA}: since $1/A$ diverges
+as $A\to0$, an error in $A$ of vanishing absolute size still produces an unbounded
+error in the quasi-stationary mean, so a candidate accurate to plotting resolution
+across the whole interval can fail here, and fail fatally.
+\end{remark}
+
+\begin{remark}[Rate of approach]
+\label{a:rem:rate}
+Numerically, $A(p)/2\varepsilon$ approaches $1$ rather slowly. Evaluating
+\cref{a:eq:prodFormula} in high precision gives $A/2\varepsilon = 0.90987$,
+$0.98612$, $0.99814$, $0.99977$ and $0.999972$ at $\varepsilon=2\times10^{-2}$ down
+to $2\times10^{-6}$. An exploratory fit to the deficit gives
+\begin{equation}
+\label{a:eq:empiricalcorrection}
+1-\frac{A}{2\varepsilon}\approx\varepsilon\lrb{\log\frac1\varepsilon+c},
+\qquad c\approx0.78,
+\end{equation}
+consistent with \cref{a:eq:Anearcritical}. The constant $c$ is empirical.
+\end{remark}
+
+\subsection*{Why the continuum route is worse}
+
+The same leading asymptotic can be reached through the Riccati approximation of
+\ChM. The exact difference is
+\begin{equation*}
+S_{n+1}-S_n = (2p-1)S_n - pS_n^2
+= -\varepsilon S_n - \tfrac12S_n^2 + \tfrac{\varepsilon}{2}S_n^2 ,
+\end{equation*}
+and dropping the $O(\varepsilon S_n^2)$ term gives
+$\dd S/\dd n = -\varepsilon S-\tfrac12S^2$. Setting $u=1/S$ linearises this to
+$u' = \varepsilon u+\tfrac12$, with solution
+\begin{equation*}
+u(n) = C\ee^{\varepsilon n} - \frac{1}{2\varepsilon},
+\qquad
+S(n) = \frac{1}{C\ee^{\varepsilon n}-\frac{1}{2\varepsilon}} .
+\end{equation*}
+Matching $S_n\sim A\ee^{-\varepsilon n}$ for small $\varepsilon$ identifies
+$A=1/C$, and matching to the critical decay $S_n\sim2/n$ in the appropriate double
+limit fixes $C\sim1/(2\varepsilon)$, recovering \cref{a:eq:Aasym}. Both steps are
+heuristic and the second is delicate; worse, the route gives no control at all on
+the error, and so cannot see the logarithm of \cref{a:eq:Anearcritical}.

@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Genetic Algorithm - Polynomial Fitting</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background: #fff;
+        color: #222;
+        padding: 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .subtitle {
+        font-size: 0.875rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+      }
+
+      canvas {
+        display: block;
+        border: 1px solid #ddd;
+        margin-bottom: 1rem;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      button {
+        font-family: inherit;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid #333;
+        background: #fff;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      button:hover {
+        background: #f5f5f5;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .stats {
+        font-size: 0.875rem;
+        color: #444;
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .stat-label {
+        color: #666;
+      }
+
+      .stat-value {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .speed-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      input[type="range"] {
+        width: 80px;
+      }
+
+      .legend {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+        color: #666;
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .legend-line {
+        width: 20px;
+        height: 2px;
+      }
+
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Genetic Algorithm: Polynomial Curve Fitting</h1>
+    <p class="subtitle">
+      Evolution of polynomial approximations over successive generations
+    </p>
+
+    <canvas id="canvas" width="850" height="500"></canvas>
+
+    <div class="controls">
+      <button id="start-btn">Start</button>
+      <button id="reset-btn">Reset</button>
+
+      <div class="speed-control">
+        <label for="speed-slider">Speed:</label>
+        <input type="range" id="speed-slider" min="1" max="20" value="10" />
+      </div>
+
+      <div class="stats">
+        <span
+          ><span class="stat-label">Generation:</span>
+          <span class="stat-value" id="gen-display">0</span>/<span
+            class="stat-value"
+            >100</span
+          ></span
+        >
+        <span
+          ><span class="stat-label">MSE:</span>
+          <span class="stat-value" id="mse-display">—</span></span
+        >
+        <span
+          ><span class="stat-label">Best MSE:</span>
+          <span class="stat-value" id="best-display">—</span></span
+        >
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #0066cc"></div>
+        <span>Data points</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-line" style="background: #cc0000"></div>
+        <span>Best fit</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-line" style="background: #ccc"></div>
+        <span>Population</span>
+      </div>
+    </div>
+
+    <script>
+      // Data points
+      const rawData = `0.01,0.49744950892200523
+0.02,0.4947961454086841
+0.03,0.49203568028781275
+0.04,0.4891655063931692
+0.05,0.4861804681386442
+0.06,0.4830774611793251
+0.07,0.4798516728499167
+0.08,0.4764965649930478
+0.09,0.4730092271000399
+0.1,0.46938333702446194
+0.11,0.46561045412689755
+0.12,0.46168780095224604
+0.13,0.45760728178648097
+0.14,0.45335797129833433
+0.15,0.44893751974883506
+0.16,0.44433208243911365
+0.17,0.43953758533578097
+0.18,0.43454255921952245
+0.19,0.4293311822253738
+0.2,0.42390081850381817
+0.21,0.4182300784035889
+0.22,0.4123108180947064
+0.23,0.40613172436516815
+0.24,0.399669551694508
+0.25,0.3929162754078347
+0.26,0.38584326351619247
+0.27,0.3784359299789587
+0.28,0.370672189995087
+0.29,0.3625279290473855
+0.3,0.35397672110443756
+0.31,0.3449895164077589
+0.32,0.33553428875892377
+0.33,0.3255756349223103
+0.34,0.31506734776888573
+0.35,0.3039779337611788
+0.36,0.2922446697896221
+0.37,0.2798182518473617
+0.38,0.2666353397344354
+0.39,0.252615526498267
+0.4,0.23768332022995975
+0.41,0.22173411227463893
+0.42,0.20466312830238828
+0.43,0.1863198446038385
+0.44,0.16655284045247842
+0.45,0.1451501913600998
+0.46,0.1218716445414851
+0.47,0.09638121630669728
+0.48,0.06824513327478827
+0.49,0.03687714681581637
+0.5,0.0044555971049409825`;
+
+      const Pvals = [];
+      const Avals = [];
+      rawData
+        .trim()
+        .split("\n")
+        .forEach((row) => {
+          const [p, a] = row.split(",").map(Number);
+          Pvals.push(p);
+          Avals.push(a);
+        });
+
+      // GA Parameters
+      const NumBases = 50;
+      const N = 50;
+      const mutRate = 0.3;
+      const numGenerations = 100;
+
+      // State
+      let population = [];
+      let generation = 0;
+      let bestMSE = Infinity;
+      let running = false;
+      let animationId = null;
+
+      // Canvas setup
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Plot bounds
+      const padding = { top: 30, right: 30, bottom: 50, left: 60 };
+      const plotWidth = canvas.width - padding.left - padding.right;
+      const plotHeight = canvas.height - padding.top - padding.bottom;
+      const xMin = 0,
+        xMax = 0.55;
+      const yMin = 0,
+        yMax = 0.55;
+
+      // UI elements
+      const genDisplay = document.getElementById("gen-display");
+      const mseDisplay = document.getElementById("mse-display");
+      const bestDisplay = document.getElementById("best-display");
+      const startBtn = document.getElementById("start-btn");
+      const resetBtn = document.getElementById("reset-btn");
+      const speedSlider = document.getElementById("speed-slider");
+
+      // Helper functions
+      function gaussianRandom(mean = 0, std = 1) {
+        const u1 = Math.random();
+        const u2 = Math.random();
+        const z0 =
+          Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+        return z0 * std + mean;
+      }
+
+      function generateRandomSolution() {
+        const chrom1 = new Array(NumBases)
+          .fill(0)
+          .map(() => Math.round(gaussianRandom(0, 5)));
+        let chrom2 = new Array(NumBases)
+          .fill(0)
+          .map(() => Math.round(gaussianRandom(0, 5)));
+        chrom2 = chrom2.map((v) => (v === 0 ? 1 : v));
+        chrom1[0] = 1;
+        chrom2[0] = 2;
+        return [chrom1, chrom2];
+      }
+
+      function evaluatePolynomial(P, solution) {
+        let result = 0;
+        for (let i = 0; i < NumBases; i++) {
+          if (solution[1][i] !== 0) {
+            result += (solution[0][i] / solution[1][i]) * Math.pow(P, i);
+          }
+        }
+        return result;
+      }
+
+      function scoreSolution(solution) {
+        let sumSqDiff = 0;
+        for (let i = 0; i < Pvals.length; i++) {
+          const polyVal = evaluatePolynomial(Pvals[i], solution);
+          sumSqDiff += Math.pow(Avals[i] - polyVal, 2);
+        }
+        const mse = sumSqDiff / Pvals.length;
+        const frmZeroSq = Math.pow(evaluatePolynomial(0.5, solution), 2);
+        return mse + frmZeroSq * 100;
+      }
+
+      function chooseRandFromOrder(n) {
+        const probs = [];
+        let sum = 0;
+        for (let i = 1; i <= n; i++) {
+          probs.push(1 / i);
+          sum += 1 / i;
+        }
+        const normalized = probs.map((p) => p / sum);
+        const rand = Math.random();
+        let cumulative = 0;
+        for (let i = 0; i < n; i++) {
+          cumulative += normalized[i];
+          if (rand <= cumulative) return i;
+        }
+        return n - 1;
+      }
+
+      function crossover(parent1, parent2) {
+        const child = [new Array(NumBases), new Array(NumBases)];
+        for (let c = 0; c < 2; c++) {
+          for (let i = 0; i < NumBases; i++) {
+            child[c][i] = Math.random() < 0.5 ? parent1[c][i] : parent2[c][i];
+          }
+        }
+        return child;
+      }
+
+      function mutate(child) {
+        for (let c = 0; c < 2; c++) {
+          for (let i = 1; i < NumBases; i++) {
+            if (Math.random() < mutRate) {
+              const mutation = Math.round(gaussianRandom(0, 5));
+              child[c][i] += mutation;
+              if (c === 1 && child[c][i] === 0) {
+                child[c][i] += mutation;
+              }
+            }
+          }
+        }
+        return child;
+      }
+
+      function sortByFitness(pop) {
+        const scored = pop.map((sol, idx) => ({
+          sol,
+          score: scoreSolution(sol),
+          idx,
+        }));
+        scored.sort((a, b) => a.score - b.score);
+        return {
+          sorted: scored.map((s) => s.sol),
+          bestScore: scored[0].score,
+        };
+      }
+
+      function makeNewGeneration(sortedPop) {
+        const newPop = [sortedPop[0]];
+        for (let i = 0; i < N - 1; i++) {
+          const p1 = sortedPop[chooseRandFromOrder(N)];
+          const p2 = sortedPop[chooseRandFromOrder(N)];
+          let child = crossover(p1, p2);
+          child = mutate(child);
+          newPop.push(child);
+        }
+        return newPop;
+      }
+
+      // Coordinate conversion
+      function toCanvasX(p) {
+        return padding.left + ((p - xMin) / (xMax - xMin)) * plotWidth;
+      }
+
+      function toCanvasY(a) {
+        return (
+          padding.top + plotHeight - ((a - yMin) / (yMax - yMin)) * plotHeight
+        );
+      }
+
+      // Drawing functions
+      function drawAxes() {
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#333";
+        ctx.font =
+          "12px -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif";
+
+        // X axis
+        ctx.beginPath();
+        ctx.moveTo(padding.left, padding.top + plotHeight);
+        ctx.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+        ctx.stroke();
+
+        // Y axis
+        ctx.beginPath();
+        ctx.moveTo(padding.left, padding.top);
+        ctx.lineTo(padding.left, padding.top + plotHeight);
+        ctx.stroke();
+
+        // X ticks and labels
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        for (let p = 0; p <= 0.5; p += 0.1) {
+          const x = toCanvasX(p);
+          ctx.beginPath();
+          ctx.moveTo(x, padding.top + plotHeight);
+          ctx.lineTo(x, padding.top + plotHeight + 5);
+          ctx.stroke();
+          ctx.fillText(p.toFixed(1), x, padding.top + plotHeight + 8);
+        }
+
+        // Y ticks and labels
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        for (let a = 0; a <= 0.5; a += 0.1) {
+          const y = toCanvasY(a);
+          ctx.beginPath();
+          ctx.moveTo(padding.left - 5, y);
+          ctx.lineTo(padding.left, y);
+          ctx.stroke();
+          ctx.fillText(a.toFixed(1), padding.left - 10, y);
+        }
+
+        // Axis labels
+        ctx.fillStyle = "#333";
+        ctx.font =
+          "14px -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(
+          "P",
+          padding.left + plotWidth / 2,
+          padding.top + plotHeight + 30,
+        );
+
+        ctx.save();
+        ctx.translate(18, padding.top + plotHeight / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textBaseline = "middle";
+        ctx.fillText("A(P)", 0, 0);
+        ctx.restore();
+      }
+
+      function drawDataPoints() {
+        ctx.fillStyle = "#0066cc";
+        for (let i = 0; i < Pvals.length; i++) {
+          const x = toCanvasX(Pvals[i]);
+          const y = toCanvasY(Avals[i]);
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function drawSolution(solution, color, alpha, lineWidth) {
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = lineWidth;
+
+        // Clip to plot area
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(padding.left, padding.top, plotWidth, plotHeight);
+        ctx.clip();
+
+        ctx.beginPath();
+        let first = true;
+        for (let p = xMin; p <= xMax; p += 0.005) {
+          const a = evaluatePolynomial(p, solution);
+
+          // Skip values far outside visible range to avoid crazy lines
+          if (a < yMin - 1 || a > yMax + 1) {
+            first = true;
+            continue;
+          }
+
+          const x = toCanvasX(p);
+          const y = toCanvasY(a);
+
+          if (first) {
+            ctx.moveTo(x, y);
+            first = false;
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      }
+
+      function draw(sortedPopulation, currentMSE) {
+        // Clear
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawAxes();
+
+        // Draw population (except best)
+        for (let i = sortedPopulation.length - 1; i >= 1; i--) {
+          drawSolution(sortedPopulation[i], "#999", 0.15, 1);
+        }
+
+        // Draw best solution
+        if (sortedPopulation.length > 0) {
+          drawSolution(sortedPopulation[0], "#cc0000", 1, 2);
+        }
+
+        drawDataPoints();
+
+        // Update displays
+        genDisplay.textContent = generation;
+        mseDisplay.textContent = currentMSE.toFixed(6);
+        if (currentMSE < bestMSE) {
+          bestMSE = currentMSE;
+        }
+        bestDisplay.textContent = bestMSE.toFixed(6);
+      }
+
+      function iterate() {
+        const { sorted, bestScore } = sortByFitness(population);
+        draw(sorted, bestScore);
+
+        if (generation < numGenerations && running) {
+          population = makeNewGeneration(sorted);
+          generation++;
+
+          const speed = speedSlider.value;
+          const delay = Math.max(10, 500 - speed * 25);
+          animationId = setTimeout(iterate, delay);
+        } else if (generation >= numGenerations) {
+          running = false;
+          startBtn.textContent = "Finished";
+          startBtn.disabled = true;
+        }
+      }
+
+      function init() {
+        population = [];
+        for (let i = 0; i < N; i++) {
+          population.push(generateRandomSolution());
+        }
+        generation = 0;
+        bestMSE = Infinity;
+
+        const { sorted, bestScore } = sortByFitness(population);
+        draw(sorted, bestScore);
+      }
+
+      function start() {
+        if (!running) {
+          running = true;
+          startBtn.textContent = "Running...";
+          iterate();
+        }
+      }
+
+      function reset() {
+        running = false;
+        if (animationId) {
+          clearTimeout(animationId);
+        }
+        startBtn.textContent = "Start";
+        startBtn.disabled = false;
+        init();
+      }
+
+      startBtn.addEventListener("click", start);
+      resetBtn.addEventListener("click", reset);
+
+      init();
+    </script>
+  </body>
+</html>

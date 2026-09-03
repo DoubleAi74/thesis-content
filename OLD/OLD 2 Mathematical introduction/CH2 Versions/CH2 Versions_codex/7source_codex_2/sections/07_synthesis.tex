@@ -1,0 +1,54 @@
+\section{What carries forward}
+\label{sec:chapter-synthesis}
+
+The chapter leaves later models with a small set of results that can be reused
+without rebuilding their probabilistic foundations.  For a discrete binary
+lineage, survival is governed by the exact recursion
+\(
+  S_{n+1}=2pS_n-pS_n^2
+\).  It separates the three growth regimes, gives the critical tail
+\(S_n\sim2/n\), and, below criticality, defines the survival amplitude \(A(p)\).
+Conditioning on survival then produces a Yaglom limit with mean \(1/A(p)\), while
+a finite founding cohort changes the chance of reaching late time but not this
+limiting conditional scale.
+
+The constant \(A(p)\) is available at three levels of resolution.  Its product
+and series representations are exact; the bounds and the interval
+\eqref{eq:A-certified-interval} provide certified finite computations; and the
+asymptotic \(A(p)\sim2(1-2p)\) explains the divergence near criticality.  The
+continuous-time constant
+\(
+  A_{\mathrm c}(p)=(1-2p)/(1-p)
+\)
+is not interchangeable with \(A(p)\): their difference records the available
+surviving states under asynchronous and generational updates.  Later applications
+must therefore choose the clock before importing a conditional population scale.
+
+Catastrophe adds a separate selection mechanism.  The weighted recursion
+\eqref{eq:cat-weighted-recursion} shows that conditioning on avoidance of rupture
+reweights entire population paths, not only their terminal counts.  A
+quasi-stationary result for ordinary branching consequently cannot be transferred
+to a killed or rupturing process without defining its transient kernel and
+conditioning event.  This point becomes more important, not less, in two-type
+models, where the catastrophe rate may depend on the composition as well as the
+total census.
+
+For transfer between compartments, the bivariate PGF keeps the interior and
+exterior counts distinct.  Pure absorption and absorption--death give binomial
+and trinomial laws, while absorption--birth--death has the global integral
+solution \eqref{eq:abd-integral-solution} and, away from critical and resonant
+parameters, the characteristic form \eqref{eq:Gabd}.  In a multi-compartment
+extension, the same construction can be applied after a rupture by replacing the
+single exterior cohort with the released burst-size distribution and assigning
+one absorption channel to each receiving compartment.  Multivariate PGFs then
+record the resulting joint counts; no new probability principle is required,
+although the state space and characteristic geometry become larger.
+
+These results also mark the boundary between model and application.  The
+mathematics states what follows from independent reproduction, constant
+state-dependent hazards and the chosen event ordering.  Whether those assumptions
+are adequate for a particular population, compartment or rupture mechanism must
+be decided in the relevant application chapter.  The quantities to test are now
+specific: early extinction probabilities, the survival-conditioned scale,
+catastrophe-time and burst-size laws, absorption times, and the sensitivity of
+each to distance from criticality.

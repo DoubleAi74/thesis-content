@@ -1,0 +1,130 @@
+% Discussion --- plan \S4.15 (Phase 5).
+% Sources: new_notes3 Part G \S32 (assay predictions), Part J \S39 (open
+% tasks); new_notes Part II \S18 (confrontation with single-cell data),
+% Part III (open tasks).
+
+\section{Discussion}
+\label{sec:discussion}
+
+The chapter set out to complete the single-cell theory of the
+birth--death--catastrophe process and to scale it up into a population
+model forced by the intracellular dynamics. Both are done: the single-cell
+description is now complete in distribution --- geometric states at every
+time, a geometric quasi-stationary limit, and a burst-size law identical to
+it --- and the population model exists, verified, and carries exact
+consequences for fitting, for thresholds, and for the evolutionary question
+of bursting versus budding. What remains is to say what the results imply
+for measurement, how they connect to the chapters that follow, and what is
+still open.
+
+\subsection{Single-cell assay predictions for lytic systems}
+\label{sec:discussion-assay}
+
+For a genuinely lytic system --- \yp{}, \ft{}, lytic phage --- a
+limiting-dilution or Hataye-type assay (one infected cell per well, counts
+followed in time) measures the single-cell process directly, with no
+population model interposed. The theory makes five predictions, all of them
+parameter-free given $(\beta,\mu,\delta)$:
+\begin{enumerate}
+\item a fraction $b$ of wells show no release ever --- the mass of internal
+extinction;
+\item the cumulative release in a well is a step function: zero, then a
+single terminal jump;
+\item the jump times follow the density $\delta J(t)/(1-b)$;
+\item the jump sizes follow the geometric law with ratio $1/a$ --- the
+quasi-stationary distribution, by Corollary~\ref{cor:burst-qsd};
+\item the between-well variance of total release is $\mathrm{Var}(W_\infty)$
+of \eqref{eq:EW2}, a quantity no deterministic constant-rate model can
+produce at all.
+\end{enumerate}
+The honest caveat of \S\ref{sec:hiv} applies: these predictions are too
+strong for HIV as literally stated --- intermittent budding is not a single
+terminal burst --- and they should be used for lytic hosts, or as the
+bursting endpoint of the spectrum of \S\ref{sec:spectrum}.
+
+\subsection{Consequences for fitting practice}
+
+Three consequences for the way within-host models are fitted to data.
+First, $p$ is not a constant of the pathogen: the effective release rate
+$p_{\rm eff}(r)$ falls monotonically with the epidemic growth rate, from
+$V_\infty/\mean{T_{\rm prod}}$ in the stationary phase towards $\delta$ in
+the acute phase, and fits to acute and set-point data should therefore
+yield systematically different estimates, in a direction and by an amount
+the theory specifies (\S\ref{sec:peff-section}). Second, the eclipse-like
+delay usually inserted into within-host models by hand emerges from the
+intracellular dynamics with no extra parameter; its duration is the mean
+productive lifetime's shadow, $\beta^{-1}\log\langle X\rangle_{\rm QS}$.
+Third, the identifiability negative result of
+\S\ref{sec:identifiability} says that no fit of $(p,d_{\Icell})$ --- from
+any data, at any growth rate --- can recover the three intracellular rates;
+a third observable is required, and the theory names the three cheapest
+ones (burst-size dispersion, the no-burst fraction $b$, the shape of the
+release-time density). An estimate of $p$ alone tells one almost nothing
+about the cell; an estimate of $p$ plus any one of the three tells one
+something testable.
+
+\subsection{Connections forward}
+
+The two-type process of Chapter~5 supplies the most immediate continuation.
+In the GATE regime $\delta_1=0<\delta_2$ --- no burst before conversion ---
+the no-catastrophe probability has $S'(0)=0$: a zero initial hazard, then
+rising. That is precisely the eclipse-phase signature which within-host
+models insert by hand, emerging mechanistically, with the eclipse duration
+set by the conversion rate $\nu$. The renewal construction of this chapter
+is ready to receive the two-type kernels; what blocks the way is the
+two-type calculation itself (below). The budding--bursting comparison of
+\S\ref{sec:flooding} finds its evolutionary home in Chapter~6, where the
+spectrum of \S\ref{sec:spectrum} --- partial release, reset catastrophe,
+self-excitation --- provides the intermediate phenotypes a selection
+argument needs; and the nonlinear mechanisms Chapter~7 discusses in the
+Komarova vein (immune saturation, local depletion, the ``all run out at
+once'' intuition) are exactly the effects the branching-structure
+comparison of \S\ref{sec:flooding} deliberately excludes, and should be
+named wherever the flooding advantage is invoked.
+
+\subsection{Open problems}
+\label{sec:open-problems}
+
+\begin{enumerate}
+\item \textbf{A conceptual proof that burst size equals QSD.} The algebra
+of \S\ref{sec:burst=qsd} is complete; a structural argument --- presumably
+size-biasing composed with the burst intensity, or a Yaglom-type limit
+\cite{yaglom1947certain} --- would turn a coincidence into a theorem one
+can quote.
+\item \textbf{Two-type killed second moments and the two-type $D$.} The
+release kernel of a two-type renewal model needs
+$\mean{X_a^2\mathbf1\{\tau_c>a\}}$, $\mean{X_aY_a\mathbf1\{\tau_c>a\}}$,
+$\mean{Y_a^2\mathbf1\{\tau_c>a\}}$, and the analogue of $D(t)$
+(extinction without catastrophe). The moment hierarchy does not close
+upward, exactly as in one type; the one-type escape was to differentiate
+the Riccati equation, and the two-type route should be to differentiate the
+backward system of Chapter~5. This is the main technical obstacle between
+this chapter and an eclipse-aware renewal BMVR, and it should not be
+assumed easy.
+\item \textbf{The flooding boundary against real parameters.} Map
+$\delta(\beta+\mu)>\beta\mu$ for \yp{} in the macrophage, and compute the
+\emph{size} of the advantage from \eqref{eq:flood}: does the pathogen sit
+on the advantageous side, and by how much?
+\item \textbf{Population-level variance.} Propagate $\mathrm{Var}(W)$ of
+\eqref{eq:EW2} through the branching structure to a whole-host prediction:
+for single-cell assays the first moments suffice, but for whole-host data
+the variance is the main stochastic signal the BMVR cannot reproduce.
+\item \textbf{Partial release and the flooding boundary in $q$.} Where on
+the boolean continuum of \S\ref{sec:boolean} does the flooding advantage
+survive? Does the closed-form structure persist at intermediate $q$?
+\item \textbf{Logistic intracellular growth.} A referee will object that
+linear birth lets the conditional load grow without bound. The defence is
+that the burst hazard is proportional to load and so regulates it --- the
+QSD result is precisely the statement that the conditional load stabilises
+at $a/(a-1)$ --- but the sensitivity of $g(a)$ and $\Ihat(a)$ to a logistic
+birth rate remains to be checked numerically.
+\item \textbf{Literature positioning.} Verify whether Carruthers et al.\
+\cite{carruthers2020stochastic} already couple an intracellular BDC to a
+between-cell model --- the novelty claim of \S\ref{sec:renewal} depends on
+the answer --- and position the renewal embedding against the
+Pearson--Krapivsky--Perelson \cite{pearson2011stochastic},
+Nelson--Gilchrist--Perelson, Gilchrist--Coombs
+\cite{gilchrist2006evolution}, and Heffernan--Wahl lines of work, with the
+BMVR's attribution settled between McLean, Nowak--Bangham, and Perelson et
+al.
+\end{enumerate}

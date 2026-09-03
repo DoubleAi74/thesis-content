@@ -1,0 +1,82 @@
+\section{Standing setup}
+\label{a:sec:setup}
+
+This section fixes the standing assumptions and notation for the chapter. The
+branching background is summarised only as far as the constant $A(p)$ requires;
+the full development of the process, of its critical behaviour, and of the
+quasi-stationary distribution whose mean $A(p)$ controls, is in \ChM, and the
+reader is referred there for proofs of everything quoted here without one.
+
+\subsection{The binary Galton--Watson process}
+\label{a:sec:setupgw}
+
+Throughout, $Z_n$ denotes the size of the $n$th generation of a Galton--Watson
+process started from a single progenitor, $Z_0=1$, in which each individual
+independently either divides into two, with probability $p$, or dies, with
+probability $1-p$:
+\begin{equation}
+\label{a:eq:binarylaw}
+\pr{L=2} = p,
+\qquad
+\pr{L=0} = 1-p ,
+\end{equation}
+$L$ being the offspring variable. The offspring \pgf{} is
+$\phi(z) = pz^2+(1-p)$, the mean offspring number is $2p$, and
+\begin{equation}
+\label{a:eq:meanZn}
+\ex{Z_n} = (2p)^n .
+\end{equation}
+Writing $u_n=\pr{Z_n=0}$ for the probability of extinction by generation $n$ and
+$S_n = 1-u_n = \pr{Z_n>0}$ for the probability of survival to generation $n$, the
+standard first-step argument \cite{Harris1963,Athreya1972} gives
+$u_{n+1}=\phi(u_n)$, $u_0=0$, equivalently
+\begin{equation}
+\label{a:eq:SnIter}
+S_{n+1} = 2pS_n - pS_n^2,
+\qquad S_0 = 1 .
+\end{equation}
+The sequence $S_n$ is non-increasing and bounded below by $0$, hence convergent.
+For $p\le\tfrac12$ the only fixed point of \cref{a:eq:SnIter} in $[0,1]$ is the
+origin, so extinction is certain; the case of interest in this chapter is the open
+subcritical interval.
+
+\begin{quote}
+\textbf{Standing assumption.}\quad $0\le p<\tfrac12$, with the endpoint
+convention $A(0):=\lim_{p\downarrow0}A(p)=\tfrac12$ adopted in
+\cref{a:sec:bounds} once the limit is available.
+\end{quote}
+
+\subsection{The constant \texorpdfstring{$A(p)$}{A(p)} and the quasi-stationary mean}
+\label{a:sec:setupAp}
+
+Fix $0<p<\tfrac12$. Since $S_n\to0$, the quadratic term in \cref{a:eq:SnIter}
+becomes negligible beside the linear one, and the recursion is increasingly well
+approximated by $S_{n+1}\approx2pS_n$. The decay is therefore geometric at rate
+$2p$, with a prefactor recording everything the linearisation forgets:
+\begin{equation}
+\label{a:eq:Apdef}
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n},
+\qquad
+S_n \sim A(p)(2p)^n \quad(n\to\infty) .
+\end{equation}
+That the limit exists, and that $A(p)$ lies strictly between $0$ and $\tfrac12$
+for $p\in(0,\tfrac12)$, is proved in \cref{a:sec:product} by way of the infinite
+product \cref{a:eq:prodFormula} below; for the moment $A(p)$ is the object whose
+properties this chapter develops.
+
+Decomposing the expectation into surviving and extinct realisations,
+\begin{equation}
+\label{a:eq:condmean}
+\ex{Z_n\mid Z_n>0} = \frac{\ex{Z_n}}{S_n} = \frac{(2p)^n}{S_n}
+\;\xrightarrow[n\to\infty]{}\;
+\frac{1}{A(p)} .
+\end{equation}
+The geometric factors cancel exactly, so the surviving population has a constant
+limiting mean, the \emph{quasi-stationary mean} $1/A(p)$; the limiting conditional
+variance, and the convergence of the full conditional distribution in the sense of
+Yaglom \cite{Yaglom1947}, are established in \ChM. The constant $A(p)$ is
+therefore the single quantity on which the late-time statistics of the subcritical
+process depend, and computing it --- exactly where possible, rigorously otherwise
+--- is the business of this chapter.
+
+\FloatBarrier

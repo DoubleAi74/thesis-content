@@ -1,0 +1,155 @@
+\section{Initial cohorts, catastrophe exposure, and continuous-time comparison}
+\label{sec:cohorts}
+
+\subsection{Survival from a finite cohort}
+\label{sec:k-ancestors}
+
+Suppose the binary Galton--Watson process begins with $Z_0=k\ge1$.  Extinction by generation $n$ requires all $k$ ancestral lineages to be extinct, and those lineages are independent.  Therefore
+\begin{equation}
+  \Prob(Z_n=0\mid Z_0=k)=q_n^k,
+  \qquad
+  S_n^{(k)}
+  :=\Prob(Z_n>0\mid Z_0=k)
+  =1-q_n^k
+  =1-(1-S_n)^k.
+  \label{eq:k-lineage-survival}
+\end{equation}
+This exact expression separates two effects that are easily conflated: the criticality parameter $p$ determines the fate of each lineage, while the initial count $k$ determines how many independent opportunities for persistence are present.
+
+In the subcritical case, $S_n\to0$ and a binomial expansion gives
+\begin{equation}
+  S_n^{(k)}
+  =kS_n+O(S_n^2)
+  \sim kA(p)m^n.
+  \label{eq:k-subcritical-asymptotic}
+\end{equation}
+Since $\E[Z_n\mid Z_0=k]=km^n$, the factors of $k$ cancel after conditioning:
+\begin{equation}
+  \E[Z_n\mid Z_n>0,Z_0=k]
+  =\frac{km^n}{S_n^{(k)}}
+  \longrightarrow \frac{1}{A(p)}.
+  \label{eq:k-yaglom-mean}
+\end{equation}
+Thus a larger inoculum makes late survival more likely but does not alter the limiting conditional law reached by a surviving finite cohort.
+
+In the supercritical case, \cref{eq:binary-ultimate-survival} instead gives the ultimate establishment probability
+\begin{equation}
+  \Prob(Z_n>0\text{ for all }n\mid Z_0=k)
+  =1-\left(\frac{1-p}{p}\right)^k,
+  \qquad p>\frac12.
+  \label{eq:k-ultimate-establishment}
+\end{equation}
+Close to criticality, even the one-lineage probability is small, but repeated independent opportunities can change the cohort-level probability substantially.  This is the precise sense in which early cohort size can dominate establishment in a slightly supercritical process.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.94\textwidth]{gw_cohort_survival.pdf}
+  \caption{Survival probability $S_n^{(k)}$ for initial cohort sizes $k\in\{1,10,100,1000\}$.  The subcritical process ($p=0.495$) eventually becomes extinct for every finite $k$, whereas the slightly supercritical process ($p=0.505$) approaches the positive establishment probability in \cref{eq:k-ultimate-establishment}.  All curves are evaluated from the exact recurrence, without Monte Carlo error.}
+  \label{fig:cohort-survival}
+\end{figure}
+
+\subsection{A state-dependent catastrophe is not a mean-field hazard}
+\label{sec:catastrophe-caution}
+
+A global catastrophe initiated by any individual provides a useful warning about state-dependent hazards.  Once a trigger occurs, every surviving lineage is stopped together, so the realised killed lineages are coupled and the event probability must be defined with care.  Let $\kappa\in[0,1]$ be the probability that an individual triggers catastrophe at a generational check.  Checks occur before reproduction, independently between individuals and generations; if no individual triggers catastrophe, offspring are then generated with PGF $f$.
+
+Let $a_n$ be the probability that no catastrophe occurs during the first $n$ checks, starting from one ancestor and regardless of whether the population becomes naturally extinct.  Conditioning on the first check and on the ancestor's offspring gives
+\begin{equation}
+  a_0=1,
+  \qquad
+  a_{n+1}=(1-\kappa)f(a_n).
+  \label{eq:catastrophe-recurrence}
+\end{equation}
+Although the killed populations share a global stopping event, their potential family trees and trigger variables factor before any trigger occurs.  Thus, for $k$ initial ancestors, the probability of no catastrophe is $a_n^k$.  In the special deterministic process in which every individual always divides, $Z_j=2^j$ before catastrophe and
+\begin{equation}
+  a_n=(1-\kappa)^{1+2+\cdots+2^{n-1}}
+      =(1-\kappa)^{2^n-1}.
+  \label{eq:deterministic-catastrophe}
+\end{equation}
+By contrast, $1-(1-\kappa)^{2^{n-1}}$ is only the conditional probability of a catastrophe at the $n$th check given that all earlier checks were passed.
+
+When demographic death makes $Z_j$ random, define the cumulative exposure
+\[
+  C_n=\sum_{j=0}^{n-1}Z_j
+\]
+for the process without catastrophe.  Then
+\begin{equation}
+  a_n=\E[(1-\kappa)^{C_n}],
+  \qquad
+  \Prob(\text{no catastrophe and }Z_n>0)
+  =\E[(1-\kappa)^{C_n}\ind_{\{Z_n>0\}}].
+  \label{eq:catastrophe-path-expectation}
+\end{equation}
+The nonlinear expectation in \cref{eq:catastrophe-path-expectation} is not equal to $(1-\kappa)^{\E[C_n]}$.  Replacing the random exposure by its mean therefore does not close the model; a marked or multivariate PGF is required.  This observation motivates the compartmental PGFs in \cref{sec:multivariate-pgf}.
+
+\subsection{The continuous-time linear birth--death process}
+\label{sec:continuous-birth-death}
+
+For comparison, let $N_t$ be a continuous-time population in which each individual gives birth at rate $\lambda\ge0$ and dies at rate $\mu\ge0$.  From state $z$, the transitions $z\to z+1$ and $z\to z-1$ therefore occur at rates $\lambda z$ and $\mu z$.  Starting from one individual, the extinction probability by time $t$ is
+\begin{equation}
+  q(t)=
+  \begin{cases}
+    \displaystyle
+    \frac{\mu\{1-\e^{-(\mu-\lambda)t}\}}
+         {\mu-\lambda\e^{-(\mu-\lambda)t}},
+      & \lambda\ne\mu,\\[4mm]
+    \displaystyle
+    \frac{\lambda t}{1+\lambda t},
+      & \lambda=\mu.
+  \end{cases}
+  \label{eq:ctbd-extinction}
+\end{equation}
+For $N_0=k$, the branching property again gives $\Prob(N_t=0\mid N_0=k)=q(t)^k$.  The mean is
+\begin{equation}
+  \E[N_t\mid N_0=k]=k\e^{(\lambda-\mu)t}.
+  \label{eq:ctbd-mean}
+\end{equation}
+
+The subcritical regime is $\lambda<\mu$.  Setting $d=\mu-\lambda>0$, the one-ancestor survival probability and conditional mean are
+\begin{align}
+  S_{\mathrm{ct}}(t)
+    &=\frac{d\e^{-dt}}{\mu-\lambda\e^{-dt}},
+    \label{eq:ctbd-survival}\\
+  \E[N_t\mid N_t>0,N_0=1]
+    &=\frac{\e^{-dt}}{S_{\mathrm{ct}}(t)}
+     =\frac{\mu-\lambda\e^{-dt}}{d}
+     \longrightarrow \frac{\mu}{\mu-\lambda}.
+    \label{eq:ctbd-conditional-mean}
+\end{align}
+The limiting conditional law is shifted geometric:
+\begin{equation}
+  \Prob(N_\infty^\star=j)
+  =\left(1-\frac{\lambda}{\mu}\right)
+     \left(\frac{\lambda}{\mu}\right)^{j-1},
+  \qquad j\ge1,
+  \label{eq:ctbd-yaglom}
+\end{equation}
+whose mean agrees with \cref{eq:ctbd-conditional-mean}.  These standard Markov branching results may also be recovered from the PGF equation used in \cref{sec:absorption-birth-death} \cite{Athreya1972}.
+
+It is useful to normalise \cref{eq:ctbd-survival} by its exponential factor:
+\begin{equation}
+  A_{\mathrm{ct}}
+  :=\lim_{t\to\infty}\frac{S_{\mathrm{ct}}(t)}
+                                 {\e^{-(\mu-\lambda)t}}
+  =\frac{\mu-\lambda}{\mu}.
+  \label{eq:ctbd-amplitude}
+\end{equation}
+When $\lambda+\mu>0$, let $\rho=\lambda/(\lambda+\mu)$ denote the dimensionless birth fraction.  Then
+\begin{equation}
+  A_{\mathrm{ct}}(\rho)=\frac{1-2\rho}{1-\rho},
+  \qquad 0\le \rho<\frac12.
+  \label{eq:ctbd-amplitude-p}
+\end{equation}
+At criticality, $\lambda=\mu>0$, \cref{eq:ctbd-extinction} gives
+\[
+  \Prob(N_t>0)=\frac{1}{1+\lambda t}
+  \sim\frac{1}{\lambda t}.
+\]
+The continuous-time critical process therefore mirrors the discrete process: extinction is certain, the conditional population scale grows linearly, and the mean extinction time diverges.
+
+\subsection{Why the discrete and continuous amplitudes differ}
+\label{sec:amplitude-comparison}
+
+The symbols $A(p)$ and $A_{\mathrm{ct}}(\rho)$ describe analogous asymptotic normalisations, but they belong to different stochastic clocks and event rules.  In the discrete binary process, an individual present at generation $n$ must divide to be represented at generation $n+1$; conditional on one-step survival, the new count is two.  Accordingly, the continuous extension of the discrete constant is $A(0+)=1/2$, and the limiting conditional mean approaches $2$ as $p\downarrow0$.
+
+In continuous time with $\lambda=0$, by contrast, a surviving individual is simply the original individual whose death clock has not yet rung.  Its conditional count is one, so $A_{\mathrm{ct}}(0)=1$.  There is therefore no reason for the two amplitude curves to coincide or to be related by a constant factor away from criticality.  What is shared is the structural statement: survival probability equals a decaying mean scale multiplied by an amplitude, and the inverse amplitude is the limiting mean conditional on survival.

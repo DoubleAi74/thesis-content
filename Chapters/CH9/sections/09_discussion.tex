@@ -1,0 +1,112 @@
+% Discussion. Short taxonomy reprise; limitations as scientific scope;
+% open problems as an enumerate, not a sixteen-row table.
+
+\section{Discussion}
+\label{var:sec:discussion}
+
+\subsection{What the collection shows}
+\label{var:sec:pattern}
+
+The sorting of \cref{var:fig:taxonomy} is the argument, and it is worth being
+exact about the last cell. A rate that moves because the process moved costs
+the generating function, and with it most of what the preceding chapters were
+able to do --- unless what the process acts on is a single random time rather
+than a moving rate. Between those two poles, the interesting object in the
+collection is the Pimentel chain: a process that repeatedly restores its own
+criticality is not the same thing as one that approaches an equilibrium, and
+\cref{var:fig:pim-critical} is the picture of that difference.
+
+\Cref{var:sec:twophase} sits where it does because the phase ends at the
+rupture of the host cell, which the process itself brings on at rate
+$\delta_1 X_t$. That is feedback of the same kind as \cref{var:sec:rrrr}'s.
+What differs is where the feedback is allowed to show up. In every other
+model the state bends a rate, and the generating function stops closing.
+Here it sets a single random \emph{time}, and the burst-size law has already
+integrated that time out --- what crosses the join is a distribution over
+$\Kb$ that has forgotten when the rupture came.
+
+That is the trade the chapter makes visible, and it is sharper than feedback
+against no feedback. A process may act on its own rates as much as it likes
+and still be solvable, provided what survives the interaction is a random
+time or a random count rather than a moving rate. It is continuous bending,
+not feedback as such, that costs the generating function.
+
+\subsection{Limitations}
+\label{var:sec:limitations}
+
+Five of the seven models have never been compared against data, and for three
+of those it is not obvious what data would serve. The Pimentel+ specification
+of \cref{var:sec:pimentelplus} has not been simulated, so the behaviour
+attributed to it is what the construction was intended to produce rather than
+anything observed of it. The public-good threshold $K^\ast$ of
+\cref{var:fig:kstar} is a numerical estimate on one parameter slice, not a
+comparison against data.
+
+The ecological models of \cref{var:sec:speciation,var:sec:rrrr} use
+``species'' as a unit whose delimitation is contested in the literature the
+speciation section responds to. \Cref{var:sec:rrrr} is explicit that its
+$X_t$ might equally count individuals, species or organisational units.
+
+None of \cref{var:sec:pimentelplus,var:sec:rrrr,var:sec:plague,%
+var:sec:publicgood} carries an existence result for the behaviour its
+motivation suggests. That the vitality coupling gives a sustained oscillation
+rather than one collapse, and that the fitness penalty of
+\cref{var:eq:fitpenalty} can reverse a dominance, remain conjectures
+supported by the construction.
+
+The organism-level claims of \cref{var:sec:publicgood,var:sec:twophase} are
+hypotheses about \yp{} compatible with the cited intracellular literature,
+not inferences this chapter can check.
+
+\subsection{Open problems}
+\label{var:sec:openproblems}
+
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.35em]
+\item \textbf{The mixture at $\beta_5$.} The law of $\Bint(t)$ under a
+randomly switching capacity, and the resulting mixture of geometrics
+\cref{var:eq:mixture}. Tractable: a Markov-modulated integral.
+\item \textbf{Identifiability.} What a time series of $S_t$ identifies,
+given that only $\Bint$ enters the law, and whether $\beta_1$ and $\beta_3$
+can be told apart from one.
+\item \textbf{Whether the Pimentel oscillation persists.} Every realisation
+run here eventually fixated. Whether the expected number of reversals before
+fixation grows without bound in $\alpha$, $\varepsilon$ or $N$, or saturates,
+is the question the model was built to answer.
+\item \textbf{A diffusion limit} in which \cref{var:eq:icrit} is a moving
+unstable equilibrium, so that the divergence of nearby trajectories becomes
+a rate.
+\item \textbf{The scaling of $K^\ast$.} \Cref{var:fig:kstar} is one slice.
+How the threshold moves with $\alpha$ and $c/g$ is open.
+\item \textbf{Against the threshold budget.} How $\ex{Z}$ here compares
+against $\vartheta^{\ast}$ of \cref{path:sec:ypestis}: whether the $\delta_1$
+that puts $\ex{Z}$ above one is the $\delta_1$ that puts the switch where
+the removal budget puts it.
+\end{enumerate}
+
+Of these, the mixture and the $\vartheta^{\ast}$ comparison would repay
+attention first: each is well posed, and each closes a section that currently
+stops one step short of an answer.
+
+\subsection{Connections}
+\label{var:sec:connections}
+
+\Cref{path:sec:forward} identifies a selection gradient between release
+phenotypes and hands the study of variability itself to this chapter.
+\Cref{var:sec:speciation,var:sec:pimentel,var:sec:pimentelplus} are what
+discharges that: variability as the object rather than as a property of a
+fixed mechanism.
+
+Two of the models point back into the core theory. The quasi-stationary
+question of \cref{var:sec:rrrr} is \cref{dist:thm:qsd}'s own question asked
+of a state-dependent catastrophe rate; the extinction probability of
+\cref{var:sec:plague} wants the first-step analysis
+\cref{path:sec:rsfirststep} runs on a two-dimensional lattice, applied to a
+lattice of a different shape.
+
+The two \yp{} models point forward. \Cref{var:sec:publicgood} offers a
+mechanism for the intracellular advantage that \ChPath{} infers but does not
+explain, and \cref{var:sec:twophase} offers $\ex{Z}$ for the consequence of
+the two-phase strategy at the level of an epidemic. The sixth open problem
+above is what would join them to it.
+
+\FloatBarrier

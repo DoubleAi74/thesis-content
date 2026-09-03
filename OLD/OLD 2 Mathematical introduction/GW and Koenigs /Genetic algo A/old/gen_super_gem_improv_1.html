@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <title>Genetic Algorithm: Polynomial Fit</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+      :root {
+        --text-color: #1a1a1a;
+        --border-color: #e0e0e0;
+        --accent-color: #c0392b; /* Professional Dark Red */
+        --bg-color: #ffffff;
+        --panel-bg: #fcfcfc;
+        --font-serif: "Georgia", "Times New Roman", serif;
+        --font-mono: "Menlo", "Consolas", "Monaco", monospace;
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0; /* Reset padding for mobile full width */
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Layout: Sidebar (Left) + Plot (Right) */
+      .layout-container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+        border-right: 1px solid var(--border-color);
+        border-left: 1px solid var(--border-color);
+      }
+
+      /* Sidebar Styling */
+      .sidebar {
+        width: 320px;
+        background: var(--panel-bg);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 25px;
+        overflow-y: auto; /* Scroll if vertical height is small */
+        flex-shrink: 0;
+        z-index: 10;
+      }
+
+      h1 {
+        font-family: var(--font-serif);
+        font-size: 1.4rem;
+        margin: 0 0 5px 0;
+        color: #000;
+        letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+      }
+
+      /* Controls */
+      .control-section {
+        margin-bottom: 25px;
+      }
+
+      label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #888;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        color: #444;
+      }
+
+      /* Equation Box */
+      .eqn-container {
+        position: relative;
+        margin-top: 5px;
+      }
+
+      .equation-box {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 12px;
+        border-radius: 3px;
+        white-space: nowrap; /* Force single line */
+        overflow-x: auto; /* Enable horizontal scroll */
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        height: 45px;
+        display: flex;
+        align-items: center;
+      }
+
+      .equation-box:hover {
+        border-color: #888;
+        background: #fdfdfd;
+      }
+
+      /* Custom Scrollbar for equation */
+      .equation-box::-webkit-scrollbar {
+        height: 4px;
+      }
+      .equation-box::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+      }
+
+      .copy-hint {
+        position: absolute;
+        top: -8px;
+        right: 8px;
+        font-size: 0.65rem;
+        background: #333;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 2px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .eqn-container:hover .copy-hint {
+        opacity: 1;
+      }
+
+      /* Buttons & Inputs */
+      button {
+        background: #222;
+        color: #fff;
+        border: none;
+        width: 100%;
+        padding: 14px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #444;
+      }
+      button:disabled {
+        background: #aaa;
+        cursor: not-allowed;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        user-select: none;
+      }
+
+      /* Plot Area */
+      .plot-wrapper {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 20px;
+        overflow: hidden;
+      }
+
+      #plot {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Toast Notification */
+      #toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s ease;
+        z-index: 1000;
+      }
+      #toast.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* MOBILE RESPONSIVENESS */
+      @media (max-width: 900px) {
+        body {
+          height: auto;
+          display: block;
+        }
+
+        .layout-container {
+          flex-direction: column-reverse; /* Controls below plot */
+          height: auto;
+          border: none;
+        }
+
+        .plot-wrapper {
+          height: 50vh; /* Fixed height for plot on mobile */
+          min-height: 350px;
+          padding: 0;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar {
+          width: 100%;
+          border-right: none;
+          height: auto;
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout-container">
+      <!-- Sidebar Controls -->
+      <aside class="sidebar">
+        <h1>Polynomial Evolution</h1>
+        <div class="subtitle">Genetic Algorithm Fitting</div>
+
+        <div class="control-section">
+          <label>Metrics</label>
+          <div class="stat-row">
+            <span>Generation</span>
+            <span id="genCount">0</span>
+          </div>
+          <div class="stat-row">
+            <span>Best MSE</span>
+            <span
+              id="bestScore"
+              style="color: var(--accent-color); font-weight: bold"
+              >---</span
+            >
+          </div>
+        </div>
+
+        <div class="control-section">
+          <label>Best Solution Model</label>
+          <div class="eqn-container" onclick="copyEquation()">
+            <div class="copy-hint">Click to Copy</div>
+            <div id="equationDisplay" class="equation-box">
+              <span style="color: #aaa; font-style: italic"
+                >Ready to start...</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section" style="margin-top: auto">
+          <div
+            class="checkbox-group"
+            style="margin-bottom: 15px"
+            onclick="document.getElementById('showTrials').click()"
+          >
+            <input
+              type="checkbox"
+              id="showTrials"
+              checked
+              onchange="updateVis()"
+            />
+            <span>Show Population Trials</span>
+          </div>
+          <button id="btnStart" onclick="toggleSimulation()">
+            Start Evolution
+          </button>
+        </div>
+      </aside>
+
+      <!-- Plot Visualization -->
+      <main class="plot-wrapper">
+        <div id="plot"></div>
+      </main>
+    </div>
+
+    <div id="toast">Equation copied to clipboard</div>
+
+    <script>
+      // -- DATASET --
+      const rawData = `0.01,0.49744950892200523
+0.02,0.4947961454086841
+0.03,0.49203568028781275
+0.04,0.4891655063931692
+0.05,0.4861804681386442
+0.06,0.4830774611793251
+0.07,0.4798516728499167
+0.08,0.4764965649930478
+0.09,0.4730092271000399
+0.1,0.46938333702446194
+0.11,0.46561045412689755
+0.12,0.46168780095224604
+0.13,0.45760728178648097
+0.14,0.45335797129833433
+0.15,0.44893751974883506
+0.16,0.44433208243911365
+0.17,0.43953758533578097
+0.18,0.43454255921952245
+0.19,0.4293311822253738
+0.2,0.42390081850381817
+0.21,0.4182300784035889
+0.22,0.4123108180947064
+0.23,0.40613172436516815
+0.24,0.399669551694508
+0.25,0.3929162754078347
+0.26,0.38584326351619247
+0.27,0.3784359299789587
+0.28,0.370672189995087
+0.29,0.3625279290473855
+0.3,0.35397672110443756
+0.31,0.3449895164077589
+0.32,0.33553428875892377
+0.33,0.3255756349223103
+0.34,0.31506734776888573
+0.35,0.3039779337611788
+0.36,0.2922446697896221
+0.37,0.2798182518473617
+0.38,0.2666353397344354
+0.39,0.252615526498267
+0.4,0.23768332022995975
+0.41,0.22173411227463893
+0.42,0.20466312830238828
+0.43,0.1863198446038385
+0.44,0.16655284045247842
+0.45,0.1451501913600998
+0.46,0.1218716445414851
+0.47,0.09638121630669728
+0.48,0.06824513327478827
+0.49,0.03687714681581637
+0.5,0.0044555971049409825`;
+
+      const X_data = [];
+      const Y_data = [];
+
+      rawData
+        .trim()
+        .split("\n")
+        .forEach((row) => {
+          const [x, y] = row.split(",").map(Number);
+          X_data.push(x);
+          Y_data.push(y);
+        });
+
+      // -- CONFIG --
+      const POP_SIZE = 50;
+      const POLY_ORDER = 15; // Number of coefficients
+      const MUTATION_RATE = 0.2;
+      const MAX_GENS = 1500;
+
+      let population = [];
+      let currentBestSol = null;
+      let genCount = 0;
+      let animationFrame = null;
+      let isRunning = false;
+
+      // -- GA LOGIC --
+
+      function randomGaussian(mean = 0, stdev = 1) {
+        const u = 1 - Math.random();
+        const v = Math.random();
+        const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        return z * stdev + mean;
+      }
+
+      function createIndividual() {
+        // Initialize with small random coefficients to prevent massive initial explosions
+        return new Array(POLY_ORDER)
+          .fill(0)
+          .map((_, i) => randomGaussian(0, 1.0 / (i + 1)));
+      }
+
+      function evaluate(coeffs, x) {
+        let y = 0;
+        let xPow = 1;
+        for (let i = 0; i < coeffs.length; i++) {
+          y += coeffs[i] * xPow;
+          xPow *= x;
+        }
+        return y;
+      }
+
+      function getFitness(coeffs) {
+        let error = 0;
+        for (let i = 0; i < X_data.length; i++) {
+          const pred = evaluate(coeffs, X_data[i]);
+          const diff = Y_data[i] - pred;
+          error += diff * diff;
+        }
+        // Mean Squared Error + Slight L2 Regularization to prefer simpler curves
+        let l2 = coeffs.reduce((acc, val) => acc + val * val, 0);
+        return error / X_data.length + l2 * 0.000001;
+      }
+
+      function evolve() {
+        // 1. Score
+        const scored = population.map((ind) => ({
+          ind,
+          score: getFitness(ind),
+        }));
+        scored.sort((a, b) => a.score - b.score);
+
+        currentBestSol = scored[0].ind;
+        const bestScore = scored[0].score;
+
+        // 2. Selection & Breeding (Elitism: Keep top 2)
+        const newPop = [scored[0].ind, scored[1].ind];
+
+        while (newPop.length < POP_SIZE) {
+          // Tournament Selection
+          const p1 = scored[Math.floor(Math.random() * (POP_SIZE / 2))].ind;
+          const p2 = scored[Math.floor(Math.random() * (POP_SIZE / 2))].ind;
+
+          // Crossover
+          const child = p1.map((val, i) => (Math.random() < 0.5 ? val : p2[i]));
+
+          // Mutation
+          for (let i = 0; i < child.length; i++) {
+            if (Math.random() < MUTATION_RATE) {
+              child[i] += randomGaussian(0, 0.2);
+            }
+          }
+          newPop.push(child);
+        }
+
+        population = newPop;
+        genCount++;
+
+        // UI Updates
+        document.getElementById("genCount").innerText = genCount;
+        document.getElementById("bestScore").innerText = bestScore.toFixed(6);
+        renderEquation(currentBestSol);
+        updateVis();
+
+        if (isRunning && genCount < MAX_GENS) {
+          animationFrame = requestAnimationFrame(evolve);
+        } else if (genCount >= MAX_GENS) {
+          stopSim();
+        }
+      }
+
+      function startSim() {
+        if (!isRunning) {
+          isRunning = true;
+          document.getElementById("btnStart").innerText = "Stop";
+
+          // Only reset if fresh start
+          if (population.length === 0) {
+            genCount = 0;
+            for (let i = 0; i < POP_SIZE; i++)
+              population.push(createIndividual());
+          }
+
+          evolve();
+        }
+      }
+
+      function stopSim() {
+        isRunning = false;
+        cancelAnimationFrame(animationFrame);
+        document.getElementById("btnStart").innerText = "Restart / Continue";
+      }
+
+      function toggleSimulation() {
+        if (isRunning) stopSim();
+        else startSim();
+      }
+
+      // -- EQUATION DISPLAY --
+      function renderEquation(coeffs) {
+        const box = document.getElementById("equationDisplay");
+        let html = "y = ";
+        let isFirst = true;
+
+        coeffs.forEach((c, i) => {
+          if (Math.abs(c) < 0.001) return; // Hide insignificant
+
+          let sign = c >= 0 ? " + " : " - ";
+          if (isFirst) {
+            if (c < 0) sign = "-";
+            else sign = "";
+            isFirst = false;
+          }
+
+          let val = Math.abs(c).toFixed(3);
+          let term = "";
+          if (i === 0) term = `${val}`;
+          else if (i === 1) term = `${val}x`;
+          else term = `${val}x<sup>${i}</sup>`;
+
+          html += `<span>${sign}${term}</span>`;
+        });
+
+        box.innerHTML = html;
+      }
+
+      function copyEquation() {
+        if (!currentBestSol) return;
+
+        // Generate plain text string
+        let txt = "y = ";
+        let isFirst = true;
+        currentBestSol.forEach((c, i) => {
+          if (Math.abs(c) < 0.0001) return;
+          let sign = c >= 0 ? " + " : " - ";
+          if (isFirst) {
+            sign = c < 0 ? "-" : "";
+            isFirst = false;
+          }
+          let val = Math.abs(c).toFixed(5); // Higher precision for copy
+          let term = i === 0 ? val : i === 1 ? `${val}x` : `${val}x^${i}`;
+          txt += sign + term;
+        });
+
+        navigator.clipboard.writeText(txt).then(() => {
+          const toast = document.getElementById("toast");
+          toast.classList.add("visible");
+          setTimeout(() => toast.classList.remove("visible"), 2000);
+        });
+      }
+
+      // -- PLOTLY VISUALIZATION --
+      // Fixed ranges are critical to prevent "jumping" when trial functions explode
+      const layout = {
+        font: { family: "-apple-system, sans-serif" },
+        margin: { l: 50, r: 20, t: 30, b: 50 },
+        autosize: true,
+        showlegend: false,
+        xaxis: {
+          title: "P (Input)",
+          range: [-0.02, 0.55], // Fixed Range
+          fixedrange: true, // Prevent zoom (keep it static/professional)
+          zerolinecolor: "#ddd",
+          gridcolor: "#f5f5f5",
+        },
+        yaxis: {
+          title: "A (Observed)",
+          range: [-0.1, 0.6], // Fixed Range
+          fixedrange: true,
+          zerolinecolor: "#ddd",
+          gridcolor: "#f5f5f5",
+        },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+      };
+
+      const config = {
+        responsive: true,
+        displayModeBar: false,
+        staticPlot: false,
+      };
+
+      function initPlot() {
+        Plotly.newPlot(
+          "plot",
+          [
+            {
+              x: X_data,
+              y: Y_data,
+              mode: "markers",
+              marker: { color: "#222", size: 6 },
+              type: "scatter",
+            },
+          ],
+          layout,
+          config,
+        );
+      }
+
+      function updateVis() {
+        if (!currentBestSol) return;
+
+        // Generate points for smooth curves
+        const xRange = [];
+        for (let x = 0; x <= 0.55; x += 0.01) xRange.push(x);
+
+        const traces = [];
+
+        // 1. Data (Bottom)
+        traces.push({
+          x: X_data,
+          y: Y_data,
+          mode: "markers",
+          marker: { color: "#000", size: 6, opacity: 0.8 },
+          name: "Data",
+        });
+
+        // 2. Population (Optional)
+        if (document.getElementById("showTrials").checked) {
+          // Show a subset of population to save performance
+          const subset = population.slice(0, 15);
+          subset.forEach((ind) => {
+            const yVals = xRange.map((x) => evaluate(ind, x));
+            traces.push({
+              x: xRange,
+              y: yVals,
+              mode: "lines",
+              line: { color: "#999", width: 1 },
+              opacity: 0.15,
+              hoverinfo: "skip",
+            });
+          });
+        }
+
+        // 3. Best Fit (Top)
+        const yBest = xRange.map((x) => evaluate(currentBestSol, x));
+        traces.push({
+          x: xRange,
+          y: yBest,
+          mode: "lines",
+          line: { color: "#c0392b", width: 3 }, // Academic Red
+          name: "Best Fit",
+        });
+
+        // Use Plotly.react for efficient updates
+        Plotly.react("plot", traces, layout, config);
+      }
+
+      // Initialize
+      initPlot();
+
+      // Handle Resize explicitly for robustness
+      window.onresize = function () {
+        Plotly.Plots.resize(document.getElementById("plot"));
+      };
+    </script>
+  </body>
+</html>

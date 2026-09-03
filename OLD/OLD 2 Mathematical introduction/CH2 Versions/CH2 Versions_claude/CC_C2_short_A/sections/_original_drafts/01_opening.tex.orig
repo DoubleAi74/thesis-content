@@ -1,0 +1,13 @@
+% Opening material before first \section
+
+\begin{itemize}
+\item In the case of slightly supercritical branching,  the initial count of replicative individuals weighs heavily on the chance of overall process survival.
+
+\item In the case of subcritical branching,  when conditioning on process non-death, the expected individual count tends to a constant (a quasi-stationary mean).  The value of this, $\mean{\xt| \xt>0}$, grows to infinity in the limit of the process becoming critical from below.  In the case of the continuous time birth-death process, we can describe the inverse of this conditional mean with a formula; in the case of the discrete Galton-Watson process,  we tried to find an elementary closed form for the discrete factor $A(p)$. No such elementary formula is known, and none is expected (Koenigs analysis).  
+\end{itemize}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Special 1 criticallity thing

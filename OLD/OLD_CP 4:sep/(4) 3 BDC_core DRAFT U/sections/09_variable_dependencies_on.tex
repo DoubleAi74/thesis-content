@@ -1,0 +1,79 @@
+\section{Variable dependencies on $I(t)$}
+\label{sec:dependencies}
+
+It happens to be possible to write all of the formulas $J(t)$,
+$\text{Var}(\xt)$, $V(t)$ and $\text{Var}(\wt)$ as functions of the
+non-rupture probability $I(t)$ alone. Time enters these expressions only
+through $I$, so the whole family of curves is parametrised by a single
+quantity moving monotonically from $1$ down to $b$; this is the viewpoint
+adopted in Chapter~4b, where the single-cell formulas become the kernels of a
+population model.
+
+\subsection{$J(I)$ and $K(I)$}
+
+Since $J = -\delta^{-1}\,{\dd I}/{\dd t}$ (\ref{ddIJ}), and
+${\dd I}/{\dd t} = \lambda (I - a)(I-b)$ (\ref{ddIIfact}), we can write $J$
+in terms of $I$:
+\begin{equation}
+\label{JI}
+J(I) = -\frac{\lambda}{\delta} (I - a)(I-b).
+\end{equation}
+Combining this with Theorem~\ref{thm:K}, the second moment likewise depends on
+$I$ alone:
+\begin{equation}
+\label{KI}
+K(I) = \frac{2\lambda^2}{\delta^2}(I-\kappa)(I - a)(I-b),
+\end{equation}
+with $\kappa = 1+\delta/2\lambda$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/N3_2_I_economy.pdf}
+\caption{The $I$-economy of the mean load $J$, mean release $V$, and second
+moment $K$ for $\lambda=1$, $\mu=0.2$, and $\delta=0.05$. Time runs from left
+to right as $I$ decreases from $1$ to $b$; the symmetric-log ordinate retains
+the raw moment values while keeping all three curves legible. Their labelled
+endpoints emphasise that time merely reparametrises a family of quantities
+already fixed algebraically by $I$.}
+\label{fig:N3_2}
+\end{figure}
+
+\subsection{Mean and variance of $\xt$}
+
+The variance of $\xt$ follows from $\text{Var}(\xt) = K(I) - J(I)^2$ written
+entirely in terms of $I$:
+\begin{align*}
+\text{Var}(\xt) &= K(I) - {J(I)}^2\\
+&=\frac{2\lambda^2}{\delta^2}\lrb{I-\kappa}\lrb{I-a}\lrb{I-b}
+- \lrb{\frac{\lambda}{\delta}(I - a)(I-b)}^2,
+\end{align*}
+which, like $J$ and $K$, vanishes at either absorbing limit $I\to a$ or
+$I\to b$ and is positive between them.
+
+\subsection{Mean and variance of $\wt$}
+
+As we have defined $V(t)$ in terms of $I(t)$ and $J(t)$, it is likewise
+possible to use (\ref{JI}) to write $V$ as a function only of the non-rupture
+probability:
+\begin{equation}
+\label{VI}
+V(I) = \frac{\lambda - \mu}{\delta}\lrb{1-I} - J(I) + 1
+= \frac{\lambda - \mu}{\delta}\lrb{1-I} + \frac{\lambda}{\delta} (I - a)(I-b) + 1.
+\end{equation}
+And given (\ref{VarY}), we can do the same for the variance of $\wt$:
+\begin{equation}
+\label{VarWI}
+\text{Var}(\wt) = \frac{2(\lambda-\mu)}{\delta} V(I) - \frac{\lambda+\mu}{\delta}I - K(I) + \frac{\lambda+\mu}{\delta} + 1 - {V(I)}^2.
+\end{equation}
+Written out in full, with (\ref{JI}), (\ref{KI}) and (\ref{VI}) substituted:
+\begin{multline*}
+\text{Var}(\wt) = \frac{2(\lambda - \mu)}{\delta} \lrbs{ \frac{\lambda - \mu}{\delta}\lrb{1-I} + \frac{\lambda}{\delta} (I - a)(I-b) + 1} \\
+- \frac{\lambda+\mu}{\delta} I
+-\frac{2\lambda^2}{\delta^2}\lrb{I-\kappa}\lrb{I-a}\lrb{I-b}
++ \frac{\lambda + \mu}{\delta} + 1 \\ - \lrbs{\frac{\lambda - \mu}{\delta}\lrb{1-I} + \frac{\lambda}{\delta} (I - a)(I-b) + 1}^2.
+\end{multline*}
+The late-time value of \eqref{VarWI} is the variance of the burst size (over
+all realisations, dead ones contributing zero); at $I=b$ with $\mu>0$ this
+remains finite, and when $\mu=0$ it reduces to the variance of the geometric
+law of Section~\ref{sec:variance}, namely $(1-s)/s^2$ with
+$s=\delta/(\lambda+\delta)$.

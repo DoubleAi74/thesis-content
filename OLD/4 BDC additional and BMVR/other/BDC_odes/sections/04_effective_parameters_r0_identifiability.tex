@@ -1,0 +1,194 @@
+% Effective parameters, R0, identifiability --- plan \S4.11 (Phase 3).
+% Sources: new_notes3 Part D \S20; new_notes Part II \S10--\S12;
+% new_notes2 \S8. The p_eff example values and the trade-off inputs were
+% re-verified numerically on 2026-08-07.
+
+\section{Effective parameters, $R_0$, and identifiability}
+\label{sec:peff-section}
+
+The renewal model \eqref{eq:Icell}--\eqref{eq:Vfree} does not merely
+disagree with classical BMVR in transients; it contains classical BMVR as an
+exact special case, and the relationship between the two is precise enough
+to be turned into predictions.
+
+\subsection{Exact reduction in the exponential phase}
+
+Suppose the incidence grows exponentially, $i(t)=i_0\ee^{rt}$, and look at
+times late enough that the lower limits of the convolutions are irrelevant.
+Then
+\begin{equation}
+\Icell(t)=i_0\ee^{rt}\Lap{\Ifix}(r),
+\qquad
+\Vfree'(t)=i_0\ee^{rt}\,\delta\Lap{K}(r)-c\,\Vfree(t),
+\end{equation}
+where $\Lap{f}(r)=\int_0^\infty\ee^{-r\alpha}f(\alpha)\,\dd\alpha$. A
+classical model $\Icell'=i-d_{\Icell}\Icell$, $\Vfree'=p\Icell-c\Vfree$
+driven by the same incidence has $\Icell(t)=i_0\ee^{rt}/(r+d_{\Icell})$ and
+the eigenvalue relation $(r+d_{\Icell})(r+c)=\gamma Tp$. Matching the two
+exponential solutions fixes
+\begin{equation}
+p_{\rm eff}(r)=\frac{\delta\,\Lap{K}(r)}{\Lap{\Ifix}(r)},
+\qquad
+d_{\Icell,{\rm eff}}(r)=\frac{1}{\Lap{\Ifix}(r)}-r.
+\label{eq:peff}
+\end{equation}
+
+This reduction is \emph{exact}, not approximate: substituting
+\eqref{eq:peff} into $(r+d_{\Icell})(r+c)=\gamma Tp$ returns
+\begin{equation}
+r+c=\gamma T\,\delta\Lap{K}(r),
+\label{eq:char}
+\end{equation}
+which is precisely the characteristic equation of the renewal system. Thus
+for every growth rate $r$ there is a unique constant-parameter BMVR that
+reproduces the renewal model's exponential solution exactly. What
+\eqref{eq:peff} cannot do is reproduce transients: a single pair
+$(p,d_{\Icell})$ matches one growth rate, and a transient samples a
+continuum of them (Figure~\ref{fig:D-exp} shows the exponential case; the
+overlays of \S\ref{sec:overlays} show everything else).
+
+The two ends of the map $r\mapsto(p_{\rm eff},d_{\Icell,{\rm eff}})$ are
+explicit. Using $\int_0^\infty\delta K=V_\infty$ (from $V'=\delta K$) and
+$\int_0^\infty\Ifix=\mean{T_{\rm prod}}$ (\eqref{prop:lifetime}),
+\begin{equation}
+r=0:\qquad
+p_{\rm eff}(0)=\frac{V_\infty}{\mean{T_{\rm prod}}}
+=\frac{\lambda\,V_\infty}{\log\bigl(a/(a-1)\bigr)},
+\qquad
+d_{\Icell,{\rm eff}}(0)=\frac{\lambda}{\log\bigl(a/(a-1)\bigr)};
+\label{eq:peff0}
+\end{equation}
+the $r=0$ value of $p_{\rm eff}$ coincides with naive moment-matching ---
+lifetime output divided by lifetime --- a pleasant consistency check, and
+the matching used in the overlays of \S\ref{sec:overlays}. At the other
+end,
+\begin{equation}
+r\to\infty:\qquad
+p_{\rm eff}(r)\to\delta,
+\qquad
+d_{\Icell,{\rm eff}}(r)\to\mu+\delta,
+\label{eq:peffinf}
+\end{equation}
+the \emph{young-cell} limit: in a fast-growing epidemic almost every
+infected cell was infected moments ago, holds one particle, bursts at rate
+$\delta$, and releases one particle when it does. Between the two ends,
+$p_{\rm eff}$ decreases monotonically in $r$ across every parameter set we
+examined (Figure~\ref{fig:peff-curves}): fast epidemics are dominated by
+young cells and release slowly per cell; slow or stationary ones are
+dominated by old cells and release quickly. At $(\lambda,\mu,\delta)=(1,0,0.1)$:
+$p_{\rm eff}(0)\approx4.59$ against $p_{\rm eff}(\infty)=0.1$ --- the same
+pathogen, two orders of magnitude apart, depending only on how fast the
+epidemic around it is growing.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/peff_dr_curves.pdf}
+\caption{The effective release and removal rates \eqref{eq:peff} as
+functions of the epidemic growth rate $r$, for three parameter sets.
+Dotted and dashed lines mark the limits \eqref{eq:peff0} and
+\eqref{eq:peffinf}. $p$ is not a constant of the pathogen; it is a
+function of the epidemic's phase.}
+\label{fig:peff-curves}
+\end{figure}
+
+The closed hypergeometric forms of $\Lap{\Ifix}$ and $\delta\Lap{K}$ are
+given in Appendix~\ref{app:transforms}; the curves above are computed by
+direct quadrature.
+
+\subsection{The characteristic equation and the invariance of $R_0$}
+
+Setting $r=0$ in \eqref{eq:char} gives the threshold condition
+$\gamma T\,\delta\Lap{K}(0)=c$, i.e.\ $\gamma T V_\infty=c$, so the
+basic reproduction number of the renewal model is
+\begin{equation}
+R_0^{\mathrm{ODE}}=\frac{\gamma T\,V_\infty}{c}.
+\label{eq:R0ODE}
+\end{equation}
+
+\begin{theorem}[$R_0$ is unchanged by bursting]
+\label{thm:R0inv}
+At fixed total per-cell output $V_\infty$, replacing constant budding by
+bursting leaves $R_0$ exactly unchanged. Bursting alters the
+generation-time distribution --- hence the growth rate $r$, hence the
+extinction probability, hence the stochastic early phase --- but not the
+threshold itself.
+\end{theorem}
+
+This is the classical $R_0$-versus-$r$ distinction in a setting where both
+sides are computable in closed form, and it connects the renewal model
+directly to the ``perilous beginning'' theme of Chapter~3 and to the
+flooding question of \S\ref{sec:flooding}. Two cautions accompany it.
+First, the numerical checks of Figures~\ref{fig:E-growth} and
+\ref{fig:F-R0}: the late growth rate of \eqref{eq:Icell}--\eqref{eq:Vfree}
+agrees with the characteristic root $r_*$ of \eqref{eq:char} to
+$\sim10^{-7}$ across five scenarios, and trajectories decay for
+$R_0<1$ and grow for $R_0>1$, the transition resolved already at
+$R_0=1.05$. Second, a notational care: \eqref{eq:R0ODE} is the
+\emph{continuum} reproduction number, in which one virion contributes mean
+$\gamma T/c$ new infections. A discrete branching process in which virions
+are absorbed on infection carries instead the mean
+$m=qV_\infty$, $q=\gamma T/(\gamma T+c)$; the two agree when
+$\gamma T\ll c$, and it is $m$ that governs the branching calculations of
+\S\ref{sec:flooding}. We write $R_0$ carefully in each context.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.47\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/E_growth_rate_match.pdf}
+\caption{Late growth = characteristic root.}
+\label{fig:E-growth}
+\end{subfigure}
+\hspace{\fill}
+\begin{subfigure}{0.47\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/F_R0_threshold.pdf}
+\caption{Sharp threshold at $R_0=1$.}
+\label{fig:F-R0}
+\end{subfigure}
+\caption{Two structural checks of the renewal system: the fitted late growth
+rate of $\Vfree$ against the root of \eqref{eq:char} (five scenarios,
+relative error $\sim10^{-6}$--$10^{-7}$), and the $R_0$ threshold scan
+(eight values through $R_0=1$).}
+\label{fig:EF}
+\end{figure}
+
+\subsection{Identifiability: a negative result}
+\label{sec:identifiability}
+
+How much of the intracellular process can a population-level fit recover?
+At any fixed growth rate $r$, the map
+\begin{equation}
+(\lambda,\mu,\delta)\ \longmapsto\ \lrb{p_{\rm eff}(r),\,d_{\Icell,{\rm eff}}(r)}
+\end{equation}
+sends three rates to two numbers, and is therefore not invertible. This
+closes, negatively, the ambition of the proposal of
+\S\ref{sec:proposal-fails}, which hoped that a good estimate of $p$ would
+grant access to the rates constituting the quasi-stationary mean: it would
+not, and neither would $(p,d_{\Icell})$ together. A third observable is
+required. In order of experimental accessibility, the natural candidates
+are:
+\begin{enumerate}
+\item the burst-size dispersion --- the geometric ratio $1/a$ fixes one
+combination of the rates directly (the burst-size law of Chapter~4a);
+\item the fraction of cells that clear without bursting, which is $b$;
+\item the shape --- not merely the mean --- of the release-time density
+$\delta J$ (Chapter~4a).
+\end{enumerate}
+Any one of these, together with $(p,d_{\Icell})$, over-determines
+$(\lambda,\mu,\delta)$ and converts the fit into a consistency test of the
+whole intracellular model. The negative result is worth stating plainly: it
+is not a limitation of a fitting procedure but of the information content
+of constant-parameter BMVR itself.
+
+\subsection{Prediction for fitting practice}
+
+Since $p_{\rm eff}$ depends on $r$ and decreases with it
+(Figure~\ref{fig:peff-curves}), BMVR fits to acute-phase data --- fast
+growth, young cells --- and to set-point data --- slow or stationary ---
+should yield systematically different estimates of $p$, in a direction and
+by an amount the theory specifies. Equivalently: the eclipse-like delay
+that within-host models usually insert by hand emerges here from the
+intracellular dynamics with no extra parameter at all --- the renewal
+system's early lag, visible in Figures~\ref{fig:overlay-V} and
+\ref{fig:growth-phase}, \emph{is} the eclipse.

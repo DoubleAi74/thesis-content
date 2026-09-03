@@ -1,0 +1,184 @@
+% Multiplicity of infection --- plan \S4.7 (Phase 2).
+% Sources: new_notes3 Part C \S14 (authoritative, corrected);
+% new_notes Part II \S17; new_notes2 \S10.1.
+% All formulas numerically verified 2026-08-07 (see file comments in the
+% verification notes); the K_2 values below were cross-checked against the
+% master equation in new_notes Part II \S17.
+
+\section{Multiplicity of infection}
+\label{sec:moi}
+
+So far the cell has been founded by a single particle. In applications this
+is not always the right picture: a macrophage may be invaded by several
+bacteria at once, and in the laboratory the multiplicity of infection is a
+control parameter. Nothing essential changes --- the process is still linear
+--- but the bookkeeping does, and one plausible guess turns out to be wrong.
+Throughout this section, $k$ founders share a single cell and hence a single
+catastrophe clock: rupture occurs at rate $\delta$ times the \emph{total}
+load, and dumps the whole cell.
+
+\subsection{Fixation functions for $k$ founders}
+
+By the branching property, the $k$ founder lineages evolve independently
+until the shared clock rings. No burst occurs by $t$ precisely when no
+lineage has burst; internal extinction occurs precisely when every lineage
+has cleared internally. Hence
+\begin{equation}
+I_k(t)=I(t)^k,\qquad
+D_k(t)=D(t)^k,\qquad
+\Ifix[,{k}](t)=I(t)^k-D(t)^k.
+\label{eq:Ihatk}
+\end{equation}
+
+\begin{remark}[A guess that fails]
+\label{rem:ihatk}
+The tempting guess is $\Ifix[,{k}]=\Ifix^{\,k}$: each lineage stays productive
+with probability $\Ifix$, independently. But ``productive'' for the whole
+cell means \emph{not fixed}, and the intersection of the independent events
+``lineage $i$ avoids bursting and does not go extinct'' is not the event
+``the cell is not fixed'': the cell also stops being productive when every
+lineage dies out. Correctly, $\Ifix[,{k}]=I^k-D^k$, whereas
+$\Ifix^k=(I-D)^k$; already for $k=2$ the two differ by
+$I^2-D^2-(I-D)^2=2D(I-D)\neq0$ whenever $\mu>0$. Numerically, at
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$ and $t=1$: the correct
+$\Ifix[,{2}]=I^2-D^2\approx0.8458$, while $\Ifix^2\approx0.6542$. When $\mu=0$,
+$D\equiv0$ and the two coincide --- again the invisible case.
+\end{remark}
+
+\subsection{Moments and the release kernel}
+\label{sec:moi-moments}
+
+The moments fall out of the $k$-founder \pgf{} of
+\S\ref{sec:pgf-k-founders}, $G_k=G^k$, where $G$ is the single-founder
+(defective) \pgf. Differentiating at $z=1$, with $G(1,t)=I(t)$,
+$\partial_zG|_{z=1}=J(t)$ and $\partial_z^2G|_{z=1}=K(t)-J(t)$,
+\begin{equation}
+J_k(t)=k\,I(t)^{k-1}J(t),
+\label{eq:Jk}
+\end{equation}
+and, from the second factorial moment,
+\begin{align}
+K_k(t)&=\partial_z^2G_k\big|_{z=1}+\partial_zG_k\big|_{z=1}\nonumber\\
+&=k(k-1)I(t)^{k-2}J(t)^2+kI(t)^{k-1}\lrb{K(t)-J(t)}+kI(t)^{k-1}J(t)\nonumber\\
+&=k\,K(t)I(t)^{k-1}+k(k-1)J(t)^2I(t)^{k-2}.
+\label{eq:Kk}
+\end{align}
+The expected release flux --- the quantity on which the population-level
+renewal model of Chapter~4b will be built --- is therefore
+\begin{equation}
+g_k(t)=\delta K_k(t)
+=\delta\lrb{k\,K(t)I(t)^{k-1}+k(k-1)J(t)^2I(t)^{k-2}}.
+\label{eq:gk}
+\end{equation}
+
+\begin{remark}[The free-sum trap]
+\label{rem:gk}
+It is tempting to write $g_k=\delta\lrb{kK+k(k-1)J^2}$, the second moment of
+a free sum of $k$ independent copies. That form omits the powers of $I$: the
+second-moment contribution of a configuration is counted only while the
+shared clock has \emph{not} rung. At $(\lambda,\mu,\delta)=(1,0.2,0.05)$,
+$t=1$, $k=2$: the free-sum form gives $K_2\approx23.39$, while
+\eqref{eq:Kk} gives $K_2\approx22.264$, which agrees with a direct
+master-equation computation. The difference is the superlinearity of $g_k$
+in $k$ wearing a disguise: even the free-sum form is superlinear, but the
+true kernel is superlinear \emph{and} tempered by survival. That a cell's
+expected release flux depends superlinearly on its founding multiplicity is
+a genuine prediction of the model --- one that classical constant-$p$ models
+cannot express, and that low-multiplicity single-cell assays can test.
+\end{remark}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.76\textwidth]{figures/N4a_7_moi_flux_ratios.pdf}
+\caption{Release-flux ratios $g_k(t)/(k g_1(t))$ for $k=2,3,4$ at
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$. Values above $1$ mark superlinear
+release relative to $k$ independent single-founder cells. All three ratios
+are superlinear early, but their crossings and subsequent decay show that
+the enhancement is age-dependent rather than a pointwise ordering valid for
+all $t$.}
+\label{fig:N4a_7}
+\end{figure}
+
+\subsection{Lifetime yield from $k$ founders}
+
+The lifetime mean release from $k$ founders is
+$V_\infty^{(k)}=\int_0^\infty g_k(t)\,\dd t$. Carrying out the integration
+(deferred to Appendix~\ref{app:technical}),
+\begin{equation}
+V_\infty^{(1)}=V_\infty=\frac{a(1-b)}{a-1},
+\end{equation}
+and, for $k\ge2$,
+\begin{equation}
+V_\infty^{(k)}
+=(1-b^k)
++\frac{2\lambda}{\delta}\Biggl[\frac{1}{k+1}-b^k+\frac{k\,b^{k+1}}{k+1}\Biggr]
++k(k-1)\frac{\lambda}{\delta}\int_1^b (x-a)(x-b)\,x^{k-2}\,\dd x.
+\label{eq:Vk}
+\end{equation}
+In the no-death case the answer simplifies dramatically:
+\begin{equation}
+V_\infty^{(k)}=k+\frac{\lambda}{\delta}\qquad(\mu=0).
+\label{eq:Vkmu0}
+\end{equation}
+Indeed, when $\mu=0$ the event type is independent of the load
+(\S\ref{sec:chained}), so the number of births before the single catastrophe
+is $\mathrm{Geom}_0(s)$ with mean $\rho/s=\lambda/\delta$ whatever the
+founding load, and the total release is simply $k$ founders plus that many
+births. For example, with $\lambda=1$, $\delta=0.1$:
+$V_\infty^{(k)}=11,12,13,14,15,\ldots$
+
+Two biological points are worth pausing on. First, the yield is \emph{not}
+$kV_\infty$: the first catastrophe dumps the entire cell once, so additional
+founders add their own expected descendants but not another cell's worth of
+release. At $(\lambda,\mu,\delta)=(1,0.2,0.05)$: $V_\infty\approx13.99$, so a
+naive scaling would predict $2V_\infty\approx27.97$ for two founders; the
+true value is $V_\infty^{(2)}\approx17.43$. Second, while the
+unconditional yield grows sub-extensively in $k$, the \emph{conditional}
+mean burst size given eventual burst, $V_\infty^{(k)}/(1-b^k)$,
+\emph{increases} with $k$ ($17.23,\,18.07,\,19.02,\,21.00$ for
+$k=1,2,3,5$ at the same parameters): multiply infected cells are more likely
+to burst at all, and when they do, they burst bigger.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.76\textwidth]{figures/N4a_8_yield_subextensive.pdf}
+\caption{Unconditional mean yield $V_\infty^{(k)}$ against founding
+multiplicity $k$, compared with the naive independent-cell line
+$kV_\infty$, for $(\lambda,\mu,\delta)=(1,0.2,0.05)$. The true yield is
+sub-extensive because all founders share one cell and hence one catastrophe;
+for $k=2$, $V_\infty^{(2)}=17.43$, rather than
+$2V_\infty=27.97$.}
+\label{fig:N4a_8}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/F4a_6_moi.pdf}
+\caption{Multiplicity of infection at $(\lambda,\mu,\delta)=(1,0.2,0.05)$.
+(a)~Release fluxes $g_k(t)=\delta K_k(t)$ for $k=1,\ldots,4$: early ages are ordered superlinearly in founding load, while late fluxes reverse as multi-founder lineages fix faster.
+(b)~Conditional mean burst $V_\infty^{(k)}/(1-b^k)$ increases with $k$; the dashed line is the $k=1$ value $a/(a-1)$.}
+\label{fig:F4a_6_moi}
+\end{figure}
+
+% \figureflag{F4a.6}{Multiplicity of infection}{%
+% \textbf{Purpose:} display the two MOI effects of this section --- the
+% superlinear release flux in founding multiplicity, and the increasing
+% conditional mean burst --- in one figure. \textbf{Type:} Python analytic
+% plot, two panels (or inset). \textbf{Content:} panel (a): the release fluxes
+% $g_k(t)=\delta K_k(t)$ against age $t\in[0,15]$ for $k=1,2,3,4$, with
+% $(\lambda,\mu,\delta)=(1,0.2,0.05)$, where
+% $K_k=kKI^{k-1}+k(k-1)J^2I^{k-2}$ from \eqref{eq:Kk} and $I,J,K$ are the
+% closed forms of Chapter~3 (\Eqref{eq:IDIhat}--\eqref{eq:K}); annotate the
+% early superlinear ordering (and the late reversal). Panel (b): the conditional mean burst
+% $V_\infty^{(k)}/(1-b^k)$ against $k=1,\ldots,6$ from \eqref{eq:Vk}, with
+% the horizontal dashed line at $V_\infty/(1-b)=a/(a-1)$ (the $k=1$ value) to
+% show the increase. \textbf{Axes:} panel (a): age $a$ (horizontal; label the
+% axis ``age'' or ``time since infection'' to avoid collision with the root
+% $a$ --- use ``age'' on the axis), release flux $g_k$ (vertical); panel (b):
+% founders $k$ (horizontal), conditional mean burst (vertical); legend entries
+% $k=1,2,3,4$. \textbf{Style:} unified Python style --- default matplotlib
+% with \texttt{tab:} colours, grid alpha 0.25, \texttt{tight\_layout}, PDF
+% output, fonts matching the chapter. \textbf{Data source:} analytic formulas
+% \eqref{eq:Kk}, \eqref{eq:Vk}; no simulation. \textbf{Placement:}
+% \Secref{sec:moi}, at the end of the section.}

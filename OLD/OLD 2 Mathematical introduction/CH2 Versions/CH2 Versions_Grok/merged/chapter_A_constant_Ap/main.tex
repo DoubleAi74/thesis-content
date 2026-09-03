@@ -1,0 +1,72 @@
+\documentclass[11pt]{report}
+\usepackage[margin=1in]{geometry}
+\input{ch_preamble}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={The constant A(p)},
+  pdfauthor={Adam Aldridge}
+}
+
+\setcounter{chapter}{2}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{4cm}
+{\LARGE\bfseries The constant \texorpdfstring{$A(p)$}{A(p)}\par}
+\vspace{6pt}
+{\large Quasi-stationary amplitude, closed forms, and the Koenigs obstruction\par}
+\vspace{2.5cm}
+{\large Adam Aldridge\par}
+\vspace{6pt}
+{\ChA\par}
+\vspace{4pt}
+{University of Leeds\par}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+\chapter{The constant \texorpdfstring{$A(p)$}{A(p)}}
+\label{a:ch:Ap}
+
+\input{sections/01_introduction}
+\input{sections/02_setup_recap}
+\input{sections/03_product}
+\input{sections/04_series_bounds}
+\input{sections/05_near_critical}
+\input{sections/06_discrete_vs_continuous}
+\input{sections/07_closed_form_search}
+\input{sections/08_koenigs_identity}
+\input{sections/09_hypertranscendence}
+\input{sections/10_scope_and_pslq}
+\input{sections/11_practical}
+\input{sections/12_conclusion}
+\appendix
+\input{sections/app_elementary_cases}
+\input{sections/app_closed_form_catalogue}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

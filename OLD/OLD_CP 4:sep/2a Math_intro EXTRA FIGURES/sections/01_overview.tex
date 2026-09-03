@@ -1,0 +1,71 @@
+\section{Overview}
+\label{m:sec:overview}
+
+The processes studied in this thesis describe populations small enough that their
+fate is decided by chance rather than by their mean behaviour --- a founding cohort
+of a few individuals, or the contents of a single compartment that may later
+rupture. At those counts a deterministic rate equation answers the wrong question.
+It returns a single trajectory, growing or decaying, when what one wants to know is
+whether the population establishes itself at all, and how large it is if it does.
+Both are questions about a distribution, and neither is visible in a mean.
+
+This chapter assembles the mathematical framework in which those questions are
+posed, together with the methods that answer them. Processes are named first; each
+technique is then developed once, on whichever process displays it most clearly.
+
+\Cref{m:sec:chains} sets out the \emph{objects}: the classes of Markov process that
+appear in this thesis. Discrete-time chains come first, the simple random walk as
+the elementary example and the Galton--Watson branching process as the one that
+matters here. Continuous-time chains follow, built from exponential clocks: the
+Poisson process, the linear birth--death process, and the
+birth--death--catastrophe process in which an abrupt event can remove an entire
+population at a stroke. Two extensions then leave the time-homogeneous setting:
+processes whose rates vary with time, worked through on a logistic model of
+diversification in which the birth rate declines as a niche fills; and coupled
+systems in which a deterministic differential equation and a Markov chain each
+drive the other, whose schematic instance here is a compartment that ruptures into
+a shared medium.
+
+\Cref{m:sec:methods} sets out the \emph{methods}. Discrete time is treated briefly;
+continuous time at length, with the birth--death process as the running example,
+covering backward equations, means, variances and higher moments, hitting
+probabilities, extinction probabilities, and the limiting conditional means that
+arise when one conditions on a process not yet having been absorbed.
+\Cref{m:sec:moc} then develops the method of characteristics, which converts the
+master equation for an infinite family of state probabilities into a single
+first-order partial differential equation for a generating function and solves it;
+a worked example is carried through in full.
+
+Three threads recur.
+
+The first is \emph{conditioning on survival}. A subcritical branching process dies
+out with probability one, so its unconditional mean decays geometrically and
+records little beyond the certainty of extinction. Restrict attention to those
+realisations still alive at generation $n$, however, and the picture changes
+entirely: the conditional population settles to a fixed distribution, and the mean
+of that distribution is a constant. For the binary Galton--Watson process with
+division probability $p<\tfrac12$ that constant is $1/A(p)$, where
+$A(p) = \lim_n S_n/(2p)^n$ and $S_n$ is the survival probability to generation $n$.
+This chapter defines $A(p)$ and shows how the whole limiting conditional law is
+expressed through it, in \cref{m:sec:condmeans}; it does not analyse the constant,
+which is the subject of \ChA.
+
+The second is the \emph{near-critical regime}. As $p$ rises towards $\tfrac12$ the
+process takes ever longer to die, the quasi-stationary mean diverges, and any
+numerical scheme that works by iterating to stationarity becomes impractical. Just
+above $\tfrac12$ the size of the founding cohort begins to weigh heavily on whether
+the process survives at all. The phenomenology is recorded in
+\cref{m:app:criticalgw}.
+
+The third is \emph{absorption}. Extinction and rupture are both absorbing states,
+and much of this thesis concerns a chain conditioned on not yet having reached one.
+The generating-function methods of \cref{m:sec:methods} are what make such
+conditioning computable.
+
+Not all of this chapter is background. The closed form obtained in
+\cref{m:app:absbirthdeath} for the absorption--birth--death generating function is
+a result of this thesis, as is the integral identity of \cref{m:app:hyp} on which an
+alternative derivation of it rests; everything else is standard, and is presented as
+such. The argument is in places heuristic --- continuum approximations to difference
+equations, mean-field substitutions, asymptotic matching. Every such step is marked
+where it occurs, and where a claim can be checked numerically it has been.

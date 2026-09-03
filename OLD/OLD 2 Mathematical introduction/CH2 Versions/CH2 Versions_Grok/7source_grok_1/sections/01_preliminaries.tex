@@ -1,0 +1,119 @@
+\section{Mathematical preliminaries}
+\label{sec:prelim}
+
+This section fixes notation and the continuous-time language used for absorption models and birth--death processes later in the chapter. It is not a survey of probability: only those objects that reappear in subsequent sections are stated.
+
+\subsection{Exponential clocks and competition}
+\label{sec:exp}
+
+\begin{definition}[Exponential law]
+A non-negative random variable \(T\) is exponential with rate \(\lambda>0\), written \(T\sim\mathrm{Exp}(\lambda)\), if
+\begin{equation*}
+\pr{T>t}=\ee^{-\lambda t},\qquad t\ge0.
+\end{equation*}
+Then \(\mean{T}=1/\lambda\) and \(\mathrm{Var}(T)=1/\lambda^2\).
+\end{definition}
+
+The exponential law is memoryless: \(\pr{T>t+s\mid T>s}=\pr{T>t}\). Consequently, in continuous-time jump models, the waiting time until the next event can be redrawn from the current state without reference to the past.
+
+\begin{proposition}[Competition of exponentials]
+\label{prop:race}
+Let \(T_1,\dots,T_m\) be independent, \(T_r\sim\mathrm{Exp}(a_r)\) with \(a_r>0\), and set \(\Lambda=\sum_{r=1}^m a_r\). Then
+\begin{equation*}
+\min_r T_r\sim\mathrm{Exp}(\Lambda),
+\qquad
+\pr{\text{event \(r\) occurs first}}=\frac{a_r}{\Lambda}.
+\end{equation*}
+\end{proposition}
+
+In modelling language: each reaction channel carries an independent exponential clock; the first to ring determines the next jump, and the holding time is exponential with rate equal to the total propensity.
+
+\subsection{Continuous-time Markov chains}
+\label{sec:ctmc}
+
+\begin{definition}[CTMC]
+A continuous-time process \(\{\xx_t:t\ge0\}\) with discrete state space \(S\) is a continuous-time Markov chain if, for \(0\le t_0<\cdots<t_n<t_{n+1}\) and states \(i_0,\dots,i_{n+1}\in S\),
+\begin{equation*}
+\pr{\xx_{t_{n+1}}=i_{n+1}\mid \xx_{t_0}=i_0,\dots,\xx_{t_n}=i_n}
+=\pr{\xx_{t_{n+1}}=i_{n+1}\mid \xx_{t_n}=i_n}.
+\end{equation*}
+\end{definition}
+
+When transition probabilities depend only on the length of the time interval, the chain is time-homogeneous. The infinitesimal generator \(Q=(q_{ij})_{i,j\in S}\) is defined by
+\begin{equation*}
+q_{ij}=\lim_{\Delta t\to0^+}\frac{\pr{\xx_{\Delta t}=j\mid \xx_0=i}-\mathbf{1}_{\{i=j\}}}{\Delta t},
+\qquad i,j\in S,
+\end{equation*}
+so that for \(i\neq j\), \(q_{ij}\ge0\) is the transition rate from \(i\) to \(j\), and \(q_{ii}=-\sum_{j\neq i}q_{ij}\). Holding times in state \(i\) are exponential with rate \(-q_{ii}\), and the next state is \(j\) with probability \(q_{ij}/(-q_{ii})\) when \(q_{ii}\neq0\).
+
+\begin{definition}[Absorbing and transient states]
+A state \(i\) is \emph{absorbing} if \(q_{ii}=0\). A non-absorbing state that is left almost surely and never returned to with positive probability is \emph{transient}. Extinction of a population, rupture of a host cell, and related terminal events are encoded as absorbing states in later models.
+\end{definition}
+
+Writing \(p_{ij}(t)=\pr{\xx_t=j\mid \xx_0=i}\), the Kolmogorov forward (master) equations read, in matrix form, \(\frac{\mathrm{d}}{\mathrm{d}t}P(t)=P(t)Q\), with \(P(0)=I\). Componentwise, for a countable state space,
+\begin{equation}
+\label{eq:master}
+\ddt{p_j(t)} = \sum_{i\neq j} p_i(t)\,q_{ij} - p_j(t)\,(-q_{jj}),
+\end{equation}
+where \(p_j(t)=\pr{\xx_t=j}\) under a fixed initial law.
+
+\subsection{Probability generating functions}
+\label{sec:pgf}
+
+\begin{definition}[Univariate PGF]
+If \(X\) takes values in \(\{0,1,2,\dots\}\) with \(\pr{X=k}=p_k\), its probability generating function is
+\begin{equation}
+\label{eq:pgf-uni}
+\phi(z)=\mean{z^X}=\sum_{k=0}^{\infty}p_k z^k,\qquad |z|\le1.
+\end{equation}
+\end{definition}
+
+Factorial moments and probabilities are recovered by differentiation:
+\begin{equation}
+\label{eq:pgf-recover}
+\mean{X}=\phi'(1),\qquad
+\pr{X=k}=\frac{1}{k!}\,\phi^{(k)}(0),
+\end{equation}
+and \(\mathrm{Var}(X)=\phi''(1)+\phi'(1)-\bigl(\phi'(1)\bigr)^2\) when the derivatives exist at \(z=1\).
+
+For a continuous-time process \(\{\xx_t\}\) on the non-negative integers, the time-dependent PGF
+\begin{equation}
+\label{eq:pgf-t}
+G(z,t)=\mean{z^{\xt}}=\sum_{k\ge0}\pr{\xt=k}\,z^k
+\end{equation}
+converts the master equation~\eqref{eq:master} into a partial differential equation whenever the rates are polynomial in the state (as they are for linear birth--death and many catastrophe models). That conversion is used systematically in \cref{sec:moc}.
+
+\begin{definition}[Multivariate and multi-type PGF]
+\label{def:multi-pgf}
+For a random vector \(\mathbf{X}=(X_1,\dots,X_d)\) with non-negative integer coordinates,
+\begin{equation}
+\label{eq:pgf-multi}
+G(\mathbf{z})=\mean{z_1^{X_1}\cdots z_d^{X_d}}=\sum_{\mathbf{k}\in\mathbb{Z}_{\ge0}^d}\pr{\mathbf{X}=\mathbf{k}}\,z_1^{k_1}\cdots z_d^{k_d}.
+\end{equation}
+In a multi-type branching process, \(X_i\) is the count of type \(i\); the offspring law of each type is encoded by a vector of generating functions. Two-type models with conversion and type-dependent catastrophe rates appear in later chapters; here only the generating-function object is needed.
+\end{definition}
+
+\subsection{First-step analysis}
+\label{sec:firststep}
+
+Many extinction and absorption probabilities satisfy a closed equation obtained by conditioning on the first jump.
+
+\begin{proposition}[First-step principle]
+\label{prop:firststep}
+Let \(\{\xx_t\}\) be a CTMC with absorbing set \(A\subset S\), and let \(h_i=\pr{\text{hit \(A\)}\mid \xx_0=i}\). Then \(h_i=1\) for \(i\in A\), and for transient \(i\),
+\begin{equation}
+\label{eq:firststep}
+h_i = \sum_{j\neq i}\frac{q_{ij}}{-q_{ii}}\,h_j.
+\end{equation}
+The same idea in discrete time yields the Galton--Watson extinction iteration of \cref{sec:gw}: the extinction probability from one individual is the offspring PGF evaluated at that probability.
+\end{proposition}
+
+\subsection{Linear birth--death (pointer)}
+\label{sec:bd-pointer}
+
+The continuous-time linear birth--death process on \(\{0,1,2,\dots\}\) has rates
+\begin{equation}
+\label{eq:bd-rates}
+q_{i,i+1}=i\lambda,\qquad q_{i,i-1}=i\mu,\qquad i\ge1,
+\end{equation}
+with \(0\) absorbing. Its extinction probability from one individual is \(\mu/\lambda\) when \(\lambda>\mu\) and \(1\) when \(\lambda\le\mu\). The associated PGF PDE and the quasi-stationary mean in the subcritical case are recorded in \cref{sec:cts}. Adding a global catastrophe (rupture) rate proportional to the load defines the birth--death--catastrophe models of Chapters~3--5; a discrete analogue is treated briefly in \cref{sec:bdc}.

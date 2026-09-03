@@ -1,0 +1,178 @@
+% The comparator and the obstruction --- plan \S4.2.
+% Sources: draft \S2 (02_why_constant_release_fails.tex), rewritten from the
+% original Ch.4 \S9 attempt.  The canonical parameter trio is introduced
+% here and used by name for the rest of the chapter.
+
+\section{The comparator and the obstruction}
+\label{p:sec:comparator}
+
+The single-cell theory is complete; what it implies for a population of
+infected cells is not. The obstruction shows itself most clearly against the
+standard model this chapter is meant to improve upon, which is where we
+begin.
+
+\subsection{The budding cell}
+\label{p:sec:classical}
+
+In the simplified, target-cell-constant Basic Model of Viral Replication
+\cite{mclean1993balance,nowak1996population,perelson1996hiv}, infected
+cells $\Icell$ and free particles $\Vfree$ obey
+\begin{equation}
+\ddt{\Icell} = \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\qquad
+\ddt{\Vfree} = p\,\Icell - c\,\Vfree,
+\label{p:eq:bmvr-classical}
+\end{equation}
+with target cells $T$ fixed, infection rate $\gamma$, virion clearance $c$,
+and the two constants that concern us: $p$, the per-cell release rate, and
+$d_{\Icell}$, the removal rate. Both are phenomenological, parameters to be
+fitted rather than quantities derived from anything inside the cell. The
+basic reproduction number is
+\begin{equation}
+R_0=\frac{\gamma T\,p}{c\,d_{\Icell}}.
+\label{p:eq:R0classical}
+\end{equation}
+Every cell, regardless of its age or its contents, releases at rate $p$ and
+dies at rate $d_{\Icell}$.
+
+That is not an arbitrary caricature. It is one kind of cell described
+exactly, and it is worth setting out in full, because it is the comparator
+the whole chapter is built against. A budding infected cell experiences two \emph{independent} event
+types: release of one particle, as a Poisson process of rate $p$, and death,
+as a Poisson process of rate $d_{\Icell}$; the two run side by side until
+the cell dies. Its survival and cumulative release are
+\begin{equation}
+I_{\rm bud}(\alpha)=\ee^{-d_{\Icell}\alpha},\qquad
+V_{\rm bud}(\alpha)=\frac{p}{d_{\Icell}}\lrb{1-\ee^{-d_{\Icell}\alpha}},
+\qquad
+\dda{V_{\rm bud}}{I_{\rm bud}}=-\frac{p}{d_{\Icell}}:
+\label{p:eq:bud-cell}
+\end{equation}
+the mean lifetime is $1/d_{\Icell}$, the lifetime release $p/d_{\Icell}$,
+and the total released is geometric on $\{0,1,2,\ldots\}$ with
+$\pr{\Kb_{\rm bud}=k}=\frac{d_{\Icell}}{d_{\Icell}+p}
+\bigl(\frac{p}{d_{\Icell}+p}\bigr)^k$ --- the successes before the
+terminating death in a sequence of events each of which is a release with
+probability $p/(d_{\Icell}+p)$. All of it sits in the pair $(p,d_{\Icell})$. That is why
+\cref{p:eq:bmvr-classical} is a faithful one-cell limit for a budding
+pathogen, and it is this cell that \cref{p:sec:flooding} matches against a
+bursting one.
+
+The structural contrast with bursting is the engine of everything that
+follows. In budding, release and death are independent: a cell may release
+many particles and then die with its contents lost, or release nothing at
+all. In bursting they are the \emph{same} event: whatever has accumulated is
+released at once, and the cell's productive life ends in that instant. The
+detailed single-cell comparison is in \ChDist{}; here the point is that
+\cref{p:eq:bmvr-classical} encodes the budding picture exactly, and the
+question is what replaces it when release comes in terminal batches.
+
+\subsection{The synchronous cohort}
+\label{p:sec:cohort}
+
+Take a clean special case: $N_0$ cells all infected at the same instant,
+each running an independent copy of the single-cell process, with no
+reabsorption or extracellular replication. The number still productively
+infected at time $t$ is $N_0\,\Ifix(t)$, exactly in expectation, and the
+expected cumulative extracellular count is
+\begin{equation}
+\Vfree(t)=N_0\,V(t),
+\label{p:eq:cohort}
+\end{equation}
+since $V(t)$ is the expected release from one cell. The release \emph{rate}
+is then $N_0V'(t)=N_0\delta K(t)$: it depends on the age of the cohort, and
+it is not constant. The classical model's $p\Icell$ can mimic such a cohort
+only by accident, and only briefly (\cref{p:fig:constant-fails}).
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.94\textwidth]{N4b_1_constant_release_fails.pdf}
+\caption{A synchronous cohort releases on a schedule, not at a rate. Both
+schedules have lifetime yield $V_\infty=11$ and mean productive lifetime
+$\mean{T_{\rm prod}}=2.398$, with $d_{\Icell}=1/\mean{T_{\rm prod}}$,
+$p=V_\infty d_{\Icell}$, $(\lambda,\mu,\delta)=(1,0,0.1)$ and $c=1$: as
+fairly matched as two constants allow. (a) Matched yield, different
+release timing: the release kernel $g(\alpha)=\delta K(\alpha)$ still lags
+the budding cell's $p\ee^{-d_{\Icell}\alpha}$, because a bursting cell must
+first accumulate load. (b) Linear clearance preserves that lag, carrying it
+into the free-particle response.}
+\label{p:fig:constant-fails}
+\end{figure}
+
+\subsection{The proposal that cannot work}
+\label{p:sec:obstruction}
+
+The natural thought is to replace the constant $p$ in
+\cref{p:eq:bmvr-classical} by a constant built from the intracellular
+theory: the quasi-stationary mean,
+\begin{equation}
+p\ \stackrel{?}{=}\ \langle X\rangle_{\rm QS}=\frac{a}{a-1}.
+\label{p:eq:naive-p}
+\end{equation}
+The intuition is that a long-lived cell hovers at the quasi-stationary
+level, so its bursting should look like release at rate
+$\langle X\rangle_{\rm QS}$. The obstruction is dimensional: $p$ has units
+of particles per unit time and $\langle X\rangle_{\rm QS}$ is a pure count,
+so \cref{p:eq:naive-p} introduces a spurious factor of time. Worse, when
+$\mu=0$ one has $\langle X\rangle_{\rm QS}=V_\infty$ exactly, so the
+proposal substitutes a cell's \emph{total lifetime output} for its
+\emph{output rate}; \cref{p:fig:overlay-naive} shows what that costs.
+
+Two repairs suggest themselves, and both fail for related reasons. First,
+average the burst size over the burst-time density $\delta J$ of \ChDist{}:
+\begin{equation}
+\int_0^\infty\delta J(t)\,\mean{\Kb\mid\tau=t}\,\dd t
+=\delta\int_0^\infty K(t)\,\dd t
+=V_\infty,
+\label{p:eq:naive-repair}
+\end{equation}
+using \cref{p:eq:sizebias} and $V'=\delta K$ --- again a count, not a rate.
+Second, weight the load-dependent flux by the burst-time density,
+$\delta\int\delta J(t)\,\mean{X_t^2\mid\cdot}\,\dd t$: the dimensions are
+right, but the measure is wrong. The burst-time density describes \emph{when
+a single cell bursts}; a population release rate needs an average over the
+\emph{ages of the cells currently infected}, and in an asynchronous
+infection those are not the same. No reweighting of a single-cell count by a
+single-cell density can fix the substitution, because the difficulty is not
+in the single-cell theory at all. It is in the population bookkeeping.
+
+What survives the failed proposal is two facts, not a substitute constant.
+The expected release flux of a cell of age $\alpha$ is $\delta K(\alpha)$,
+and at any host time the infected population is a mixture of ages, one
+cohort per past moment of infection. The population model must therefore
+track cell age. That is the renewal construction of
+\cref{p:sec:renewal}.
+
+\subsection{Three regimes, used throughout}
+\label{p:sec:trio}
+
+Three intracellular parameter triples recur throughout, chosen to straddle
+the flooding boundary $L=1$ of \cref{p:sec:flooding}: one on each side, one
+exactly on it. They are named here and used by name thereafter, and
+\cref{p:tab:trio} collects what follows from them by
+\crefrange{p:eq:roots}{p:eq:lifetime}.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.12}
+\small
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+$(\lambda,\mu,\delta)$ & $a$ & $b$ & $L$ & $V_\infty$
+ & $\mean{T_{\rm prod}}$ & $d_{\Icell,{\rm eff}}(0)$ & $p_{\rm eff}(0)$ \\
+\midrule
+$(1,0,0.1)$    & $1.100$ & $0$     & $1.10$ & $11.00$ & $2.398$ & $0.417$ & $4.59$ \\
+$(1,0.5,1/3)$  & $1.500$ & $1/3$   & $1.00$ & $2.00$  & $1.099$ & $0.910$ & $1.82$ \\
+$(1,0.9,0.1)$  & $1.316$ & $0.684$ & $0.42$ & $1.32$  & $1.426$ & $0.701$ & $0.92$ \\
+\bottomrule
+\end{tabular}
+\caption{The three regimes used throughout, and what follows from them: the
+first has $L>1$, the second sits on the boundary $L=1$, the third has $L<1$.
+The last two columns are the $r=0$ endpoints of the effective-parameter map
+of \cref{p:sec:projection}. The verification suite of
+\cref{p:app:verification} uses these three with $(1,0.2,0.05)$ and
+$(1,0,0.5)$; a wider spread suits testing than exposition.}
+\label{p:tab:trio}
+\end{table}
+
+\FloatBarrier

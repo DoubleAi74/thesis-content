@@ -1,0 +1,18 @@
+\section{Introduction}
+\label{sec:intro}
+
+The models in this thesis track populations that are small enough for chance to be part of the mechanism. A few colony-forming units deposited in a mammalian host, a handful of intracellular pathogens inside a single cell: in each case the count lies far from the regime in which deterministic rate equations describe what actually happens. The questions that matter --- will the population establish at all? if it survives, how large is it typically? --- are questions about distributions and rare surviving trajectories, not about a single mean path. This chapter assembles the mathematical apparatus needed for those questions.
+
+Two threads organise the material that follows.
+
+The first is \emph{conditioning on survival}. A subcritical branching process dies out almost surely, so its unconditional mean decays geometrically and carries little information about what a surviving realisation looks like. Restricting attention to those trajectories still alive at generation \(n\) produces a different picture: the conditional population settles to a fixed law, the \emph{quasi-stationary} (or Yaglom) distribution, whose mean is a constant. For the binary Galton--Watson process with replication probability \(p<\tfrac12\) that constant is \(1/A(p)\), where
+\begin{equation*}
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n},
+\end{equation*}
+and \(S_n\) is the probability of survival to generation \(n\). A substantial part of the chapter is devoted to \(A(p)\): exact representations, bounds, near-critical asymptotics, comparison with the continuous-time analogue, and the dynamical reason why no elementary closed form is known.
+
+The second thread is the \emph{near-critical regime}. As \(p\) approaches \(\tfrac12\) from below, extinction becomes slow, the quasi-stationary mean \(1/A(p)\) diverges, and any numerical scheme that relies on iterating to stationarity becomes expensive. Just above \(\tfrac12\), the size of the founding cohort weighs heavily on the chance of ultimate survival. Behaviour on either side of criticality is what makes small inocula scientifically interesting and computationally awkward.
+
+\Cref{sec:prelim} records the continuous-time and generating-function language used later. \Cref{sec:gw} sets out the Galton--Watson process and the two facts on which the discrete analysis rests: extinction is certain at and below criticality, and at criticality the expected lifetime is nevertheless infinite. \Cref{sec:qsd} derives the limiting conditional mean and variance and introduces \(A(p)\). \Cref{sec:small} treats a founding cohort of size \(k\), records discrete birth--death--catastrophe survival formulae, and gives the continuous-time birth--death constant \(A_{\mathrm{c}}(p)\), for which a closed form is available. \Cref{sec:Ap} develops \(A(p)\) in full. \Cref{sec:moc} turns to absorption models and the method of characteristics for the generating-function partial differential equations used in later chapters when particles move between extracellular and intracellular compartments.
+
+Standard results are presented as such. Heuristic steps and places where numerics carry the argument are marked. Where a claim can be checked numerically, it has been.

@@ -1,0 +1,579 @@
+\section{Absorption models and the method of characteristics}
+\label{sec:characteristics}
+
+We now consider a population split between the exterior and interior of a single
+compartment.  Transfer moves an exterior particle to the interior; interior
+particles may then die or reproduce.  The models are deliberately elementary, but
+their two-dimensional state and linear per-capita rates already produce the
+generating-function PDEs needed later for systems with rupture.
+
+Let \(X_t\) and \(Y_t\) denote the interior and exterior counts, respectively, and
+write
+\begin{equation}
+  p_{i,j}(t)=\Prob(X_t=i,Y_t=j),
+  \qquad
+  G(x,y,t)=\E[x^{X_t}y^{Y_t}]
+  =\sum_{i,j\geq0}p_{i,j}(t)x^iy^j.
+  \label{eq:absorption-pgf-definition}
+\end{equation}
+Every model starts from \(X_0=0\), \(Y_0=N\), and hence
+\begin{equation}
+  G(x,y,0)=y^N.
+  \label{eq:absorption-initial-pgf}
+\end{equation}
+Three cases are treated in increasing order of difficulty.  Transfer alone and
+transfer followed by death have finite reachable state spaces and admit direct
+single-particle solutions.  Adding birth opens an infinite state space.  The
+branching property still raises the one-founder generating function to the power
+\(N\), but it no longer supplies that one-founder function; the PDE must then be
+solved.
+
+\subsection{Transfer only}
+\label{sec:transfer-only}
+
+Each exterior particle transfers at rate \(\alpha>0\), so the only jump is
+\begin{equation}
+  (i,j)\longrightarrow(i+1,j-1)
+  \quad\text{at rate }\alpha j.
+  \label{eq:transfer-only-rate}
+\end{equation}
+Equivalently, over a short interval \(h\),
+\begin{align}
+  \Prob(\Delta X=1,\Delta Y=-1\mid X_t=i,Y_t=j)
+    &=\alpha jh+o(h),
+  \notag\\
+  \Prob(\Delta X=0,\Delta Y=0\mid X_t=i,Y_t=j)
+    &=1-\alpha jh+o(h).
+  \label{eq:transfer-only-short-time}
+\end{align}
+The componentwise forward equation is
+\begin{equation}
+  \frac{\dd p_{i,j}}{\dd t}
+  =\alpha(j+1)p_{i-1,j+1}-\alpha jp_{i,j}.
+  \label{eq:transfer-only-forward}
+\end{equation}
+
+The generating-function PDE follows directly from the generator.  Applied to the
+monomial \(f(i,j)=x^iy^j\),
+\begin{align}
+  \mathcal Lf(i,j)
+  &=\alpha j\{x^{i+1}y^{j-1}-x^iy^j\}
+  \notag\\
+  &=\alpha(x-y)\frac{\partial}{\partial y}(x^iy^j).
+\end{align}
+Taking expectations gives
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =\alpha(x-y)\frac{\partial G}{\partial y},
+  \qquad G(x,y,0)=y^N.
+  \label{eq:transfer-only-pde}
+\end{equation}
+This generator calculation is equivalent to multiplying
+\cref{eq:transfer-only-forward} by \(x^iy^j\), summing and shifting indices, but it
+keeps the jump that produces each derivative visible.
+
+The direct solution uses independence.  For one initial exterior particle the only
+states are \((0,1)\) and \((1,0)\), with
+\begin{equation}
+  p_{0,1}(t)=\e^{-\alpha t},
+  \qquad
+  p_{1,0}(t)=1-\e^{-\alpha t}.
+  \label{eq:transfer-only-states}
+\end{equation}
+Thus
+\begin{equation}
+  G_1(x,y,t)=(1-\e^{-\alpha t})x+\e^{-\alpha t}y.
+\end{equation}
+The \(N\) initial particles move independently, so
+\begin{equation}
+  \boxed{
+  G_N(x,y,t)=
+  \left\{(1-\e^{-\alpha t})x+\e^{-\alpha t}y\right\}^{N}.}
+  \label{eq:G-transfer-only}
+\end{equation}
+In particular,
+\begin{equation}
+  X_t\sim\operatorname{Binomial}(N,1-\e^{-\alpha t}),
+  \qquad Y_t=N-X_t.
+  \label{eq:transfer-binomial}
+\end{equation}
+Direct differentiation confirms that \cref{eq:G-transfer-only} satisfies
+\cref{eq:transfer-only-pde}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.58\textwidth]{abs1.pdf}
+  \caption{State probabilities for one particle in the transfer-only model.  The
+  probability of remaining outside decays at rate \(\alpha\); the complementary
+  probability records transfer to the interior.}
+  \label{fig:transfer-only-states}
+\end{figure}
+
+\subsection{Transfer followed by death}
+\label{sec:transfer-death}
+
+Now let each interior particle die at rate \(\mu>0\).  The jumps are
+\begin{align}
+  (i,j)&\longrightarrow(i+1,j-1) &&\text{at rate }\alpha j,
+  \notag\\
+  (i,j)&\longrightarrow(i-1,j)   &&\text{at rate }\mu i.
+  \label{eq:transfer-death-rates}
+\end{align}
+The forward equations become
+\begin{equation}
+  \frac{\dd p_{i,j}}{\dd t}
+  =\alpha(j+1)p_{i-1,j+1}+\mu(i+1)p_{i+1,j}
+   -(\alpha j+\mu i)p_{i,j}.
+  \label{eq:transfer-death-forward}
+\end{equation}
+Using the two jump increments in the generator gives
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =\mu(1-x)\frac{\partial G}{\partial x}
+   +\alpha(x-y)\frac{\partial G}{\partial y},
+  \qquad G(x,y,0)=y^N.
+  \label{eq:transfer-death-pde}
+\end{equation}
+
+For one initial particle there are three states: exterior \((0,1)\), interior
+\((1,0)\), and dead \((0,0)\).  The first two probabilities solve
+\begin{equation}
+  p_{0,1}'=-\alpha p_{0,1},
+  \qquad
+  p_{1,0}'=\alpha p_{0,1}-\mu p_{1,0}.
+  \label{eq:transfer-death-single-odes}
+\end{equation}
+When \(\alpha\neq\mu\),
+\begin{align}
+  p_{0,1}(t)&=\e^{-\alpha t},
+  \notag\\
+  p_{1,0}(t)&=\frac{\alpha}{\mu-\alpha}
+              (\e^{-\alpha t}-\e^{-\mu t}),
+  \notag\\
+  p_{0,0}(t)&=1-p_{0,1}(t)-p_{1,0}(t).
+  \label{eq:transfer-death-states}
+\end{align}
+At the removable degeneracy \(\alpha=\mu\), the middle expression is replaced by
+\begin{equation}
+  p_{1,0}(t)=\alpha t\e^{-\alpha t}.
+  \label{eq:transfer-death-equal-rates}
+\end{equation}
+Independence of the initial particles again gives a power:
+\begin{equation}
+  G_N(x,y,t)
+  =\{p_{0,0}(t)+p_{1,0}(t)x+p_{0,1}(t)y\}^{N}.
+  \label{eq:G-transfer-death-compact}
+\end{equation}
+For \(\alpha\neq\mu\), this is
+\begin{equation}
+  \boxed{\begin{aligned}
+  G_N(x,y,t)=\Bigg\{&
+  1-\frac{\mu}{\mu-\alpha}\e^{-\alpha t}
+    +\frac{\alpha}{\mu-\alpha}\e^{-\mu t} \\
+  &+\frac{\alpha}{\mu-\alpha}
+      (\e^{-\alpha t}-\e^{-\mu t})x
+    +\e^{-\alpha t}y
+  \Bigg\}^{N}.
+  \end{aligned}}
+  \label{eq:G-transfer-death}
+\end{equation}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.58\textwidth]{abs2.pdf}
+  \caption{State probabilities for one particle under transfer followed by death.
+  The interior probability rises while transfer dominates and then decays as the
+  absorbing dead state accumulates probability.}
+  \label{fig:transfer-death-states}
+\end{figure}
+
+\subsection{Characteristics tested on the transfer--death PDE}
+\label{sec:characteristics-test}
+
+The direct calculation has already supplied \cref{eq:G-transfer-death}.  This makes
+\cref{eq:transfer-death-pde} a useful test problem for the method of characteristics:
+the method can be developed without leaving its answer unchecked.
+
+Introduce parameters \((s,q,\tau)\) and write
+\begin{equation}
+  (x,y,t)=(x(s,q,\tau),y(s,q,\tau),t(s,q,\tau)),
+\end{equation}
+with initial surface
+\begin{equation}
+  x(s,q,0)=s,
+  \qquad y(s,q,0)=q,
+  \qquad t(s,q,0)=0.
+  \label{eq:characteristic-initial-surface}
+\end{equation}
+Along a curve with \(s\) and \(q\) fixed, the chain rule gives
+\begin{equation}
+  \frac{\dd G}{\dd\tau}
+  =G_t\frac{\dd t}{\dd\tau}
+   +G_x\frac{\dd x}{\dd\tau}
+   +G_y\frac{\dd y}{\dd\tau}.
+  \label{eq:characteristic-chain-rule}
+\end{equation}
+Writing \cref{eq:transfer-death-pde} as
+\(-G_t+\mu(1-x)G_x+\alpha(x-y)G_y=0\) and matching coefficients gives
+\begin{align}
+  \frac{\dd G}{\dd\tau}&=0,
+  &\frac{\dd t}{\dd\tau}&=-1,
+  &\frac{\dd x}{\dd\tau}&=\mu(1-x),
+  &\frac{\dd y}{\dd\tau}&=\alpha(x-y).
+  \label{eq:transfer-death-characteristics}
+\end{align}
+
+The first two equations and \cref{eq:characteristic-initial-surface} give
+\begin{equation}
+  G(s,q,\tau)=q^N,
+  \qquad t=-\tau.
+  \label{eq:G-t-characteristics-test}
+\end{equation}
+Solving the \(x\)-equation gives
+\begin{equation}
+  1-x=(1-s)\e^{-\mu\tau}.
+  \label{eq:x-characteristic-test}
+\end{equation}
+Substitution into the final equation and use of an integrating factor yield, for
+\(\alpha\neq\mu\),
+\begin{equation}
+  y=1-\frac{\alpha}{\alpha-\mu}(1-s)\e^{-\mu\tau}
+   +\left\{q+\frac{\alpha}{\alpha-\mu}(1-s)-1\right\}
+    \e^{-\alpha\tau}.
+  \label{eq:y-characteristic-test}
+\end{equation}
+The equal-rate case follows by taking the limit \(\mu\to\alpha\).
+
+It remains to return from \((s,q,\tau)\) to \((x,y,t)\).  Rearranging
+\cref{eq:y-characteristic-test} for \(q\), then substituting
+\(1-s=(1-x)\e^{\mu\tau}\) from \cref{eq:x-characteristic-test} and
+\(\tau=-t\), gives
+\begin{equation}
+\begin{aligned}
+  q={}&1-\frac{\mu}{\mu-\alpha}\e^{-\alpha t}
+    +\frac{\alpha}{\mu-\alpha}\e^{-\mu t}
+    +\frac{\alpha}{\mu-\alpha}
+       (\e^{-\alpha t}-\e^{-\mu t})x
+    +\e^{-\alpha t}y.
+\end{aligned}
+  \label{eq:q-recovered-test}
+\end{equation}
+Finally \(G=q^N\) by \cref{eq:G-t-characteristics-test}, reproducing
+\cref{eq:G-transfer-death}.  The characteristic orientation, signs and initial
+surface have therefore all been checked against an independent solution.
+
+\subsection{Transfer, birth and death}
+\label{sec:transfer-birth-death}
+
+Add linear birth of interior particles at per-capita rate \(\beta>0\).  The jump
+rates are now
+\begin{align}
+  (i,j)&\longrightarrow(i+1,j-1) &&\text{at rate }\alpha j,
+  \notag\\
+  (i,j)&\longrightarrow(i+1,j)   &&\text{at rate }\beta i,
+  \notag\\
+  (i,j)&\longrightarrow(i-1,j)   &&\text{at rate }\mu i.
+  \label{eq:abd-rates}
+\end{align}
+The corresponding forward equations are
+\begin{multline}
+  \frac{\dd p_{i,j}}{\dd t}
+  =\alpha(j+1)p_{i-1,j+1}
+   +\mu(i+1)p_{i+1,j}
+   +\beta(i-1)p_{i-1,j}\\
+   -(\alpha j+\mu i+\beta i)p_{i,j}.
+  \label{eq:abd-forward}
+\end{multline}
+The generator applied to \(x^iy^j\) gives the first-order PDE
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =\{\mu-(\mu+\beta)x+\beta x^2\}\frac{\partial G}{\partial x}
+   +\alpha(x-y)\frac{\partial G}{\partial y},
+  \qquad G(x,y,0)=y^N.
+  \label{eq:abd-pde}
+\end{equation}
+Birth makes infinitely many interior states reachable from one transferred
+particle.  Independence still implies \(G_N=G_1^N\), but \(G_1\) is now an infinite
+series and must itself be determined.  We solve \cref{eq:abd-pde} directly.
+
+\subsubsection{The characteristic system}
+
+Use the same initial surface as in \cref{eq:characteristic-initial-surface}.  The
+characteristic equations are
+\begin{align}
+  \frac{\dd G}{\dd\tau}&=0,
+  &\frac{\dd t}{\dd\tau}&=-1,
+  \notag\\
+  \frac{\dd x}{\dd\tau}
+    &=\mu-(\mu+\beta)x+\beta x^2,
+  &\frac{\dd y}{\dd\tau}&=\alpha(x-y).
+  \label{eq:abd-characteristics}
+\end{align}
+Thus \(G=q^N\) and \(t=-\tau\).  The \(x\)-equation factorises without a
+quadratic surd:
+\begin{equation}
+  \mu-(\mu+\beta)x+\beta x^2
+  =\beta(x-1)(x-\rho),
+  \qquad
+  \rho:=\frac{\mu}{\beta}.
+  \label{eq:abd-factorisation}
+\end{equation}
+Put
+\begin{equation}
+  b:=\beta-\mu=\beta(1-\rho).
+  \label{eq:abd-net-growth}
+\end{equation}
+When \(b\neq0\), separation of variables and the condition \(x(s,q,0)=s\)
+give
+\begin{equation}
+  \frac{x-1}{x-\rho}
+  =\frac{s-1}{s-\rho}\e^{b\tau}.
+  \label{eq:abd-x-ratio}
+\end{equation}
+Writing
+\begin{equation}
+  Z=\frac{s-1}{s-\rho},
+  \qquad
+  \zeta(\tau)=Z\e^{b\tau},
+  \label{eq:abd-zeta}
+\end{equation}
+we may solve \cref{eq:abd-x-ratio} as
+\begin{equation}
+  x(\tau)
+  =\frac{1-\rho\zeta(\tau)}{1-\zeta(\tau)}
+  =1+(1-\rho)\frac{\zeta(\tau)}{1-\zeta(\tau)}.
+  \label{eq:abd-x-zeta}
+\end{equation}
+
+The last characteristic equation is linear once \(x(\tau)\) is known:
+\begin{equation}
+  \frac{\dd}{\dd\tau}\{\e^{\alpha\tau}y(\tau)\}
+  =\alpha\e^{\alpha\tau}x(\tau).
+  \label{eq:abd-y-integrating-factor}
+\end{equation}
+For \(|\zeta|<1\), expand the last quotient in
+\cref{eq:abd-x-zeta}.  Termwise integration gives
+\begin{equation}
+  \Psi(\zeta)
+  :=1+\frac{\alpha}{\beta}
+       \sum_{n=1}^{\infty}\frac{\zeta^n}{n+\delta},
+  \qquad
+  \delta:=\frac{\alpha}{b},
+  \label{eq:Psi-series}
+\end{equation}
+for non-resonant parameter values.  Indeed,
+\begin{equation}
+  \frac{\dd}{\dd\tau}
+  \{\e^{\alpha\tau}\Psi(\zeta(\tau))\}
+  =\alpha\e^{\alpha\tau}x(\tau),
+  \label{eq:Psi-antiderivative}
+\end{equation}
+because \(\alpha+nb=b(n+\delta)\) and
+\(b/\beta=1-\rho\).  Applying \(y(s,q,0)=q\) to
+\cref{eq:abd-y-integrating-factor} therefore yields
+\begin{equation}
+  q=\e^{\alpha\tau}\{y-\Psi(\zeta(\tau))\}+\Psi(Z).
+  \label{eq:abd-q-characteristic}
+\end{equation}
+
+To return to the original variables, set
+\begin{equation}
+  W=\frac{x-1}{x-\rho}.
+  \label{eq:abd-W}
+\end{equation}
+Then \(\zeta(\tau)=W\), \(Z=W\e^{bt}\) and \(\tau=-t\).  Since
+\(G=q^N\), we obtain the promised generating function.
+
+\begin{proposition}[Transfer--birth--death generating function]
+\label{prop:abd-pgf}
+Suppose \(\beta\neq\mu\), and define \(b,\rho,\delta,W\) and \(\Psi\) by
+\cref{eq:abd-net-growth,eq:Psi-series,eq:abd-W}.  Wherever the displayed series
+converges, and elsewhere by continuation along the characteristic,
+\begin{equation}
+  \boxed{
+  G(x,y,t)=
+  \left[
+    \e^{-\alpha t}\{y-\Psi(W)\}
+    +\Psi(W\e^{bt})
+  \right]^N.}
+  \label{eq:abd-pgf-solution}
+\end{equation}
+At resonant parameter values the right-hand side is understood by its finite
+limit, described below.
+\end{proposition}
+
+\begin{proof}
+Equations \cref{eq:abd-characteristics,eq:abd-q-characteristic} show that the
+quantity inside square brackets is the initial coordinate \(q\) of the
+characteristic through \((x,y,t)\).  The initial condition is \(G=q^N\), which
+proves \cref{eq:abd-pgf-solution}.  The derivation also proves that it satisfies
+\cref{eq:abd-pde}; no uniqueness beyond the usual local uniqueness of the
+characteristic initial-value problem is being assumed.
+\end{proof}
+
+\subsubsection{A parameter-regular representation}
+\label{sec:abd-regular}
+
+The special-function form is compact, but the underlying probability calculation
+provides a representation that remains transparent at \(\beta=\mu\), at resonance
+and across hypergeometric branch cuts.  Let \(F(x,t)\) be the \pgf{} at time \(t\)
+of an interior linear birth--death process started from one particle.  Its backward
+equation is
+\begin{equation}
+  \frac{\partial F}{\partial t}
+  =\beta F^2-(\beta+\mu)F+\mu,
+  \qquad F(x,0)=x.
+  \label{eq:interior-bd-backward}
+\end{equation}
+For \(\beta\neq\mu\),
+\begin{equation}
+  \frac{F(x,t)-1}{F(x,t)-\rho}
+  =\frac{x-1}{x-\rho}\e^{bt},
+  \label{eq:interior-bd-ratio}
+\end{equation}
+while at \(\beta=\mu\),
+\begin{equation}
+  F(x,t)
+  =1-\frac{1-x}{1+\beta t(1-x)}.
+  \label{eq:interior-bd-critical}
+\end{equation}
+
+For one initial exterior particle, either transfer has not occurred by time \(t\),
+or it occurs at time \(u\in(0,t)\) and leaves an interior birth--death process of
+duration \(t-u\).  Conditioning on that transfer time gives
+\begin{equation}
+  g(x,y,t)
+  =\e^{-\alpha t}y
+   +\alpha\e^{-\alpha t}
+      \int_0^t \e^{\alpha v}F(x,v)\,\dd v.
+  \label{eq:abd-convolution}
+\end{equation}
+Consequently,
+\begin{equation}
+  G(x,y,t)=g(x,y,t)^N.
+  \label{eq:abd-convolution-power}
+\end{equation}
+This formula is real and finite for \(x,y\in[0,1]\) and all positive rates.  For
+\(\beta\neq\mu\), substituting \cref{eq:interior-bd-ratio} into the integral and
+using \cref{eq:Psi-antiderivative} recovers
+\cref{eq:abd-pgf-solution}.  Thus \cref{eq:abd-convolution} also specifies
+unambiguously which continuation of the special-function expression is intended.
+
+Several checks now require almost no algebra.  At \(t=0\),
+\cref{eq:abd-convolution} gives \(g=y\), and hence \(G=y^N\).  At
+\(x=y=1\), \(F(1,v)=1\), so \(g=1\) and total probability is conserved.
+Setting \(x=1\) gives
+\begin{equation}
+  G(1,y,t)
+  =\{\e^{-\alpha t}y+1-\e^{-\alpha t}\}^{N},
+  \label{eq:abd-exterior-binomial}
+\end{equation}
+which is the generating function of
+\(Y_t\sim\operatorname{Binomial}(N,\e^{-\alpha t})\).  The exterior marginal is
+therefore unaffected by the interior birth and death rates, as the transition
+diagram requires.
+
+\subsubsection{Hypergeometric form, domains and resonance}
+\label{sec:abd-hypergeometric}
+
+The series in \cref{eq:Psi-series} is a Gauss hypergeometric function.  With
+\begin{equation}
+  {}_2F_1(a,b;c;z)
+  =\sum_{n=0}^{\infty}
+    \frac{(a)_n(b)_n}{(c)_n}\frac{z^n}{n!},
+  \label{eq:hypergeometric-definition}
+\end{equation}
+the Pochhammer cancellation
+\begin{equation}
+  \frac{(\delta)_n}{(\delta+1)_n}
+  =\frac{\delta}{\delta+n}
+  \label{eq:pochhammer-ratio}
+\end{equation}
+gives
+\begin{equation}
+  {}_2F_1(1,\delta;\delta+1;z)
+  =\sum_{n=0}^{\infty}\frac{\delta}{\delta+n}z^n.
+  \label{eq:hypergeometric-simple-series}
+\end{equation}
+It follows that
+\begin{equation}
+  \Psi(z)
+  =1+(1-\rho)
+   \{{}_2F_1(1,\delta;\delta+1;z)-1\}.
+  \label{eq:Psi-hypergeometric}
+\end{equation}
+A second derivation, based on a general exponential--rational integral, is given in
+\cref{app:hypergeometric-integral}.
+
+The elementary series \cref{eq:Psi-series} converges for \(|z|<1\).  If
+\(\mu>\beta\), then \(b<0\), \(\rho>1\), and, for \(x\in[0,1]\),
+\begin{equation}
+  0\leq W\leq\frac{\beta}{\mu}<1,
+  \qquad
+  0\leq W\e^{bt}\leq W.
+\end{equation}
+Except at the resonances described next, the series therefore covers the whole
+\pgf{} interval.  If \(\beta>\mu\), the arguments may leave the unit disc or cross
+the standard hypergeometric cut.  One may then use analytic continuation, tracking
+the branch along the characteristic, but the real integral
+\cref{eq:abd-convolution} is usually safer.  The apparent singularity of \(W\) at
+\(x=\rho\) is also only a coordinate singularity; \(F(\rho,t)=\rho\) and the
+continuous limit of \cref{eq:abd-convolution} is regular.
+
+When
+\begin{equation}
+  \alpha=n(\mu-\beta),
+  \qquad n=1,2,\ldots,
+  \label{eq:abd-resonance}
+\end{equation}
+we have \(\delta=-n\), and one denominator in
+\cref{eq:Psi-series} vanishes.  The separate \(\Psi\)-terms in
+\cref{eq:abd-pgf-solution} then have poles, but their combination does not.  In the
+resonant term,
+\begin{equation}
+  \frac{(W\e^{bt})^n-\e^{-\alpha t}W^n}{n+\delta}
+  \label{eq:resonant-cancellation}
+\end{equation}
+has a finite parameter limit and produces the familiar factor
+\(t\e^{-\alpha t}\).  Equivalently, \cref{eq:abd-convolution} contains no singular
+denominator and supplies the limit directly.  Resonance is therefore a defect of
+the separated antiderivative, not of the generating function.
+
+\subsection{Recovering state probabilities}
+\label{sec:coefficient-recovery}
+
+A generating function is useful only insofar as its coefficients can be recovered.
+In every model above,
+\begin{equation}
+  p_{i,j}(t)=[x^iy^j]G(x,y,t)
+  =\frac{1}{i!\,j!}
+   \left.
+   \frac{\partial^{i+j}G}
+        {\partial x^i\partial y^j}
+   \right|_{x=y=0}.
+  \label{eq:bivariate-coefficient}
+\end{equation}
+For transfer--birth--death, write
+\begin{equation}
+  h(x,t)
+  :=\alpha\e^{-\alpha t}
+     \int_0^t\e^{\alpha v}F(x,v)\,\dd v,
+  \qquad
+  g(x,y,t)=\e^{-\alpha t}y+h(x,t).
+  \label{eq:abd-h-definition}
+\end{equation}
+The finite exterior expansion then separates the two coefficient extractions:
+\begin{equation}
+  p_{i,j}(t)
+  =\binom Nj\e^{-\alpha tj}
+   [x^i]h(x,t)^{N-j},
+  \qquad 0\leq j\leq N.
+  \label{eq:abd-coefficient-formula}
+\end{equation}
+The remaining univariate coefficient can be obtained by differentiation, by
+convolution of truncated series, or by Cauchy's integral formula.  The full
+coefficient calculations for all three models are collected in
+\cref{app:coefficient-extraction}; the accompanying script implements the
+convolution route and checks normalisation.
+
+\FloatBarrier

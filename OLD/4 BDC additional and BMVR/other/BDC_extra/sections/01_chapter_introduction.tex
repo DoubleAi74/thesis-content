@@ -1,0 +1,82 @@
+% Chapter 4a introduction --- scope per Project_specification.md \S4.1.
+% Absorbs the killing/catastrophe distinction from the former
+% 02_specification_of_rupture_state.tex (typos fixed).
+
+\section{Introduction}
+
+The standard models of within-host infection treat the infected cell as a
+black box. In the Basic Model of Viral Replication, a cell that has been
+infected releases new particles at a constant rate $p$ until it is removed
+at a constant rate $d_{\Icell}$; nothing about the cell's interior enters
+the dynamics, and the two constants are phenomenological --- parameters to
+be fitted, not quantities to be derived. For a budding virus this is at
+least a defensible caricature. For a lytic pathogen it is plainly wrong in
+mechanism, whatever it may achieve by fitting: such a pathogen grows inside
+the cell, and releases nothing until the cell ruptures, at which point it
+releases everything at once. \textit{Yersinia pestis} in the macrophage,
+\textit{Francisella tularensis} in the macrophage, the lytic phage in its
+bacterium --- all follow the intracellular replication-and-lysis picture,
+and all are poorly served by a constant drip.
+
+Any replacement of that black box must begin with a complete description of
+a single infected cell, and that description is the subject of this
+chapter. The intracellular model was set up in Chapter~3: the
+birth--death--catastrophe process, in which the pathogen count within one
+cell is born at rate $\lambda$ per particle, dies at rate $\mu$ per
+particle, and triggers the rupture of the cell at rate $\delta$ per
+particle. Chapter~3 derived the principal single-cell quantities --- the
+no-rupture probability $I(t)$, the non-fixation probability $\Ifix(t)$,
+the mean and second moment $J(t)$, $K(t)$, and the cumulative mean release
+$V(t)$ --- each in closed form. What it did not derive is the full
+distribution of the process, or the statistics of the rupture event itself.
+These are the subjects of the present chapter.
+
+Three questions organise it.
+\begin{enumerate}
+\item What is the complete single-cell description? The state
+probabilities at every time, the quasi-stationary distribution of the
+intracellular load, and the laws of the burst time and the burst size
+(\S\S\ref{sec:pgf-pdes}--\ref{sec:cond-means}).
+\item How do several founders in one cell behave? The multi-founder
+quantities foreshadowed in Chapter~3, and the conditional means available
+to an experiment that observes a burst
+(\S\ref{sec:cond-means}--\S\ref{sec:moi}).
+\item What happens when the released particles found a new infection
+immediately? The chained immediate-transfer model, in which one cell's
+rupture is the next cell's inoculum (\S\ref{sec:chained}).
+\end{enumerate}
+
+The answers, in advance and in brief, are these. The single-cell process
+is solvable far beyond its moments: the state probabilities are geometric
+at every time, and their conditional limit --- the quasi-stationary
+distribution --- is geometric with ratio $1/a$. The burst-size
+distribution, conditioned on bursting, is \emph{exactly the same law}: a
+cell's rupture size is distributed as the load it would have had, had it
+kept growing forever. Burst times given burst sizes obey a harmonic-number
+law; cells infected by $k$ particles release superlinearly more, and the
+chained transfer of bursts from cell to cell has an exact negative-binomial
+structure. Each of these results is stated in Chapter~3's notation, which
+this chapter completes rather than revises.
+
+The chapter that follows this one, Chapter~4b, takes the completed
+single-cell theory and embeds it in a population: the survival and release
+kernels derived here become the age-structured kernels of a renewal model
+of viral dynamics, and the constant-rate black box of the Basic Model is
+shown to be a projection of that model, with quantifiable distortions.
+Nothing beyond the contents of the present chapter is needed for that
+step.
+
+\subsection{Two varieties of rupture: killing and catastrophe}
+\label{sec:rupture-conventions}
+
+Before we begin, it is important to state a distinction between two
+varieties of the model, already touched on in Chapter~3. When a rupture
+event occurs, the process goes to a state. In the literature, this state is
+sometimes chosen to be $0$, and in other cases there is a separate rupture
+state defined, sometimes labelled $H$. The analysis does differ between the
+two options. And so for clarity, in this chapter we will refer to the
+$0$-state case as ``killing''; the distinct rupture state as
+``catastrophe''. The distinction matters most in
+\S\S\ref{sec:pgf-pdes}--\ref{sec:state-probs}, where both conventions are
+carried in parallel; from \S\ref{sec:qsd} onward the catastrophe
+convention is primary.

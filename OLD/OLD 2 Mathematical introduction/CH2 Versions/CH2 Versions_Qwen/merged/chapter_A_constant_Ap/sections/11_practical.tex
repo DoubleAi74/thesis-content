@@ -1,0 +1,51 @@
+\section{Computing \texorpdfstring{$A(p)$}{A(p)} in practice}
+\label{a:sec:practical}
+
+In the absence of an exact formula we are left with approximation, and the two
+regimes of \cref{a:sec:bounds} suggest how to split the work.
+
+Over most of the interval, direct evaluation of the infinite product
+\cref{a:eq:prodFormula} is entirely satisfactory: its partial products bound
+$A(p)$ from above at every order, and the tail bracket \cref{a:eq:tailbound}
+bounds it from below, so every truncation carries a certified error bar rather
+than a hope of convergence. The bracket also supplies the stopping criterion:
+iterate until the bracket is narrower than the required tolerance, which is
+stronger than observing that successive floating-point iterates have stopped
+changing. The difficulty is confined to a neighbourhood of $p=\tfrac12$, and it
+has two parts. First, as $A(p)\to0$ the quantity of interest $1/A$ diverges, so a
+fixed absolute error in $A$ becomes an unbounded error in the quasi-stationary
+mean. Second, and this is the binding constraint, as the process is defined ever
+closer to criticality its lifetime, though still finite, grows enormously, and
+$S_n$ recedes to zero ever more slowly. The iteration must be carried to a
+generation at which $S_n$ is essentially unchanging, and \cref{a:tab:Avals} shows
+what that costs: about $10^2$ factors at $p=0.2$, $10^3$ at $p=0.45$, but nearly
+$5\times10^5$ at $p=0.4999$.
+
+The remedy is to hand the near-critical region to the asymptotic
+\cref{a:eq:Anearcrit}, which is exact in the limit and cheap everywhere:
+\begin{equation}
+\label{a:eq:Apractical}
+A(p) \approx
+\begin{cases}
+\displaystyle \frac12\prod_{k=1}^{N}\lrb{1-\frac{S_k}{2}}, & p<p_\ast,\quad N\gg1,\\[14pt]
+2-4p, & p\ge p_\ast,
+\end{cases}
+\end{equation}
+with the crossover $p_\ast$ chosen just below $\tfrac12$. \Cref{a:rem:rate}
+indicates where to put it: the relative error of the asymptotic is about
+$\varepsilon\ln(1/\varepsilon)$ by \cref{a:thm:nearcrit}, so at
+$p_\ast = 0.4999$ ($\varepsilon = 2\times10^{-4}$) the asymptotic is already
+accurate to about two parts in $10^3$, while the product still converges in a few
+hundred thousand iterations. Choosing $p_\ast=0.499$ instead leaves an error of
+about $1.4\%$ at the join. Any $p_\ast$ in the range $0.499$ to $0.4999$ gives a
+scheme accurate to better than one per cent throughout, and the two branches can
+be blended over a narrow window if continuity of the derivative matters.
+
+This is the recipe used for the numerical values quoted throughout this chapter,
+including those in \cref{a:tab:Avals}; all of them are generated from the product
+rather than from a fitted formula, with the asymptotic switched on only inside the
+crossover window. For calculations that do not require a certified product value
+arbitrarily close to criticality, \cref{a:eq:Apractical} restores accurate
+quasi-stationary means $1/A(p)$ even where raw iteration becomes expensive.
+
+\FloatBarrier

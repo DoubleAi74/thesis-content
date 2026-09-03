@@ -1,0 +1,74 @@
+% Appendix C (Chapter 4b) --- hypergeometric Laplace transforms of the
+% kernels. The V_inf^(k) derivation and the PGF coefficient extraction live
+% in Chapter 4a's Appendix C.
+
+\section{Technical derivations}
+\label{app:technical}
+
+\subsection{Hypergeometric Laplace transforms of the kernels}
+\label{app:transforms}
+
+Write $s:=r/\theta$ and recall $\theta=\lambda(a-b)$. Both transforms reduce,
+under $v=\ee^{-\theta t}$ (so $\dd t=-\dd v/(\theta v)$, $v:1\to0$), to
+moments of the form $\int_0^1 v^{s-1}(1-v)^n(A+Bv)^{-m}\dd v$, which are
+hypergeometric. For the survival kernel, from \eqref{eq:IDIhat},
+$$
+\Ifix(t)=\frac{(a-b)^2w}{(B+Aw)(aw-b)},\qquad w=\ee^{\theta t},
+$$
+and in $v=1/w$,
+$$
+\Lap{\Ifix}(r)=\frac{a-b}{\theta}\int_0^1 v^s
+\Bigl[\frac{B}{A+Bv}+\frac{b}{a-bv}\Bigr]\dd v,
+$$
+using the partial-fraction decomposition
+$(a-b)/[(A+Bv)(a-bv)]=B/(A+Bv)+b/(a-bv)$ (both sides multiplied out give
+$(a-b)^2$ in the numerator after using $Ab+aB=a-b$). Each term is a
+standard hypergeometric integral,
+$\int_0^1 v^s/(1-zv)\dd v=(s+1)^{-1}\Fhyp(1,s+1;s+2;z)$, giving
+\begin{equation}
+\Lap{\Ifix}(r)=\frac{1}{\lambda(s+1)}
+\Biggl[
+\Psi(A,B,s)
++\frac{b}{a}\,\Fhyp\Bigl(1,s+1;s+2;\frac{b}{a}\Bigr)
+\Biggr],
+\label{eq:LIhat}
+\end{equation}
+where, so that the hypergeometric series always converges,
+\begin{equation}
+\Psi(A,B,s)=
+\begin{cases}
+\Fhyp\bigl(1,s+1;s+2;-\frac{A}{B}\bigr), & B\ge A,\\[0.4em]
+\frac{B}{A}\,\Fhyp\bigl(1,s+1;s+2;-\frac{B}{A}\bigr), & A>B,
+\end{cases}
+\end{equation}
+the two branches being equal by the identity
+$(B/A)\Fhyp(1,s+1;s+2;-B/A)=\Fhyp(1,s+1;s+2;-A/B)$ --- both sides equal
+$(s+1)B\int_0^1 v^s/(A+Bv)\dd v$. (The single-argument form
+$(B/A)\Fhyp(1,s+1;s+2;-B/A)$, valid by analytic continuation for all
+$A,B>0$, has a convergent defining series only when $B\le A$, i.e.\
+$\delta\ge\lambda-\mu$.) For the release kernel, $g=\delta K$ with
+$K=[1+2\lambda(1-I)/\delta]J$; the same substitution and termwise
+integration give
+\begin{equation}
+\delta\Lap{K}(r)=\frac{\delta}{\lambda}
+\Biggl[
+\frac{\Fhyp(1,s;s+2;z)}{A(s+1)}
++\frac{2\,\Fhyp(2,s;s+3;z)}{A^2(s+1)(s+2)}
+\Biggr],
+\qquad z=-\frac{B}{A},
+\label{eq:dLK}
+\end{equation}
+again with the understanding that for $B>A$ the defining series of the
+right-hand side must be evaluated through its analytic continuation (or
+through the integral representation from which it came). Both formulae
+reduce correctly at $s=0$: with $\Fhyp(1,1;2;z)=-\log(1-z)/z$,
+\eqref{eq:LIhat} gives
+$\Lap{\Ifix}(0)=\lambda^{-1}\log(a/(a-1))=\mean{T_{\rm prod}}$, and
+\eqref{eq:dLK} gives $\delta\Lap{K}(0)=(\delta/\lambda)(1/A+1/A^2)
+=aB/A=V_\infty$, using $AB=\delta/\lambda$. Both reductions were verified
+numerically against direct quadrature, as was \eqref{eq:dLK} for general
+$r$ (relative error $\sim10^{-8}$ in the convergent regime).
+
+The companion derivations --- the lifetime yield $V_\infty^{(k)}$ and the
+PGF coefficient extraction used by the chained model --- are in
+Chapter~4a's Appendix~C.

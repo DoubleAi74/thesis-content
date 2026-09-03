@@ -1,0 +1,68 @@
+% ===========================================================================
+%  ch_preamble.tex --- Chapter A (The constant A(p)).
+%  Adapted from 7source_claude_1/ch2_preamble.tex.  When this chapter is
+%  dropped into the thesis, merge this file into the thesis preamble;
+%  duplicates may simply be deleted.
+% ===========================================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+% --- Equation cross-references as bare parenthesised numbers -----------------
+\crefformat{equation}{(#2#1#3)}
+\Crefformat{equation}{(#2#1#3)}
+\crefrangeformat{equation}{(#3#1#4)--(#5#2#6)}
+\crefmultiformat{equation}{(#2#1#3)}{ and (#2#1#3)}{, (#2#1#3)}{ and (#2#1#3)}
+
+% --- Notation ---------------------------------------------------------------
+\newcommand{\pgf}{probability generating function}
+\newcommand{\rv}{random variable}
+\newcommand{\pr}[1]{\mathbb{P}\!\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\!\left(#1\right)}
+\newcommand{\var}[1]{\operatorname{Var}\!\left(#1\right)}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\lrb}[1]{\left(#1\right)}
+\newcommand{\lrbs}[1]{\left[#1\right]}
+\newcommand{\Ac}{A_{\mathrm{c}}}
+\newcommand{\ind}{\mathbf{1}}
+
+% --- Cross-chapter references ------------------------------------------------
+% Standalone-build form, numbered for the expected thesis order (mathematical
+% introduction = Chapter 2, the constant A(p) = Chapter 3).  Thesis integration
+% will redefine \ChM to a numbered reference (e.g.\ Chapter~\ref{ch:math-intro}).
+\newcommand{\ChM}{Chapter~2 (\emph{Mathematical introduction})}
+
+% --- Theorem environments ----------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\allowdisplaybreaks

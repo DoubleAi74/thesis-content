@@ -1,0 +1,15 @@
+{
+  "figure": "fig05",
+  "chapter_number": "5.5",
+  "label": "dist:fig:lifetime",
+  "slug": "productive_lifetime",
+  "included_from": "sections/05_quasi_stationary.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig05.pdf",
+    "fig05.png"
+  ],
+  "simulation": false
+}

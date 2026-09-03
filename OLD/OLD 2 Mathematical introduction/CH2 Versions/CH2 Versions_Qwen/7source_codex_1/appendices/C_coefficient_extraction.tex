@@ -1,0 +1,147 @@
+\section{Coefficient extraction from the generating functions}
+\label{app:coefficient-extraction}
+
+Let
+\begin{equation}
+  G(x,y,t)=\sum_{i,j\geq0}p_{i,j}(t)x^iy^j
+  \label{eq:appendix-pgf-series}
+\end{equation}
+be analytic in a neighbourhood of the origin.  The bivariate Taylor formula gives
+\begin{equation}
+  p_{i,j}(t)
+  =[x^iy^j]G(x,y,t)
+  =\frac{1}{i!\,j!}
+   \left.
+   \frac{\partial^{i+j}G}
+        {\partial x^i\partial y^j}
+   \right|_{x=y=0}.
+  \label{eq:appendix-state-probability}
+\end{equation}
+For completeness, the coefficient is also represented by the bivariate Cauchy
+integral
+\begin{equation}
+  p_{i,j}(t)
+  =\frac{1}{(2\pi\mathrm i)^2}
+   \int_{|x|=r_x}\int_{|y|=r_y}
+   \frac{G(x,y,t)}
+        {x^{i+1}y^{j+1}}\,\dd y\,\dd x,
+  \label{eq:bivariate-cauchy}
+\end{equation}
+for circles inside the domain of analyticity.  This form is useful for stable
+numerical extraction when derivatives of a special-function representation are
+unwieldy.
+
+\subsection{A multilinear power}
+
+Suppose
+\begin{equation}
+  G(x,y,t)=\{c(t)+f(t)x+g(t)y\}^{N}.
+  \label{eq:multilinear-power}
+\end{equation}
+For \(a+b\leq N\), repeated differentiation gives
+\begin{equation}
+  \frac{\partial^{a+b}G}{\partial x^a\partial y^b}
+  =
+  \frac{N!}{(N-a-b)!}
+  f^ag^b(c+fx+gy)^{N-a-b},
+  \label{eq:multilinear-derivative}
+\end{equation}
+and the derivative is zero when \(a+b>N\).  Hence
+\begin{equation}
+  p_{i,j}(t)
+  =
+  \frac{N!}{i!\,j!\,(N-i-j)!}
+  f(t)^i g(t)^j c(t)^{N-i-j},
+  \qquad i+j\leq N.
+  \label{eq:trinomial-probability}
+\end{equation}
+This is the trinomial law.  In particular, the factor brought down by
+differentiation is the falling factorial \(N!/(N-i-j)!\), not \(N^{i+j}\).
+The distinction is essential for exact normalisation.
+
+For transfer alone,
+\begin{equation}
+  c=0,\qquad
+  f=1-\e^{-\alpha t},\qquad
+  g=\e^{-\alpha t}.
+\end{equation}
+Only states with \(i+j=N\) have positive probability, and
+\begin{equation}
+  p_{i,j}(t)
+  =\binom Ni
+   (1-\e^{-\alpha t})^i
+   \e^{-\alpha tj},
+  \qquad i+j=N.
+  \label{eq:transfer-only-coefficients}
+\end{equation}
+
+For transfer followed by death, take
+\begin{align}
+  c(t)
+  &=1-\frac{\mu}{\mu-\alpha}\e^{-\alpha t}
+       +\frac{\alpha}{\mu-\alpha}\e^{-\mu t},
+  \notag\\
+  f(t)
+  &=\frac{\alpha}{\mu-\alpha}
+    (\e^{-\alpha t}-\e^{-\mu t}),
+  \notag\\
+  g(t)&=\e^{-\alpha t},
+  \label{eq:transfer-death-cfg}
+\end{align}
+with the continuous equal-rate limit from
+\cref{eq:transfer-death-equal-rates}.  Substitution into
+\cref{eq:trinomial-probability} gives the complete joint law.  Since
+\(c+f+g=1\), summing over \(i\) and \(j\) recovers one by the multinomial theorem.
+
+\subsection{Transfer, birth and death}
+
+The full generating function is not a finite multilinear power in \(x\), but its
+dependence on \(y\) remains linear before the power is taken.  From
+\cref{eq:abd-h-definition},
+\begin{equation}
+  G(x,y,t)
+  =\{\e^{-\alpha t}y+h(x,t)\}^{N}.
+\end{equation}
+The binomial theorem gives
+\begin{equation}
+  G(x,y,t)
+  =\sum_{j=0}^{N}
+   \binom Nj
+   \e^{-\alpha tj}y^j
+   h(x,t)^{N-j},
+\end{equation}
+and therefore
+\begin{equation}
+  p_{i,j}(t)
+  =\binom Nj\e^{-\alpha tj}
+   [x^i]h(x,t)^{N-j}.
+  \label{eq:appendix-abd-coefficients}
+\end{equation}
+
+If
+\begin{equation}
+  h(x,t)=\sum_{k\geq0}h_k(t)x^k,
+\end{equation}
+then the remaining coefficient is the finite convolution
+\begin{equation}
+  [x^i]h(x,t)^M
+  =
+  \sum_{\substack{k_1+\cdots+k_M=i\\k_r\geq0}}
+  \prod_{r=1}^{M}h_{k_r}(t).
+  \label{eq:coefficient-convolution}
+\end{equation}
+Truncating \(h\) after degree \(i\) is exact for this calculation: coefficients of
+higher degree cannot contribute to \([x^i]\).  This observation underlies
+\texttt{scripts/extract\_coefficients.py}.  As a check, summing over all interior
+states at fixed \(j\) means setting \(x=1\); since
+\(h(1,t)=1-\e^{-\alpha t}\),
+\begin{equation}
+  \sum_{i=0}^{\infty}p_{i,j}(t)
+  =
+  \binom Nj
+  \e^{-\alpha tj}
+  (1-\e^{-\alpha t})^{N-j},
+\end{equation}
+which is the exterior binomial marginal in
+\cref{eq:abd-exterior-binomial}.
+

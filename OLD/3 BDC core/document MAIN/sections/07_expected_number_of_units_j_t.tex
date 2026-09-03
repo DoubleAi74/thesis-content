@@ -1,0 +1,87 @@
+\section{Expected number of units,  $J(t) = \mean{\xt}$}
+
+Individual realisations of the stochastic process, $\xt$, will vary greatly. When comparing a large number side by side, an increasing count will have collapsed to 0, as those remaining climb higher and higher. (assuming $\beta > \mu$). Despite this, we can quantify the expected (mean) value of the process over time --- call it $J(t)$: 
+$$J(t) = \mean{\xt\;|\;\xx_0=1}.$$
+
+\subsection{$J(t)$ as a formula in time}
+A formula for $J(t)$ can be obtained with the following line of reasoning. 
+
+Take the forward Kolmogorov equation describing $p_0(t) = \pr{\xt = 0}$.
+$$\ddt{p_0} = \delta (1 p_1 + 2 p_2 + 3p_3  + \dots ) + \mu p_1$$
+ On the RHS we see a sum of probabilities for the process being in a given state, multiplied by the relevant transition rates to 0. The end term, $\mu p_1$ is associated with death of the final living infectious particle. All of the others relate to catastrophe transitions, from every non-zero state, $i$, and with rates $\delta i$. These conveniently combine and make up the definition of $\mean{\xt}$. So we can write,
+$$\ddt{p_0} = \delta J + \mu p_1.$$
+Removing the $\mu p_1$ term, we are left with an equation describing the probability that $\xt$  equals $0$, \textit{and} it arrived there following a rupture event --- or, the probability that rupture has occurred. Call it $\hat p_0$. 
+$$\ddt{\hat p_0} = \delta J.$$
+Since $I(t)$ is the probability rupture has \textit{not} yet happened: $I(t) = 1-\hat p_0$. Hence,
+\begin{equation}
+\label{ddIJ}
+\ddt{I} = -\delta J.
+\end{equation}
+(\ref{ddIJ}) can be rearranged ---
+$$J = -\frac{1}{\delta}\ddt{I}$$
+--- and solved for $J(t)$ by differentiating  (\ref{formI}), the formula for $I(t)$:
+\begin{equation*}
+J(t) = -\frac{\beta(1-I_+)(1-I_-)(I_+-I_-)^2\ee^{\beta(I_+-I_-)t}}{\delta\big((1-I_-) - (1-I_+)\ee^{\beta(I_+-I_-)t}\big)^2}
+\end{equation*}
+
+
+
+\subsection{Rate of change of $J$}
+
+By looking to the list of possible events over a period $\delt$, we can write down the following relationship describing how $\mean{\xt}$ changes.
+$$\mean{\xx_{t+\delt}} = \mean{\xt} + \mean{\xx_{t+\delt}-\xt};$$
+the expected value of $\xx_{t+\delt}$ is what it was at time $t$, plus the expected change during the interval [$t$, $t+\delt$].
+\begin{equation}
+\label{ddJ}
+\mean{\xx_{t+\delt}} = \mean{\xt} + \mean{\beta\delt\xt - \mu\delt\xt - \delta\delt\xt\cdot\xt}
+\end{equation}
+The final compenent, $- \delta\delt\xt\cdot\xt$, represents the probability that a rupture occurs during the interval, $\delta\delt\xt$, multiplied by the change to $\xt$ --- in this case: $-\xt$ (complete elimination).
+Rearranging (\ref{ddJ}), we find 
+$$\frac{\mean{\xx_{t+\delt}} - \mean{\xt}}{\delt} = \beta\mean{\xt} - \mu\mean{\xt} - \delta \mean{\xt^2}.$$
+Which, evaluated in the limit, $\delt \to 0$, becomes
+\begin{equation}
+\label{ddJ2}
+\ddt{J} = (\beta - \mu) J - \delta K(t),
+\end{equation}
+with
+\begin{equation*}
+K(t) = \mean{\xt^2}.
+\end{equation*}
+
+
+\subsection{Extracellular count, $V(t)$}
+
+If we define a secondary process, $\yt$, as the number of units ``expelled'' following a rupture event in $\xt$, we can quantify the expected ``extracellular'' particle count through time. To clarify, $\yt$ will remain at 0 unless the associated process $\xt$ undergoes a catastrophe. With probability $1-I_-$, this will happen eventually, in which case $\yt$ will jump from 0 to the value of $\xt$ immediately prior to mass expulsion;
+$$\pr{\yy_{t+\delt}-\yt = \xt,\; \xx_{t+\delt}-\xt=0} = \delta\xt\cdot\delt.$$
+
+
+
+\noindent
+By analogous reasoning that derived (\ref{ddJ2}), it is possible to state
+\begin{equation}
+\label{ddV}
+\ddt{V} =  \delta K(t),
+\end{equation}
+where $V(t) = \mean{\yt}$.
+And this can be solved for $V(t)$ in the following way. (\ref{ddJ2}) and (\ref{ddV}) combine to give,
+$$\ddt{J} = (\beta - \mu) J - \ddt{V}.$$
+With (\ref{ddIJ}), this can be rearranged into,
+$$\ddt{V} = -\frac{(\beta - \mu)}{\delta}\ddt{I} - \ddt{J}.$$ 
+Then, integrating:
+$$V(t) = -\frac{(\beta - \mu)}{\delta}I(t) - J(t) + \text{const}.$$
+And finally with initial conditions, $V(0) = 0$, and $J(0)=I(0)=1$,
+\begin{equation*}
+\label{Voft}
+V(t) = \frac{(\beta - \mu)}{\delta}\big[1-I(t)\big] -J(t)+1.
+\end{equation*}
+
+
+
+
+\noindent
+In late time, $V(t)$ will tend to
+$$V_{\infty} =  \frac{(\beta - \mu)}{\delta}\big[1-I_-\big] +1,$$
+which can be interpreted as the expected rupture size. 
+
+When $\mu = 0$,
+$$V_\infty = 1 +\frac{\beta}{\delta}.$$

@@ -1,0 +1,24 @@
+\section{Burst size distribution}
+
+Using 
+
+$$ \int p_k(t)\dd t  = (n\beta)^{-1} \lrb{\frac{{1-\ee^{\beta(a-b)t}}}{{b - a\ee^{\beta(a-b)t}} } }^{n},$$
+
+the following equation can be approached. 
+
+
+$$\pr{K = k} = \delta k \int_0^\infty p_k(t)\dd t$$
+Where $p_k(t) = \pr{\xt = k}$. We have above determined that 
+
+$$p_k(t) =\lrb{ \frac{ a-b }{{b - a\ee^{\beta(a-b)t}}}}^2 \ee^{\beta(a-b)t} \lrb{\frac{{1-\ee^{\beta(a-b)t}}}{{b - a\ee^{\beta(a-b)t}} } }^{k-1}.$$
+Then, we have the formula
+
+$$\pr{K = k} = \delta k \int_0^\infty p_k(t)\dd t$$
+The current goal is to verify this using Gillespie algorithm simulations. First, we have the integration,
+
+$$\int p_k(t)\dd t  = (k\beta)^{-1} \lrb{\frac{1 - \ee^{\beta(a-b)t}}{b - a\ee^{\beta(a-b)t}}}^k $$
+Which can be verified with reverse differentiation (found with Wolfram Alpha). With this,
+
+$$\pr{K=k} = \frac{\delta}{\beta}\lrbs{ \lrb{\frac{1 - \ee^{\beta(a-b)t}}{b - a\ee^{\beta(a-b)t}}}^k}^\infty_0 = \frac{\delta}{\beta}\lrb{\frac{1}{a}}^k$$
+
+$$\pr{K=k} = \frac{\delta}{\beta}\lrb{\frac{1}{\frac{\beta+\mu+\delta}{2\beta} + \sqrt{\lrb{\frac{\beta+\mu+\delta}{2\beta}}^2 - \frac{\mu}{\beta}}}}^k$$

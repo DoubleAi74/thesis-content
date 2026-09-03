@@ -1,0 +1,105 @@
+\section{Extracting state probabilities from a generating function}
+\label{m:app:extract}
+
+Every generating function obtained above arrived as a formula rather than as an
+explicit series --- the absorption-only case, for instance, as
+\begin{equation}
+\label{m:eq:examplePgf}
+G(x,y,t) = \Bigl(\bigl(1-\ee^{-\alpha t}\bigr)x + \ee^{-\alpha t}y\Bigr)^n .
+\end{equation}
+Such a formula can always be converted back to the series form
+\begin{equation}
+\label{m:eq:series1}
+G(x,y,t) = \sum_{i=0}^{\infty}\sum_{j=0}^{\infty}p_{i,j}(t)\,x^iy^j ,
+\end{equation}
+which recovers the time-dependent state probabilities. All that is required is that
+$G$ be repeatedly partially differentiable in $x$ and $y$.
+
+The reason is the bivariate Maclaurin expansion,
+\begin{equation*}
+f(x,y) = \sum_{k=0}^{\infty}\frac{1}{k!}\sum_{\varrho=0}^{k}\binom{k}{\varrho}
+\partial_x^{\varrho}\partial_y^{\,k-\varrho}f\Big|_{(0,0)}\;x^{\varrho}y^{k-\varrho},
+\end{equation*}
+whose coefficient of $x^iy^j$, taking $k=i+j$ and $\varrho=i$, is
+$\frac{1}{(i+j)!}\binom{i+j}{i}\partial_x^i\partial_y^{\,j}f\big|_{(0,0)}$. Hence
+\begin{equation}
+\label{m:eq:stateProb}
+p_{i,j}(t) = \frac{1}{i!\,j!}\,\partial_x^i\partial_y^{\,j}G\Big|_{(0,0)} .
+\end{equation}
+Equivalently, and more stably in floating point when $G$ is a special-function
+expression whose high derivatives are unwieldy, the same coefficient is the
+bivariate Cauchy integral
+\begin{equation}
+\label{m:eq:bivariateCauchy}
+p_{i,j}(t) = \frac{1}{(2\pi\mathrm i)^2}
+\oint_{|x|=\varrho_x}\oint_{|y|=\varrho_y}
+\frac{G(x,y,t)}{x^{\,i+1}y^{\,j+1}}\,\dd y\,\dd x
+\end{equation}
+over circles inside the domain of analyticity.
+
+\subsection*{The multilinear case}
+
+Both \cref{m:eq:Gabsonly} and \cref{m:eq:Gabsdeath} have the form
+\begin{equation}
+\label{m:eq:multilinear}
+G(x,y,t) = \bigl(c(t) + f(t)\,x + g(t)\,y\bigr)^n ,
+\end{equation}
+for which the derivatives are immediate. Each differentiation lowers the power by
+one and brings down a factor, so
+\begin{equation}
+\label{m:eq:derivs}
+\partial_x^{a}\partial_y^{\,b}G
+= \frac{n!}{(n-a-b)!}\,f^{a}g^{b}\bigl(c+fx+gy\bigr)^{n-a-b}
+\qquad(a+b\le n),
+\end{equation}
+and zero for $a+b>n$. Evaluating at the origin and applying \cref{m:eq:stateProb},
+\begin{equation}
+\label{m:eq:stateProbSpec}
+p_{i,j}(t) = \frac{n!}{i!\,j!\,(n-i-j)!}\;f(t)^{i}g(t)^{j}c(t)^{\,n-i-j},
+\qquad i+j\le n,
+\end{equation}
+and $p_{i,j}=0$ otherwise. This is the trinomial distribution, which is exactly
+what it should be: the $n$ particles are independent, and at time $t$ each is in
+one of three states, with probabilities $c$ (neither inside nor outside --- that
+is, dead), $f$ (inside) and $g$ (outside). Note in particular that the falling
+factorial $n!/(n-i-j)!$ in \cref{m:eq:derivs} is \emph{not} $n^{i+j}$; the two agree
+only to leading order in $n$, and using the latter breaks normalisation.
+
+\subsection*{Applied to the absorption models}
+
+For absorption only, \cref{m:eq:examplePgf}, we have $c=0$, $f = 1-\ee^{-\alpha t}$
+and $g = \ee^{-\alpha t}$. The factor $c^{\,n-i-j}$ then vanishes unless $i+j=n$,
+and \cref{m:eq:stateProbSpec} gives
+\begin{equation*}
+p_{i,j}(t) = \binom{n}{i}\bigl(1-\ee^{-\alpha t}\bigr)^{i}\bigl(\ee^{-\alpha t}\bigr)^{j},
+\qquad i+j=n,
+\end{equation*}
+so $X_t\sim\text{Binomial}\bigl(n,1-\ee^{-\alpha t}\bigr)$ and $Y_t = n-X_t$, as
+anticipated in \cref{m:app:absonly}.
+
+For absorption--death, \cref{m:eq:Gabsdeath}, the three functions are
+\begin{equation*}
+c(t) = 1-\frac{\mu}{\mu-\alpha}\ee^{-\alpha t} + \frac{\alpha}{\mu-\alpha}\ee^{-\mu t},
+\qquad
+f(t) = \frac{\alpha}{\mu-\alpha}\bigl(\ee^{-\alpha t}-\ee^{-\mu t}\bigr),
+\qquad
+g(t) = \ee^{-\alpha t},
+\end{equation*}
+which are precisely $p_{0,0}$, $p_{1,0}$ and $p_{0,1}$ of
+\cref{m:eq:absdeathstates}, so that
+\begin{equation*}
+p_{i,j}(t) = \frac{n!}{i!\,j!\,(n-i-j)!}\;f(t)^{i}g(t)^{j}c(t)^{\,n-i-j} .
+\end{equation*}
+Each particle independently ends up dead, absorbed, or still outside, with those
+three probabilities, and the joint law is trinomial. That the generating function
+factorises in this way is \cref{m:eq:indRelPGF} read backwards.
+
+The absorption--birth--death generating function of \cref{m:prop:Gabd} is not of the
+form \cref{m:eq:multilinear}, and \cref{m:eq:stateProb} must be applied to
+\cref{m:eq:Gabd} directly, or --- better --- the exterior variable separated first
+as in \cref{m:eq:abdcoef}, leaving a univariate coefficient extraction from
+$h(x,t)^{N-j}$ that may be done by convolution of truncated series or by
+\cref{m:eq:bivariateCauchy} reduced to one circle.
+
+% --- restore default section numbering for subsequent chapters --------------
+\renewcommand{\thesection}{\thechapter.\arabic{section}}

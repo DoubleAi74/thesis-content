@@ -1,0 +1,122 @@
+% --- Chapter appendices, numbered <chapter>.A --------------------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+\section{Elementary Koenigs functions at \texorpdfstring{$r=2$ and $r=4$}{r=2 and r=4}}
+\label{a:app:integrable}
+
+These cases lie outside subcritical branching, where $r=2p<1$, but they complete
+the classical picture of integrable logistic linearisations and they show what a
+solvable case looks like. At both parameters the fixed point at the origin is
+\emph{repelling}, so the functions below are Poincaré-type linearisations rather
+than attracting Koenigs maps; \cref{a:rem:empty} explains why that is the decisive
+point rather than an incidental one.
+
+\subsection{The monomial case, \texorpdfstring{$r=2$}{r=2}}
+\label{a:app:r2}
+
+For $r=2$ we have $f_2(x) = 2x(1-x)$, and the fixed point $0$ has multiplier
+$f_2'(0)=2$. The affine change $u=1-2x$ conjugates the dynamics to the monomial
+map: since
+\begin{equation*}
+1-2f_2(x) = 1-4x+4x^2 = (1-2x)^2,
+\end{equation*}
+the substitution gives $u_{n+1} = u_n^2$, which the logarithm linearises because
+$\ln(u^2) = 2\ln u$. Returning to $x$ and imposing the normalisation of
+\cref{a:def:koenigs},
+\begin{equation}
+\label{a:eq:psi2}
+\psi_2(x) = -\tfrac12\ln(1-2x),
+\end{equation}
+which is readily verified:
+\begin{equation*}
+\psi_2\bigl(f_2(x)\bigr) = -\tfrac12\ln\bigl((1-2x)^2\bigr) = -\ln(1-2x)
+= 2\psi_2(x),
+\end{equation*}
+with $\psi_2(0)=0$ and $\psi_2'(0)=1$.
+
+\subsection{The Chebyshev case, \texorpdfstring{$r=4$}{r=4}}
+\label{a:app:r4}
+
+For $r=4$ we have $f_4(x) = 4x(1-x)$, with multiplier $f_4'(0)=4$. Putting
+$x=\sin^2\theta$,
+\begin{equation*}
+f_4(x) = 4\sin^2\theta\cos^2\theta = (2\sin\theta\cos\theta)^2 = \sin^2(2\theta),
+\end{equation*}
+so the map is a doubling $\theta\mapsto2\theta$ in the $\theta$ coordinate. The
+multiplier at the origin is $4$ rather than $2$, which suggests that the
+linearisation involves $\theta^2$; and indeed
+\begin{equation}
+\label{a:eq:psi4}
+\psi_4(x) = \bigl(\arcsin\sqrt{x}\bigr)^2 .
+\end{equation}
+Using $\arcsin\bigl(2u\sqrt{1-u^2}\bigr) = 2\arcsin u$ with $u=\sqrt x$, on an
+appropriate real interval, gives
+$\psi_4(f_4(x)) = (2\arcsin\sqrt x)^2 = 4\psi_4(x)$; and as $x\to0$,
+$\arcsin\sqrt x\approx\sqrt x$, so $\psi_4(x)\approx x$ and $\psi_4'(0)=1$.
+
+\subsection{Affine conjugacy to \texorpdfstring{$z^2+c$}{z\textasciicircum 2+c}}
+\label{a:app:affine}
+
+\begin{lemma}
+\label{a:lem:affine}
+The logistic map $f_r(x) = rx(1-x)$ is affinely conjugate to $P_c(z) = z^2+c$ with
+\begin{equation}
+\label{a:eq:cofr}
+c = c(r) := \frac{2r-r^2}{4} .
+\end{equation}
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Seek $h(x) = ax+b$ with $h\circ f_r\circ h^{-1} = P_c$. The substitution
+$z = r\bigl(\tfrac12-x\bigr)$ --- equivalently $x = -z/r+\tfrac12$, for $r\neq0$ ---
+yields a monic quadratic; if $x' = f_r(x)$ and $z' = r(\tfrac12-x')$, direct
+substitution gives $z' = z^2+c$ with $c$ as in \cref{a:eq:cofr}.
+\end{proof}
+
+Under this conjugacy, $r=2$ corresponds to $c=0$ (the monomial $z^2$) and $r=4$ to
+$c=-2$ (Chebyshev type; the value $c=-2$ is also reached at $r=-2$). Neither
+exceptional value lies in the image of $r\in(0,1)$, which is $c\in(0,\tfrac14)$.
+As explained in \cref{a:rem:empty}, this parameter count is a consistency check
+rather than the proof: the decisive point is that both exceptional cases sit over
+\emph{repelling} fixed points, which the attracting window excludes structurally.
+
+\subsection{The worked examples inside the Becker--Bergweiler classification}
+\label{a:app:classification}
+
+\Cref{a:thm:BB} says that a differentially algebraic Schröder function exists only
+over a repelling fixed point, and is then a Möbius transformation of
+$\exp(\alpha t^{\varrho})$, of $\cos(\alpha t^{\varrho}+\beta)$, or of
+Weierstrass-$\wp$ material, with the underlying map Möbius-conjugate to $z^{\pm d}$,
+to $\pm T_d$, or to a Lattès map. The two derivations above realise the first two
+families exactly.
+
+\paragraph{Case $r=2$.}
+Inverting \cref{a:eq:psi2}, the relation $t = -\tfrac12\ln(1-2x)$ gives
+\begin{equation*}
+\varphi_2(t) = \psi_2^{-1}(t) = \frac{1-\ee^{-2t}}{2},
+\end{equation*}
+an affine --- hence Möbius --- image of $\exp(-2t)$: the family
+$\exp(\alpha t^{\varrho})$ with $\varrho=1$, $\alpha=-2$. Correspondingly the
+substitution $u=1-2x$ conjugates $f_2$ to the monomial $u\mapsto u^2$, and the
+linearised fixed point has multiplier $2$, which is repelling, as
+\cref{a:thm:BB}(i) requires.
+
+\paragraph{Case $r=4$.}
+Inverting \cref{a:eq:psi4}, the relation $t = (\arcsin\sqrt x)^2$ gives
+\begin{equation*}
+\varphi_4(t) = \psi_4^{-1}(t) = \sin^2\!\sqrt t = \frac{1-\cos\bigl(2\sqrt t\bigr)}{2},
+\end{equation*}
+a Möbius image of $\cos(\alpha t^{\varrho}+\beta)$ with $\varrho=\tfrac12$,
+$\alpha=2$, $\beta=0$; the fractional exponent is admissible precisely because
+$\cos(2\sqrt t)$ is an entire function of $t$. Correspondingly $u=1-2x$ conjugates
+$f_4$ to $T_2(u) = 2u^2-1$, the second Chebyshev polynomial, and the multiplier at
+the linearised fixed point is $4$, again repelling.
+
+Both examples therefore sit exactly where \cref{a:thm:BB} says all differentially
+algebraic Schröder functions must sit: over repelling fixed points, in the
+exponential and cosine families. For $r\in(0,1)$ the fixed point is attracting, no
+member of the classification is available, and \cref{a:thm:ht} gives
+hypertranscendence of $\psi_r$ --- which is what underpins the main claims of this
+chapter about $A(p) = 2\Psi_{2p}(\tfrac12)$.
+

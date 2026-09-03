@@ -1,0 +1,90 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\graphicspath{{../Ch2_seed/figures/IMG_ch3/}}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\allowdisplaybreaks
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prb}{\mathbb{P}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{Exp}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\given}{\,\middle|\,}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\defeq}{\coloneqq}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=red!50!black,
+  urlcolor=blue!55!black,
+  pdftitle={Mathematical foundations for stochastic populations, survival and absorption},
+  pdfauthor={Adam Aldridge}
+}
+
+\title{Mathematical foundations for stochastic populations,\\
+survival and absorption}
+\author{Adam Aldridge}
+\date{Chapter~2\\University of Leeds}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.2em}
+\tableofcontents
+\clearpage
+
+\input{sections/01_introduction.tex}
+\input{sections/02_framework.tex}
+\input{sections/03_branching.tex}
+\input{sections/04_constant_A.tex}
+\input{sections/05_small_populations.tex}
+\input{sections/06_absorption.tex}
+\input{sections/07_synthesis.tex}
+\input{sections/08_appendices.tex}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

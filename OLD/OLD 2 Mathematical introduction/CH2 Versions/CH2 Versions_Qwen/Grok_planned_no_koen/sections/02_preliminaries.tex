@@ -1,0 +1,116 @@
+\section{Mathematical preliminaries}
+\label{sec:preliminaries}
+
+This section fixes a short common vocabulary. The aim is not a course in stochastic processes but a set of names and pictures that the rest of the chapter---and the continuous-time models later in the thesis---can use without redefinition. We assume standard undergraduate probability and ordinary differential equations, and concentrate on three things: discrete- and continuous-time Markov structure, generating functions, and the elementary trichotomy of branching criticality.
+
+\subsection{Discrete-time Markov chains}
+\label{sec:dtmc}
+
+A discrete-time Markov chain on a countable state space $\mathcal{S}$ is a sequence of random variables $(\xx_n)_{n\geq 0}$ taking values in $\mathcal{S}$ and satisfying the Markov property: the conditional law of the next state depends on the past only through the present. Writing $p(i,j)$ for the one-step transition probability from $i$ to $j$, that property reads
+\[
+\pr{\xx_{n+1}=j \mid \xx_n=i,\, \xx_{n-1}=i_{n-1},\,\ldots,\, \xx_0=i_0}
+=
+\pr{\xx_{n+1}=j \mid \xx_n=i}
+=
+p(i,j),
+\]
+whenever the conditioning event has positive probability.
+
+A state $a\in\mathcal{S}$ is \emph{absorbing} if $p(a,a)=1$; once the chain enters such a state it remains there forever. Extinction of a population, and later the ``rupture'' or catastrophe events of birth--death--catastrophe models, will all be encoded by absorption of this kind, sometimes after enlarging the state space with a cemetery state.
+
+The Galton--Watson process treated later in this chapter is a discrete-time Markov chain of exactly this type: it lives on $\mathcal{S}=\{0,1,2,\ldots\}$ and is absorbed at $0$. Its one-step transitions are determined by an offspring distribution rather than by an arbitrary matrix $p(i,j)$, but the Markov and absorption language carries over unchanged.
+
+\subsection{Continuous-time Markov chains}
+\label{sec:ctmc}
+
+A continuous-time Markov chain (CTMC) on a countable state space replaces discrete steps by holding times and jumps. While the process occupies state $i$ it waits an exponential time whose rate $q_i$ may depend on $i$, and then jumps to a different state $j$ with probabilities determined by the off-diagonal rates $q(i,j)$. The infinitesimal description, for small $\delt>0$, is
+\begin{align*}
+\pr{\xx_{t+\delt}=j \mid \xx_t=i}
+&=
+q(i,j)\,\delt + o(\delt),
+\qquad
+j\neq i,
+\\
+\pr{\xx_{t+\delt}=i \mid \xx_t=i}
+&=
+1 - q_i\,\delt + o(\delt),
+\end{align*}
+with $q_i=\sum_{j\neq i} q(i,j)$, assumed finite. The Markov property again holds, now with respect to continuous time.
+
+In population models these rates are typically linear, or at least affine, in the current count. A single-type birth--death process on $\{0,1,2,\ldots\}$ with per capita birth rate $\beta$ and death rate $\mu$ therefore has, when $\xx_t=n\geq 1$,
+\begin{align*}
+q(n,n+1) &= \beta n,
+&
+q(n,n-1) &= \mu n,
+&
+q_n &= (\beta+\mu)n,
+\end{align*}
+with $0$ absorbing if there is no immigration. A catastrophe or ``killing'' mechanism adds a further transition out of every $n\geq 1$, at a rate proportional to $n$ or to some more general function of $n$; that structure is the continuous-time backbone of the birth--death--catastrophe analysis later in the thesis.
+
+Two elementary facts will be used repeatedly. First, the holding time in $i$ is memoryless, so the future after a jump depends only on the arrival state. Second, absorption is again well defined: if $q_a=0$, then $a$ is absorbing in continuous time. Pathwise, a CTMC may be constructed from its jump chain---the discrete-time sequence of visited states---together with independent exponential clocks. We shall seldom need that construction explicitly, but it is worth having in view, since it explains why discrete-time branching intuition and continuous-time rate models sit in the same family.
+
+\subsection{Probability generating functions}
+\label{sec:pgf}
+
+For a random variable $N$ taking values in $\{0,1,2,\ldots\}$, the \emph{probability generating function} (\pgf) is
+\[
+G(z)
+:=
+\mean{z^{N}}
+=
+\sum_{k=0}^{\infty} \pr{N=k}\, z^{k},
+\qquad
+|z|\leq 1.
+\]
+When the series converges in a neighbourhood of the origin, derivatives at $0$ recover the point masses, and
+\[
+\mean{N} = G'(1),
+\qquad
+\mean{N(N-1)} = G''(1),
+\]
+whenever those moments exist, with one-sided derivatives at $z=1$ if necessary.
+
+The reason generating functions earn their place here is that they turn independent sums into products, and thereby turn many branching calculations into functional iteration or ordinary differential equations. If each individual in a Galton--Watson generation produces offspring independently with generating function $f(z)$, then the population size after one generation from a single ancestor has generating function $f$, and after $n$ generations $f^{\circ n}$. In continuous time the \pgf\ of a CTMC's state, $G(z,t)=\mean{z^{\xt}}$, often satisfies a first-order partial differential equation obtained from the master equation (Section~\ref{sec:master-eq}). That second route is opened for linear birth--death in the continuous-time section below and developed fully by the method of characteristics later in the chapter.
+
+\subsection{Criticality for branching}
+\label{sec:criticality}
+
+Branching mechanisms are organised by a single comparison of mean growth to replacement. The same trichotomy appears in discrete and continuous time; only the bookkeeping of the mean changes.
+
+\paragraph{Discrete time.}
+Suppose each individual has offspring mean $m=\mean{\xi}$, where $\xi$ is a generic offspring count, and exclude the trivial law concentrated at $1$. The associated Galton--Watson process is
+\begin{itemize}
+\item \emph{subcritical} if $m<1$,
+\item \emph{critical} if $m=1$,
+\item \emph{supercritical} if $m>1$.
+\end{itemize}
+In the binary death-or-division case used throughout much of this chapter, an individual is replaced by two offspring with probability $p$ and by zero with probability $1-p$, so that $m=2p$. Subcriticality is then $p<\tfrac12$, criticality $p=\tfrac12$, and supercriticality $p>\tfrac12$.
+
+\paragraph{Continuous time.}
+For a linear birth--death process with per capita rates $\beta$ and $\mu$, the mean $M(t)=\mean{\xt}$ obeys $\ddt{M}=(\beta-\mu)M$ when it exists, so the net growth rate $\beta-\mu$ plays the role of $\log m$ per unit time. The process is called subcritical, critical, or supercritical according as $\beta-\mu$ is negative, zero, or positive, again excluding degenerate cases with no randomness.
+
+\paragraph{Why the trichotomy governs what follows.}
+Extinction probabilities, the existence of a non-trivial survival event, and the nature of population size \emph{conditional on non-extinction} all change character across the critical threshold. In the subcritical regime extinction is certain, yet the conditional distribution of size given survival can settle into a quasi-stationary picture; near criticality those conditional sizes become large; above criticality there is a positive probability of indefinite growth. (A brief discussion already appears in Chapter~1; the definitions here are self-contained, so that the present chapter can be read on its own.) The sections on discrete and continuous branching specialise these regimes in turn, and the constant $A(p)$ of the discrete theory will live naturally in the subcritical half-line $p\in[0,\tfrac12)$.
+
+\subsection{Forward equations and the master equation}
+\label{sec:master-eq}
+
+Let $p_n(t)=\pr{\xt=n}$ for a CTMC on $\{0,1,2,\ldots\}$. Balancing probability flux into and out of each state yields the \emph{forward Kolmogorov equations}, often called the \emph{master equation} in the physical literature. For the linear birth--death process with rates $\beta,\mu$ as above they read
+\begin{align*}
+\ddt{p_0}
+&=
+\mu p_1,
+\\
+\ddt{p_n}
+&=
+\beta(n-1)p_{n-1}
++
+\mu(n+1)p_{n+1}
+-
+(\beta+\mu)n\, p_n,
+\qquad
+n\geq 1,
+\end{align*}
+with the usual convention that terms with negative indices are omitted. The first line records that the only way to enter $0$ is by a death from state $1$; the second records births from $n-1$, deaths from $n+1$, and the total exit rate from $n$.
+
+As it stands the master equation is an infinite linear system for the law of $\xt$, and two standard compressions of it will matter later. Taking moments against $n$ produces ordinary differential equations for means and, with more work, for higher moments. Passing instead to the \pgf\ $G(z,t)=\sum_n p_n(t) z^n$ converts the same system into a single first-order partial differential equation for $G$, which is the natural continuous-time counterpart of the functional iteration of discrete branching. We do not develop that partial differential equation here; it appears first for linear birth--death in the continuous-time section of this chapter, and then in greater generality under the method of characteristics.

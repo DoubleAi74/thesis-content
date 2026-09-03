@@ -1,0 +1,93 @@
+\section{State probabilities}
+\label{sec:state-probs}
+
+Using formula (\ref{stateFormula}), we can obtain the individual state
+probabilities. The first, $p_0(t)$, differs between the catastrophe and
+killing cases:
+$$G(0 , t) = \begin{cases}
+\frac{ab(1-\ee^{\lambda(a-b) t})  } {  (b-a\ee^{\lambda(a-b) t})   }, & \text{(catastrophe)}\\
+1 - I(t) + \frac{ab(1-\ee^{\lambda(a-b) t})  } {  (b-a\ee^{\lambda(a-b) t})   }, & \text{(killing).}
+\end{cases}$$
+As stated above, the fraction term in each case represents the probability
+of reaching $0$ by the death of every individual, and the $1-I(t)$ pertains
+to reaching $0$ by collapse in the killing convention. \par
+From here, the state probabilities $p_1(t)$, $p_2(t)$, $p_3(t)\dots$ do not
+differ between the cases. Repeated differentiation of $G(z,t)$ with respect
+to $z$ reveals the formula,
+$$\frac{\partial^n G}{\partial z^n} =n! \ee^{\lambda(a-b)t}(a-b)^2  \frac{\lrb{1-\ee^{\lambda(a-b)t}}^ {n-1} }{\lrb{b - a\ee^{\lambda(a-b)t} - \lrb{1-\ee^{\lambda(a-b)t}}z} ^ {n+1}} $$
+Hence, setting $z=0$, and dividing by $n!$, the state probabilities for
+$n\geq1$ are described by,
+\begin{equation}
+\label{stateprob}
+p_n(t) =\lrb{ \frac{ a-b }{{b - a\ee^{\lambda(a-b)t}}}}^2 \ee^{\lambda(a-b)t} \lrb{\frac{{1-\ee^{\lambda(a-b)t}}}{{b - a\ee^{\lambda(a-b)t}} } }^{n-1}.
+\end{equation}
+
+\subsection{Geometric at every time}
+\label{sec:geometric-every-time}
+
+There is more structure here than (\ref{stateprob}) first suggests. Writing
+\begin{equation}
+P(t):=\frac{1-\ee^{\lambda(a-b)t}}{b-a\ee^{\lambda(a-b)t}},
+\label{eq:Pdef}
+\end{equation}
+the entire $n$-dependence of $p_n(t)$ lives in the single factor
+$P(t)^{n-1}$:
+\begin{equation}
+p_n(t)=p_1(t)\,P(t)^{n-1},\qquad n\ge1.
+\end{equation}
+That is, \emph{at every time $t$}, conditional on the population being
+non-zero, the load is geometrically distributed with ratio $P(t)$. The ratio
+itself evolves monotonically, with
+\begin{equation}
+P(0)=0,\qquad P(t)\xrightarrow[t\to\infty]{}\frac{1}{a},
+\end{equation}
+so the transient geometric laws slide towards a fixed limit. This limit is
+the heart of \S\ref{sec:qsd}--\S\ref{sec:burst-time-size}.
+
+\subsection{Normalisation: the sum is $\Ifix$}
+\label{sec:sum-ihat}
+
+A useful consistency check is to sum \eqref{stateprob} over the positive
+states. As a geometric series,
+$$
+\sum_{n=1}^{\infty}p_n(t)
+=\frac{p_1(t)}{1-P(t)}.
+$$
+Now
+$$
+1-P(t)=\frac{b-a\ee^{\lambda(a-b)t}-1+\ee^{\lambda(a-b)t}}{b-a\ee^{\lambda(a-b)t}}
+=\frac{-(1-b)-\ee^{\lambda(a-b)t}(a-1)}{b-a\ee^{\lambda(a-b)t}}
+=\frac{B+A\ee^{\lambda(a-b)t}}{a\ee^{\lambda(a-b)t}-b},
+$$
+and therefore
+\begin{equation}
+\sum_{n=1}^{\infty}p_n(t)
+=\frac{(a-b)^2\ee^{\lambda(a-b)t}}
+{\lrb{B+A\ee^{\lambda(a-b)t}}\lrb{a\ee^{\lambda(a-b)t}-b}}
+=\Ifix(t).
+\label{eq:pnsum}
+\end{equation}
+The sum of the positive state probabilities is exactly the non-fixation
+probability of \Secref{sec:fixation-funcs} --- the probability of being
+neither ruptured nor extinct. Equation \eqref{eq:pnsum} thereby confirms,
+by a completely independent route, the closed form \eqref{eq:IDIhat}: the
+state probabilities of this section imply the same $\Ifix(t)$ that
+Chapter~3's decomposition produced.
+
+\figureflag{F4a.2}{Geometric slide of the state probabilities}{%
+\textbf{Purpose:} make the section's central fact visible --- that the load
+is geometrically distributed at \emph{every} time, with a ratio $P(t)$ that
+slides monotonically to $1/a$. \textbf{Type:} Python analytic plot.
+\textbf{Content:} $p_n(t)$ against $n=1,\ldots,60$ for
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$ at the five times
+$t\in\{0.5,1,2,5,15\}$, evaluated from the closed form \eqref{stateprob}
+with $w=e^{\theta t}$, $\theta=\lambda(a-b)$; annotate each curve with its
+value of $P(t)=(1-w)/(b-aw)$, and mark the limit $1/a$ (e.g.\ via an inset
+plotting $P(t)$ against $t$ from \eqref{eq:Pdef}). \textbf{Axes:} $n$
+(horizontal), $p_n(t)$ (vertical, log scale optional); legend entries
+$t=0.5,1,2,5,15$. \textbf{Style:} unified Python style --- default
+matplotlib with \texttt{tab:} colours, grid alpha 0.25,
+\texttt{tight\_layout}, PDF output, fonts matching the chapter.
+\textbf{Data source:} analytic formula \eqref{stateprob}; no simulation.
+\textbf{Placement:} \Secref{sec:state-probs}, after the ``Geometric at
+every time'' subsection.}

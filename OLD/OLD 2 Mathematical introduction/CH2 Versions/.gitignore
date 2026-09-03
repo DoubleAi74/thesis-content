@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# LaTeX build artifacts (keep main.pdf deliverables)
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.brf
+*.nav
+*.snm
+*.vrb
+*.run.xml
+*.bcf

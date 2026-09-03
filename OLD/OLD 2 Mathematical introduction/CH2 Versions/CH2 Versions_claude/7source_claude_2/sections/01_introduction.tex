@@ -1,0 +1,63 @@
+\section{Introduction}
+\label{sec:intro}
+
+Every model in this thesis describes a population small enough that chance belongs to
+the mechanism rather than to the error bars. A few individuals founding a colony, or a
+few particles held inside a single compartment that may later open: in each case the
+count is far from the regime in which a deterministic rate equation carries useful
+information, and the questions worth asking --- will the population establish itself at
+all, and if it survives, how large will it be? --- are questions about a distribution
+rather than about a mean. This chapter assembles the apparatus needed to answer them.
+The treatment is deliberately abstract, in counts, rates and generating functions, and
+the modelling motifs that motivate it are left to the chapters that use them.
+
+Two threads run through the material, and it is worth naming both before either is
+developed.
+
+The first is \emph{conditioning on survival}. A subcritical branching process dies out
+with probability one, so its unconditional mean decays geometrically and reports almost
+nothing about the realisations one would actually observe. Restrict attention to those
+realisations still alive at generation $n$, however, and a different picture appears:
+the conditional population settles onto a fixed distribution --- the
+\emph{quasi-stationary} distribution --- whose mean is a constant. For the binary
+Galton--Watson process with replication probability $p<\tfrac12$ that constant is
+$1/A(p)$, where
+\begin{equation*}
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n}
+\end{equation*}
+and $S_n$ is the probability of survival to generation $n$. A large part of this
+chapter is an account of $A(p)$: what it is, how to compute it, and why, despite a
+considerable search, no elementary formula for it has been found.
+
+The second thread is \emph{the near-critical regime}. As $p$ rises towards $\tfrac12$
+the process takes ever longer to die, the quasi-stationary mean $1/A(p)$ diverges, and
+any numerical scheme that iterates to stationarity becomes impractical. Just above
+$\tfrac12$ the size of the founding cohort begins to weigh heavily on whether the
+process survives at all. The behaviour on either side of $p=\tfrac12$ is what makes
+small founding numbers interesting, and it is also what makes them awkward to compute
+with.
+
+\Cref{sec:tools} sets out the standard machinery the rest of the chapter uses:
+continuous-time Markov chains and their generators, exponential clocks and the
+competition between them, generating functions, and the linear birth--death process
+solved in closed form. Readers already fluent in that material may read it as a fixing
+of notation. \Cref{sec:gw} introduces the Galton--Watson process and establishes the
+two facts on which everything later rests --- that extinction is certain at and below
+criticality, and that at criticality the expected lifetime is nonetheless infinite.
+\Cref{sec:qsd} conditions on survival, derives the limiting conditional mean and
+variance, and so introduces $A(p)$. \Cref{sec:small} asks what changes when the process
+starts from a cohort of $k$ individuals rather than one, records a discrete
+birth--death--catastrophe calculation of the kind developed properly in later chapters,
+and works out the corresponding constant for the continuous-time birth--death process,
+where a closed form \emph{is} available. \Cref{sec:Ap} is devoted to $A(p)$ itself: an
+infinite-product representation, an exact series with two-sided bounds that pin the
+constant between the continuous-time answer and twice it, the near-critical asymptotic
+$A(p)\sim2(1-2p)$, and an account of why the exact function resists closed-form
+description --- a question that turns out to concern the Koenigs linearisation of the
+logistic map. \Cref{sec:moc} then changes tack and develops generating-function partial
+differential equations and the method of characteristics for the absorption models used
+later in the thesis.
+
+Standard results are presented as standard. Where an argument is heuristic, or where
+the numerics are doing the real work, the text says so at that point rather than in a
+general disclaimer, and every claim that can be checked numerically has been.

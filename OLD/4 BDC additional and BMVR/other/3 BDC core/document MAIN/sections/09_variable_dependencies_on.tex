@@ -1,0 +1,34 @@
+\section{Variable dependencies on $I(t)$}
+
+It happens to be possible to write all of the formulas, $J(t)$, $\text{Var}(\xt)$, $V(t)$, $\text{Var}(\yt)$, as functions of the non-rupture probability $I(t)$. 
+
+
+\subsection{Mean and variance of $\xt$}
+
+Since $J = \delta^{-1}{\dd I}/{\dd t} $, and ${\dd I}/{\dd t} =  \beta (I - I_+)(I-I_-)$ (from (\ref{ddIJ})), we can write $J$ in terms of $I$:
+\begin{equation}
+\label{JI}
+J(I) = -\frac{\beta}{\delta}  (I - I_+)(I-I_-).
+\end{equation}
+Combining this with (\ref{KtI}), we can also write $\text{Var}(\xt)$ as a function of $I(t)$,
+
+\begin{align*}
+\text{Var}(\xt) &= K(I) - {J(I)}^2\\
+&=-\frac{2\beta^2}{\delta}\lrb{I-\kappa}\lrb{I-I_-}\lrb{I-I_+} - \lrb{\frac{\beta}{\delta}  (I - I_+)(I-I_-)}^2,
+\end{align*}
+$$\lrb{\kappa = 1+\frac{\delta}{2\beta}}.$$
+
+
+
+\subsection{Mean and variance of $\yt$}
+
+As we have defined $V(t)$ in terms of $I(t)$ and $J(t)$, it is likewise possible to use (\ref{JI}) to write $V(I)$, a function only of the non-rupture probability:
+$$V(I) = \frac{\beta - \mu}{\delta}\lrb{1-I} + \frac{\beta}{\delta} (I - I_+)(I-I_-) + 1.$$
+And given (\ref{VarY}), we can do the same for the variance of $\yt$:
+$$\text{Var}(\yt) = 2\frac{\beta-\mu}{\delta} V(I) + \frac{\beta+\mu}{\delta}I + K(I) - \frac{\beta+\mu}{\delta} - {V(I)}^2;$$
+
+
+\begin{multline*}
+\text{Var}(\yt) = 2\frac{\beta - \mu}{\delta} \lrbs{ \frac{\beta - \mu}{\delta}\lrb{1-I} + \frac{\beta}{\delta} (I - I_+)(I-I_-) + 1} + \\
+\frac{\beta+\mu}{\delta} I -\frac{2\beta^2}{\delta}\lrb{I-\kappa}\lrb{I-I_-}\lrb{I-I_+} - \frac{\beta + \mu}{\delta} - \\ \lrbs{\frac{\beta - \mu}{\delta}\lrb{1-I} + \frac{\beta}{\delta} (I - I_+)(I-I_-) + 1}^2.
+\end{multline*}

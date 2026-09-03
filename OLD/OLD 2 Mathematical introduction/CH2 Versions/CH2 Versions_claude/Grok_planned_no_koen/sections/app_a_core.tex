@@ -1,0 +1,43 @@
+\section{Appendix A-core: discrete second-moment derivation}
+\label{app:a-core}
+
+This appendix records the second-moment calculation underlying \eqref{eq:secondMoment} in Section~\ref{sec:cond-var}. The notation matches the death-or-division Galton--Watson process with division probability $p\in\bigl(0,\tfrac12\bigr)$.
+
+The offspring \pgf\ is $\phi_1(z)=p z^2+(1-p)$, so the moment generating function of generation~$1$ is
+\[
+M_1(t)=\phi_1(\ee^t)=p\ee^{2t}+(1-p),
+\]
+and moments satisfy $\mean{\zz_n^r}=\frac{\dd^r}{\dd t^r}M_n(t)\big|_{t=0}$ when they exist. Writing $\phi_n=\phi_1^{\circ n}$ for the $n$-fold iterate, the same holds at every generation with
+\[
+M_n(t)=\phi_n(\ee^t).
+\]
+Differentiating once along the iterate, by the chain rule applied through all $n$ compositions, gives
+\begin{equation}
+\label{eq:app-dmgf2}
+M_n'(t)
+=
+(2p)^n\,
+M_{n-1}(t)\,
+M_{n-2}(t)
+\cdots
+M_1(t)\,
+\ee^{2t}.
+\end{equation}
+Differentiating again, evaluating at $t=0$, and using $M_k(0)=1$ together with $M_k'(0)=(2p)^k$ produces
+\[
+M_n''(0)
+=
+(2p)^n
+\lrbs{
+\sum_{i=0}^{n-1}(2p)^i
++
+1
+}
+=
+(2p)^n\lrb{\frac{1-(2p)^n}{1-2p}+1}
+=
+(2p)^n\lrb{1+\frac{1}{1-2p}}
+-
+(2p)^{2n}\lrb{\frac{1}{1-2p}},
+\]
+which is \eqref{eq:secondMoment}. (The minus sign is required: at $n=1$ the expression must return $\mean{\zz_1^2}=4p$.) The conditional limits \eqref{eq:cond-second}--\eqref{eq:cond-var} then follow from $S_n\sim A(p)(2p)^n$, exactly as in the main text.

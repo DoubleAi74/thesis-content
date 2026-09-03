@@ -1,0 +1,92 @@
+% --- Chapter appendices, numbered <chapter>.A, .B, ... -----------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+% Appendix A --- the seven models on one page, plan \S3.3 "Appendices".
+
+\section{Model summary}
+\label{var:app:models}
+
+\begin{table}[!tbp]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.115\textwidth}>{\raggedright\arraybackslash}p{0.11\textwidth}>{\raggedright\arraybackslash}p{0.275\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.115\textwidth}>{\raggedright\arraybackslash}p{0.085\textwidth}@{}}
+\toprule
+Model & State & Rates or evolution equation & Parameters
+  & Figures & Status \\
+\midrule
+Logistic speciation \newline \cref{var:sec:speciation}
+ & $S_t\in\{1,2,\dots\}$, $N(t)\in(0,K)$
+ & $\dd N/\dd t=\varrho N(1-N/K)$;
+   $q_{s,s+1}(t)=\beta(t)s$ with $\beta(t)=\sigma(K-N(t))$
+ & $\varrho$ growth; $K$ capacity; $N_0$ founding abundance;
+   $\sigma$ speciation coefficient
+ & \cref{var:fig:logspec-limit,var:fig:lsmean}
+ & closed form \\
+Pimentel competition \newline \cref{var:sec:pimentel}
+ & $(A_t,R_{a,t},$ $R_{b,t})$, with $A_t\in\{0,\dots,N\}$, discrete time
+ & kernel \cref{var:eq:kernel} with blocking \cref{var:eq:blockprobs};
+   $R_{k,t+1}=R_{k,t}+\varepsilon\Delta R_{k,t}$, \cref{var:eq:dR}
+ & $N$ capacity; $\varepsilon$ evolution rate; $\alpha$ squeeze exponent
+ & \cref{var:fig:pim-two-runs,var:fig:pim-runs,var:fig:pim-critical,var:fig:automaton}
+ & critical point closed form; simulated \\
+Pimentel+ \newline \cref{var:sec:pimentelplus}
+ & $(A_t,f_a,f_b,$ $S^{(a)}_t,S^{(b)}_t)$
+ & kernel \cref{var:eq:fitkernel}; fitness \cref{var:eq:fitpenalty};
+   species counts \cref{var:eq:subspec}
+ & $\varepsilon,\alpha$ as above; $\zeta$ dominance exponent;
+   $\gamma$ variation penalty; $\mu_a$ species extinction
+ & ---
+ & specified \\
+Rise, run, ruin, rejuvenation \newline \cref{var:sec:rrrr}
+ & $(X_t,V(t))$, $X_t\in\{0,1,\dots\}$
+ & $\dd V/\dd t=\phi-cX_t$; channels \cref{var:eq:rrrr}, catastrophe at
+   $\delta X_t/V(t)$
+ & $\phi$ inflow; $c$ consumption; $\lambda$ proliferation;
+   $\delta$ catastrophe; $\omega$ revival
+ & \cref{var:fig:vbc-two,var:fig:vbc-many}
+ & simulated \\
+Birth--plague \newline \cref{var:sec:plague}
+ & $(X_t,Y_t)\in\mathbb{Z}_{\ge0}^2$
+ & \cref{var:eq:plague}; one loss channel at $(\delta+\chi Y_t)X_t$
+ & $\lambda$ birth; $\delta$ corruption; $\chi$ contact; $\mu$ clearance
+ & \cref{var:fig:plague-rates,var:fig:bpplots}
+ & simulated \\
+Birth--plague, vitality-coupled \newline \cref{var:sec:vitality}
+ & $(X_t,Y_t,$ $V(t))$
+ & as above with corruption at $\delta X_t/V(t)$, \cref{var:eq:vitality};
+   $\dd V/\dd t=\phi-cX_t$
+ & as above, plus $\phi$ inflow and $c$ consumption
+ & ---
+ & specified \\
+Public good \newline \cref{var:sec:publicgood}
+ & $(X_t,P(t))$
+ & $\dd P/\dd t=gX_t-c$; birth at $(\lambda_0+\alpha P(t))X_t$,
+   death at $\mu X_t$, \cref{var:eq:publicgood}
+ & $g$ production; $c$ clearance; $\lambda_0$ base birth;
+   $\alpha$ advantage; $\mu$ death
+ & \cref{var:fig:board,var:fig:kstar}
+ & $K^\ast$ computed \\
+Two phases of infection \newline \cref{var:sec:twophase}
+ & $X^{(1)}_t$ then $X^{(2)}_t$; $Z$ above
+ & BDC $(\lambda_1,\mu_1,\delta_1)$ to $t_c$, then BD
+   $(\lambda_2,\mu_2)$ from $\Kb$ founders; composition
+   \cref{var:eq:phasepgf}
+ & $\lambda_1,\mu_1,\delta_1$; $\lambda_2,\mu_2$; $t_c$ switch time
+ & \cref{var:fig:phase-schematic,var:fig:rough1,var:fig:rough23}
+ & closed form \\
+\bottomrule
+\end{tabular}
+\caption{Every model in the chapter, with what it acts on, what moves its
+rates, and how far it was taken. The rows run in section order, so the column
+of statuses reads as the shape of the chapter. Three constructions recur
+across otherwise unrelated rows and are worth noticing: an inflow $\phi$ set
+against a per-capita consumption $c$, in three models; the exponent structure
+$(\cdot)^\alpha$ near an absorbing boundary, in two; and a rate written as a
+base plus a coupling, in three.}
+\label{var:tab:modelsummary}
+\end{table}
+
+\FloatBarrier

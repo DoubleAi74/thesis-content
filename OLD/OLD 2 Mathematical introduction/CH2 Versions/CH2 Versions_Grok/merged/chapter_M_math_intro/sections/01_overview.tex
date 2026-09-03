@@ -1,0 +1,43 @@
+\section{Overview}
+\label{m:sec:overview}
+
+This chapter sets out the mathematical framework used throughout the thesis: Markovian
+population models, discrete or continuous in time, in which counts may be small enough
+that extinction, establishment, and absorption are random events rather than the
+deterministic outcomes of a rate equation. When the mean trajectory answers the wrong
+question, one needs a distribution, and the apparatus below is chosen for that purpose.
+
+The chapter is organised as objects first, methods second.
+
+\Cref{m:sec:markov} surveys the process classes that appear later. In discrete time the
+main examples are simple random walks and Galton--Watson branching (the latter only
+briefly here). In continuous time the building blocks are exponential clocks and the
+chains assembled from them: Poisson processes, birth--death processes, and
+birth--death--catastrophe processes. Time-inhomogeneous models and systems that couple
+ordinary differential equations to continuous-time Markov chains complete the inventory.
+Notation for generators, competing clocks, and probability generating functions is fixed
+along the way.
+
+\Cref{m:sec:methods} collects the analytic methods applied to those processes.
+Discrete-time devices---first-step analysis and functional iteration of generating
+functions---are treated briefly; a fuller development of the quasi-stationary amplitude
+$A(p)$ and of Koenigs-function methods is deferred to \ChA. Continuous-time methods are
+developed with linear birth--death processes as the running example: backward equations,
+means and higher moments, hitting and extinction probabilities, and conditional means,
+including the continuous-time constant $\Ac(p)$ and a light definition of the discrete
+constant $A(p)$. The method of characteristics is presented with one worked example;
+extended absorption models are recorded in the appendix.
+
+Two modelling threads run through later chapters and are introduced only as far as the
+toolkit requires. The first is \emph{conditioning on survival}: a subcritical branching
+process dies out almost surely, yet conditioned on non-extinction its population settles
+to a quasi-stationary law whose mean is $1/A(p)$. The second is the \emph{near-critical
+regime}, in which lifetimes become long and numerical schemes that iterate to stationarity
+become expensive. Deep analysis of $A(p)$ itself---product and series representations,
+bounds, closed-form search, and the Koenigs obstruction---belongs to \ChA, not to the
+present chapter.
+
+Open questions that sit with this toolkit rather than with the arithmetic of $A(p)$ include
+the existence of a quasi-stationary distribution when one conditions on neither extinction
+nor rupture, and the tightness of Jensen-type bounds for discrete catastrophe survival.
+Those are left for later modelling chapters.

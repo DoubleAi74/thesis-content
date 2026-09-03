@@ -1,0 +1,69 @@
+\section{Introduction}
+\label{sec:introduction}
+
+When a population contains only a few individuals, its extinction, persistence and
+time spent near zero are distributional questions rather than small corrections to a
+deterministic mean.  The models used later in this thesis therefore describe integer
+counts that change at random event times.  Birth, death, transfer, absorption and
+rupture are treated as abstract jump mechanisms, while the population count records
+the state on which those mechanisms act.
+
+This chapter develops two connected strands of the required probability.  The first
+begins in discrete time with a binary Galton--Watson process.  Its simplicity makes
+the distinction between mean behaviour and survival particularly sharp.  Below the
+critical reproduction probability the population becomes extinct almost surely, but
+the population conditional on survival approaches a non-degenerate limiting law.
+For the binary model, the limiting conditional mean is the reciprocal of the
+constant
+\begin{equation}
+  A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n},
+  \qquad 0<p<\tfrac12,
+  \label{eq:intro-A}
+\end{equation}
+where \(S_n\) is the probability of survival to generation \(n\).  The value at the
+left endpoint will always mean the right limit, \(A(0):=\lim_{p\downarrow0}A(p)\).
+The constant in \cref{eq:intro-A} measures the cumulative effect of the nonlinear
+part of the survival recursion before its late geometric decay becomes dominant.
+It has an exact product representation, an exact series, useful two-sided bounds and
+a controlled near-critical asymptotic.  It also has a less obvious interpretation as
+a value of a Koenigs linearising function.  These facts explain both how \(A(p)\) can
+be computed and why elementary curve fitting has proved unreliable.
+
+The second strand concerns continuous-time jump processes and their generating
+functions.  Once a process has more than one count, its forward equations form a
+large or infinite coupled system.  A multivariate probability generating function
+compresses that system into a first-order partial differential equation.  The method
+of characteristics then converts the PDE into ordinary differential equations along
+curves in the enlarged state--time space.  We develop this method through three
+transfer models.  The first conserves particles, the second permits death after
+transfer, and the third adds linear birth.  The final model has an infinite state
+space and leads to a closed generating function involving a Gauss hypergeometric
+function.  The calculation supplies the analytical template used later for
+birth--death--catastrophe processes.
+
+The two strands meet in several places.  Both use generating functions to replace a
+countable family of probabilities by one analytic object.  Both are organised by
+absorption: extinction in the branching process and transfer, death or rupture in
+the continuous-time models.  Most importantly, both distinguish an unconditional
+population, which may decay to zero, from a population observed under a survival or
+non-absorption condition.  Quasi-stationarity is the language for that distinction.
+
+The order of the chapter follows the mathematical dependence rather than the later
+applications.  \Cref{sec:ctmc-pgf} gives only the continuous-time and generating-
+function background needed for the calculations that follow.  The Galton--Watson
+process, its extinction threshold and its critical lifetime are developed in
+\cref{sec:galton-watson}.  \Cref{sec:qsd} introduces quasi-stationarity and obtains
+the limiting conditional moments.  Founding populations, a discrete rupture
+mechanism, the linear continuous-time birth--death process and the killed-generator
+form of a catastrophe mechanism are treated in \cref{sec:small-populations}.  The
+analysis of \(A(p)\) occupies
+\cref{sec:constant-A}; the main text contains the exact results and proofs, while the
+exploratory closed-form search is retained in a chapter-local appendix.  Finally,
+\cref{sec:characteristics} derives and solves the generating-function PDEs.  Two
+further appendices collect a hypergeometric integral identity and the extraction of
+state probabilities from multivariate generating functions.
+
+Standard background is stated concisely.  Proofs are given when the result is
+specific to the models developed here, and numerical evidence is labelled as such.
+This separation matters near criticality, where a visually accurate approximation
+to \(A(p)\) can still produce a poor approximation to the conditional mean \(1/A(p)\).

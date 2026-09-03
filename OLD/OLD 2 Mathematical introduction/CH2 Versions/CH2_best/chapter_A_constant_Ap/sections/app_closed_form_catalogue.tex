@@ -1,0 +1,62 @@
+\section{Catalogue of exploratory formulae}
+\label{a:app:catalogue}
+
+This appendix records the remaining output of the closed-form searches described in
+\cref{a:sec:GA}. The expressions below are approximations only. They have no
+inferential status whatever --- they are records of a curve-fitting exercise, not
+proposed identities --- and they are retained for one reason: they show how little a
+visually accurate fit says about the singular quantity $1/A(p)$.
+
+\subsection*{The constrained rational candidate}
+
+Polynomial and rational searches can be constrained to the known endpoints
+$A(0)=\tfrac12$ and $A(\tfrac12)=0$. One of the more economical rational candidates
+was $\hat A_1$ of \cref{a:eq:A1hat}, reproduced here for comparison:
+\begin{equation*}
+\hat A_1(p) = \frac{\tfrac12(1-2p)(1+2p)}
+{1+\tfrac12p-\tfrac52p^2-\tfrac65p^3+\tfrac65p^4},
+\qquad
+\hat A_1'(\tfrac12) = -\frac{2}{0.55}\approx-3.636 .
+\end{equation*}
+It passes through both endpoints and misses the critical slope $-4$ required by
+\cref{a:rem:gradient}. Matching the values while missing the slope is enough to
+make the relative error in $A$, and hence the error in $1/A$, unacceptable near
+criticality.
+
+\subsection*{Unconstrained symbolic tree search}
+
+A less restricted symbolic tree search produced many longer formulae of similar
+visual quality. Two representative outputs were
+\begin{multline}
+\label{a:eq:A2hat}
+\hat A_2(p)
+= 0.31696448624690005\,
+\log\!\Biggl(
+\Biggl|\cos\!\biggl(
+\lrb{\frac{1}{3.19801133824532}}^{1/4}\\
+{}+p\biggl[
+\sin\!\Bigl(
+\cos\!\bigl(|p|(0.621865696665606-p)\cos(\ee^{\ee^{p}})\bigr)
+\Bigr)+|p|
+\biggr]\biggr)\Biggr|
+\Biggr)
++ 0.5982282661889831
+\end{multline}
+and $\hat A_3$ of \cref{a:eq:A3hat}. Both reproduce the target curve to within the
+thickness of a plotted line across the whole interval (\cref{a:fig:A3hat}), and
+neither is interpretable in any useful sense. The characteristic signature of the
+search is on display: deep nestings of trigonometric and iterated exponential terms
+carrying a dozen or more fitted decimal constants, with no structural relationship
+to the recursion that defines $A$.
+
+\subsection*{Spliced surrogates}
+
+Forcing the correct critical branch by splicing gives $\hat A_4$ of
+\cref{a:eq:A4hat}, which is a workable practical surrogate and nothing more. If a
+splice is wanted, the certified partial product \cref{a:eq:producttailbound} is
+preferable on the first branch and the proved asymptotic \cref{a:eq:Anearcritical}
+on the second; that is the scheme adopted in \cref{a:sec:practical}, and unlike
+$\hat A_4$ it comes with error control at every parameter.
+
+% --- restore default section numbering for subsequent chapters --------------
+\renewcommand{\thesection}{\thechapter.\arabic{section}}

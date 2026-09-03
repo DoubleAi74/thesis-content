@@ -1,0 +1,64 @@
+\section{Variance and standard deviation of $\xt$ \& $\yt$}
+
+To describe the variance of a random variable, it is standard to use the formula, 
+\begin{equation*}
+\text{Var}(\xt) = \mean{\xt^2} - \mean{\xt}^2.
+\end{equation*}
+And we can apply this to $\xt$ and $\yt$ to quantify the variability of intracellular and extracellular particles as functions of time. 
+
+In each case, we will first require a formula for the expected value of the counts squared,  $\mean{\xt^2}$ and $\mean{\yt^2}$.
+These will be computed first.
+
+
+
+\subsection{Variance of $\xt$}
+
+\subsubsection{Formula for $\mean{\xt^2} = K(t)$}
+
+$K(t) = \mean{\xt^2}$ is derived in the following way. Taking the time derivative of equations,
+
+ (\ref{ddIJ}): ${\rm d}I/{\rm d}t = -\delta J$, and, 
+ 
+ (\ref{ddII}): ${\rm d}I/{\rm d}t = \mu - (\beta + \mu + \delta) I + \beta I^2$.
+
+\begin{align}
+\label{Kderev1}
+\text{(\ref{ddIJ})}\to&&\ddt{J} = -\frac{1}{\delta}\frac{\dd^2 I}{\dd t^2}&&
+\end{align}
+\begin{align*}
+\text{(\ref{ddII})}\to&& \frac{\dd^2 I}{\dd t^2} = -(\beta + \mu + \delta) \ddt{I} + 2\beta I \ddt{I}.&&
+\end{align*}
+The latter, with ${\rm d}I/{\rm d}t = -\delta J$, becomes
+\begin{equation}
+\label{Kderev2}
+\frac{\dd^2 I}{\dd t^2} = (\beta + \mu + \delta)\beta J- 2\beta \delta I J.
+\end{equation}
+Comparing (\ref{Kderev2}) with (\ref{Kderev1}),
+\begin{equation*}
+%\label{Kderev3}
+\ddt{J} = -(\beta + \mu + \delta) J + 2\beta I J;
+\end{equation*}
+then, this with (\ref{ddJ2}),
+$$(\beta - \mu) J - \delta K = -(\beta + \mu + \delta) J + 2\beta I J.$$
+Rearranging for $K(t)$,
+\begin{equation*}
+K(t) = \frac{2\beta}{\delta}\lrb{1+\frac{\delta}{2\beta} - I}J
+\end{equation*}
+
+
+
+\subsubsection{One standard deviation from the mean, $J(t)$}
+With the expectation of $\xt^2$,
+\begin{equation*}
+K(t) = \frac{2\beta}{\delta}\lrb{\kappa- I}J
+\end{equation*}
+$$\bigg( \kappa = 1+\frac{\delta}{2\beta}\bigg),$$
+we can write down the variance of $\xt$ as,
+\begin{align*}
+\text{Var}(\xt) &= K(t) - {J(t)}^2\\
+&= \frac{2\beta}{\delta}\lrb{\kappa - I}J - J^2.
+\end{align*}
+The standard deviation is then,
+\begin{equation*}
+\text{Std}(\xt) = \sqrt{\frac{2\beta}{\delta}\lrb{\kappa- I}J - J^2}.
+\end{equation*}

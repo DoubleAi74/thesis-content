@@ -1,0 +1,399 @@
+\section{Burst time and burst size}
+\label{sec:burst-time-size}
+
+The two random quantities that a bursting cell presents to the outside world
+are the time of its rupture and the size of the rupture. Both are now within
+reach of closed forms.
+
+\subsection{Burst time}
+\label{sec:burst-time}
+
+The no-burst probability is $I(t)=\Prob{\tau>t}$, so the density of the
+burst time is
+\begin{equation}
+\varphi(t):=-I'(t)=\delta J(t),
+\label{eq:phi}
+\end{equation}
+using $I'=-\delta J$ from \S\ref{sec:moments-recap}. This density is
+\emph{defective}: since $I(t)\to b$,
+\begin{equation}
+\int_0^\infty\varphi(t)\,\dd t=1-b,
+\end{equation}
+with the remaining mass $b$ sitting at $\tau=\infty$ --- the realisations
+that clear internally without ever bursting. Conditioned on eventual burst,
+the density is $\varphi(t)/(1-b)=\delta J(t)/(1-b)$. Where earlier work
+referred to ``the known pdf of rupture times $\phi(t)$'', it is
+\eqref{eq:phi} that was meant, available all along from $I'=-\delta J$.
+
+\figureflag{F4a.4}{Burst-time density}{%
+\textbf{Purpose:} display the defective burst-time density, making the mass
+$b$ at $\tau=\infty$ and the conditional density explicit in one picture.
+\textbf{Type:} Python analytic plot. \textbf{Content:} two parameter sets,
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$ and $(1,0,0.1)$, on $t\in[0,15]$: the
+defective density $\varphi(t)=\delta J(t)$ from \eqref{eq:phi} and
+\eqref{eq:J} (solid curves); for the $\mu>0$ set, shade and annotate the
+missing mass $b$ at $\infty$ (e.g.\ an annotated bar or hatched region
+labelled ``mass $b$ at $\tau=\infty$''); overlay the conditional density
+$\delta J(t)/(1-b)$ as a dashed curve for the $\mu>0$ set. \textbf{Axes:}
+$t$ (horizontal), density (vertical); legend entries $\varphi(t)$ and
+$\varphi(t)/(1-b)$ per parameter set. \textbf{Style:} unified Python style
+--- default matplotlib with \texttt{tab:} colours, grid alpha 0.25,
+\texttt{tight\_layout}, PDF output, fonts matching the chapter.
+\textbf{Data source:} analytic formulas \eqref{eq:phi}, \eqref{eq:J}; no
+simulation. \textbf{Placement:} \Secref{sec:burst-time}, directly after the
+defect discussion.}
+
+\subsection{Burst size}
+\label{sec:burst-size}
+
+The burst size $\Kb$ is the value of $\xt$ immediately before rupture. For
+the burst to occur in state $k$, the process must be in state $k$ and then
+rupture from there; rupturing from state $k$ happens at rate $\delta k$.
+Hence
+\begin{equation}
+\pr{\Kb = k} = \delta k \int_0^\infty p_k(t)\,\dd t.
+\label{eq:burstintegral}
+\end{equation}
+A direct discretisation makes this plain: partitioning time into intervals
+of width $\Delta t$, the probability that the burst occurs during an interval
+in which the process is at $k$ is
+$$
+\pr{\xt=k}\,\pr{\text{rupture in }\Delta t\mid\xt=k}
+=\pr{\xt=k}\,\delta k\,\Delta t,
+$$
+and summing over intervals and passing to the limit $\Delta t\to0$ yields
+\eqref{eq:burstintegral}.
+
+The integral is evaluable in closed form. With $P(t)$ as in \eqref{eq:Pdef},
+\begin{equation}
+\frac{\dd}{\dd t}\Bigl[\frac{P(t)^k}{k\lambda}\Bigr]
+=\frac{1}{\lambda}P(t)^{k-1}P'(t)
+=\lrb{\frac{a-b}{b-a\ee^{\lambda(a-b)t}}}^2
+\ee^{\lambda(a-b)t}P(t)^{k-1}
+=p_k(t),
+\label{eq:antideriv}
+\end{equation}
+as one verifies from
+$P'(t)=\lambda(a-b)^2\ee^{\lambda(a-b)t}/(b-a\ee^{\lambda(a-b)t})^2$.
+Therefore, since $P(0)=0$ and $P(\infty)=1/a$,
+\begin{equation}
+\int_0^\infty p_k(t)\,\dd t=\frac{1}{k\lambda}\Bigl(\frac{1}{a}\Bigr)^k,
+\end{equation}
+and \eqref{eq:burstintegral} gives the burst-size law.
+
+\begin{theorem}[Burst-size distribution]
+\label{thm:burst}
+Unconditionally (including the mass $b$ of realisations that never burst),
+\begin{equation}
+\pr{\Kb=k}=\frac{\delta}{\lambda}\,a^{-k},\qquad k\ge1;
+\label{eq:burstlaw}
+\end{equation}
+conditioned on the burst occurring,
+\begin{equation}
+\pr{\Kb=k\mid\text{burst}}=(a-1)\,a^{-k},\qquad k\ge1.
+\label{eq:burstlaw-cond}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The unconditional form is the computation above. For the conditional form,
+divide \eqref{eq:burstlaw} by the eventual-burst probability $1-b$:
+$$
+\pr{\Kb=k\mid\text{burst}}
+=\frac{(\delta/\lambda)\,a^{-k}}{1-b}
+=\frac{AB}{B}\,a^{-k}
+=(a-1)\,a^{-k},
+$$
+using $\delta/\lambda=AB$ from \eqref{eq:AB}.
+\end{proof}
+
+No simulation is required; nevertheless two consistency checks close the
+loop pleasantly. First, normalisation:
+$$
+\sum_{k=1}^{\infty}\frac{\delta}{\lambda}a^{-k}
+=\frac{\delta}{\lambda}\,\frac{1}{a-1}
+=\frac{AB}{A}=B=1-b,
+$$
+matching the eventual-burst probability. Second, the first moment:
+$$
+\sum_{k=1}^{\infty}k\,\frac{\delta}{\lambda}a^{-k}
+=\frac{\delta}{\lambda}\,\frac{a}{(a-1)^2}
+=\frac{aB}{A}=V_\infty,
+$$
+recovering \eqref{eq:Vinf}. This second check independently validates the
+burst-size law, the formula for $V_\infty$, and the identity
+\eqref{eq:AB} simultaneously.
+
+\subsection{Burst size equals the quasi-stationary distribution}
+\label{sec:burst=qsd}
+
+Compare \eqref{eq:burstlaw-cond} with Theorem~\ref{thm:qsd}: they are the
+same law.
+
+\begin{corollary}[Burst size $=$ QSD]
+\label{cor:burst-qsd}
+The burst-size distribution, conditioned on bursting, is exactly the
+quasi-stationary distribution of the load: both are geometric on
+$\{1,2,\ldots\}$ with ratio $1/a$.
+\end{corollary}
+
+This is not obvious, and it deserves a moment's pause. A burst is a
+\emph{size-biased} draw from the transient load distribution, taken against
+the burst intensity, and then integrated over all burst times; that this
+should land exactly on the conditional limiting distribution is a genuine
+identity, not a definition. The algebra above proves it; a structural
+argument --- presumably relating size-biasing composed with the burst
+intensity to the Yaglom limit \cite{yaglom1947certain} --- would make it
+quotable rather than coincidental, and remains open
+(see \S\ref{sec:open-problems}).
+
+\subsection{Size-biasing and the size of a late burst}
+\label{sec:size-bias}
+
+The size-biasing mechanism is worth stating on its own terms. A cell bursts
+at rate $\delta\xt$, so given that the burst occurs at time $t$, its size is
+a size-biased draw from $p_\cdot(t)$:
+\begin{equation}
+\pr{\Kb=k\mid\tau=t}=\frac{k\,p_k(t)}{J(t)},
+\qquad
+\mean{\Kb\mid\tau=t}=\frac{K(t)}{J(t)}
+=1+\frac{2\lambda}{\delta}\lrb{1-I(t)}.
+\label{eq:sizebias}
+\end{equation}
+Taking $t\to\infty$,
+\begin{equation}
+\mean{\Kb\mid\tau=t}\xrightarrow[t\to\infty]{}
+1+\frac{2\lambda}{\delta}(1-b)
+=\frac{\langle X^2\rangle_{\rm QS}}{\langle X\rangle_{\rm QS}},
+\end{equation}
+where the second equality follows from \eqref{eq:QSmoments}. A very late
+burst is roughly twice the size of an average one --- the signature of
+size-biasing a geometric law: the cells that survive long are precisely the
+ones that grew large, and large cells burst quickly.
+
+\figureflag{F4a.5}{Burst size and late bursts}{%
+\textbf{Purpose:} show the two identities of this section together --- the
+burst-size law, and the size-biasing effect by which late bursts exceed
+average ones. \textbf{Type:} Python analytic plot, two panels.
+\textbf{Content:} panel (a): bars of the unconditional burst-size law
+$\Pr\{\Kb=k\}=(\delta/\lambda)a^{-k}$, $k=1,\ldots,40$, for
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$, with the conditional law
+$(a-1)a^{-k}$ overlaid as a connected curve, and the mass $b$ at $k=0$
+annotated (bar or text). Panel (b): the size-biased conditional mean
+$K(t)/J(t)=1+\frac{2\lambda}{\delta}(1-I(t))$ against $t\in[0,25]$ for the
+same parameters, with the horizontal asymptote
+$(a+1)/(a-1)\approx33.5$ dashed and annotated; optionally overlay the QS
+mean $a/(a-1)$ for contrast. \textbf{Axes:} panel (a): burst size $k$
+(horizontal), probability (vertical); panel (b): $t$ (horizontal),
+$\mean{\Kb\mid\tau=t}$ (vertical). \textbf{Style:} unified Python style ---
+default matplotlib with \texttt{tab:} colours, grid alpha 0.25,
+\texttt{tight\_layout}, PDF output, fonts matching the chapter.
+\textbf{Data source:} analytic formulas \eqref{eq:burstlaw},
+\eqref{eq:burstlaw-cond}, \eqref{eq:sizebias}; no simulation.
+\textbf{Placement:} \Secref{sec:size-bias}, after the size-biasing
+discussion.}
+
+\subsection{Burst time given burst size, without death}
+\label{sec:tau-given-k}
+
+Size-biasing conditions the burst size on the burst time; the converse
+conditioning --- the burst time given the burst size --- has an equally
+explicit form when $\mu=0$, and it is the quantity an experiment accesses
+when it measures both members of each (burst time, burst size) pair. Write
+$\theta=\lambda+\delta$ for the rate combination that governs the $\mu=0$
+case (it is $\lambda(a-b)$ evaluated at $b=0$). Fixing $n$ and regarding
+$p_n(t)$ as a function of $t$, the state probability rises from zero,
+peaks, and decays; differentiating $\log p_n(t)$ shows the maximum is
+attained at
+\begin{equation}
+t_n=\frac{\log n}{\theta}:
+\label{eq:tn}
+\end{equation}
+a burst of size $n$ is most likely to have occurred once the process has had
+of order $(\log n)/\theta$ of growth time. The exact conditional mean burst
+time is the following.
+
+\begin{proposition}[Conditional rupture time, $\mu=0$]
+\label{prop:tau-given-k}
+With $\mu=0$ and $\theta=\lambda+\delta$,
+\begin{equation}
+\mean{\tau\mid\Kb=n}=\frac{1}{\theta}\sum_{k=1}^{n}\frac{1}{k},
+\qquad n\ge1.
+\label{eq:tau-given-k}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+When $\mu=0$ the state probabilities \eqref{stateprob} reduce, with
+$r=\lambda/\delta$ and $s=\theta t$, to
+$$p_n(t)=\ee^{-\theta t}\lrb{\frac{1-\ee^{-\theta t}}{1+1/r}}^{n-1},$$
+and the burst-size law \eqref{eq:burstlaw} to
+$\pr{\Kb=n}=(1/r)(r/(r+1))^n$. Writing
+$$L_1(n)=\int_0^\infty \ee^{-s}(1-\ee^{-s})^{n-1}\,\dd s,\qquad
+L_2(n)=\int_0^\infty s\,\ee^{-s}(1-\ee^{-s})^{n-1}\,\dd s,$$
+the substitution $s=\theta t$ gives
+$\mean{\tau\mid\Kb=n}=L_2(n)/(\theta L_1(n))$. The first integral is
+$L_1(n)=1/n$, by the substitution $u=1-\ee^{-s}$. For the second, split off
+one factor of $(1-\ee^{-s})$ to write
+$L_2(n+1)=L_2(n)-\int_0^\infty s\ee^{-2s}(1-\ee^{-s})^{n-1}\dd s$, and
+integrate by parts in the remaining integral; the result is the recurrence
+$$(n+1)L_2(n+1)=nL_2(n)+\frac{1}{n+1},\qquad L_2(1)=1,$$
+whose solution is $L_2(n)=\frac{1}{n}(1+\frac12+\cdots+\frac1n)$; the
+quotient is \eqref{eq:tau-given-k}.
+\end{proof}
+
+For large $n$ the harmonic sum gives the approximation
+\begin{equation}
+\mean{\tau\mid\Kb=n}\simeq\frac{\log n+\gamma}{\theta}\qquad(n\gg1),
+\label{eq:tau-given-k-asymp}
+\end{equation}
+where $\gamma=0.5772\ldots$ is Euler's constant: conditional rupture time
+grows logarithmically with burst size. The full conditional distribution has
+a clean form in the same limit. Since the density of $\tau$ at $t$, given
+$\Kb=n$, is proportional to $p_n(t)$,
+\begin{equation}
+\pr{\tau<t\mid\Kb=n}
+=\frac{\delta n\int_0^t p_n(s)\,\dd s}{\pr{\Kb=n}}
+=(1-\ee^{-\theta t})^n,
+\label{eq:cond-cdf}
+\end{equation}
+and for $n\gg1$, with $T=\theta(t-t_n)$ and $t_n$ as in \eqref{eq:tn},
+\begin{equation}
+\pr{\tau<t\mid\Kb=n}\simeq\exp\lrb{-n\ee^{-\theta t}}
+=\exp\lrb{-\ee^{-T}}:
+\end{equation}
+the conditioned rupture time, centred at $t_n$ and scaled by $1/\theta$,
+converges to the standard Gumbel law. Burst sizes thus select burst times
+from a travelling window of width of order $1/\theta$ around
+$(\log n)/\theta$.
+
+\subsection{The mean burst time when death is possible}
+\label{sec:tau-burst-mu-pos}
+
+When $\mu>0$ the burst time $\tau$ has no finite mean, because the mass $b$
+at $\tau=\infty$ (the internally cleared cells) makes the integral diverge.
+Conditioned on bursting, however, the mean is finite and explicit.
+
+\begin{proposition}[Mean burst time conditioned on bursting]
+\label{prop:tau-burst}
+For $\mu>0$,
+\begin{equation}
+\mean{\tau\mid\text{burst}}
+=\frac{1}{\lambda(1-b)}\log\frac{a-b}{a-1}.
+\label{eq:tau-burst}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The density of $\tau$ on the bursting realisations is $\varphi(t)=\delta J(t)$,
+with total mass $1-b$, so
+$\mean{\tau\mid\text{burst}}=(1-b)^{-1}\int_0^\infty t\,\varphi(t)\,\dd t$.
+Since $\varphi=-(I-b)'$, integrating by parts on $[0,T]$ gives
+$$\int_0^T t\,\varphi(t)\,\dd t
+=-T\bigl(I(T)-b\bigr)+\int_0^T\bigl(I(t)-b\bigr)\,\dd t,$$
+and the boundary term vanishes as $T\to\infty$ because
+$I(T)-b=B(a-b)/(B+Aw)$, read off from \eqref{eq:IDIhat}, decays like
+$\ee^{-\theta T}$. It remains to evaluate the integral: with
+$\dd t=\dd w/(\theta w)$ and the partial-fraction decomposition
+$1/[w(B+Aw)]=B^{-1}\bigl(1/w-A/(B+Aw)\bigr)$,
+$$\int_0^\infty\bigl(I(t)-b\bigr)\,\dd t
+=\frac{B(a-b)}{\theta}\int_1^\infty\frac{\dd w}{w(B+Aw)}
+=\frac{1}{\lambda}\log\frac{a-b}{a-1},$$
+and dividing by $1-b$ gives \eqref{eq:tau-burst}.
+\end{proof}
+
+This quantity is distinct from the mean productive lifetime
+$\mean{T_{\rm prod}}=\lambda^{-1}\log\frac{a}{a-1}$ of
+\S\ref{sec:lifetime}, and the distinction should be kept visible:
+$\mean{\tau\mid\text{burst}}$ averages the rupture time over cells that
+burst, while $\mean{T_{\rm prod}}$ averages the time spent productive over
+\textit{all} cells, the internally cleared ones included with their shorter
+productive spans. When $\mu=0$ the two coincide, both reducing to
+$\lambda^{-1}\log(1+\lambda/\delta)$, and it is tempting to read more into
+the coincidence than it supports.
+
+\subsection{Comparison with budding release}
+\label{sec:bud-vs-burst-single-cell}
+
+The bursting single-cell picture just completed has a natural comparator:
+the budding cell of the constant-rate models. In its simplest stochastic
+form, a budding infected cell experiences two \textit{independent} event
+types --- release of one infectious particle at rate $p$, and death of the
+cell at rate $d_{\Icell}$ --- and the two continue until the cell dies. Its
+survival and mean release are then
+$$I_{\rm bud}(t)=\ee^{-d_{\Icell}t},\qquad
+V_{\rm bud}(t)=\frac{p}{d_{\Icell}}\lrb{1-\ee^{-d_{\Icell}t}},$$
+the same one-cell limit that the Basic Model of Viral Replication reaches at
+the population level. The release count of a budding cell is geometric on
+$\{0,1,2,\ldots\}$:
+\begin{equation}
+\pr{\Kb_{\rm bud}=k}=\frac{d_{\Icell}}{d_{\Icell}+p}
+\lrb{\frac{p}{d_{\Icell}+p}}^k,\qquad k=0,1,2,\ldots,
+\label{eq:bud-geom}
+\end{equation}
+since each of the successive events is a release with probability
+$p/(d_{\Icell}+p)$ and the terminating death with probability
+$d_{\Icell}/(d_{\Icell}+p)$. The structural contrast with bursting is exact:
+in budding, release and death are independent events, and a cell may release
+many particles and then die with nothing left to release; in bursting,
+release and death are the \textit{same} event, and whatever has accumulated
+is released at once. Table~\ref{tab:budburst} collects the two single-cell
+descriptions side by side for the $\mu=0$ bursting case.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & budding & bursting ($\mu=0$) \\
+\midrule
+$\ddt{I}$ & $-d_{\Icell} I$ & $-(\lambda+\delta)I+\lambda I^2$ \\
+$I(t)$ & $\ee^{-d_{\Icell}t}$ & $\dfrac{\lambda+\delta}{\lambda+\delta\,\ee^{(\lambda+\delta)t}}$ \\
+mean cell lifetime & $1/d_{\Icell}$ & $\dfrac{1}{\lambda}\log\lrb{1+\dfrac{\lambda}{\delta}}$ \\
+$V(t)$ & $\dfrac{p}{d_{\Icell}}(1-I)$ & $\dfrac{\lambda}{\delta}+1-\dfrac{2\lambda+\delta}{\delta}I+\dfrac{\lambda}{\delta}I^2$ \\
+release law & geometric on $\{0,1,\ldots\}$, \eqref{eq:bud-geom} & geometric on $\{1,2,\ldots\}$, $\pr{\Kb=k}=\frac{\delta}{\lambda}a^{-k}$ \\
+\bottomrule
+\end{tabular}
+\caption{Single-cell budding and bursting compared, $\mu=0$ for bursting.
+Budding parameters: release rate $p$ and infected-cell death rate
+$d_{\Icell}$. Bursting parameters: division rate $\lambda$ and rupture rate
+$\delta$ per intracellular particle; $a=(\lambda+\delta)/\lambda$ here.}
+\label{tab:budburst}
+\end{table}
+
+Two rows of the table carry the comparison. The mean cell lifetime of a
+bursting cell grows only logarithmically with $\lambda/\delta$, while its
+mean release grows linearly; budding offers no such coupling, its lifetime
+and its release controlled by separate parameters. And the release laws,
+both geometric, differ in their support: budding can release nothing at all
+from a dead cell, while bursting never does. These two differences are what
+the population-level comparison of Chapter~4b exploits, where bursting's
+simultaneous release-and-death translates into a measurable advantage at
+small population sizes.
+
+\figureflag{F4a.8}{Conditional rupture time versus burst size}{%
+\textbf{Purpose:} show the harmonic-number law \eqref{eq:tau-given-k}
+against burst size, with its large-$n$ approximation and the linear budding
+comparator, in one figure. \textbf{Type:} Python analytic plot.
+\textbf{Content:} main panel: $\mu=0$ with $\theta=\lambda+\delta=1.1$
+(e.g.\ $\lambda=1$, $\delta=0.1$): red dots at the exact means
+$\mean{\tau\mid\Kb=n}=\theta^{-1}\sum_{k=1}^n 1/k$ for $n=1,\ldots,40$;
+dotted curve $\theta^{-1}(\log n+\gamma)$ for $n\ge2$; dashed straight line
+$(n+1)/(d_{\Icell}+p)$, the budding conditional mean for exactly $n$
+released particles, with $d_{\Icell}+p=8$ (the comparator scale of the
+source figure; any matched scale may be substituted and should then be
+stated in the caption). Optional second panel: three values of $\mu$ ---
+$\lambda=0.5$, $\delta=0.01$, $\mu\in\{0,0.005,0.01\}$ --- exact conditional
+means from simulation of the conditioned process, with the approximation
+$(\log n+\gamma-\mu/\lambda)/(\lambda+\delta-\mu)$ overlaid as a dashed
+curve for each. \textbf{Axes:} burst size $n$ (horizontal), conditional mean
+rupture time (vertical); legend entries ``exact'', ``harmonic
+approximation'', ``budding''. \textbf{Style:} unified Python style ---
+default matplotlib with \texttt{tab:} colours, grid alpha 0.25,
+\texttt{tight\_layout}, PDF output, fonts matching the chapter.
+\textbf{Data source:} exact formula \eqref{eq:tau-given-k}; approximation
+\eqref{eq:tau-given-k-asymp}; budding comparator: $n+1$ exponential waiting
+times each of rate $d_{\Icell}+p$; optional panel by simulating the BDC
+process and conditioning on $\Kb=n$. \textbf{Placement:}
+\Secref{sec:tau-given-k}, after Proposition~\ref{prop:tau-given-k}.}

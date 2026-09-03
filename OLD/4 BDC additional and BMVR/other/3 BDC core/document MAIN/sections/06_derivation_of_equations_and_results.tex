@@ -1,0 +1,59 @@
+\section{Derivation of equations and results}
+
+
+\subsection{First equation}
+
+
+{\large$$\ddt{I} = \mu - (\lambda + \mu + \delta) I + \lambda I^2$$}
+
+
+
+Considering what may happen during an interval of duration $\delt$ after $t=0$, we can write down the equation,
+$$I(0+\delt) = \mu \delt + [1 - (\beta + \mu + \delta)\delt] I(0) + \beta\delt {I(0)}^2 + o(\delt). $$
+The single initial unit may die, divide, cause rupture, or do nothing at all; each possibility accounted for on the RHS, with the respective event-probabilities multiplied by the updated non-rupture likelihoods --- as if the process were beginning anew. In the case a rupture occurred, this value will obviously be 0; if a birth takes place, it assumes the value, $I_2(0)$. Which, as shown above is equivalent to ${I(0)}^2$. And because the model is homogeneous in time, the relation maintains applicability in subsequent intervals, $[t, t+\delt]$:
+$$I(t+\delt) = \mu \delt + [1 - (\beta + \mu + \delta)\delt] I(t) + \beta\delt {I(t)}^2 + o(\delt). $$
+Rearranging this yields, 
+$$\frac{I(t+\delt) -I(t)}{\delt} = \mu - (\beta + \mu + \delta) I(t) + \beta {I(t)}^2 + \frac{o(\delt)}{\delt}.$$
+Which, in the limit as $\delt\to 0$, becomes
+\begin{equation}
+\label{ddII}
+\ddt{I} = \mu - (\beta + \mu + \delta) I + \beta {I}^2,
+\end{equation}
+a Ricatti equation with solution
+\begin{equation}
+\label{formI}
+I(t) = \frac{I_+(1-I_-) - I_-(1-I_+) \ee^{\beta(I_+ - I_-)t}}{(1-I_-) - (1-I_+) \ee^{\beta(I_+ - I_-)t}}.
+\end{equation}
+Constants, $I_{\pm}$, given:
+\begin{align*}
+I_{\pm} = \eta \pm \sqrt{\eta^2 - \frac{\mu}{\beta}}\;, \hspace{20pt} \text{with}\hspace{20pt} \eta = \frac{\beta + \mu + \delta}{2\beta}.
+\end{align*}
+
+As an aside, it's worth mentioning that (\ref{ddII}) can be written in in terms of the constants, $I_{\pm}$:
+
+\begin{equation}
+\label{ddIIfact}
+\ddt{I} =\beta\lrb{I-I_+}\lrb{I-I_+}.
+\end{equation}
+
+
+
+\noindent
+Plotting $\dd I/\dd t$ against $I$ gives an intuitive picture of why $I(t)$ tends to $I_-$ at late time. 
+
+
+\subsection{Alternative quantity to $I(t)$}
+What if we consider the probability that the process has yet to reach the absorbing state of 0 --- by neither rupture, nor the birth-death process dying out? 
+$$\hat I(t) = \pr{\xt \neq 0}.$$
+When $\mu = 0$, this will be identical to $I(t)$.
+
+The equivalent to equation (\ref{ddII}) is
+\begin{equation}
+\label{ddIIhat}
+\ddt{\hat I} =  -(\beta + \mu + \delta)\hat I + \beta {\hat I}^2,
+\end{equation}
+as, during its derivation, in the case where the first unit dies, $\hat I(t)$ will become 0 rather than 1, so there is no $\mu$ term on the RHS.
+
+(\ref{ddIIhat}) is solved by
+$$\hat I(t) = \frac{\hat\eta}{1 - (1-\hat\eta)\ee^{\hat\eta\beta t}}, $$
+with $\hat\eta = (\beta + \mu + \delta)/\beta$.

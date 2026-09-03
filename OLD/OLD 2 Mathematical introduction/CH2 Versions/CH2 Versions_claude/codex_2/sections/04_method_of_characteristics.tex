@@ -1,0 +1,315 @@
+\section{Multivariate PGFs and the method of characteristics}
+\label{sec:multivariate-pgf}
+
+The branching calculations above concern a single population count.  We now use the same PGF structure to follow a pathogenic cohort as it moves from an extracellular compartment into a host cell.  The models form a hierarchy: absorption is introduced first, intracellular death is then added, and intracellular replication is added last.  This order keeps the probabilistic meaning of each term visible.
+
+\subsection{A two-compartment Markov model}
+\label{sec:two-compartment-model}
+
+Let $X_t$ and $Y_t$ denote the intracellular and extracellular particle counts.  For a fixed $N\in\mathbb{N}$, we take
+\[
+  (X_0,Y_0)=(0,N)
+\]
+and impose three modelling assumptions: particles act independently, the host has no capacity limit, and intracellular descendants do not return to the extracellular compartment.  The non-negative rates $\alpha$, $\beta$, and $\mu$ govern absorption, intracellular birth, and intracellular death, respectively, as listed in \cref{tab:compartment-events}.
+
+\begin{table}[tb]
+  \centering
+  \caption{Events in the absorption--birth--death model.  Terms of order $o(\Delta t)$ are omitted from the corresponding infinitesimal transition probabilities.}
+  \label{tab:compartment-events}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Event & State change from $(i,j)$ & Rate \\
+    \midrule
+    Absorption          & $(i,j)\to(i+1,j-1)$ & $\alpha j$ \\
+    Intracellular birth & $(i,j)\to(i+1,j)$   & $\beta i$ \\
+    Intracellular death & $(i,j)\to(i-1,j)$   & $\mu i$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+For a test function $h$ on the state space, the generator is
+\begin{align}
+  \mathcal{L}h(i,j)
+  ={}&\alpha j\{h(i+1,j-1)-h(i,j)\}\notag\\
+    &+\beta i\{h(i+1,j)-h(i,j)\}
+     +\mu i\{h(i-1,j)-h(i,j)\}.
+  \label{eq:compartment-generator}
+\end{align}
+Define the bivariate PGF
+\begin{equation}
+  G(x,y,t)
+  =\E[x^{X_t}y^{Y_t}]
+  =\sum_{i=0}^{\infty}\sum_{j=0}^{N}
+     p_{i,j}(t)x^{i}y^{j},
+  \qquad
+  p_{i,j}(t)=\Prob(X_t=i,Y_t=j).
+  \label{eq:bivariate-pgf}
+\end{equation}
+for $(x,y)\in[0,1]^2$.
+Applying \cref{eq:compartment-generator} to $h(i,j)=x^{i}y^{j}$ and using
+$\frac{\dd}{\dd t}\E[h(X_t,Y_t)]=\E[\mathcal{L}h(X_t,Y_t)]$ gives
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =a(x)\frac{\partial G}{\partial x}
+   +\alpha(x-y)\frac{\partial G}{\partial y},
+  \qquad
+  a(x)=\beta x^2-(\beta+\mu)x+\mu,
+  \label{eq:general-pgf-pde}
+\end{equation}
+with initial condition
+\begin{equation}
+  G(x,y,0)=y^N.
+  \label{eq:general-pgf-initial}
+\end{equation}
+At $(x,y)=(1,1)$ both transport coefficients in \cref{eq:general-pgf-pde} vanish; together with the initial value, this gives the normalisation $G(1,1,t)=1$.
+
+Written as
+\[
+  G_t-a(x)G_x+\alpha(y-x)G_y=0,
+\]
+\cref{eq:general-pgf-pde} has characteristic equations
+\begin{equation}
+  \frac{\dd t}{\dd s}=1,
+  \qquad
+  \frac{\dd x}{\dd s}=-a(x),
+  \qquad
+  \frac{\dd y}{\dd s}=\alpha(y-x),
+  \qquad
+  \frac{\dd G}{\dd s}=0.
+  \label{eq:general-characteristics}
+\end{equation}
+Thus $G$ is constant along a characteristic, and the solution at $(x,y,t)$ is obtained by tracing that characteristic back to the initial surface $t=0$.  The following special cases make this construction explicit.
+
+\subsection{Absorption without intracellular dynamics}
+\label{sec:absorption-only}
+
+Set $\beta=\mu=0$.  Equation \eqref{eq:general-pgf-pde} reduces to
+\begin{equation}
+  G_t=\alpha(x-y)G_y.
+  \label{eq:absorption-pde}
+\end{equation}
+Here $x$ is constant along a characteristic and $y$ solves
+\[
+  \frac{\dd y}{\dd s}=\alpha(y-x).
+\]
+Tracing the terminal point $(x,y)$ at time $t$ back to time zero gives
+\[
+  y_0=x+(y-x)\e^{-\alpha t}.
+\]
+Since the initial PGF is $y_0^N$,
+\begin{equation}
+  G_{\mathrm{abs}}(x,y,t)
+  =\left[\{1-\e^{-\alpha t}\}x+\e^{-\alpha t}y\right]^N.
+  \label{eq:absorption-pgf}
+\end{equation}
+
+The same formula follows directly from independence.  Each initial particle remains extracellular with probability $\e^{-\alpha t}$ and has been absorbed with probability $1-\e^{-\alpha t}$.  Consequently,
+\begin{equation}
+  \Prob(X_t=i,Y_t=j)
+  =\ind_{\{i+j=N\}}
+   \frac{N!}{i!\,j!}
+   \{1-\e^{-\alpha t}\}^{i}
+   \e^{-\alpha t j}.
+  \label{eq:absorption-state-probability}
+\end{equation}
+In particular,
+\[
+  \E[Y_t]=N\e^{-\alpha t},
+  \qquad
+  \E[X_t]=N\{1-\e^{-\alpha t}\}.
+\]
+
+\subsection{Absorption followed by intracellular death}
+\label{sec:absorption-death}
+
+Now set $\beta=0$ and retain $\mu\ge0$.  One initially extracellular particle can occupy only three states at time $t$: extracellular, intracellular, or dead.  Denote the corresponding probabilities by $\pi_{\mathrm{E}}(t)$, $\pi_{\mathrm{I}}(t)$, and $\pi_{\mathrm{D}}(t)$.  The first is
+\[
+  \pi_{\mathrm{E}}(t)=\e^{-\alpha t}.
+\]
+Conditioning on an absorption time $s$ gives
+\begin{equation}
+  \pi_{\mathrm{I}}(t)
+  =\int_0^t \alpha\e^{-\alpha s}
+              \e^{-\mu(t-s)}\,\dd s
+  =
+  \begin{cases}
+    \displaystyle
+    \frac{\alpha}{\mu-\alpha}
+      \{\e^{-\alpha t}-\e^{-\mu t}\},
+      & \alpha\ne\mu,\\[3mm]
+    \alpha t\e^{-\alpha t},
+      & \alpha=\mu,
+  \end{cases}
+  \label{eq:absorption-death-intracellular}
+\end{equation}
+and $\pi_{\mathrm{D}}(t)=1-\pi_{\mathrm{I}}(t)-\pi_{\mathrm{E}}(t)$.  Independence of the $N$ initial particles therefore yields
+\begin{equation}
+  G_{\mathrm{ad}}(x,y,t)
+  =\{\pi_{\mathrm{D}}(t)+\pi_{\mathrm{I}}(t)x+\pi_{\mathrm{E}}(t)y\}^{N}.
+  \label{eq:absorption-death-pgf}
+\end{equation}
+Substitution verifies that \cref{eq:absorption-death-pgf} solves
+\[
+  G_t=\mu(1-x)G_x+\alpha(x-y)G_y
+\]
+with initial condition $y^N$.  The characteristic method and the direct probabilistic construction are therefore two descriptions of the same solution, rather than competing approximations.
+
+The complete state probabilities are multinomial:
+\begin{equation}
+  p_{i,j}(t)
+  =\frac{N!}{i!\,j!\,(N-i-j)!}
+    \pi_{\mathrm{I}}(t)^i
+    \pi_{\mathrm{E}}(t)^j
+    \pi_{\mathrm{D}}(t)^{N-i-j},
+  \quad
+  i,j\ge0,\quad i+j\le N.
+  \label{eq:absorption-death-state-probability}
+\end{equation}
+They are zero when $i+j>N$.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.94\textwidth]{absorption_probabilities.pdf}
+  \caption{One-particle state probabilities.  Left: absorption only, with $\alpha=1$.  Right: absorption followed by intracellular death, with $\alpha=1$ and $\mu=0.4$.  The death state accumulates the probability that has left both living compartments.}
+  \label{fig:absorption-probabilities}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Absorption followed by intracellular birth and death}
+\label{sec:absorption-birth-death}
+
+When $\beta>0$, a single absorbed particle can generate an unbounded number of intracellular descendants.  This removes the finite three-state shortcut, but it does not remove the branching property.  The cleanest exact solution conditions on the absorption time.
+
+Let
+\begin{equation}
+  F(x,t)=\E[x^{W_t}\mid W_0=1]
+  \label{eq:ctbd-one-particle-pgf}
+\end{equation}
+be the PGF of a linear birth--death process with per-particle birth rate $\beta$ and death rate $\mu$.  A first-event argument gives the Riccati equation
+\begin{equation}
+  F_t=\beta F^2-(\beta+\mu)F+\mu,
+  \qquad F(x,0)=x.
+  \label{eq:ctbd-riccati}
+\end{equation}
+For $\beta\ne\mu$, its solution can be written without introducing singular root labels as
+\begin{equation}
+  F(x,t)
+  =
+  \frac{
+    \e^{(\mu-\beta)t}(\beta x-\mu)+\mu(1-x)}
+  {\e^{(\mu-\beta)t}(\beta x-\mu)+\beta(1-x)}.
+  \label{eq:ctbd-pgf-noncritical}
+\end{equation}
+At $\beta=\mu=\gamma$, the continuous limit is
+\begin{equation}
+  F(x,t)
+  =\frac{x+\gamma t(1-x)}
+         {1+\gamma t(1-x)}.
+  \label{eq:ctbd-pgf-critical}
+\end{equation}
+Both formulae satisfy $F(1,t)=1$ and $F(x,0)=x$.
+
+For one particle initially outside the cell, non-absorption by time $t$ contributes $\e^{-\alpha t}y$ to its bivariate PGF\@.  If absorption occurs at time $s\in[0,t]$, with density $\alpha\e^{-\alpha s}$, the intracellular descendants evolve for the remaining time $t-s$ and contribute $F(x,t-s)$.  Hence
+\begin{equation}
+  g(x,y,t)
+  =\e^{-\alpha t}y
+   +\int_0^t\alpha\e^{-\alpha s}F(x,t-s)\,\dd s.
+  \label{eq:one-extracellular-pgf}
+\end{equation}
+The $N$ initial particles generate independent descendant families, so the full solution is simply
+\begin{equation}
+  G_{\mathrm{abd}}(x,y,t)=g(x,y,t)^N.
+  \label{eq:absorption-birth-death-pgf}
+\end{equation}
+
+\begin{proposition}
+The function in \cref{eq:absorption-birth-death-pgf} is the normalised solution of \cref{eq:general-pgf-pde,eq:general-pgf-initial}.
+\end{proposition}
+
+\begin{proof}
+The branching semigroup for $F$ also satisfies
+\[
+  F_t=a(x)F_x,
+  \qquad
+  a(x)=\beta x^2-(\beta+\mu)x+\mu.
+\]
+Differentiating \cref{eq:one-extracellular-pgf}, using $F(x,0)=x$, gives
+\[
+  g_t
+  =\alpha\e^{-\alpha t}(x-y)+a(x)g_x
+  =a(x)g_x+\alpha(x-y)g_y,
+\]
+because $g_y=\e^{-\alpha t}$.  The chain rule then shows that $G=g^N$ satisfies the same linear PDE\@.  At $t=0$, $g=y$ and hence $G=y^N$; at $(x,y)=(1,1)$, the two mutually exclusive absorption-time cases in \cref{eq:one-extracellular-pgf} sum to one.
+\end{proof}
+
+The integral in \cref{eq:one-extracellular-pgf} can be reduced further for generic parameter choices, but the one-dimensional integral is the more stable exact representation.  It remains valid at equal rates, preserves normalisation transparently, and avoids branch choices and removable singularities.
+
+\subsection{Coefficient extraction and moment checks}
+\label{sec:coefficient-extraction}
+
+For any analytic bivariate PGF, the state probabilities are
+\begin{equation}
+  p_{i,j}(t)
+  =\frac{1}{i!\,j!}
+   \left.
+   \frac{\partial^{i+j}G}
+        {\partial x^i\partial y^j}
+   \right|_{x=y=0}.
+  \label{eq:general-coefficient-extraction}
+\end{equation}
+If $G=(c_0+c_x x+c_y y)^N$, the multinomial theorem gives the more explicit formula
+\begin{equation}
+  [x^{i}y^{j}]G
+  =\frac{N!}{i!\,j!\,(N-i-j)!}
+    c_x^i c_y^j c_0^{N-i-j},
+  \qquad i+j\le N.
+  \label{eq:affine-power-coefficients}
+\end{equation}
+The falling factorial in \cref{eq:affine-power-coefficients} is essential; replacing it by $N^{i+j}$ does not differentiate a power correctly.  Equations \eqref{eq:absorption-state-probability} and \eqref{eq:absorption-death-state-probability} are immediate special cases.
+
+For the absorption--birth--death model, write
+\[
+  b(x,t)
+  =\int_0^t\alpha\e^{-\alpha s}F(x,t-s)\,\dd s,
+  \qquad
+  g(x,y,t)=b(x,t)+\e^{-\alpha t}y.
+\]
+Since the extracellular count cannot exceed $N$,
+\begin{equation}
+  p_{i,j}(t)
+  =\binom{N}{j}\e^{-\alpha tj}
+     [x^i]\,b(x,t)^{N-j},
+  \qquad 0\le j\le N.
+  \label{eq:abd-coefficients}
+\end{equation}
+This reduces coefficient recovery to a univariate series problem even though the intracellular count is unbounded.
+
+Two mean identities provide inexpensive checks on analytical or numerical implementations.  Differentiating the PGF at $(1,1)$, or taking expectations in the transition rates, gives
+\begin{equation}
+  \E[Y_t]=N\e^{-\alpha t}
+  \label{eq:extracellular-mean}
+\end{equation}
+and
+\begin{equation}
+  \E[X_t]
+  =
+  \begin{cases}
+    \displaystyle
+    \frac{\alpha N}
+         {\alpha+\beta-\mu}
+    \left\{\e^{(\beta-\mu)t}-\e^{-\alpha t}\right\},
+      & \alpha+\beta-\mu\ne0,\\[4mm]
+    \alpha Nt\e^{-\alpha t},
+      & \alpha+\beta-\mu=0.
+  \end{cases}
+  \label{eq:intracellular-mean}
+\end{equation}
+Together with $G(1,1,t)=1$ and $G(x,y,0)=y^N$, these identities test normalisation, signs, equal-rate limits, and the placement of every exponential.
+
+\subsection{Synthesis}
+\label{sec:chapter-synthesis}
+
+The discrete and continuous models are connected by more than notation.  In both, independence converts an initial cohort into a power of a one-ancestor PGF\@.  Extinction and conditioning are controlled by evaluations of that PGF at zero, while moments are its derivatives at one.  Nonlinearity enters differently: functional iteration produces the Kolmogorov constant in discrete time, whereas the continuous-time birth--death semigroup solves a Riccati equation.  Once absorption couples two counts, the generator converts those same mechanisms into a first-order PDE, and characteristics recover the probabilistic decomposition.
+
+This common structure also fixes the appropriate level of approximation.  A mean trajectory is adequate for the identities in \cref{eq:extracellular-mean,eq:intracellular-mean}, but it cannot replace the path distribution in a survival or catastrophe probability.  Conversely, an exact PGF need not be expanded into a cumbersome special-function expression when a normalised integral representation already exposes the model, its limiting cases, and a stable route to computation.

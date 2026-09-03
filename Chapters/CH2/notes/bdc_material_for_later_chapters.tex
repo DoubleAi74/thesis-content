@@ -1,0 +1,268 @@
+% ===========================================================================
+%  HOLDING FILE --- NOT COMPILED INTO CHAPTER A
+%
+%  Excised BDC-facing material from Chapter A (mathematical introduction).
+%  Preserved verbatim for possible reuse in later chapters (4a/4b and beyond).
+%  Do not \input this file from main.tex or chapter.tex.
+%
+%  Source audit date: 2026-08-10
+%  Editorial horizon: Chapter A orients only for the single-cell BDC chapter
+%  (3 BDC_core DRAFT U / main.pdf). Material below anticipates later work:
+%  killed-generator viewpoint, mean-field hazard warning, BDC quasi-stationarity,
+%  and rupture-into-shared-medium / reseeding.
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+% FORMER LOCATION: sections/02_markov_chains.tex
+%   Immediately after the birth--death vs BDC rate diagram (m:fig:ratediagram),
+%   within subsubsection m:sec:bdc.
+% LIKELY DESTINATION: later BDC methods / conditioning chapters; killed-process
+%   convention differs from the H-state definition retained in Chapter A.
+% ---------------------------------------------------------------------------
+
+%% BEGIN: killed generator, survival-mass balance, and multi-chapter handoff
+% (Original notation used catastrophe-to-0 / kappa_i; Chapter A now uses H / delta.)
+%
+% INTEGRATION NOTE (E2/E3, added 2026-08-10).
+%  (a) STOPPING TIME.  T_0 below is the hitting time of 0 under the OLD
+%      convention, in which a catastrophe sends the process directly to 0, so
+%      T_0 is there already the first of the two mechanisms.  Under Chapter A's
+%      convention (m:def:bdc) catastrophe goes to a SEPARATE state H, and every
+%      occurrence of T_0 in this block and in the quasi-stationarity block below
+%      must become the absorption time  T_0 \wedge T_H  (first of internal
+%      extinction and rupture).  Left uncorrected here so the two conventions
+%      are not silently mixed; correct it at the point of integration, together
+%      with the survival-mass balance, whose right-hand side then splits into a
+%      mu_1 term draining into 0 and a catastrophe term draining into H.
+%  (b) SYMBOL.  kappa_i must become delta*i on integration.  NOTE that the BDC
+%      core chapter (3 BDC_core DRAFT U) already uses kappa for the unrelated
+%      reference constant 1 + delta/(2*lambda); kappa is therefore NOT free
+%      there and must not survive into the merged text.
+Let the positive state $i$ carry
+birth rate $\lambda_i$, ordinary death rate $\mu_i$ and catastrophe rate
+$\kappa_i$, a catastrophe sending the process directly to $0$. On bounded test
+functions the generator is
+\begin{equation}
+\label{m:eq:bdcgenerator}
+(\mathcal Lf)(i)
+= \lambda_i\{f(i+1)-f(i)\} + \mu_i\{f(i-1)-f(i)\} + \kappa_i\{f(0)-f(i)\},
+\qquad i\ge1,
+\end{equation}
+with $(\mathcal Lf)(0)=0$. Restricting to the positive states gives the
+\emph{killed} subgenerator $K$, with $K_{i,i+1}=\lambda_i$, $K_{i,i-1}=\mu_i$ for
+$i\ge2$, and
+\begin{equation}
+\label{m:eq:killedsubgen}
+K_{i,i} = -(\lambda_i+\mu_i+\kappa_i) .
+\end{equation}
+The row mass missing from $K$ is the instantaneous absorption rate: $\kappa_i$ for
+$i\ge2$, and $\mu_1+\kappa_1$ for $i=1$. Writing $T_0=\inf\{t\ge0:X_t=0\}$ and
+summing the positive-state forward equations,
+\begin{equation}
+\label{m:eq:bdcsurvivalloss}
+\ddt{}\pr{T_0>t}
+= -\mu_1\pr{X_t=1} - \sum_{i\ge1}\kappa_i\pr{X_t=i},
+\end{equation}
+all probabilities on the right being understood before absorption. Ordinary death
+drains survival mass only from state $1$; catastrophe drains it from every positive
+state. The
+consequences for conditioning are taken up in \cref{m:sec:condmeans}, and the
+process itself is developed \fwd{bdc}{in the later chapters on
+birth--death--catastrophe processes}, with the two-type extension treated
+\fwd{multitype}{in the chapter on multi-type processes} and the release of a
+ruptured compartment's contents into a shared medium
+\fwd{rupture}{in the chapter on compartment rupture}.
+%% END: killed generator block
+
+% ---------------------------------------------------------------------------
+% FORMER LOCATION: sections/02_markov_chains.tex, within m:sec:bdc
+% LIKELY DESTINATION: discrete-time / generating-function discussion of
+%   state-dependent rupture; or a methods warning in a later BDC chapter.
+% ---------------------------------------------------------------------------
+
+%% BEGIN: mean-field hazard remark
+% Notation aligned with 3 BDC_core DRAFT U / main:
+%   X = census of replicative units; \lambda birth, \mu death, \delta catastrophe
+%   (per unit); H = absorbing catastrophe/rupture state.
+%
+% INTEGRATION NOTE (A2, added 2026-08-10).  The version of this remark that is
+% compiled in Chapter A no longer reuses \delta for the discrete-time trigger
+% probability: it writes \chi \in (0,1) for the per-individual probability per
+% generation, reserving \delta for the continuous per-capita rate as in
+% m:def:bdc and in the BDC core chapter.  The copy below is the OLD text and
+% still overloads \delta; adopt the \chi form when this block is integrated.
+\begin{remark}[A state-dependent catastrophe is not a mean-field hazard]
+\label{m:rem:notmeanfield}
+It is tempting to replace a state-dependent catastrophe rate by a deterministic
+hazard evaluated at the mean population, and it does not work. The point is
+clearest in discrete time. Write $\delta\in(0,1)$ for the probability that a given
+individual initiates catastrophe at a generation --- the discrete counterpart of
+the per-capita catastrophe rate $\delta$ of the continuous-time process
+\cref{m:def:bdc}, whose total rate out of census $n$ is $\delta n$ into the
+absorbing rupture state $H$. Let $\widetilde X_i$ be the branching population with
+catastrophe switched off, and let
+\begin{equation*}
+\mathcal{E}_n = \sum_{i=0}^{n-1}\widetilde X_i
+\end{equation*}
+be the cumulative exposure through generation $n-1$ (the letter $H$ is reserved
+for the catastrophe state itself). Conditioning on the entire catastrophe-free
+genealogy, every individual present independently declines to trigger, so
+\begin{equation}
+\label{m:eq:norupture}
+\pr{\text{no catastrophe before }n} = \ex{(1-\delta)^{\mathcal{E}_n}} .
+\end{equation}
+This identity is exact. Replacing $\mathcal{E}_n$ by $\ex{\mathcal{E}_n}$ is not:
+the map $e\mapsto(1-\delta)^e$ is convex, so Jensen's inequality gives
+$\ex{(1-\delta)^{\mathcal{E}_n}}\ge(1-\delta)^{\ex{\mathcal{E}_n}}$, and the
+substitution systematically understates the chance of getting through: the
+expectation in \cref{m:eq:norupture} is a nonlinear functional of the whole path,
+and no deterministic hazard closes it.
+Two further cautions belong with it. Non-catastrophe is not the same event as
+population survival: the probability of being both unruptured and non-zero at
+generation $n$ is $\ex{\ind\{\widetilde X_n>0\}(1-\delta)^{\mathcal{E}_n}}$, for
+which Jensen supplies no bound at all. And once a trigger occurs every surviving
+lineage is stopped together --- the compartment enters $H$ --- so the killed
+lineages are coupled and cannot be treated as independent after the fact ---
+although their family trees and trigger variables do factorise \emph{before} any
+trigger, which is what makes \cref{m:eq:norupture} correct. Closing the model
+properly therefore requires a marked or multivariate generating function, or the
+killed-generator / rate description of \cref{m:def:bdc,m:eq:bdcrates}.
+\end{remark}
+%% END: mean-field hazard remark
+
+% ---------------------------------------------------------------------------
+% FORMER LOCATION: sections/02_markov_chains.tex, m:sec:coupledexample
+%   (end of Coupled ODE--CTMC systems section)
+% LIKELY DESTINATION: chapter on compartment rupture / shared medium
+%   (beyond the single-cell BDC core chapter).
+% FIGURE ASSET retained on disk: figures/rupture_sawtooth.pdf
+%
+% INTEGRATION NOTE (E1/A2, added 2026-08-10).  SYMBOLS ARE INVERTED in this
+% block relative to Chapter A and to the BDC core chapter.  Here \delta is the
+% per-unit CLEARANCE rate of the medium (m:eq:mediumdecay) and \rho is the
+% CATASTROPHE rate; everywhere else \delta is the catastrophe rate.  The figure
+% caption below carries the same inversion (\rho = 0.08 catastrophe,
+% \delta = 0.30 clearance), and rupture_sawtooth.pdf was generated under it.
+% Before integrating: rename clearance to a free letter (\rho, \chi, \beta and
+% \omega are all free in the BDC core; \omega is now used in Chapter A app. B
+% and \chi in m:rem:notmeanfield), restore \delta to the catastrophe rate, and
+% regenerate the figure so its labels match.
+% ---------------------------------------------------------------------------
+
+%% BEGIN: rupture into a shared medium
+\subsubsection{A schematic instance: rupture into a shared medium}
+\label{m:sec:coupledexample}
+
+It is worth seeing the framework carry one concrete mechanism, and the natural
+one here is suggested by \cref{m:def:bdc}. Let $X_t$ be the contents of a
+compartment, evolving as the birth--death--catastrophe process of that
+definition, and let $y(t)\ge0$ be the concentration of material in a medium the
+compartment sits in. Between catastrophes the medium clears at a constant
+per-unit rate $\delta$,
+\begin{equation}
+\label{m:eq:mediumdecay}
+\dda{y}{t} = -\delta y ,
+\end{equation}
+and at a catastrophe time $\tau$ the entire contents of the compartment are
+released into the medium at once,
+\begin{equation}
+\label{m:eq:mediumjump}
+y(\tau+) = y(\tau-) + c\,X_{\tau-} ,
+\end{equation}
+with $c>0$ the material carried per individual. That is the first arrow of the
+coupling: the discrete component drives the flow. The second is equally present,
+since the catastrophe rate $\rho$, and any rate at which a surviving compartment
+takes material back up, may themselves be functions of the current concentration,
+so that a fuller medium hastens the next rupture. Both dependences are then
+active and the system is of the two-way form \cref{m:eq:coupledthree}.
+
+This is a schematic: it fixes the mechanism and the shape of the state, and the
+models actually built on it are developed \fwd{rupture}{in the chapter on
+compartment rupture}. Two of its features are worth isolating even so, because
+they survive into every instance and neither is visible in
+\cref{m:eq:coupledgenerator} as written. The continuous variable is
+\emph{impulsive}: \cref{m:eq:mediumjump} is a jump map, not a vector field, so
+the natural description is a flow punctuated by resets rather than a single
+differential equation, and the generator acquires a corresponding jump term in
+$y$. And the quantity released, $X_{\tau-}$, is the state of the chain at a
+stopping time rather than a parameter of the model: what the rupture finds is
+whatever the conditioned process happens to hold, so its law is the
+quasi-stationary problem of \cref{m:sec:condmeans} evaluated at a random time.
+That is why systems of this kind are approached with the generating-function and
+first-step machinery of \cref{m:sec:methods} rather than closed by simulation
+alone. \Cref{m:fig:sawtooth} shows one realisation.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.86\textwidth]{rupture_sawtooth.pdf}
+\caption{One exact event-driven realisation of the schematic
+\cref{m:eq:mediumdecay,m:eq:mediumjump}, with $\lambda=0.55$, $\mu=0.25$,
+$\rho=0.08$, $X_0=5$, $\delta=0.30$ and $c=0.4$; so that the picture continues
+past the first rupture, the compartment is re-seeded with $X_0$ individuals after
+each one. Upper panel: the compartment contents $X_t$, growing between ruptures
+and collapsing at them. Lower panel: the medium $y(t)$, decaying exponentially
+between ruptures and receiving the impulsive release $c\,X_{\tau-}$ at each.
+Dotted verticals mark the rupture times, aligned across the panels. The releases
+differ in size because each is the compartment's state at the moment its
+catastrophe clock happened to fire, and a rate proportional to the contents
+biases that state upwards, a fuller compartment rupturing sooner. That is why
+\cref{m:eq:mediumjump} cannot be replaced by a fixed increment.}
+\label{m:fig:sawtooth}
+\end{figure}
+%% END: rupture into a shared medium
+
+% ---------------------------------------------------------------------------
+% FORMER LOCATION: sections/03_methods.tex, end of m:sec:condmeans
+%   paragraph "Conditioning under two absorbing mechanisms"
+% LIKELY DESTINATION: BDC quasi-stationarity discussion after the core
+%   single-cell results; depends on killed-subgenerator labels above.
+% ---------------------------------------------------------------------------
+
+%% BEGIN: BDC quasi-stationarity paragraph
+\paragraph{Conditioning under two absorbing mechanisms.}
+One structural point about the birth--death--catastrophe process of
+\cref{m:def:bdc} belongs here. If a distribution $\nu$ on the positive states is
+quasi-stationary in the sense of \cref{m:def:qsd} and the relevant sums are finite,
+then for some $\theta>0$
+\begin{equation}
+\label{m:eq:bdcqsdeigen}
+\nu K = -\theta\nu,
+\qquad
+\mathbb{P}_\nu\!\left(T_0>t\right) = \ee^{-\theta t},
+\end{equation}
+with $K$ the killed subgenerator \cref{m:eq:killedsubgen}. Indeed
+quasi-stationarity writes the unnormalised positive-state law at time $t$ as
+$a(t)\nu$; the semigroup property forces $a(s+t)=a(s)a(t)$, and right-continuity
+gives $a(t)=\ee^{-\theta t}$. Differentiating at zero yields the left-eigenvector
+relation, and summing its coordinates against \cref{m:eq:bdcsurvivalloss}
+identifies the decay rate as
+\begin{equation}
+\label{m:eq:bdcdecayrate}
+\theta = \mu_1\nu_1 + \sum_{i\ge1}\kappa_i\nu_i .
+\end{equation}
+This is the continuous-time statement of what $A(p)$ and $(2p)^n$ do together in
+\cref{m:eq:Apdef}. One limiting case is worth
+isolating: if $\kappa_i\equiv\kappa$ is constant, the catastrophe clock is
+independent of the birth--death process, the killed semigroup factorises as
+$P^K_t = \ee^{-\kappa t}P^{\mathrm{BD},K}_t$, and the extra clock shifts the decay
+rate by $\kappa$ while leaving the conditional law unchanged. A state-dependent
+sequence such as $\kappa_i=i\kappa$ weights paths by their accumulated exposure and
+generally changes the quasi-stationary law itself. Whether a quasi-stationary
+distribution survives when the process is conditioned on \emph{neither} extinction
+nor rupture is not settled by the argument above, and is best approached by
+simulation in the first instance.
+%% END: BDC quasi-stationarity paragraph
+
+% ---------------------------------------------------------------------------
+% FORMER CROSS-REFERENCE SNIPPET: logistic surrogate paragraph in
+%   sections/02_markov_chains.tex (m:sec:logisticspeciation), which cited
+%   m:rem:notmeanfield. Rewritten in the compiled chapter without that cite.
+% ---------------------------------------------------------------------------
+%
+% That replacement is a modelling step and not an identity. It is the same
+% substitution of a mean for a random census that \cref{m:rem:notmeanfield} shows to
+% fail outright for a state-dependent catastrophe, and what separates the two cases is
+% only what is being asked of it: here it defines a tractable comparison process, there
+% it was asked to return an exact survival probability and did not. Everything that
+% follows is accordingly a statement about the surrogate, not about the chain
+% \cref{m:eq:speciationrate} defines.

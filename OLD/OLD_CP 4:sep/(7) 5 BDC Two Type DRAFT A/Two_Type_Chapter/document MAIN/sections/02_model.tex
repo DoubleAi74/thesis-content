@@ -1,0 +1,188 @@
+\section{Model, assumptions, and backward equations}
+\label{sec:model}
+
+\subsection{The two-type process}
+
+We begin with the process before catastrophe. Let $X_t$ and $Y_t$ denote the numbers of type-1 and type-2 individuals. A type-1 individual gives birth at rate $\lambda_1$, dies at rate $\mu_1$, and changes irreversibly into type 2 at rate $\nu$. A type-2 individual gives birth at rate $\lambda_2$ and dies at rate $\mu_2$. All these rates are non-negative.
+
+Catastrophe is a single global absorbing event. When the population is $(x,y)$, its instantaneous rate is
+\begin{equation}
+\label{eq:catastrophe-rate}
+\delta_1x+\delta_2y,
+\end{equation}
+where $\delta_1,\delta_2\geq0$. Thus one individual contributes a catastrophe rate determined by its type, but the first trigger sends the complete process to an absorbing state, denoted by $(\R,\R)$.
+
+\begin{definition}[Birth--death--catastrophe process]
+Before absorption, the non-zero transition rates from $(x,y)\in\mathbb Z_{\geq0}^2$ are
+\begin{equation*}
+\begin{array}{@{}r@{\;}l@{\qquad}l@{\hspace{0.9em}}l@{\quad}l@{}}
+(x,y)&\longrightarrow(x+1,y)&\text{at rate}&\lambda_1x,&\text{(birth)}\\
+(x,y)&\longrightarrow(x-1,y)&\text{at rate}&\mu_1x,&\text{(death)}\\
+(x,y)&\longrightarrow(x-1,y+1)&\text{at rate}&\nu x,&\text{(conversion)}\\
+(x,y)&\longrightarrow(x,y+1)&\text{at rate}&\lambda_2y,&\text{(birth)}\\
+(x,y)&\longrightarrow(x,y-1)&\text{at rate}&\mu_2y,&\text{(death)}\\
+(x,y)&\longrightarrow(\R,\R)&\text{at rate}&\delta_1x+\delta_2y.&\text{(catastrophe)}
+\end{array}
+\end{equation*}
+The state $(\R,\R)$ is absorbing.
+\end{definition}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\textwidth]{figures/fig01_process_schematic/fig01.pdf}
+  \caption{Two-type birth--death--conversion with a single global absorbing catastrophe.
+  Type~1 (blue) gives birth at rate $\lambda_1$, dies at $\mu_1$, and converts irreversibly to type~2 (vermillion) at rate $\nu$; type~2 gives birth at $\lambda_2$ and dies at $\mu_2$.
+  In state $(x,y)$ catastrophe fires at rate $\delta_1x+\delta_2y$ and absorbs the process in $(\R,\R)$.
+  $S(t)$ and $G(t)$ are the probabilities that this has not occurred by time $t$, from one type-1 or type-2 individual respectively.}
+  \label{fig:process-schematic}
+\end{figure}
+
+Write $\tau_{\!c}$ for the catastrophe time. We need two probabilities because the initial type matters:
+\begin{align*}
+S(t)&=\Prob_{(1,0)}\{\tau_{\!c}>t\},\\
+G(t)&=\Prob_{(0,1)}\{\tau_{\!c}>t\}.
+\end{align*}
+They satisfy $S(0)=G(0)=1$. These are no-catastrophe probabilities rather than population-survival probabilities: an ordinary death may remove the final individual without causing catastrophe, and such a path continues to count as catastrophe-free.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig03_genealogy_tree/fig03.pdf}
+  \caption{One continuous-time realisation starting from a single type-1 individual.
+  Filled nodes mark births; blue-ringed vermillion nodes mark type~$1\to2$ conversion; crosses mark ordinary death; red discs mark lineages killed by the global catastrophe (dashed wavefront: simultaneous absorption in $(\R,\R)$).
+  Parameters: $\lambda_1=1.0$, $\mu_1=0.55$, $\nu=0.40$, $\lambda_2=0.90$, $\mu_2=0.50$, $\delta_1=0.05$, $\delta_2=0.08$ (Gillespie, seed 2869).
+  \explorerlink{https://files.volvox.site/users/pages/6a6852d29e3764e44c80325e/files/1785221941917-TT_bdc_genealogy_visualiser.html}{Genealogy visualiser}}
+  \label{fig:genealogy}
+\end{figure}
+
+\subsection{Occupation-time representation}
+
+The same probabilities admit a second description that keeps ordinary extinction separate from catastrophe. Imagine first generating only the birth--death--conversion history $(X_s,Y_s)_{0\le s\le t}$, as if the absorbing catastrophe jump were switched off. Each such history is one population path: a full record of how many type-1 and type-2 individuals are present at every time. Along that record, catastrophe is restored as a Poisson clock of rate $\lambda(s)=\delta_1X_s+\delta_2Y_s$. Over a short interval of length $\Delta t$ the chance of no trigger is about $1-\lambda(s)\Delta t$. The chance of no trigger on the whole of $[0,t]$ is therefore a product of such factors, one per bin of a fine partition. As the mesh tends to zero that product becomes an exponential of a sum, and the sum becomes an integral (see \cref{app:product-to-exponential}):
+\[
+\exp\Bigl\{-\int_0^t\lambda(s)\,\dd s\Bigr\}
+=\exp\Bigl\{-\int_0^t\bigl(\delta_1X_s+\delta_2Y_s\bigr)\,\dd s\Bigr\}.
+\]
+Thus, given the path, this is the probability that the clock has not fired by time $t$. The expectation then averages that pathwise probability over random branching histories, recovering $\Prob\{\tau_{\!c}>t\}$.
+
+\begin{proposition}[Occupation-time transform]
+\label{prop:feynman-kac}
+For the corresponding catastrophe-free branching process,
+\begin{subequations}
+\label{eq:feynman-kac}
+\begin{align}
+S(t)&=\E_{(1,0)}\!\left[
+\exp\!\left\{-\int_0^t(\delta_1X_s+\delta_2Y_s)\,\dd s\right\}\right],\\
+G(t)&=\E_{(0,1)}\!\left[
+\exp\!\left\{-\int_0^t(\delta_1X_s+\delta_2Y_s)\,\dd s\right\}\right].
+\end{align}
+\end{subequations}
+Consequently $S$ and $G$ lie in $[0,1]$ and are non-increasing in time.
+\end{proposition}
+
+\begin{proof}
+Conditional on a path, \eqref{eq:catastrophe-rate} is the intensity of an inhomogeneous Poisson clock, whose survival probability is the displayed exponential. Taking the expectation over the branching path gives \cref{eq:feynman-kac}. The bounds and monotonicity hold pathwise, hence also after averaging.
+\end{proof}
+
+A lineage may die out by ordinary deaths and still contribute a positive weight to $S(t)$ or $G(t)$ if the catastrophe clock never rang. The calculation below uses backward equations, but this is the object those equations compute.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig02_path_exposure/fig02.pdf}
+  \caption{Why the no-catastrophe probability depends on occupation times, not only terminal counts.
+  Two deterministic histories on $t\in[0,10]$ share $(X_0,Y_0)=(1,0)$ and $(X_{10},Y_{10})=(2,1)$: (a)~early peak then die-back; (b)~late bloom.
+  (c)~Rates $\lambda=\delta_1X+\delta_2Y$ share the terminal hazard but differ in integrated exposure by about $2.4$.
+  (d)~Pathwise weights $\exp\{-\int\lambda\,ds\}$ averaged in \cref{prop:feynman-kac} ($\delta_1=0.15$, $\delta_2=0.10$).}
+  \label{fig:path-exposure}
+\end{figure}
+
+\subsection{First-event calculation}
+
+The backward equations follow from the first event in a short interval $\Delta t$. Start with one type-1 individual. With high probability nothing happens and the no-catastrophe probability from that state remains $S(t)$. A birth produces two independent type-1 lineages, so the contribution is $S(t)^2$. An ordinary death leaves no one, and an empty population contributes probability one of avoiding future catastrophe. Conversion replaces the type-1 lineage by a type-2 lineage and contributes $G(t)$. Catastrophe in the interval means the event being measured has already failed, so that case contributes zero rather than a survival factor. The partition is summarised in \cref{fig:first-event}. Collecting rates gives
+\begin{align*}
+S(t+\Delta t)
+={}&\bigl[1-(\lambda_1+\mu_1+\nu+\delta_1)\Delta t\bigr]S(t)\\
+&+\lambda_1\Delta t\,S(t)^2
++\mu_1\Delta t
++\nu\Delta t\,G(t)
++o(\Delta t).
+\end{align*}
+Starting from one type-2 individual, the same reasoning yields birth, death, inactivity, and catastrophe only (there is no conversion out of type~2), and we obtain
+\begin{align*}
+G(t+\Delta t)
+={}&\bigl[1-(\lambda_2+\mu_2+\delta_2)\Delta t\bigr]G(t)\\
+&+\lambda_2\Delta t\,G(t)^2
++\mu_2\Delta t+o(\Delta t).
+\end{align*}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/fig05_first_event/fig05.pdf}
+  \captionsetup{labelformat=empty,labelsep=none}
+  \caption{}
+  \label{fig:first-event}
+\end{figure}
+
+Subtract the value at $t$, divide by $\Delta t$, and let $\Delta t$ tend to zero. We obtain the triangular backward system
+\begin{subequations}
+\label{eq:backward-unscaled}
+\begin{align}
+\frac{\dd S}{\dd t}
+&=\lambda_1S^2-(\lambda_1+\mu_1+\nu+\delta_1)S
++\mu_1+\nu G,\label{eq:S-unscaled}\\
+\frac{\dd G}{\dd t}
+&=\lambda_2G^2-(\lambda_2+\mu_2+\delta_2)G
++\mu_2,\label{eq:G-unscaled}
+\end{align}
+\end{subequations}
+with $S(0)=G(0)=1$. Immediately,
+\begin{equation}
+\label{eq:initial-slopes}
+S'(0)=-\delta_1,
+\qquad
+G'(0)=-\delta_2.
+\end{equation}
+The equations therefore reproduce the initial catastrophe rates before any birth, death, or conversion has had time to occur.
+
+\subsection{Dimensionless form}
+
+It is convenient to measure time in units of the type-1 birth timescale. We therefore assume from this point that
+\begin{equation}
+\label{eq:lambda1-positive}
+\lambda_1>0,
+\end{equation}
+and set $\hat t=\lambda_1t$. Define
+\begin{equation*}
+\widehat S(\hat t)=S(\hat t/\lambda_1),
+\qquad
+\widehat G(\hat t)=G(\hat t/\lambda_1),
+\end{equation*}
+together with
+\begin{equation}
+\label{eq:scaled-rates}
+\hat\mu_i=\frac{\mu_i}{\lambda_1},
+\qquad
+\hat\nu=\frac{\nu}{\lambda_1},
+\qquad
+\hat\delta_i=\frac{\delta_i}{\lambda_1},
+\qquad
+\hat\lambda_2=\frac{\lambda_2}{\lambda_1}.
+\end{equation}
+Every rate is now a dimensionless ratio to $\lambda_1$, and the type-1 birth coefficient in the scaled equations is one. With primes denoting differentiation in $\hat t$, the system becomes
+\begin{subequations}
+\label{eq:backward-scaled}
+\begin{align}
+\widehat S'
+&=\widehat S^2-\hat\kappa_1\widehat S
++\hat\mu_1+\hat\nu\widehat G,
+&\hat\kappa_1&=1+\hat\mu_1+\hat\nu+\hat\delta_1,
+\label{eq:S-scaled}\\
+\widehat G'
+&=\hat\lambda_2\widehat G^2
+-(\hat\lambda_2+\hat\mu_2+\hat\delta_2)\widehat G
++\hat\mu_2.
+\label{eq:G-scaled}
+\end{align}
+\end{subequations}
+
+For the main formula we take $\hat\lambda_2>0$, $\hat\delta_2>0$, and $\hat\nu>0$. The cases $\lambda_1=0$, $\hat\lambda_2=0$, $\hat\delta_2=0$, and $\hat\nu=0$ are separated in \cref{app:limits}. Those boundaries matter: the scaling or the coordinate used in the hypergeometric reduction degenerates there, even though the original unscaled initial-value problem remains regular.
+
+\FloatBarrier

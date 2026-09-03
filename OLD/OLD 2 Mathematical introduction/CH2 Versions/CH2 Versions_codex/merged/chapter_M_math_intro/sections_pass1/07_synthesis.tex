@@ -1,0 +1,33 @@
+\section{Synthesis and what carries forward}\label{m:sec:summary}
+
+The chapter has assembled three layers of machinery.  The first is the standard
+Markov-chain apparatus: exponential clocks and competing events, continuous-time
+generators, Kolmogorov equations, probability generating functions and the linear
+birth--death process.  Its generating-function equation
+\cref{m:eq:bdpde} is the template for the later calculations.
+
+The second layer is the branching and quasi-stationary picture.  The binary
+Galton--Watson process supplies an exact survival recursion, its critical scaling
+and its total-progeny law.  In the subcritical regime, conditioning on survival
+produces a limiting mean \(1/A(p)\) and variance \cref{m:eq:condvar}.  Continuous
+time provides the explicit comparison constant
+\(A_{\mathrm c}(p)=(1-2p)/(1-p)\).  The discrete constant is used here as a named
+object only: its product, series, bounds, near-critical asymptotics,
+Koenigs-function identification and obstruction theory are all reserved for
+\ChA.
+
+The third layer is the method of characteristics for bivariate generating-function
+equations.  It was checked against absorption--death, where an independent-particle
+answer was already available, and then applied to absorption--birth--death to give
+the closed form \cref{m:eq:Gabd}.  The appendices show how the special-function
+identity enters and how state probabilities are recovered from the resulting PGFs.
+
+Two questions remain naturally on the mathematical side of this chapter.  First,
+when extinction and catastrophe coexist, the relevant conditional law is that of a
+killed chain conditioned on avoiding both mechanisms; the eigenrelation in
+\cref{m:eq:bdc-qsd-eigenrelation} gives the correct starting point, but not a
+general solution.  Second, the Jensen lower bound for random catastrophe exposure
+is rigorous, while its tightness depends on fluctuations of the accumulated
+population and must be assessed model by model.  Later modelling chapters take up
+the birth--death--catastrophe and multi-compartment extensions; this chapter stops
+with the reusable toolkit.

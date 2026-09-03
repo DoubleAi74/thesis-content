@@ -1,0 +1,351 @@
+\section{Branching, extinction and quasi-stationarity}
+\label{sec:gw}
+
+The linear birth--death process resolves events one at a time.  A
+Galton--Watson process instead advances by generations, replacing every member of
+the current population simultaneously by a random number of descendants.  This
+change of clock preserves the branching property but alters the states available
+to a surviving population.  That difference will eventually account for the gap
+between \(A_{\mathrm c}(p)\) and its discrete counterpart.
+
+\subsection{The Galton--Watson construction}
+
+Let \(\{\xi_{n,i}:n\geq0,i\geq1\}\) be independent copies of a non-negative
+integer-valued random variable \(\xi\), with
+\[
+  \Prb(\xi=k)=p_k,
+  \qquad
+  \phi(s)=\E[s^\xi]=\sum_{k=0}^{\infty}p_ks^k,
+  \qquad
+  m=\E[\xi]=\phi'(1).
+\]
+Starting from one ancestor, \(Z_0=1\), define
+\begin{equation}
+  Z_{n+1}=\sum_{i=1}^{Z_n}\xi_{n,i},
+  \label{eq:gw-definition}
+\end{equation}
+with an empty sum equal to zero.  Conditional independence gives
+\begin{equation}
+  \E[s^{Z_{n+1}}\mid Z_n]=\phi(s)^{Z_n}.
+  \label{eq:gw-conditional-pgf}
+\end{equation}
+Consequently the PGF \(F_n(s)=\E[s^{Z_n}]\) satisfies
+\(F_{n+1}=F_n\circ\phi=\phi^{\circ(n+1)}\), while
+\begin{equation}
+  \E[Z_{n+1}\mid Z_n]=mZ_n,
+  \qquad
+  \E[Z_n]=m^n.
+  \label{eq:gw-mean}
+\end{equation}
+The extinction probability by generation \(n\) is
+\(u_n=F_n(0)=\Prb(Z_n=0)\).  Since \(F_{n+1}(0)=\phi(F_n(0))\),
+\begin{equation}
+  u_{n+1}=\phi(u_n),
+  \qquad u_0=0.
+  \label{iterPGF}
+\end{equation}
+The ultimate extinction probability is the smallest fixed point of \(\phi\) in
+\([0,1]\) under the usual non-degeneracy assumptions
+\cite{Harris1963,Athreya1972}.  In particular, extinction is certain when
+\(m\leq1\), whereas \(m>1\) permits survival with positive probability.
+
+\subsection{The multi-type extension}
+\label{sec:multitype}
+
+Later compartment models distinguish particles by type, location or phenotype.
+The Galton--Watson construction extends without changing its logic.  Suppose
+there are \(d\) types and a type-\(i\) individual produces the offspring vector
+\(\boldsymbol\xi^{(i)}=(\xi^{(i)}_1,\ldots,\xi^{(i)}_d)\), with PGF
+\begin{equation}
+  \Phi_i(\boldsymbol s)
+  =\E\!\left[\prod_{j=1}^{d}s_j^{\xi^{(i)}_j}\right],
+  \qquad i=1,\ldots,d.
+  \label{eq:multitype-offspring-pgf}
+\end{equation}
+The mean progeny matrix
+\begin{equation}
+  M_{ij}
+  =\left.\frac{\partial\Phi_i}{\partial s_j}\right|_{\boldsymbol s=\boldsymbol1}
+  =\E[\xi^{(i)}_j]
+  \label{eq:mean-progeny-matrix}
+\end{equation}
+records the expected number of type-\(j\) children produced by one type-\(i\)
+parent.  If population composition is represented by a row vector
+\(\boldsymbol Z_n\), then
+\begin{equation}
+  \E[\boldsymbol Z_{n+1}\mid\boldsymbol Z_n]
+  =\boldsymbol Z_nM,
+  \qquad
+  \E[\boldsymbol Z_n]=\E[\boldsymbol Z_0]M^n.
+  \label{eq:multitype-mean}
+\end{equation}
+
+Let \(u_i^{(n)}\) be the probability that all descendants are extinct by
+generation \(n\) when the founder has type \(i\).  Componentwise first-step
+conditioning gives
+\begin{equation}
+  \boldsymbol u^{(n+1)}
+  =\boldsymbol\Phi(\boldsymbol u^{(n)}),
+  \qquad
+  \boldsymbol u^{(0)}=\boldsymbol0,
+  \label{eq:multitype-extinction-iteration}
+\end{equation}
+and the ultimate extinction vector is the least fixed point of
+\(\boldsymbol\Phi\) in \([0,1]^d\).  For a finite, irreducible and
+non-degenerate type system, the threshold is the spectral radius
+\(\varrho(M)\): extinction is certain when \(\varrho(M)\leq1\), whereas
+\(\varrho(M)>1\) gives a positive survival probability
+\cite{Athreya1972}.  This criterion describes reproductive amplification of a
+type mixture.  It does not determine rupture or killing when the catastrophe
+rate depends on composition; that requires the transient kernel of the killed
+process as well as its mean matrix.
+
+\subsection{Binary death or division}
+\label{sec:deathordivision}
+
+The discrete model used throughout the chapter has the offspring law
+\begin{equation}
+  \Prb(\xi=2)=p,
+  \qquad
+  \Prb(\xi=0)=1-p,
+  \qquad
+  \phi(s)=1-p+ps^2.
+  \label{eq:pgfbinary}
+\end{equation}
+Its mean offspring number is \(m=2p\), so the process is subcritical, critical or
+supercritical according as \(p<\tfrac12\), \(p=\tfrac12\) or
+\(p>\tfrac12\).  The mean \(\E[Z_n]=(2p)^n\) identifies these three regimes, but
+it cannot distinguish a common early extinction from a rare surviving tree.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.78\textwidth]{simpleGWvis.png}\\[5pt]
+  \includegraphics[width=0.78\textwidth]{subGWvis.png}
+  \caption{Genealogies of the binary Galton--Watson process, with generation
+  increasing to the right.  The upper realisation is supercritical
+  (\(p=0.58\)); the lower is subcritical (\(p=0.47\)).  A single trajectory does
+  not identify the regime, but the contrast indicates why extinction and
+  conditional size must be studied separately.}
+  \label{fig:gwvis}
+\end{figure}
+
+Let
+\begin{equation}
+  S_n=\Prb(Z_n>0)=1-u_n
+  \label{eq:Sn-def}
+\end{equation}
+denote survival to generation \(n\).  Substitution of
+\(u_n=1-S_n\) into \eqref{iterPGF} yields the central recursion
+\begin{equation}
+  S_{n+1}=2pS_n-pS_n^2
+  =mS_n\left(1-\frac{S_n}{2}\right),
+  \qquad S_0=1.
+  \label{SnIter}
+\end{equation}
+The quadratic term has a direct first-step interpretation.  If the founder dies,
+the lineage is already extinct; if it divides, survival requires at least one of
+the two independent daughter lineages to remain alive.
+
+Because extinction is absorbing, \(S_n\) is non-increasing and has a limit.  The
+fixed points of \eqref{SnIter} are
+\begin{equation}
+  S_\infty=0,
+  \qquad
+  S_\infty=\frac{2p-1}{p}.
+  \label{eq:binary-fixed-points}
+\end{equation}
+The second value is admissible only when \(p>\tfrac12\).  Hence
+\begin{equation}
+  \Prb(Z_n>0\ \text{for all }n)
+  =\begin{cases}
+     0,&0\leq p\leq\tfrac12,\\[2pt]
+     (2p-1)/p,&\tfrac12<p\leq1.
+   \end{cases}
+  \label{eq:binary-survival-limit}
+\end{equation}
+At \(p=\tfrac12\), the positive fixed point meets the origin and the linear
+contraction disappears.  This is the source of the slow critical decay.
+
+\subsection{Critical survival and lifetime}
+\label{sec:criticalcase}
+
+At criticality, \eqref{SnIter} becomes
+\begin{equation}
+  S_{n+1}=S_n-\frac12S_n^2.
+  \label{eq:critical-survival-recurrence}
+\end{equation}
+The asymptotic form can be obtained without replacing the difference equation by
+an ODE.  Since \(S_n\downarrow0\),
+\begin{equation}
+  \frac{1}{S_{n+1}}-\frac{1}{S_n}
+  =\frac{1}{2-S_n}\longrightarrow\frac12.
+  \label{eq:critical-reciprocal-increment}
+\end{equation}
+Ces\`aro averaging of these increments, or the Stolz--Ces\`aro theorem, therefore
+gives
+\begin{equation}
+  S_n\sim\frac{2}{n}
+  \qquad (n\to\infty).
+  \label{twoovrn_sn}
+\end{equation}
+
+Let \(T=\inf\{n\geq0:Z_n=0\}\) be the extinction generation.  The tail-sum
+formula gives
+\begin{equation}
+  \E[T]
+  =\sum_{n=0}^{\infty}\Prb(T>n)
+  =\sum_{n=0}^{\infty}S_n.
+  \label{eq:ETsumSn}
+\end{equation}
+By \eqref{twoovrn_sn}, the last series has the same tail as twice the harmonic
+series, and hence \(\E[T]=\infty\), although \(T<\infty\) almost surely.  The
+apparently conflicting statements are resolved by conditioning:
+\begin{equation}
+  \E[Z_n\mid Z_n>0]=\frac{\E[Z_n]}{S_n}
+  =\frac{1}{S_n}\sim\frac{n}{2}.
+  \label{eq:critical-conditional-mean}
+\end{equation}
+Surviving critical trees become linearly larger, while their probability falls
+like \(1/n\), leaving the unconditional mean equal to one.
+
+Two related exponents follow from the same binary structure.  First,
+\(
+  \Prb(T=n)=S_{n-1}-S_n=\tfrac12S_{n-1}^2\sim2n^{-2}.
+\)
+Second, if
+\(\mathcal T=\sum_{j\geq0}Z_j\) is total progeny, then a complete binary tree with
+\(k\) division vertices has \(2k+1\) vertices altogether.  At \(p=\tfrac12\),
+\begin{equation}
+  \Prb(\mathcal T=2k+1)
+  =\frac{1}{2^{2k+1}}\frac{1}{k+1}\binom{2k}{k}
+  \sim \frac{1}{2\sqrt{\pi}}k^{-3/2}.
+  \label{eq:critical-total-progeny}
+\end{equation}
+Thus the familiar \(3/2\) exponent applies along the odd support of
+\(\mathcal T\), rather than to every integer indiscriminately.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.96\textwidth]{power_law_fixed.pdf}
+  \caption{Critical binary branching in \(10^6\) simulated realisations.  The
+  panels show the \(n^{-1}\) survival tail, the \(n^{-2}\) extinction-time mass
+  and the \(n^{-3/2}\) total-progeny mass.  The last scaling is understood on the
+  odd support imposed by binary division.}
+  \label{fig:power_law}
+\end{figure}
+
+\subsection{The limiting conditional distribution}
+\label{sec:qsd}
+
+Return to the subcritical range \(0<p<\tfrac12\), so \(m=2p<1\).  The
+unconditional law converges to the point mass at zero.  Its informative remnant is
+the conditional law
+\begin{equation}
+  \Prb(Z_n=k\mid Z_n>0),
+  \qquad k\geq1.
+  \label{eq:conditional-law}
+\end{equation}
+For a non-degenerate subcritical Galton--Watson process with the mild moment
+conditions satisfied here, Yaglom's theorem states that
+\eqref{eq:conditional-law} converges to a proper distribution on the positive
+integers \cite{Yaglom1947,Athreya1972}.  This limiting conditional distribution
+is quasi-stationary: if it is used as the initial law, one update followed by
+conditioning on non-extinction leaves it unchanged.
+
+The late survival scale is obtained directly from \eqref{SnIter}.  Since
+\(S_n\to0\), the ratio \(S_{n+1}/S_n=m(1-S_n/2)\) tends to \(m\).  Define
+\begin{equation}
+  A(p)=\lim_{n\to\infty}\frac{S_n}{m^n},
+  \qquad m=2p.
+  \label{eq:Ap-def}
+\end{equation}
+The product argument in \cref{sec:product} proves that this limit exists and is
+strictly positive for \(0<p<\tfrac12\).  It follows that
+\begin{equation}
+  S_n\sim A(p)m^n.
+  \label{lateS}
+\end{equation}
+The quantity on the right of \eqref{eq:Ap-def} is a limit of ratios; it is not the
+limit of \(S_n\), which remains zero.
+
+The first conditional moment now follows without further approximation:
+\begin{equation}
+  \E[Z_n\mid Z_n>0]
+  =\frac{\E[Z_n]}{S_n}
+  =\frac{m^n}{S_n}
+  \longrightarrow \frac{1}{A(p)}.
+  \label{eq:qsmean}
+\end{equation}
+The constant \(1/A(p)\) will be called the quasi-stationary mean.  It measures
+the size of a late surviving population, not the frequency with which survival
+occurs.
+
+The second moment makes the same separation visible.  The offspring variance is
+\(
+  \sigma^2=4p(1-p)
+\), and the standard branching recurrence gives, for \(m\neq1\),
+\begin{equation}
+  \Var(Z_n)
+  =\sigma^2m^{n-1}\frac{1-m^n}{1-m},
+  \qquad
+  \E[Z_n^2]=m^{2n}+\Var(Z_n).
+  \label{eq:gw-second-moment}
+\end{equation}
+Dividing by \(S_n\sim A(p)m^n\) and using
+\(
+  \sigma^2/m=2(1-p)=2-m
+\)
+gives
+\begin{align}
+  \E[Z_n^2\mid Z_n>0]
+  &\longrightarrow
+  \frac{1}{A(p)}\left(1+\frac{1}{1-2p}\right),
+  \label{eq:conditional-second-moment}\\
+  \Var(Z_n\mid Z_n>0)
+  &\longrightarrow
+  \frac{1}{A(p)}\left(1+\frac{1}{1-2p}\right)
+  -\frac{1}{A(p)^2}.
+  \label{eq:condvar}
+\end{align}
+These moment limits are consequences of the Yaglom limit, rather than a proof of
+distributional convergence by themselves.  They show that the whole late
+conditional scale is controlled by \(p\) and the single constant \(A(p)\).
+
+If \(H\) denotes the PGF of the Yaglom distribution, then the branching property
+also yields the functional equation
+\begin{equation}
+  H(\phi(s))=mH(s)+1-m,
+  \qquad H(0)=0,\quad H(1)=1.
+  \label{eq:yaglom-functional}
+\end{equation}
+For the binary process its support lies in the positive even integers, because
+\(Z_n\) is even for every \(n\geq1\).  This simple parity constraint will later
+provide a useful bound on \(A(p)\).
+
+\subsection{A continuum approximation and its limit}
+\label{sec:riccati}
+
+Write \(\varepsilon=1-2p=1-m>0\).  The exact survival recursion can be written as
+\begin{equation}
+  S_{n+1}-S_n=-\varepsilon S_n-pS_n^2.
+  \label{eq:Sdiff}
+\end{equation}
+When \(S_n\) changes little over one generation, replacing the left-hand side by
+a derivative gives the Riccati equation
+\begin{equation}
+  \frac{\dd S}{\dd n}=-\varepsilon S-pS^2.
+  \label{eq:riccati}
+\end{equation}
+With \(U=1/S\), this becomes \(U'=\varepsilon U+p\), and hence
+\begin{equation}
+  S(n)=\frac{\varepsilon}
+  {C\varepsilon\e^{\varepsilon n}-p}
+  \label{eq:riccatisol}
+\end{equation}
+for a constant \(C\).  The approximation recovers the critical \(1/n\) scale and
+the subcritical exponential scale, but it cannot determine their amplitude:
+\(C\) is fixed by the early generations, exactly where the continuum replacement
+is least accurate.  The constant \(A(p)\) therefore has to be recovered from the
+discrete recursion itself.
+
+\FloatBarrier

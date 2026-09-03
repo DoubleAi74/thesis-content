@@ -1,0 +1,37 @@
+\section{Summary}
+\label{sec:summary}
+
+Three things have been assembled in this chapter, and it is worth separating them
+before they are used.
+
+The first is standard apparatus: exponential clocks and the races between them,
+continuous-time Markov chains and their generators, generating functions, and the
+linear birth--death process together with the first-order equation
+\cref{eq:bdpde} satisfied by its generating function. That equation is the template
+for every generating-function calculation in this thesis.
+
+The second is the quasi-stationary picture. A subcritical binary Galton--Watson
+process is certain to die out, but conditioned on survival its population settles
+to a fixed distribution whose mean is $1/A(p)$ and whose variance is
+\cref{eq:condvar}. Both are expressed entirely in terms of $p$ and the constant
+$A(p) = \lim_n S_n/(2p)^n$. That constant admits the exact product
+\cref{eq:prodFormula} and the exact series \cref{eq:Aseries}; it is confined by
+\cref{prop:bounds} between half the continuous-time constant $\Ac(p)$ and
+$2\varepsilon/(1+2\varepsilon)$, approaching the first as $p\to0$ and the second as
+$p\to\tfrac12^-$, where $A(p)\sim2(1-2p)$; and it is a value of the Koenigs
+linearising function of the logistic map, which is why the search for an elementary
+formula failed and should be expected to. \Cref{eq:Apractical} is the scheme used
+to evaluate it in the rest of this thesis.
+
+The third is the method of characteristics for the generating-function equations of
+absorption models, developed on a case whose answer was already known and then
+applied to absorption--birth--death, where it produces the closed form
+\cref{eq:Gabd}. That is the tool that
+\fwd{bdc}{the later chapters on birth--death--catastrophe processes} take up, first
+for the process of \cref{def:bdc} and then for the multi-type and multi-compartment
+extensions.
+
+What has deliberately not been done here is to develop those extensions. The
+birth--death--catastrophe process has been defined and its generating-function
+equation written down, and no more; the results belong to the chapters that need
+them.

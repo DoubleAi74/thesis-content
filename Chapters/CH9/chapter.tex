@@ -1,0 +1,34 @@
+% ===========================================================================
+%  chapter.tex --- thesis-ready fragment.
+%  Requires the macros of preamble.tex.
+% ===========================================================================
+
+\chapter{Models with non-constant rates}
+\label{var:ch:rates}
+
+\input{sections/01_introduction}
+\input{sections/02_logistic_speciation}
+\input{sections/03_pimentel}
+\input{sections/05_rrrr}
+\input{sections/06_birth_plague}
+\input{sections/07_public_good}
+\input{sections/08_two_phase}
+\input{sections/09_discussion}
+
+\clearpage
+\begingroup
+\centering
+\rule{0.35\textwidth}{0.4pt}\\[0.4em]
+{\scshape Appendices}\\[-0.2em]
+\rule{0.35\textwidth}{0.4pt}\par
+\endgroup
+\vspace{1em}
+
+\begingroup
+\renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
+\renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
+\renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
+\input{sections/A_model_summary}
+\input{sections/B_figure_record}
+\input{sections/C_characteristics}
+\endgroup

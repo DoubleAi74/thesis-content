@@ -1,0 +1,44 @@
+\section{Standing setup}\label{a:sec:setup}
+
+Let \(Z_0=1\), and let each individual independently leave two offspring with
+probability \(p\) and none with probability \(1-p\).  With
+\(S_n=\mathbb P(Z_n>0)\), the offspring PGF
+\(\phi(z)=pz^2+(1-p)\) gives
+\begin{equation}
+ S_{n+1}=2pS_n-pS_n^2,
+ \qquad S_0=1.
+ \label{a:eq:SnIter}
+\end{equation}
+Throughout the chapter
+\begin{equation}
+ \varepsilon=1-2p,
+ \qquad r=2p,
+ \qquad 0\le p<\tfrac12.
+ \label{a:eq:epsdef}
+\end{equation}
+The endpoint value \(A(0)=\tfrac12\) is understood by continuity from
+\(p\downarrow0\).
+
+The Kolmogorov constant is
+\begin{equation}
+ A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n}.
+ \label{a:eq:setup-A}
+\end{equation}
+Since \(\mathbb E Z_n=(2p)^n\), conditioning on the non-zero state gives
+\begin{equation}
+ \mathbb E[Z_n\mid Z_n>0]=\frac{(2p)^n}{S_n}
+ \longrightarrow\frac1{A(p)}.
+ \label{a:eq:qsmean}
+\end{equation}
+The full derivation of the conditional law and its variance belongs to \ChM; the
+recap here fixes only the interface needed below.
+
+For later comparison, the continuous-time linear birth--death process with birth
+and death rates \(\lambda\) and \(\mu\), matched through the competing-clock
+probability \(p=\lambda/(\lambda+\mu)\), has
+\begin{equation}
+ A_{\mathrm c}(p)=\frac{1-2p}{1-p}.
+ \label{a:eq:Acts}
+\end{equation}
+Its derivation is also given in \ChM, and the resulting closed form provides the
+explicit benchmark for the discrete constant used throughout this chapter.

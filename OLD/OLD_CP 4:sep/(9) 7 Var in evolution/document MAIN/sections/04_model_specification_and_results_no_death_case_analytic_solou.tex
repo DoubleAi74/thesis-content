@@ -1,0 +1,177 @@
+\section{Model specification and results (no death case analytic soloutions)}
+
+The following model is a version of the Yule process where the division rate, $\beta$, is a function of time. $\yt$ describes the number of species and it changes in continuous time according to the transition probabilities:
+
+
+\begin{align}
+\label{cases1}
+\begin{split}
+\pr{\yy_{t+\delt} - \pr{\yt} = 1} = \beta(t)\delt\yt + o(\delt)\\
+\pr{\yy_{t+\delt} - \yt = 0} = 1 -  \beta(t)\delt\yt + o(\delt)
+\end{split}
+\end{align}
+defined for $\delt\to 0$. \par
+$N(t)$ is an index for the total population size, of individuals, constituting the sum of those in each $\yt$ species. Assuming the overall population is large, even from the beginning, $N(t)$ is defined as a real number. Starting at $N(0) = N_0$, the population develops acording to standard logistic growth: 
+$$\ddt{N} = rN\lrb{1 - \frac{N}{K}};$$
+Which permits description by the known formula, 
+$$N(t) = \frac{K\ee^{rt}}{\xi + \ee^{rt}},$$
+with the constant combination, $\xi = K/N_0 - 1$.\par
+As discussed above, the model is set up to capture a variable speciation rate, and $\beta(t)$ varies with $N(t)$ to account for selection pressure --- higher when resources are less scarce. The exact form of $\beta(t)$ is a potential subject of experimentation. For now, we will  develop the case where
+\begin{equation}
+\label{basicRate1}
+\beta(t) = \sigma\lrb{K-N(t)},
+\end{equation}
+but later, the following alternatives may also be explored:
+\vspace{10pt}
+\hrule
+\vspace{10pt}
+\noindent
+\textbf{Alternative speciation rates}
+\begin{itemize}
+\item $\beta_2(t) = \sigma\lrb{K-N(t)} + \eta$,\\ ($\eta$ constant)
+\item $\beta_3{t} = \sigma \ddt{N}$
+\item $\beta_4{t} = \sigma \ddt{N} + \eta$
+\item $\beta_5(t) = \sigma\lrb{K_t-N(t)}$,\\ with $K_t$ behaving according to some random switching regime (this may be a little too ambitions)
+\end{itemize}
+It may make sense for the speciation rate to depend on the rate of population increase rather than simply its size compared to availability of resource. With rapid individual replication, more opportunities are present for specific mutation events.\par
+The incorporation of $\eta$ in case $\beta_2$ \& $\beta_4$ represents some baseline rate of variation, approached to at late time at the $N(t)$ reaches its steady state. This seems fitting to represent some underlying disequalibria in an ecosystem.  
+\vspace{10pt}
+\hrule
+\vspace{10pt}
+
+\noindent
+With the above formula for $N(t)$, we can also write the division rate, (\ref{basicRate1}), as 
+$$\beta(t) = \sigma\lrb{K - \frac{K\ee^{rt}}{\xi + \ee^{rt}}}$$
+simplifying to 
+$$\beta(t) = \sigma K \frac{\xi}{\xi + \ee^{rt}}$$
+
+
+\subsection{Expectiation $\mean{\yt}$}
+In the chosen case where $\beta(t)$ tends to 0 at late time, the final state of the process, $\yy_{t\to\infty}$, will arive at some fixed value. This could be thought of independently as a random variable with some mean, variance and distribution. Knowing more about this asymptoitc stationary distribution, we can ask questions surrounding how its nature depends on the parameters and their inyterplay. Here we will compute the mean, but we can do better than mearly compute its late time measure. It turns out quite straightforward to foumulate the expected value as a function of time; in this way we can see how the final position is approached. \par
+
+If we consider how the expectation of $\yy_t$ changes over some vanishing interval, $\delt$, the mean after the interval is equivalent to the mean before plus the expected change;
+\begin{equation}
+\label{ExpectChange1} 
+\mean{\yy_{t+\delt}} = \mean{\yt} + \mean{\yy_{t+\delt} - \yy_t}.
+\end{equation}
+And this latter term, the change, can be analysed in tems of the definition of the dirctete expectation, along with the possible cases and their associated probabilities (see (\ref{cases1})):
+
+$$ \mean{\yy_{t+\delt} - \yy_t} = 0 \cdot \lrbs{1 -  \beta(t)\yt\delt} + 1\cdot \lrbs{\beta(t)\yt\delt} + o(\delt)$$
+Ommitting the $\delt$, this simplifies to
+$$ \mean{\yy_{t+\delt} - \yy_t} =  {\beta(t)\delt\yt} $$
+which is equivalent to 
+$$ \mean{\yy_{t+\delt} - \yy_t} =  {\beta(t)\delt\mean{\yt}}$$
+(by taking the expected value of each side). Hence, with (\ref{ExpectChange1}), we can write
+$$\frac{\mean{\yy_{t+\delt}} -  \mean{\yt}}{\delt} =    {\beta(t)\mean{\yt}},$$
+or in the limit $\delt \to 0$,
+$$\ddt{} \mean{\yy_t} = \beta(t) \mean{\yt}.$$
+This is a seperable equation $\to$
+$$\int\frac{1}{\mean{\yt}}\dd \mean{\yt}  = \int \beta(t) \dd t =  \sigma K \xi \int \frac{1}{\xi + \ee^{rt}} \dd t.$$
+And with 
+\begin{equation}
+\label{intBetaT}
+\int \frac{1}{\xi + \ee^{rt}} \dd t =\frac{1}{\xi} \lrb{ t - \frac{1}{r} \ln\lrb{\xi + \ee^{rt}} },
+\end{equation}
+it permits a solution in the following way.
+$$\ln\lrb{\mean{\yt}} =  \sigma K\lrb{ t - \frac{1}{r} \ln\lrb{\xi + \ee^{rt}} }  + \text{const},$$
+$$\mean{\yt} = C_0 \ee^{\sigma K\lrb{ t - \frac{1}{r} \ln\lrb{\xi + \ee^{rt}} } }.$$
+The constant, $C_0$, is fixed with the initial condition, $\mean{\yy_0} = 1$:
+$$C_0 = \ee^{\frac{\sigma K}{r} \ln\lrb{ \xi+1}}.$$
+So
+$$\mean{\yt} = \ee^{\sigma K \lrb{ t - \frac{1}{r} \ln\lrb{\xi + \ee^{rt}} +\frac{1}{r}\ln\lrb{\xi + 1} }}$$
+and with some rearrangment, 
+$$\mean{\yt} =  \ee^{\sigma K t} \lrb{\frac{\xi + 1}{\xi + \ee^{rt}}}^{\frac{\sigma K}{r}}.$$ 
+
+
+
+\subsection{Probability generating function $G_{\yt}(z, t)$}
+
+In validating a model like this with observational data, there are a number of measures that could be considered. The mean number of species through time could be of use, but we will no doubt be better equiped with knowledge of the full distribution of $\yt$. For this, and other metrics such as the variance, we can employ the probability generating function (PGF).
+$$G_{\yt}(z,t) = \sum^{\infty}_{i=0} \pr{\yt = i} z^i $$
+Along with being a means of verifying our mean formula,
+$$\mean{\yt} = \dda{G}{z}\bigg|_{z=1} = \sum_{i=1}^{\infty} i \pr{\yt = 1} (1)^{i-1},$$
+the probability of $\yt$ being in any state, $i$, can be computed with repeated differentiation:
+\begin{equation}
+\label{diston}
+\pr{\yt = n} = \frac{1}{n!}\frac{\partial^n G}{\partial z^n}\bigg|_{z= 0}
+\end{equation}
+For the present system, the iterative diferentiation happens to generalise as a formula. Details of this can be seen below. For now, let us focus on deriving the PGF.
+
+\subsubsection*{Forward Kolmogorov equation}
+
+The forward Kolmogorov equation for this system is essentially the same as that of the pure birth process. All which differes is that here the rate is a function of time. It is derrived in the following way by considering what occurs in a vanishing interval of duration $\delt$. Denoting $p_i(t) = \pr{\yt = i}$,
+$$p_i(t+\delt) = \beta(t)(i-1) \delt p_{i-1}(t) + \lrb{1 - \beta(t) i \delt} p_i(t).$$
+Rearranging, and taken in the limit, $\delt\to 0$, this becomes
+$$\ddt{p_i(t)} = \beta(t)(i-1) p_{i-1} - \beta i p_i.$$
+By a procedure covered in section (TO ADD), the FKE can be transformed into an equation describing the probability generating function: 
+$$\frac{\partial G}{\partial t} = \beta(t) z(z - 1) \frac{\partial G}{\partial z}$$  
+Which, despite the form of $\beta(t)$, does permit a solution via the method of characteristics. Details of the process are covered elsewhere, but it boils down to: making a change of variables, then solving the characteristic equations for a chosen set of initial conditions. \par
+Here, the change of variables is 
+$$G(z,t) \equiv G\lrb{s((z,t), \tau(z,t))} = G(s,\tau);$$
+initial conditions can be set to
+\begin{align}
+\label{charICs}
+z(s, \tau = 0) = s, && t(s, \tau = 0) = 0;
+\end{align}
+and the characteristic equations are
+\begin{align}
+\dda{G}{\tau} &= 0,\\
+\dda{t}{\tau} &= -1,\label{char12}\\
+\dda{z}{\tau} &= \beta(t)z(z - 1).\label{char13}
+\end{align}
+The first two tell us that $G(s,\tau)$ is purely a function of $s$,
+$$G(s,\tau) = \phi(s);$$
+and (\ref{char12}) that $t = -\tau$. If we assume there to be just a single initial species, $\yy_0 = 1$, then for time $t=0$, the probability generating function will take the form,
+$$G(z, 0) = z.$$
+And with this, along with the initialcondition, $z(s, \tau = 0) = s$, we can fix $G$ in terms of $s(z,t)$ as 
+$$G(s, \tau) = s.$$
+This will prove essential in obtaining the final formula. To now find the expression of $s(z,t)$ in terms of our functional variables, $z$ \& $t$, we turn to the last characteristic equation, (\ref{char13}). With $t = -\tau$, it seperates as,
+\begin{equation}
+\label{char3int}
+\int\frac{1}{z(z-1)}\dd z = \int \beta(-\tau) \dd\tau.
+\end{equation}
+As the integral of $\beta$ with respect to $t$ is known --- (\ref{intBetaT}) --- with $\dd \tau = -\dd t$, the RHS above can be delt with as,
+$$\int \beta(-\tau)\dd \tau = - \int \beta(t) \dd t.$$
+Thus, (\ref{char3int}) is evaluates to
+$$\ln\lrb{\frac{z-1}{z}} =   \sigma K \lrb{\tau + \frac{1}{r}\ln\lrb{\xi + \ee^{-r\tau}}  } + \text{const}.$$
+The constant can be fixed with initial conditions, (\ref{charICs}),
+$$\text{const} = \ln\lrb{\frac{s-1}{s}} - \frac{\sigma K }{r} \ln\lrb{\xi + 1},$$ 
+so,
+$$\ln\lrb{\frac{z-1}{z}} =   \sigma K \lrb{\tau + \frac{1}{r}\ln\lrb{\xi + \ee^{-r\tau}}  } +  \ln\lrb{\frac{s-1}{s}\lrb{\xi + 1}^{-\frac{\sigma K }{r} } }.$$
+Rearranging for $s$:
+$$s = \lrb{1 - \lrb{\frac{z-1}{z}} \ee^{-\sigma K \tau} \lrb{\frac{\xi + 1}{\xi + \ee^{-r\tau}}}^{\frac{\sigma K}{r}} }^{-1}.$$
+Hence, 
+\begin{equation}
+\label{PGF1} 
+G(z, t) = \frac{z}{z + (1 - z) \ee^{\sigma K t} \lrb{\frac{\xi + 1}{\xi + \ee^{rt}}}^{\frac{\sigma K}{r}}}.
+\end{equation}
+
+\subsubsection*{Connecting to the mean foumula}
+For simplicity, we can represent (\ref{PGF1}) by 
+$$G(z, t) = \frac{z}{z\lrb{1 - \Psi(t)} + \Psi(t)},$$
+with
+$$\Psi(t) =  \ee^{\sigma K t} \lrb{\frac{\xi + 1}{\xi + \ee^{rt}}}^{\frac{\sigma K}{r}}.$$
+To use the PGF, $G(z,t)$, for computing the mean, $\mean{\yt}$, one simply needs to differentiate partially with respect to $z$, then substitute $z=1$. Since $\Phi(t)$ does not depend at all on $z$, it can be treated as constant during the differentiation. A straightforward application of the quotient rule yields
+$$\partial_z G = \frac{z\lrb{1 - \Psi}  + \Psi  - z(1 - \Psi) }{\lrb{z\lrb{1 - \Psi} + \Psi}^2} = \frac{\Psi}{\lrb{z\lrb{1 - \Psi} + \Psi}^2}.$$
+Then, with $z = 1$,
+$$\partial_z G |_{z=1} = \Psi$$
+And in fact, we recognise that $\Psi(t) \equiv \mean{\yt}$. 
+
+
+
+\subsection{Full distribution of $\yt$}
+
+To compute a probability that the process, $\yt$, is in state $n$, we can use formula (\ref{diston}). It requires differentiating the probability generating function $n$ times... Just above, we got off to a flying start by finding the first of these iterations:
+$$\partial_z G = \Psi \lrb{z(1-\Psi) + \Psi}^{-2}.$$
+From here on, a pattern emerges.
+\begin{align*}
+\partial_z G &= \Psi \lrb{z(1-\Psi) + \Psi}^{-2}\\
+\partial_{2z} G &= 2\Psi (\Psi -1 ) \lrb{z(1-\Psi) + \Psi}^{-3}\\
+\partial_{3z} G &= 2\cdot 3\Psi (\Psi -1 )^{2} \lrb{z(1-\Psi) + \Psi}^{-4}\\
+&\hspace{45pt}\vdots\\
+\partial_{nz} G &= n!\Psi (\Psi -1 )^{n-1} \lrb{z(1-\Psi) + \Psi}^{-(n+1)}
+\end{align*}
+To obtain the full distribution of states, we must only substitute $\partial_{nz}$ into formula (\ref{diston}), evaluating the result at $z=0$:
+$$\pr{\yt = i} = \Psi^{-n}\lrb{\Psi- 1}^{n-1}$$ 
+And with substitution of $\Psi = \Psi(t)$,
+$$\pr{\yt = i} = \lrb{ \ee^{\sigma K t} \lrb{\frac{\xi + 1}{\xi + \ee^{rt}}}^{\frac{\sigma K}{r}}}^{-n}\lrb{ \ee^{\sigma K t} \lrb{\frac{\xi + 1}{\xi + \ee^{rt}}}^{\frac{\sigma K}{r}}- 1}^{n-1}$$

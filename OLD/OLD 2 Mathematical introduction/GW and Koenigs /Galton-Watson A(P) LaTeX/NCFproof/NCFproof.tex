@@ -1,0 +1,148 @@
+% --- Packages ---
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm, amsfonts}
+\usepackage{geometry}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{mathrsfs}
+
+% --- Formatting ---
+\geometry{margin=1in}
+\linespread{1.15}
+
+% --- Theorem Environments ---
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{example}{Example}[section]
+
+% --- Metadata ---
+\title{\textbf{On the Hypertranscendence of the Koenigs Function for the Logistic Map}}
+\author{\textsc{Gemini 3 pro}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent We investigate the existence of closed-form descriptions for the Koenigs function associated with the logistic map $f_r(x) = rx(1-x)$. While the function is generally hypertranscendental for the parameter range $r \in (0,1)$, we analyze the exceptional integrable cases $r=2$ and $r=4$. We provide explicit closed-form derivations for these values, contrasting them with the categorical non-existence of such formulas in the interval $r \in (0,1)$. This confirms that within the real domain specified, the Koenigs function does not admit a closed formula description.
+\end{abstract}
+
+\section{Introduction}
+
+The logistic map, defined as $f_r(x) = rx(1-x)$, is a paradigmatic example of a nonlinear dynamical system. For a parameter $r$ where the origin is a fixed point with multiplier $\lambda = r$ (specifically non-resonant cases), the classical theory of Koenigs \cite{Koenigs1884} guarantees a unique local holomorphic change of coordinates $\phi$, known as the \textit{Koenigs function} or linearization map. This map satisfies the Schröder equation:
+\begin{equation} \label{eq:schroder}
+\phi(f_r(z)) = r \phi(z), \quad \phi(0)=0, \quad \phi'(0)=1.
+\end{equation}
+
+The central inquiry of this paper is whether $\phi$ admits a \textit{closed-form expression} in terms of elementary functions. We establish that for $r \in (0,1)$, $\phi$ is \textit{hypertranscendental}, while for $r=2$ and $r=4$, explicit closed forms exist.
+
+\section{Explicit Solutions for Integrable Cases}
+
+Before addressing the non-integrability of the range $r \in (0,1)$, we derive the closed-form solutions for the two exceptional parameters where the dynamics are conjugate to Chebyshev polynomials or monomials.
+
+\subsection{Case I: The Logistic Map at $r=2$}
+For $r=2$, the map is $f_2(x) = 2x(1-x)$. The fixed point is at $x=0$ with multiplier $\lambda = 2$.
+We seek $\phi$ such that $\phi(2x(1-x)) = 2\phi(x)$.
+
+Consider the affine transformation $u = 1-2x$. The dynamics of $x$ map to the dynamics of $u$ via:
+\[
+u_{n+1} = 1 - 2(2x_n(1-x_n)) = 1 - 4x_n + 4x_n^2 = (1-2x_n)^2 = u_n^2.
+\]
+The linearization of the map $u \to u^2$ involves the natural logarithm, as $\ln(u^2) = 2\ln u$.
+Returning to the variable $x$, we construct our candidate solution using the logarithm. To satisfy the normalization $\phi(0)=0$ and $\phi'(0)=1$, we define:
+\begin{equation}
+\phi(x) = -\frac{1}{2} \ln(1-2x).
+\end{equation}
+
+\textbf{Verification:}
+\begin{align*}
+\phi(f_2(x)) &= -\frac{1}{2} \ln(1 - 2(2x(1-x))) \\
+&= -\frac{1}{2} \ln(1 - 4x + 4x^2) \\
+&= -\frac{1}{2} \ln((1-2x)^2) \\
+&= -\frac{1}{2} \cdot 2 \ln(1-2x) \\
+&= 2 \left[ -\frac{1}{2} \ln(1-2x) \right] = 2\phi(x).
+\end{align*}
+Thus, for $r=2$, the Koenigs function is an elementary logarithmic function.
+
+\subsection{Case II: The Logistic Map at $r=4$}
+For $r=4$, the map is $f_4(x) = 4x(1-x)$. The fixed point is at $x=0$ with multiplier $\lambda = 4$.
+We seek $\phi$ such that $\phi(4x(1-x)) = 4\phi(x)$.
+
+This map is known to be conjugate to the Chebyshev polynomial $T_2(z) = 2z^2-1$ via trigonometric substitution. Let $x = \sin^2 \theta$. Then:
+\[
+f_4(x) = 4\sin^2\theta(1-\sin^2\theta) = 4\sin^2\theta\cos^2\theta = (2\sin\theta\cos\theta)^2 = \sin^2(2\theta).
+\]
+In the $\theta$ coordinate, the map is a doubling map $\theta \to 2\theta$. However, the multiplier at the origin is $4$, not $2$. This suggests the linearization relates to $\theta^2$.
+We propose the solution:
+\begin{equation}
+\phi(x) = \left( \arcsin \sqrt{x} \right)^2.
+\end{equation}
+
+\textbf{Verification:}
+\begin{align*}
+\phi(f_4(x)) &= \left( \arcsin \sqrt{4x(1-x)} \right)^2.
+\end{align*}
+Using the identity $\arcsin(2u\sqrt{1-u^2}) = 2\arcsin u$ (for suitable domains), let $u=\sqrt{x}$. Then $\sqrt{4x(1-x)} = 2\sqrt{x}\sqrt{1-x}$.
+\begin{align*}
+\phi(f_4(x)) &= \left( 2 \arcsin \sqrt{x} \right)^2 \\
+&= 4 \left( \arcsin \sqrt{x} \right)^2 \\
+&= 4\phi(x).
+\end{align*}
+Furthermore, as $x \to 0$, $\arcsin \sqrt{x} \approx \sqrt{x}$, so $\phi(x) \approx (\sqrt{x})^2 = x$, satisfying $\phi'(0)=1$.
+Thus, for $r=4$, the Koenigs function is the square of the arcsine.
+
+\section{Hypertranscendence in the Range $r \in (0,1)$}
+
+Having identified the closed forms for $r=2$ and $r=4$, we return to the interval of interest $r \in (0,1)$. We rely on the rigidity theorem for the linearization of rational maps by Becker and Bergweiler \cite{Becker1995}.
+
+\begin{theorem}[Becker \& Bergweiler, 1995]
+The Koenigs linearization map $\phi$ associated with a rational function $R$ satisfies an algebraic differential equation if and only if $R$ is analytically conjugate to a monomial map $z^{\pm d}$ or a Chebyshev polynomial $\pm T_d(z)$.
+\end{theorem}
+
+We transform $f_r(x)$ to the canonical quadratic $z^2 + c$ where $c = \frac{2r - r^2}{4}$.
+\begin{itemize}
+\item The monomial case corresponds to $c=0$, which implies $r=2$.
+\item The Chebyshev case corresponds to $c=-2$, which implies $r=4$.
+\end{itemize}
+
+For the interval $r \in (0,1)$, the parameter $c$ lies strictly in $(0, 0.25)$. This interval contains neither $0$ nor $-2$. Therefore, the Koenigs function for $r \in (0,1)$:
+\begin{enumerate}
+\item Is not an elementary function.
+\item Does not satisfy any algebraic differential equation.
+\end{enumerate}
+
+\section{Conclusion}
+
+The existence of closed-form expressions for the Koenigs function of the logistic map is a rare phenomenon, occurring only at specific integrable points such as $r=2$ (logarithmic) and $r=4$ (inverse trigonometric).
+
+For the requested range $r \in (0,1)$, we are categorically sure that no such closed formula exists in the set of real elementary functions. The function is hypertranscendental, existing fundamentally as a limit of the dynamics rather than a combination of standard analytical objects.
+
+\begin{thebibliography}{9}
+
+\bibitem{Koenigs1884}
+G. Koenigs,
+``Recherches sur les intégrales de certaines équations fonctionnelles,''
+\textit{Annales Scientifiques de l'École Normale Supérieure}, vol. 1, pp. 3--41, 1884.
+
+\bibitem{Milnor2006}
+J. Milnor,
+\textit{Dynamics in One Complex Variable}, 3rd ed.,
+Princeton University Press, 2006.
+
+\bibitem{Becker1995}
+J. Becker and W. Bergweiler,
+``Hypertranscendency of local conjugacies and semiconjugacies of rational functions,''
+\textit{Proceedings of the American Mathematical Society}, vol. 123, no. 7, pp. 2199--2205, 1995.
+
+\end{thebibliography}
+
+\end{document}

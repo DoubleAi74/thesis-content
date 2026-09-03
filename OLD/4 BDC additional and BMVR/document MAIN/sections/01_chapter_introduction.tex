@@ -1,0 +1,87 @@
+% Chapter introduction --- plan \S4.1 (Phase 5).
+% Absorbs the killing/catastrophe distinction from the former
+% 02_specification_of_rupture_state.tex (typos fixed).
+
+\section{Introduction}
+
+The standard models of within-host infection treat the infected cell as a
+black box. In the Basic Model of Viral Replication, a cell that has been
+infected releases new particles at a constant rate $p$ until it is removed
+at a constant rate $d_{\Icell}$; nothing about the cell's interior enters
+the dynamics, and the two constants are phenomenological --- parameters to
+be fitted, not quantities to be derived. For a budding virus this is at
+least a defensible caricature. For a lytic pathogen it is plainly wrong in
+mechanism, whatever it may achieve by fitting: such a pathogen grows inside
+the cell, and releases nothing until the cell ruptures, at which point it
+releases everything at once. \textit{Yersinia pestis} in the macrophage,
+\textit{Francisella tularensis} in the macrophage, the lytic phage in its
+bacterium --- all follow the intracellular replication-and-lysis picture,
+and all are poorly served by a constant drip.
+
+This chapter asks what the constant-rate assumption should be replaced
+with, and what the replacement implies. The intracellular model was set up
+in Chapter~3: the birth--death--catastrophe process, in which the
+pathogen count within one cell is born at rate $\beta$ per particle, dies
+at rate $\mu$ per particle, and triggers the rupture of the cell at rate
+$\delta$ per particle. Chapter~3 derived the principal single-cell
+quantities --- the no-rupture probability $I(t)$, the mean and second
+moment $J(t)$, $K(t)$, and the cumulative mean release $V(t)$. What it did
+not derive is the full distribution of the process, the statistics of the
+rupture event itself, or the passage from one cell to a population of them.
+These are the subjects of the present chapter.
+
+Four questions organise it.
+\begin{enumerate}
+\item What is the complete single-cell description? The state
+probabilities at every time, the quasi-stationary distribution of the
+load, and the laws of the burst time and the burst size
+(\S\S\ref{sec:state-probs}--\ref{sec:cond-means}).
+\item How do several founders in one cell, and chains of cells, behave?
+Multiplicity of infection (\S\ref{sec:moi}) and chained immediate transfer
+(\S\ref{sec:chained}).
+\item How should the single-cell theory be embedded in a population model?
+Why the constant-rate substitution fails (\S\ref{sec:why-constant-fails}),
+and the age-structured renewal model that replaces it
+(\S\ref{sec:renewal}).
+\item What does the replacement imply? Effective parameters and the
+invariance of $R_0$, and what population data can and cannot identify
+(\S\ref{sec:peff-section}); the flooding advantage of bursting and its
+trade-off against invasion speed (\S\ref{sec:flooding}); the spectrum of
+release models between bursting and budding (\S\ref{sec:spectrum}); and the
+boundary of the lytic claims, drawn against HIV (\S\ref{sec:hiv}).
+\end{enumerate}
+
+The answers, in advance and in brief, are these. The single-cell process
+is solvable far beyond its moments: the state probabilities are geometric
+at every time, and their conditional limit --- the quasi-stationary
+distribution --- is geometric with ratio $1/a$. The burst-size distribution,
+conditioned on bursting, is \emph{exactly the same law}: a cell's rupture
+size is distributed as the load it would have had, had it kept growing
+forever. A population of such cells is not a constant-rate system but an
+age-structured one, governed by two closed-form kernels --- the survival
+kernel $\Ihat(a)$ and the release kernel $g(a)=\delta K(a)$ --- and the
+renewal model built on them contains classical BMVR as an exact
+exponential-phase projection. Under that projection, the effective release
+rate $p_{\rm eff}$ depends on the epidemic growth rate, falling by orders
+of magnitude from the stationary phase to the acute phase; $R_0$ itself is
+invariant to bursting at fixed total output; and the three intracellular
+rates cannot be recovered from the two BMVR parameters alone. At fixed
+output, bursting lowers the probability of early extinction --- relative to
+matched budding --- if and only if $1/\delta<1/\beta+1/\mu$, at the cost of
+a slower deterministic invasion. And the honest boundary of all this is
+that HIV, which buds, is not a BDC pathogen; the chapter ends by saying
+precisely what the lytic theory does and does not offer it.
+
+\subsection{Two varieties of rupture: killing and catastrophe}
+\label{sec:rupture-conventions}
+
+Before we begin, it is important to state a distinction between two
+varieties of the model. When a rupture event occurs, the process goes to a
+state. In the literature, this state is sometimes chosen to be $0$, and in
+other cases there is a separate rupture state defined, sometimes labelled
+$R$. The analysis does differ between the two options. And so for clarity,
+in this chapter we will refer to the $0$-state case as ``killing''; the
+distinct rupture state as ``catastrophe''. The distinction matters most in
+\S\S\ref{sec:pgf-pdes}--\ref{sec:state-probs}, where both conventions are
+carried in parallel; from \S\ref{sec:qsd} onward the catastrophe
+convention is primary.

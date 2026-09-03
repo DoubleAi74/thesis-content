@@ -1,0 +1,54 @@
+\section{What carries forward}
+\label{m:sec:summary}
+
+Three things have been assembled in this chapter, and it is worth separating them
+before they are used.
+
+The first is standard apparatus: exponential clocks and the races between them,
+continuous-time Markov chains and their generators, generating functions, and the
+linear birth--death process together with the first-order equation
+\cref{m:eq:bdpde} satisfied by its generating function. That equation is the
+template for every generating-function calculation in this thesis. The working
+method is by now explicit: a model is specified by rates; the rates give a
+generator and a master equation; multiplying by $z^i$ (or by $x^iy^j$) and summing
+converts that master equation into a single first-order partial differential
+equation for a generating function; and the method of characteristics of
+\cref{m:sec:mocabsdeath} solves equations of that type. \Cref{m:eq:Gabd} shows the
+route completed on a problem for which no shortcut exists, and the same route is
+followed in later chapters when a catastrophe channel is added to the rates of
+\cref{m:eq:bdcrates}. \Cref{m:app:extract} supplies the last step, recovering
+time-dependent state probabilities from a generating function given by a formula
+rather than a series.
+
+The second is the quasi-stationary picture. A subcritical binary Galton--Watson
+process is certain to die out, but conditioned on survival its population settles
+to a fixed distribution whose mean is $1/A(p)$ and whose variance is
+\cref{m:eq:condvar}, both expressed entirely in terms of $p$ and the constant
+$A(p) = \lim_n S_n/(2p)^n$. Its continuous-time counterpart is elementary,
+$\Ac(p) = (1-2p)/(1-p)$ of \cref{m:eq:Acts}; the discrete constant is not, and
+\ChA{} develops what replaces a closed form --- an exact product and an exact
+series with two-sided bounds, the near-critical asymptotic $A(p)\sim2(1-2p)$, and a
+hybrid scheme for evaluating $A(p)$ and $1/A(p)$ accurately across the whole
+subcritical interval. That scheme is what the numerics of later chapters use.
+
+The third is the method of characteristics for the generating-function equations of
+absorption models, developed on a case whose answer was already known and then
+applied to absorption--birth--death, where it produces the closed form
+\cref{m:eq:Gabd}. That is the tool that \fwd{bdc}{the later chapters on
+birth--death--catastrophe processes} take up, first for the process of
+\cref{m:def:bdc} and then for the multi-type and multi-compartment extensions.
+
+Two specific questions left open here are taken up later. Whether a
+quasi-stationary distribution survives when a birth--death--catastrophe process is
+conditioned on \emph{neither} extinction nor rupture is not settled by the
+argument of \cref{m:sec:bdc}, and is best approached by simulation. And how tight
+the Jensen bound below \cref{m:eq:bdcguess} is remains a numerical question; a
+sharp answer would make the discrete catastrophe calculation usable in its own
+right.
+
+What has deliberately not been done here is to develop those extensions. The
+birth--death--catastrophe process has been defined and its generating-function
+equation written down, and no more; the results belong to the chapters that need
+them. The same restraint applies to $A(p)$: this chapter has defined the constant
+and used it, while its analysis --- and the explanation of why it resists closed
+form --- is the subject of \ChA.

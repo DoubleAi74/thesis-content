@@ -1,0 +1,965 @@
+\section{Markov chains}
+\label{m:sec:chains}
+
+A stochastic process is \emph{Markov} if its future depends on its past only
+through its present. That single property is what makes every model in this thesis
+tractable, and this section sets out the classes of Markov process the thesis uses.
+Standard treatments are Norris \cite{Norris1997}, Karlin and Taylor
+\cite{KarlinTaylor1975}, and, closest to the applications here, Allen
+\cite{Allen2010}.
+
+\subsection{Discrete-time Markov chains}
+\label{m:sec:dtmc}
+
+Let $\{X_n : n=0,1,2,\dots\}$ take values in a countable state space $\mathcal S$.
+The process is a \emph{discrete-time Markov chain} if
+\begin{equation}
+\label{m:eq:dtmarkov}
+\pr{X_{n+1}=j \mid X_n=i,\ X_{n-1},\dots,X_0} = \pr{X_{n+1}=j\mid X_n=i}
+=: P_{ij},
+\end{equation}
+the right-hand side being independent of $n$ for a \emph{time-homogeneous} chain.
+The matrix $P = (P_{ij})$ is stochastic: its entries are non-negative and each row
+sums to one. Multi-step laws follow by decomposing a journey at an intermediate
+state, which gives the Chapman--Kolmogorov identity
+\begin{equation}
+\label{m:eq:chapmankolmogorov}
+\pr{X_{n+m}=j\mid X_0=i}
+= \sum_{k\in\mathcal S}\pr{X_n=k\mid X_0=i}\,\pr{X_m=j\mid X_0=k},
+\end{equation}
+and hence $\pr{X_n=j\mid X_0=i}=(P^n)_{ij}$: composing steps is multiplying
+matrices. In principle everything about the chain is therefore contained in $P$;
+in practice the interest lies in extracting it, and the rest of this chapter is
+about how. A state $i$ with $P_{ii}=1$ is \emph{absorbing}: a chain that reaches
+it never leaves.
+
+\subsubsection{Simple random walks}
+\label{m:sec:randomwalk}
+
+The simplest non-trivial chain moves one step at a time on the integers. Fix
+$q\in(0,1)$ and let
+\begin{equation}
+\label{m:eq:rwrates}
+P_{i,i+1} = q,
+\qquad
+P_{i,i-1} = 1-q,
+\end{equation}
+so that $X_n = X_0 + \sum_{k=1}^{n}\xi_k$ with the $\xi_k$ independent and equal to
+$+1$ with probability $q$ and $-1$ otherwise. The walk is \emph{symmetric} when
+$q=\tfrac12$. Its mean and variance are immediate from the independence of the
+increments:
+\begin{equation}
+\label{m:eq:rwmoments}
+\ex{X_n} = X_0 + n(2q-1),
+\qquad
+\var{X_n} = 4nq(1-q).
+\end{equation}
+The drift $2q-1$ decides the long-run behaviour, and the diffusive spread
+$\sqrt{n}$ is what the mean cannot see --- the same tension, in its simplest form,
+that motivates everything else in this chapter.
+
+Here the whole law is available too, and it is worth writing down once, since it
+is the distribution that \cref{m:eq:rwmoments} summarises. If $R$ of the $n$
+increments are $+1$ then $X_n = X_0+2R-n$, and $R$ is binomial with parameters
+$n$ and $q$, so
+\begin{equation}
+\label{m:eq:rwlaw}
+\pr{X_n = X_0+2r-n} = \binom{n}{r}q^{\,r}(1-q)^{\,n-r},
+\qquad r=0,1,\dots,n ,
+\end{equation}
+supported on those lattice points with the parity of $n$
+(\cref{m:fig:rwlaw}). Almost no other chain in this chapter surrenders its
+$n$-step law so cheaply, and the reason is that the increments of the walk are
+independent of the state it has reached. Once the step distribution depends on
+the current count --- as it does for every branching process below --- the
+$n$-step law is no longer a convolution and must be reached by the generating
+functions of \cref{m:sec:pgfmethod}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.74\textwidth]{rw_transition.pdf}
+\caption{The exact displacement law \cref{m:eq:rwlaw} at $n=40$, for
+$q=0.4,\,0.5,\,0.6$; the dotted vertical lines mark the means $(2q-1)n$ of
+\cref{m:eq:rwmoments}. Changing the drift slides the whole distribution along the
+lattice and barely deforms it, because the width $\sqrt{4nq(1-q)}$ varies little
+over this range of $q$. \Cref{m:fig:randomwalk} shows the same process as
+trajectories; this is the distribution those trajectories are drawn from, and the
+gap between the two pictures --- a smooth law, and paths that wander far from its
+centre --- is the reason a mean is not an answer.}
+\label{m:fig:rwlaw}
+\end{figure}
+
+The random walk is not a peripheral example here. Every continuous-time chain in
+\cref{m:sec:ctmc} decomposes into a holding time and a jump, and the sequence of
+jumps is itself a discrete-time chain --- the \emph{embedded jump chain}. For the
+linear birth--death process of \cref{m:sec:bd}, whose rates out of state $i$ are
+$\lambda i$ and $\mu i$, the state-dependence cancels in the ratio and the embedded
+chain is exactly \cref{m:eq:rwrates} with
+\begin{equation}
+\label{m:eq:embedded}
+q = \frac{\lambda}{\lambda+\mu} .
+\end{equation}
+Absorption at $0$ is then the walk's ruin problem, and hitting probabilities for
+the continuous-time process can be computed on the walk alone; \cref{m:sec:firststep}
+does exactly that. \Cref{m:eq:embedded} is also the bridge between the
+discrete-generation and continuous-time models compared in
+\cref{m:sec:condmeans}.
+
+Two absorbing barriers are usually imposed. With absorbing states at $0$ and $M$,
+writing $h_i$ for the probability of reaching $M$ before $0$ from state $i$, the
+one-step decomposition $h_i = qh_{i+1}+(1-q)h_{i-1}$ with $h_0=0$, $h_M=1$ has the
+classical gambler's-ruin solution
+\begin{equation}
+\label{m:eq:gamblersruin}
+h_i =
+\begin{cases}
+\dfrac{1-\theta^{\,i}}{1-\theta^{\,M}},
+& \theta := \dfrac{1-q}{q}\neq1,\\[12pt]
+\dfrac{i}{M}, & q=\tfrac12 .
+\end{cases}
+\end{equation}
+This is the smallest instance of the first-step principle of
+\cref{m:sec:firststep}, and it is worth keeping in view: the entire method of
+\cref{m:sec:methods} consists of conditioning on one step and solving the resulting
+self-consistent equation, on state spaces where the equation is no longer a
+two-term recursion. \Cref{m:fig:randomwalk} shows both halves of the picture.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{random_walk.pdf}
+\caption{The simple random walk of \cref{m:eq:rwrates}.
+(a) Seven realisations at $q=0.45$ (grey), against the drift line
+$n(2q-1)$ and the envelope $\pm\sqrt{4nq(1-q)}$ of one standard deviation
+(red), from \cref{m:eq:rwmoments}. The drift is linear in $n$ and the spread only
+$O(\sqrt n)$, so the drift eventually dominates; over the first hundred steps it
+does not, and individual paths spend long intervals on the wrong side of the mean.
+(b) The gambler's-ruin probability \cref{m:eq:gamblersruin} of reaching $M=20$
+before $0$, against the starting state $i$, for
+$\theta=(1-q)/q \in\{0.7,\,0.85,\,1,\,1.2,\,1.5\}$. The symmetric case $\theta=1$
+is the straight line $i/M$; $\theta<1$ bows the curve up and $\theta>1$ bows it
+down, and the effect is strongly nonlinear in $\theta$. Only the ratio $\theta$
+enters, which is why \cref{m:eq:bdruin} can read this figure off the embedded jump
+chain of a birth--death process without reference to its rates.}
+\label{m:fig:randomwalk}
+\end{figure}
+
+\subsubsection{Galton--Watson branching processes}
+\label{m:sec:gw}
+
+The Galton--Watson process is a discrete-time chain on the non-negative integers in
+which every member of a population independently leaves offspring, or does not, at
+each generational increment. It is the oldest model of stochastic branching and the
+central object of this thesis; the standard references are Harris \cite{Harris1963}
+and Athreya and Ney \cite{Athreya1972}.
+
+Suppose each individual produces, independently of every other, a number of
+offspring distributed as the \rv{} $L$, with $\pr{L=k}=p_k$ and mean
+$\mu=\ex{L}$. Let $Z_n$ be the size of generation $n$, started from a single
+progenitor, $Z_0=1$, so that
+\begin{equation}
+\label{m:eq:gwrecursion}
+Z_{n+1} = \sum_{i=1}^{Z_n}L_i ,
+\end{equation}
+the $L_i$ being independent copies of $L$. Conditioning on the previous generation
+and using the tower property gives $\ex{Z_{n+1}} = \mu\ex{Z_n}$, hence
+\begin{equation}
+\label{m:eq:gwmean}
+\ex{Z_n} = \mu^{\,n} .
+\end{equation}
+When $\mu<1$ the expected population decays geometrically, and since $Z_n$ is
+integer-valued Markov's inequality gives $\pr{Z_n\ge1}\le\mu^n\to0$: extinction is
+certain. The three regimes $\mu<1$, $\mu=1$, $\mu>1$ are called
+\emph{subcritical}, \emph{critical} and \emph{supercritical}.
+
+Because $Z_{n+1}$ is a random sum of independent copies of $L$, the composition
+rule for generating functions (\cref{m:sec:pgfmethod}) turns
+\cref{m:eq:gwrecursion} into a functional iteration. Writing
+$\phi(z)=\ex{z^L}$ for the offspring generating function and $\phi_n$ for that of
+$Z_n$,
+\begin{equation}
+\label{m:eq:gwcomposition}
+\phi_{n+1} = \phi_n\circ\phi ,
+\end{equation}
+so $\phi_n$ is the $n$-fold composition of $\phi$ with itself. That single fact is
+the source of both the tractability and the difficulty of the model: everything
+about $Z_n$ is encoded in an iterated map, and iterating a map is easy to do and
+hard to solve in closed form.
+
+\paragraph{The binary case.}
+Throughout this thesis we specialise to the binary, or \emph{simple}, case, in
+which an individual either divides into two or dies:
+\begin{equation}
+\label{m:eq:binarylaw}
+p_2 = p \quad\text{(division)},
+\qquad
+p_0 = 1-p \quad\text{(death)},
+\qquad
+p_i = 0 \ \text{ otherwise},
+\end{equation}
+so that $\mu=2p$, $\ex{Z_n}=(2p)^n$, and the offspring generating function is
+\begin{equation}
+\label{m:eq:pgfbinary}
+\phi(z) = pz^2+(1-p) .
+\end{equation}
+Criticality is at $p=\tfrac12$. Writing $u_n = \pr{Z_n=0}$ for the probability of
+extinction by generation $n$ and setting $z=0$ in \cref{m:eq:gwcomposition} gives
+$u_{n+1}=\phi(u_n)$, and it is more convenient to work with the survival
+probability $S_n = 1-u_n = \pr{Z_n>0}$, which satisfies
+\begin{equation}
+\label{m:eq:SnIter}
+S_{n+1} = 2pS_n - pS_n^2,
+\qquad S_0 = 1 .
+\end{equation}
+\Cref{m:fig:gwvis} shows realisations either side of criticality.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.72\textwidth]{simpleGWvis.png}\\[6pt]
+\includegraphics[width=0.72\textwidth]{subGWvis.png}
+\caption{Realisations of the simple Galton--Watson process, drawn as genealogies
+with generation increasing to the right. Top: supercritical, $p=0.58$, where the
+number of lines grows without bound. Bottom: subcritical, $p=0.47$; the same
+construction, but the tree terminates. Colour encodes generation number.}
+\label{m:fig:gwvis}
+\end{figure}
+
+That is as far as the definition needs to go here. \Cref{m:eq:SnIter} is a quadratic
+recursion, and almost everything of interest about the binary process turns out to
+be a statement about its orbit: whether that orbit reaches zero
+(\cref{m:sec:extinction}), how fast it does so (\cref{m:app:criticalgw}), and what
+constant survives in front of the decay (\cref{m:sec:dtlimit}, and then \ChA{} at
+length). The critical case, in which extinction is certain and yet the expected
+lifetime is infinite, is developed in full in \cref{m:app:critical}.
+
+\subsection{Continuous-time Markov chains}
+\label{m:sec:ctmc}
+
+Let $\{X_t : t\ge0\}$ take values in a countable state space $\mathcal S$, which
+throughout will be a set of population counts or of tuples of counts. The process
+is a \emph{continuous-time Markov chain} if, for all $s,t\ge0$,
+\begin{equation}
+\label{m:eq:markov}
+\pr{X_{t+s}=j \mid X_t=i,\ \{X_u\}_{u<t}} = \pr{X_{t+s}=j\mid X_t=i},
+\end{equation}
+and \emph{time homogeneous} if the right-hand side depends on $s$ but not $t$, in
+which case one writes $p_{ij}(s)$. Such a chain is specified by its
+\emph{generator} $Q=(q_{ij})$, whose off-diagonal entries are transition rates,
+\begin{equation}
+\label{m:eq:generator}
+q_{ij} = \lim_{\Delta t\to0}\frac{p_{ij}(\Delta t)}{\Delta t}\quad(j\neq i),
+\qquad
+q_{ii} = -\sum_{j\neq i}q_{ij} =: -q_i ,
+\end{equation}
+so that every row of $Q$ sums to zero. Equivalently, and this is the form used to
+define models below,
+\begin{equation}
+\label{m:eq:infinitesimal}
+\pr{X_{t+\Delta t}=j\mid X_t=i} = q_{ij}\,\Delta t + o(\Delta t)
+\qquad(j\neq i),
+\end{equation}
+with complementary probability $1-q_i\Delta t+o(\Delta t)$ of no transition at all.
+A state with $q_i=0$ is absorbing.
+
+\subsubsection{Exponential clocks}
+\label{m:sec:exp}
+
+Everything in continuous time rests on one distribution, and it is worth seeing
+why it is forced rather than chosen. A \rv{} $T$ is exponentially distributed with
+rate $\theta>0$, written $T\sim\mathrm{Exp}(\theta)$, if
+\begin{equation}
+\label{m:eq:expdef}
+f_T(t) = \theta\ee^{-\theta t},
+\qquad
+F_T(t) = 1-\ee^{-\theta t}
+\qquad(t\ge0),
+\end{equation}
+with mean $1/\theta$ and variance $1/\theta^2$. The property that matters is
+memorylessness: for $t_1,t_2>0$,
+\begin{equation}
+\label{m:eq:memoryless}
+\pr{T>t_1+t_2\mid T>t_1}
+= \frac{\ee^{-\theta(t_1+t_2)}}{\ee^{-\theta t_1}}
+= \ee^{-\theta t_2}
+= \pr{T>t_2},
+\end{equation}
+so a clock that has already run for time $t_1$ is statistically indistinguishable
+from a fresh one. The exponential law is the only continuous distribution with this
+property, which is exactly why a process assembled from constant-rate events
+satisfies \cref{m:eq:markov}: with any other waiting-time law the elapsed time would
+be informative and the process would not be Markov.
+
+When several events compete, two facts organise everything that follows.
+
+\begin{proposition}[Competing clocks]
+\label{m:prop:race}
+Let $T_1,\dots,T_m$ be independent with $T_i\sim\mathrm{Exp}(\theta_i)$, let
+$T=\min_iT_i$, and write $\Theta=\sum_i\theta_i$. Then
+\begin{equation}
+\label{m:eq:race}
+T\sim\mathrm{Exp}(\Theta),
+\qquad
+\pr{T_k=T} = \frac{\theta_k}{\Theta},
+\end{equation}
+and the identity of the winning clock is independent of $T$.
+\end{proposition}
+
+\begin{proof}
+For the first claim,
+$\pr{T>t} = \prod_i\pr{T_i>t} = \prod_i\ee^{-\theta_it} = \ee^{-\Theta t}$.
+For the second, condition on the value of $T_k$ and use independence:
+\begin{equation*}
+\pr{T_k=T}
+= \int_0^\infty\theta_k\ee^{-\theta_ku}\prod_{i\neq k}\ee^{-\theta_iu}\,\dd u
+= \theta_k\int_0^\infty\ee^{-\Theta u}\,\dd u
+= \frac{\theta_k}{\Theta} .
+\end{equation*}
+Repeating the calculation with the integral truncated at $t$ gives
+$\pr{T_k=T,\ T>t} = (\theta_k/\Theta)\ee^{-\Theta t} = \pr{T_k=T}\pr{T>t}$, which is
+the asserted independence.
+\end{proof}
+
+\Cref{m:prop:race} is what connects \cref{m:eq:infinitesimal} to a trajectory: the
+chain leaves state $i$ after a holding time $\mathrm{Exp}(q_i)$ and then jumps to
+$j$ with probability $q_{ij}/q_i$, independently of how long it waited. It also
+says that a rate becomes a probability as soon as one asks \emph{which} of several
+things happened rather than when, which is the identification \cref{m:eq:embedded}
+of the embedded jump chain. And it is the whole content of the direct simulation
+method.
+
+\begin{remark}[Direct simulation]
+\label{m:rem:gillespie}
+\Cref{m:prop:race} is an algorithm as well as a theorem. Given the current state,
+compute the rate $\theta_i$ of every possible event and their sum $\Theta$; draw
+$T\sim\mathrm{Exp}(\Theta)$ by inverting \cref{m:eq:expdef} on a uniform variate;
+draw the event $k$ with probability $\theta_k/\Theta$; advance the clock by $T$,
+apply event $k$, and repeat. Because the two draws are independent and the
+exponential law is memoryless, the resulting trajectory has exactly the law of the
+process. This is Gillespie's direct method \cite{Gillespie1977}; it is used in this
+thesis to check analytical results, never to replace them.
+\end{remark}
+
+\subsubsection{The Poisson process}
+\label{m:sec:poisson}
+
+The simplest continuous-time chain counts events that arrive at a constant rate and
+never depart. Let $N_t$ take values in $\{0,1,2,\dots\}$ with the single non-zero
+rate
+\begin{equation}
+\label{m:eq:poissonrates}
+q_{n,n+1} = \alpha
+\qquad(n\ge0),
+\end{equation}
+so $q_n=\alpha$ for every $n$. By \cref{m:prop:race} the holding times are
+independent $\mathrm{Exp}(\alpha)$ variables, and $N_t$ counts how many have
+elapsed by time $t$: the process is the renewal count of a sequence of independent
+exponential waits. Its law follows from the master equation
+\cref{m:eq:master} below, or directly by induction on $n$:
+\begin{equation}
+\label{m:eq:poissonlaw}
+\pr{N_t = n} = \ee^{-\alpha t}\frac{(\alpha t)^n}{n!},
+\qquad
+\ex{N_t} = \var{N_t} = \alpha t .
+\end{equation}
+The equality of mean and variance is characteristic, and is the baseline against
+which the over-dispersion of branching processes should be read.
+\Cref{m:fig:poisson} shows a realisation and the law it is drawn from.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{poisson_process.pdf}
+\caption{The Poisson process of \cref{m:eq:poissonrates}, at rate $\alpha=1.5$.
+(a) One realisation of the counting process $N_t$, with the independent
+$\mathrm{Exp}(\alpha)$ holding times of \cref{m:prop:race} marked in alternating
+shades along the axis, and the mean $\alpha t$ dashed. The path crosses and
+recrosses its own mean; nothing prevents a long wait followed by three arrivals in
+quick succession, because each holding time is drawn afresh.
+(b) The law \cref{m:eq:poissonlaw} at $t=1,\,3,\,6$. Mean and variance are both
+$\alpha t$, so the distribution broadens as it advances and its relative width
+$1/\sqrt{\alpha t}$ shrinks.}
+\label{m:fig:poisson}
+\end{figure}
+
+Two properties are used later. Counts over disjoint time intervals are
+independent, and the count over an interval depends only on its length --- the
+process has stationary independent increments, which is the continuous-time
+statement of memorylessness. And if each arrival is independently retained with
+probability $\varpi$, the retained arrivals form a Poisson process of rate
+$\varpi\alpha$: \emph{thinning} preserves the class. Thinning is what makes the
+absorption models of \cref{m:sec:moc} tractable, where a cohort of exterior
+particles is taken up one by one at a constant per-particle rate.
+
+The Poisson process is also the $\mu=0$, state-independent corner of the family
+treated next. Making the arrival rate proportional to the current count, $\alpha n$
+in place of $\alpha$, gives the pure-birth (Yule) process; adding a departure rate
+gives the birth--death process.
+
+\subsubsection{Birth--death processes}
+\label{m:sec:bd}
+
+Let $X_t$ count individuals, each of which independently gives birth at rate
+$\lambda$ and dies at rate $\mu$. The non-zero rates out of state $n$ are
+\begin{equation}
+\label{m:eq:bdrates}
+q_{n,n+1} = \lambda n,
+\qquad
+q_{n,n-1} = \mu n ,
+\end{equation}
+so $q_n = (\lambda+\mu)n$ and $n=0$ is absorbing. This is the \emph{linear}
+birth--death process, the continuous-time counterpart of the Galton--Watson process
+of \cref{m:sec:gw}, and it is the running example of \cref{m:sec:ctmethods}: nearly
+every method in this thesis is first demonstrated on it. Its embedded jump chain is
+the random walk \cref{m:eq:rwrates} with $q=\lambda/(\lambda+\mu)$, so questions
+about \emph{which} states are visited reduce to \cref{m:sec:randomwalk} while
+questions about \emph{when} require the rates themselves.
+
+\Cref{m:fig:bdpaths} shows the three regimes it can occupy.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{birth_death_paths.pdf}
+\caption{Nine realisations of the linear birth--death process \cref{m:eq:bdrates}
+from $X_0=5$, with $\mu=1$ throughout and the mean $N\ee^{(\lambda-\mu)t}$ of
+\cref{m:eq:bdmean} in red; dots on the axis mark trajectories that reached the
+absorbing state. The middle panel is the one to dwell on. At criticality the mean
+is exactly constant, and yet several realisations are already extinct while others
+have grown fourfold --- the mean is the same number in both cases, and describes
+neither. That gap between a mean and a distribution is what the conditioning of
+\cref{m:sec:condmeans} exists to close. Note also that extinction is not confined
+to the subcritical panel: a supercritical process still dies out with probability
+$(\mu/\lambda)^{N}$, visible here as the paths that fail early on the right.}
+\label{m:fig:bdpaths}
+\end{figure}
+
+The general birth--death process allows state-dependent rates $\lambda_n$ and
+$\mu_n$; the linear case $\lambda_n=\lambda n$, $\mu_n=\mu n$ is the one in which
+individuals act independently, and hence the one for which generating functions
+close. Everything derived in \cref{m:sec:ctmethods} --- mean, variance, extinction
+probability, conditional mean --- uses that independence.
+
+\subsubsection{Birth--death--catastrophe processes}
+\label{m:sec:bdc}
+
+The processes at the centre of this thesis add a third channel. Alongside the
+gradual loss of individuals to death, a compartment may suffer a
+\emph{catastrophe}: an abrupt event removing the entire population at once.
+
+\begin{definition}[Birth--death--catastrophe process]
+\label{m:def:bdc}
+Let $X_t$ count individuals in a compartment. Each individual independently gives
+birth at rate $\lambda$ and dies at rate $\mu$, and the compartment additionally
+undergoes a catastrophe --- a rupture that removes the entire population at once
+--- at rate $\rho$ per individual, so that the total catastrophe rate in state $n$
+is $\rho n$. Writing $\dagger$ for the post-catastrophe state, the non-zero
+transition rates out of $n\ge1$ are
+\begin{equation}
+\label{m:eq:bdcrates}
+q_{n,n+1} = \lambda n,
+\qquad
+q_{n,n-1} = \mu n,
+\qquad
+q_{n,\dagger} = \rho n ,
+\end{equation}
+and both $n=0$ and $\dagger$ are absorbing.
+\end{definition}
+
+Two features distinguish \cref{m:def:bdc} from the birth--death process, and both
+matter later. The process has \emph{two} absorbing states, reached by mechanisms
+that are distinguishable and not interchangeable: extinction empties the
+compartment gradually, catastrophe empties it in one event and releases its
+contents. And the catastrophe rate is proportional to the population, so the
+compartment becomes more likely to rupture the fuller it is --- the hazard is
+state-dependent, which is a genuine complication rather than a parameter choice, as
+\cref{m:rem:notmeanfield} shows. \Cref{m:fig:ratediagram} sets the two processes
+side by side.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  >={Stealth[length=1.9mm]},
+  st/.style ={circle, draw, thick, minimum size=7.5mm, inner sep=0pt, font=\small},
+  ab/.style ={circle, draw, thick, double, double distance=0.7pt,
+              minimum size=7.5mm, inner sep=0pt, font=\small},
+  lb/.style ={font=\footnotesize, inner sep=1.6pt},
+  rowlab/.style={font=\small\itshape, anchor=west},
+  every path/.style={thick}
+]
+% ---------------- linear birth--death -------------------------------------
+\node[rowlab] at (-1.9,1.15) {birth--death};
+\node[ab] (a0) at (0,0)   {$0$};
+\node[st] (a1) at (2.1,0) {$1$};
+\node[st] (a2) at (4.2,0) {$2$};
+\node[st] (a3) at (6.3,0) {$3$};
+\node     (a4) at (7.9,0) {$\cdots$};
+\draw[->] (a1) to[bend left=38]  node[above,lb]{$\lambda$}  (a2);
+\draw[->] (a2) to[bend left=38]  node[above,lb]{$2\lambda$} (a3);
+\draw[->] (a3) to[bend left=38]  node[above,lb]{$3\lambda$} (a4);
+\draw[->] (a1) to[bend left=38]  node[below,lb]{$\mu$}      (a0);
+\draw[->] (a2) to[bend left=38]  node[below,lb]{$2\mu$}     (a1);
+\draw[->] (a3) to[bend left=38]  node[below,lb]{$3\mu$}     (a2);
+
+% ---------------- birth--death--catastrophe -------------------------------
+\begin{scope}[yshift=-3.5cm]
+\node[rowlab] at (-1.9,1.15) {birth--death--catastrophe};
+\node[ab] (b0) at (0,0)   {$0$};
+\node[st] (b1) at (2.1,0) {$1$};
+\node[st] (b2) at (4.2,0) {$2$};
+\node[st] (b3) at (6.3,0) {$3$};
+\node     (b4) at (7.9,0) {$\cdots$};
+\draw[->] (b1) to[bend left=38]  node[above,lb]{$\lambda$}  (b2);
+\draw[->] (b2) to[bend left=38]  node[above,lb]{$2\lambda$} (b3);
+\draw[->] (b3) to[bend left=38]  node[above,lb]{$3\lambda$} (b4);
+\draw[->] (b1) to[bend left=38]  node[below,lb]{$\mu$}      (b0);
+\draw[->] (b2) to[bend left=38]  node[below,lb]{$2\mu$}     (b1);
+\draw[->] (b3) to[bend left=38]  node[below,lb]{$3\mu$}     (b2);
+\node[ab] (bd) at (4.2,-2.35) {$\dagger$};
+\draw[->,densely dashed] (b1) to[bend right=12]
+      node[pos=0.68,left=1.5pt,lb]{$\rho$} (bd);
+\draw[->,densely dashed] (b2) --
+      node[pos=0.68,right=1.5pt,lb]{$2\rho$} (bd);
+\draw[->,densely dashed] (b3) to[bend left=12]
+      node[pos=0.68,right=1.5pt,lb]{$3\rho$} (bd);
+\end{scope}
+\end{tikzpicture}
+\caption{Transition-rate diagrams for the linear birth--death process
+\cref{m:eq:bdrates} and for the birth--death--catastrophe process of
+\cref{m:def:bdc}. Double circles mark absorbing states. Every rate is proportional
+to the current count, because individuals act independently. The two differ in one
+structural respect: the birth--death chain can only be absorbed by stepping down
+through state $1$, whereas catastrophe (dashed) removes the population from
+\emph{any} state in a single transition, and does so faster the fuller the
+compartment is. That is why survival mass drains from state $1$ alone in the first
+process but from every positive state in the second, as
+\cref{m:eq:bdcsurvivalloss} records, and it is what makes $\dagger$ and $0$
+genuinely different endings rather than two labels for extinction.}
+\label{m:fig:ratediagram}
+\end{figure}
+
+It is useful to see the whole family at once. Let the positive state $i$ carry
+birth rate $\lambda_i$, ordinary death rate $\mu_i$ and catastrophe rate
+$\kappa_i$, a catastrophe sending the process directly to $0$. On bounded test
+functions the generator is
+\begin{equation}
+\label{m:eq:bdcgenerator}
+(\mathcal Lf)(i)
+= \lambda_i\{f(i+1)-f(i)\} + \mu_i\{f(i-1)-f(i)\} + \kappa_i\{f(0)-f(i)\},
+\qquad i\ge1,
+\end{equation}
+with $(\mathcal Lf)(0)=0$. Restricting to the positive states gives the
+\emph{killed} subgenerator $K$, with $K_{i,i+1}=\lambda_i$, $K_{i,i-1}=\mu_i$ for
+$i\ge2$, and
+\begin{equation}
+\label{m:eq:killedsubgen}
+K_{i,i} = -(\lambda_i+\mu_i+\kappa_i) .
+\end{equation}
+The row mass missing from $K$ is the instantaneous absorption rate: $\kappa_i$ for
+$i\ge2$, and $\mu_1+\kappa_1$ for $i=1$. Writing $T_0=\inf\{t\ge0:X_t=0\}$ and
+summing the positive-state forward equations,
+\begin{equation}
+\label{m:eq:bdcsurvivalloss}
+\ddt{}\pr{T_0>t}
+= -\mu_1\pr{X_t=1} - \sum_{i\ge1}\kappa_i\pr{X_t=i},
+\end{equation}
+all probabilities on the right being understood before absorption. Ordinary death
+drains survival mass only from state $1$; catastrophe drains it from every positive
+state, and that asymmetry is the whole difference between the two channels. The
+consequences for conditioning are taken up in \cref{m:sec:condmeans}, and the
+process itself is developed \fwd{bdc}{in the later chapters on
+birth--death--catastrophe processes}, with the two-type extension treated
+\fwd{multitype}{in the chapter on multi-type processes} and the release of a
+ruptured compartment's contents into a shared medium
+\fwd{rupture}{in the chapter on compartment rupture}.
+
+\begin{remark}[A state-dependent catastrophe is not a mean-field hazard]
+\label{m:rem:notmeanfield}
+It is tempting to replace a state-dependent catastrophe rate by a deterministic
+hazard evaluated at the mean population, and it does not work. The point is
+clearest in discrete time. Let $\kappa$ be the probability that a given individual
+initiates catastrophe at a step, let $\widetilde Z_i$ be the branching population
+with catastrophe switched off, and let $H_n=\sum_{i=0}^{n-1}\widetilde Z_i$ be the
+cumulative exposure. Conditioning on the entire catastrophe-free genealogy, every
+individual present independently declines to trigger, so
+\begin{equation}
+\label{m:eq:norupture}
+\pr{\text{no catastrophe before }n} = \ex{(1-\kappa)^{H_n}} .
+\end{equation}
+This identity is exact. Replacing $H_n$ by $\ex{H_n}$ is not: the map
+$h\mapsto(1-\kappa)^h$ is convex, so Jensen's inequality gives
+$\ex{(1-\kappa)^{H_n}}\ge(1-\kappa)^{\ex{H_n}}$, and the substitution
+systematically understates the chance of getting through. The failure is
+structural, not a matter of accuracy --- the expectation in \cref{m:eq:norupture} is
+a nonlinear functional of the whole path, and no deterministic hazard closes it.
+Two further cautions belong with it. Non-catastrophe is not the same event as
+population survival: the probability of being both unruptured and non-zero at
+generation $n$ is $\ex{\ind\{\widetilde Z_n>0\}(1-\kappa)^{H_n}}$, for which
+Jensen supplies no bound at all. And once a trigger occurs every surviving lineage
+is stopped together, so the killed lineages are coupled and cannot be treated as
+independent after the fact --- although their family trees and trigger variables do
+factorise \emph{before} any trigger, which is what makes \cref{m:eq:norupture}
+correct. Closing the model properly therefore requires a marked or multivariate
+generating function, or the killed-generator viewpoint of \cref{m:eq:killedsubgen};
+the elementary calculation this remark displaces, and the size of the gap it leaves,
+are recorded in \cref{m:app:discreterupture}.
+\end{remark}
+
+\subsection{Time-inhomogeneous processes}
+\label{m:sec:inhomogeneous}
+
+All the chains above are time homogeneous: the rates in \cref{m:eq:infinitesimal}
+depend on the state but not on the clock. Dropping that assumption gives a
+\emph{time-inhomogeneous} chain, with generator $Q(t)$ and transition
+probabilities depending on both endpoints,
+\begin{equation}
+\label{m:eq:inhomogtrans}
+p_{ij}(s,t) = \pr{X_t=j\mid X_s=i}
+\qquad(s\le t),
+\end{equation}
+in place of the single-argument $p_{ij}(t-s)$. The Chapman--Kolmogorov identity
+survives in the form $P(s,t) = P(s,u)P(u,t)$ for $s\le u\le t$, and differentiating
+it gives forward and backward equations
+\begin{equation}
+\label{m:eq:inhomogkolmogorov}
+\pdd{}{t}P(s,t) = P(s,t)\,Q(t),
+\qquad
+\pdd{}{s}P(s,t) = -Q(s)\,P(s,t),
+\end{equation}
+but the solution is no longer the matrix exponential $\ee^{(t-s)Q}$ unless the
+generators at different times commute. In general one is left with a
+time-ordered product, and the methods of \cref{m:sec:ctmethods} apply only after
+that complication has been handled.
+
+Much survives nonetheless. The competing-clocks decomposition of
+\cref{m:prop:race} still holds instantaneously, so direct simulation still applies
+with a time-dependent total rate --- at the cost of thinning or of integrating the
+rate to find the next event time. And a linear birth--death process with
+time-varying rates $\lambda(t)$, $\mu(t)$ still has a generating function
+satisfying a first-order partial differential equation, so the method of
+characteristics of \cref{m:sec:moc} remains available; the characteristics simply
+acquire time-dependent coefficients.
+
+\subsubsection{The time-inhomogeneous linear birth--death process}
+\label{m:sec:tibd}
+
+The workhorse of the inhomogeneous setting is the process of \cref{m:sec:bd} with
+rates that are prescribed functions of the clock: each individual gives birth at
+rate $\lambda(t)$ and dies at rate $\mu(t)$, both taken locally integrable. The
+master equation is \cref{m:eq:bdmaster} with time-dependent coefficients, and the
+generating function accordingly satisfies
+\begin{equation}
+\label{m:eq:tibdpde}
+\pddt{G} = \bigl(\lambda(t)z^2-(\lambda(t)+\mu(t))z+\mu(t)\bigr)\pdd{G}{z},
+\qquad
+G(z,0)=z^N ,
+\end{equation}
+which is \cref{m:eq:bdpde} with its quadratic coefficient set in motion. The
+equation is still first order, so \cref{m:sec:moc} still applies; what has been
+lost is that the coefficient no longer factorises once and for all, and with it
+the closed solution \cref{m:eq:bdsolution}.
+
+Two quantities survive intact whatever the rates do. The mean obeys the same
+closed equation as before, $\ddt{}\ex{X_t}=(\lambda(t)-\mu(t))\ex{X_t}$, because
+the rates are still linear in the count, so
+\begin{equation}
+\label{m:eq:meanodeinhom}
+\ex{X_t} = N\exp\lrb{\int_0^t\bigl(\lambda(s)-\mu(s)\bigr)\dd s} ,
+\end{equation}
+and only the integrated net growth enters, not how it was distributed over the
+interval. And the extinction probability $u(t)=\pr{X_t=0}$ from a single founder
+satisfies the Riccati equation
+\begin{equation}
+\label{m:eq:riccatiext}
+\dda{u}{t} = \mu(t)-\bigl(\lambda(t)+\mu(t)\bigr)u+\lambda(t)u^2,
+\qquad u(0)=0 ,
+\end{equation}
+which is the backward equation of \cref{m:sec:backward} with time-dependent
+coefficients: over the first small interval either the founder dies, contributing
+$\mu(t)\Delta t$, or it divides, contributing $\lambda(t)\Delta t\,u(t)^2$ since
+both daughter lineages must then die out in turn, or nothing happens. This is a
+single scalar equation, integrated numerically without difficulty when it does
+not solve in closed form, and the full generating function retains the
+fractional-linear shape of \cref{m:eq:bdsolution} with its coefficients replaced
+by solutions of \cref{m:eq:riccatiext}.
+
+The same Riccati structure recurs twice more below, and the three occurrences are
+worth keeping apart. It appears as the continuum approximation
+\cref{m:eq:riccati} to the discrete survival recursion, and as the characteristic
+equation \cref{m:eq:ch23} of the absorption--birth--death model. Only the middle
+one is an approximation; \cref{m:eq:riccatiext} and \cref{m:eq:ch23} are exact
+consequences of their models, and the difference is exactly what
+\cref{m:app:riccati} turns on.
+
+\subsubsection{The logistic speciation model}
+\label{m:sec:logisticspeciation}
+
+The standard application of that framework is a population whose per-capita birth
+rate falls as the population fills the space available to it. In the macroevolutionary
+reading of that idea the counted individuals are species and the births are
+speciation events \cite{Allen2010}: let $X_t$ be the standing diversity, let each
+species go extinct at constant rate $\mu$, and let it speciate at the
+diversity-dependent rate
+\begin{equation}
+\label{m:eq:speciationrate}
+\lambda(n) = \lambda_0\lrb{1-\frac{n}{K}},
+\qquad \lambda_0>\mu ,
+\end{equation}
+when the standing diversity is $n$, with $K$ the niche capacity.
+
+\Cref{m:eq:speciationrate} is not yet of the form treated above, and the
+distinction is the whole point of the subsection: the rate depends on the
+\emph{state}, not on the clock. The chain it defines is nonlinear, its moment
+equations do not close, and none of the machinery of \cref{m:sec:ctmethods}
+reaches it directly. The tractable surrogate replaces the random diversity inside
+\cref{m:eq:speciationrate} by a deterministic mean-field trajectory $\bar N(t)$,
+which turns the rate into a prescribed function of time and the chain into a
+time-inhomogeneous \emph{linear} process, to which \cref{m:sec:tibd} does apply.
+That replacement is a modelling step and not an identity. It is the same
+substitution of a mean for a random census that \cref{m:rem:notmeanfield} shows to
+fail outright for a state-dependent catastrophe, and what separates the two cases is
+only what is being asked of it: here it defines a tractable comparison process, there
+it was asked to return an exact survival probability and did not. Everything that
+follows is accordingly a statement about the surrogate, not about the chain
+\cref{m:eq:speciationrate} defines.
+
+The mean-field diversity solves the logistic equation
+\begin{equation}
+\label{m:eq:logisticode}
+\dda{\bar N}{t} = \bigl(\lambda(\bar N)-\mu\bigr)\bar N
+= \gamma\,\bar N\lrb{1-\frac{\bar N}{N_\ast}},
+\qquad
+\gamma = \lambda_0-\mu,
+\quad
+N_\ast = K\lrb{1-\frac{\mu}{\lambda_0}},
+\end{equation}
+whose equilibrium $N_\ast$ is the diversity at which speciation balances
+extinction. From $\bar N(0)=N_0$,
+\begin{equation}
+\label{m:eq:logisticsol}
+\bar N(t) = \frac{N_\ast}{1+B\ee^{-\gamma t}},
+\qquad
+B = \frac{N_\ast}{N_0}-1 ,
+\end{equation}
+and the surrogate speciation rate $\lambda(t)=\lambda_0\bigl(1-\bar N(t)/K\bigr)$
+is
+\begin{equation}
+\label{m:eq:lambdat}
+\lambda(t) = \mu + \frac{\gamma B\ee^{-\gamma t}}{1+B\ee^{-\gamma t}},
+\qquad
+\lambda(0) = \lambda_0\lrb{1-\frac{N_0}{K}} ,
+\end{equation}
+relaxing monotonically from $\lambda(0)$ down to $\mu$. The integrated net growth
+that \cref{m:eq:meanodeinhom} calls for is then available in closed form,
+\begin{equation}
+\label{m:eq:lambdaint}
+\int_0^t\bigl(\lambda(s)-\mu\bigr)\dd s
+= \ln\lrb{\frac{1+B}{1+B\ee^{-\gamma t}}} ,
+\end{equation}
+so that the mean diversity of the surrogate process is
+\begin{equation}
+\label{m:eq:logspecmean}
+\ex{X_t} = N_0\,\frac{1+B}{1+B\ee^{-\gamma t}}
+\;\xrightarrow[t\to\infty]{}\;
+N_0(1+B) = N_\ast ,
+\end{equation}
+recovering the deterministic equilibrium, as a linear surrogate built on that
+equilibrium must. Its extinction probability follows by integrating
+\cref{m:eq:riccatiext} with the rate \cref{m:eq:lambdat}, and no longer in closed
+form. \Cref{m:fig:logspecmean} plots \cref{m:eq:logspecmean} for three founding
+diversities.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.78\textwidth]{logspec_mean.pdf}
+\caption{Mean diversity \cref{m:eq:logspecmean} of the logistic speciation
+surrogate for founding diversities $N_0=1,3,6$, with $\mu/\lambda_0=0.1$ and
+$K=10$, so that $N_\ast=9$; the abscissa is the rescaled time $\gamma t$. Every
+founding diversity relaxes monotonically to $N_\ast$, and the mean of the
+surrogate coincides with the deterministic solution \cref{m:eq:logisticsol}
+exactly, because the surrogate is linear and its mean therefore closes. The
+smallest cohort spends a long early interval in near-exponential growth before the
+diversity dependence binds --- and it is over precisely that interval that the
+surrogate is least trustworthy, since it is there that a single realisation is
+least like its mean.}
+\label{m:fig:logspecmean}
+\end{figure}
+
+Two limits are worth reading off \cref{m:eq:lambdat}. At early times
+$\lambda(t)\approx\lambda(0)>\mu$ and the surrogate is indistinguishable from a
+homogeneous supercritical process; at late times $\lambda(t)\downarrow\mu$ and it
+approaches criticality from above. The model therefore drifts, over its own
+lifetime, into the regime whose discrete-generation counterpart causes the
+difficulties documented in \cref{m:app:criticalgw} --- a fixed carrying capacity
+manufactures a near-critical process out of a comfortably supercritical one, and
+does so without any parameter being changed by hand.
+
+\subsection{Coupled ODE--CTMC systems}
+\label{m:sec:coupled}
+
+The final class leaves the purely stochastic setting. In a \emph{coupled
+ODE--CTMC system} a continuous, deterministic state $\mathbf y(t)\in\mathbb R^d$
+evolves alongside a discrete, stochastic state $X_t\in\mathcal S$, and the two
+influence one another. Three couplings are possible, and they are genuinely
+different.
+
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \emph{The differential equation depends on the chain.} The vector field is
+      indexed by the discrete state,
+      \begin{equation}
+      \label{m:eq:coupledone}
+      \dda{\mathbf y}{t} = F\bigl(\mathbf y(t),\,X_t\bigr),
+      \end{equation}
+      with $X_t$ an autonomous Markov chain. Between jumps the trajectory follows a
+      fixed flow; at each jump the flow switches. The pair
+      $(\mathbf y(t),X_t)$ is a Markov process on $\mathbb R^d\times\mathcal S$ even
+      though neither component is one alone, and it is a piecewise-deterministic
+      Markov process in the standard classification \cite{Davis1993}.
+\item \emph{The chain depends on the differential equation.} The transition rates
+      are functions of the continuous state,
+      \begin{equation}
+      \label{m:eq:coupledtwo}
+      q_{ij} = q_{ij}\bigl(\mathbf y(t)\bigr),
+      \end{equation}
+      with $\mathbf y$ following a prescribed trajectory. This is a
+      time-inhomogeneous chain in the sense of \cref{m:sec:inhomogeneous}, with the
+      inhomogeneity generated by the flow rather than imposed directly, and the
+      remarks there apply.
+\item \emph{Both directions at once.} The vector field depends on the discrete
+      state and the rates depend on the continuous one:
+      \begin{equation}
+      \label{m:eq:coupledthree}
+      \dda{\mathbf y}{t} = F\bigl(\mathbf y(t),X_t\bigr),
+      \qquad
+      q_{ij} = q_{ij}\bigl(\mathbf y(t)\bigr) .
+      \end{equation}
+      Neither component can now be solved first and substituted into the other, and
+      the joint process must be treated as a whole.
+\end{enumerate}
+
+Case (i) alone is already enough to break the methods of \cref{m:sec:ctmethods} as
+stated, because the state space is no longer countable and the generator acquires a
+transport term: for suitable test functions $f(\mathbf y,i)$,
+\begin{equation}
+\label{m:eq:coupledgenerator}
+(\mathcal Lf)(\mathbf y,i)
+= F(\mathbf y,i)\cdot\nabla_{\mathbf y}f(\mathbf y,i)
++ \sum_{j\neq i}q_{ij}(\mathbf y)\bigl\{f(\mathbf y,j)-f(\mathbf y,i)\bigr\} .
+\end{equation}
+The first term is the deterministic drift along the flow and the second is the
+familiar jump part; \cref{m:eq:coupledgenerator} covers all three cases above,
+with the $\mathbf y$-dependence of the rates dropped in case (i) and the
+$i$-dependence of $F$ dropped in case (ii). Written this way the coupled system is
+a recognisable object, and the corresponding forward equation is a system of
+transport equations indexed by $\mathcal S$ rather than a system of ordinary
+differential equations.
+
+\Cref{m:fig:coupled} shows what the two-way case \cref{m:eq:coupledthree} looks like
+in a trajectory. The system drawn there is generic --- it is chosen only to make the
+mechanism visible, and is not a model used elsewhere in this thesis --- but it
+displays the feature that distinguishes coupling (iii) from the two one-way cases.
+Because the switching rate rises with $y$, the intervals spent in the second
+discrete state are not scattered uniformly in time: they cluster where the
+continuous variable has climbed, and each such interval then pulls $y$ back down.
+Neither component can be solved first and substituted into the other, because each
+is continually re-shaping the other's behaviour.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{coupled_ode_ctmc.pdf}
+\caption{A trajectory of a coupled ODE--CTMC system of the two-way form
+\cref{m:eq:coupledthree}. The continuous variable follows
+$\dd y/\dd t = a(X_t)-by$, so it relaxes towards $a_1/b$ while $X_t=1$ and towards
+$a_2/b$ while $X_t=2$ (dashed lines); the chain switches $1\to2$ at rate
+$\kappa y$, which depends on the continuous state, and back at a constant rate.
+Upper panel: $y(t)$, with the intervals spent in state $2$ shaded. Lower panel:
+the discrete component $X_t$. The visits to state $2$ concentrate where $y$ is
+large, which is the $y$-dependence of the rate made visible; the resulting descents
+then remove the very condition that made them likely. The joint process
+$(y(t),X_t)$ is Markov although neither component is, and its generator is
+\cref{m:eq:coupledgenerator}. The parameters are illustrative only.}
+\label{m:fig:coupled}
+\end{figure}
+
+\subsubsection{Simulating a coupled system}
+\label{m:sec:coupledsim}
+
+The competing-clocks construction of \cref{m:prop:race} extends to
+\cref{m:eq:coupledthree} with one qualification: the rates are no longer constant
+between events, because $\mathbf y$ moves. Given the current state
+$(\mathbf y,i)$, integrate the flow with the discrete component held at $i$ to
+obtain $\mathbf y_s$ for $s\ge t$; the total jump rate
+$q_i(\mathbf y_s)=\sum_{j\neq i}q_{ij}(\mathbf y_s)$ is then a known function of
+$s$, and the next jump time $T$ has survival function
+\begin{equation}
+\label{m:eq:coupledholding}
+\pr{T>s} = \exp\lrb{-\int_t^{s}q_i(\mathbf y_u)\,\dd u} ,
+\end{equation}
+exactly as in \cref{m:sec:inhomogeneous}; the destination is then drawn with
+probability $q_{ij}(\mathbf y_T)/q_i(\mathbf y_T)$, the state is updated, and the
+procedure repeats. Where $q_i$ admits a constant majorant the integral can be
+inverted by rejection, and otherwise by quadrature. Analytically the position is
+less comfortable. If the coupling is weak one closes the system by replacing
+$\mathbf y$ by its mean-field trajectory --- which returns a time-inhomogeneous
+chain in the sense of \cref{m:sec:inhomogeneous}, and the logistic surrogate of
+\cref{m:sec:logisticspeciation} is exactly that closure --- or by replacing $X_t$
+by its mean, which returns a closed differential equation. When the coupling is
+strong neither closure is exact, and the working objects become joint
+expectations satisfying hybrid moment equations that mix the jump generator with
+the drift.
+
+\subsubsection{A schematic instance: rupture into a shared medium}
+\label{m:sec:coupledexample}
+
+It is worth seeing the framework carry one concrete mechanism, and the natural
+one here is suggested by \cref{m:def:bdc}. Let $X_t$ be the contents of a
+compartment, evolving as the birth--death--catastrophe process of that
+definition, and let $y(t)\ge0$ be the concentration of material in a medium the
+compartment sits in. Between catastrophes the medium clears at a constant
+per-unit rate $\delta$,
+\begin{equation}
+\label{m:eq:mediumdecay}
+\dda{y}{t} = -\delta y ,
+\end{equation}
+and at a catastrophe time $\tau$ the entire contents of the compartment are
+released into the medium at once,
+\begin{equation}
+\label{m:eq:mediumjump}
+y(\tau+) = y(\tau-) + c\,X_{\tau-} ,
+\end{equation}
+with $c>0$ the material carried per individual. That is the first arrow of the
+coupling: the discrete component drives the flow. The second is equally present,
+since the catastrophe rate $\rho$, and any rate at which a surviving compartment
+takes material back up, may themselves be functions of the current concentration,
+so that a fuller medium hastens the next rupture. Both dependences are then
+active and the system is of the two-way form \cref{m:eq:coupledthree}.
+
+This is a schematic: it fixes the mechanism and the shape of the state, and the
+models actually built on it are developed \fwd{rupture}{in the chapter on
+compartment rupture}. Two of its features are worth isolating even so, because
+they survive into every instance and neither is visible in
+\cref{m:eq:coupledgenerator} as written. The continuous variable is
+\emph{impulsive}: \cref{m:eq:mediumjump} is a jump map, not a vector field, so
+the natural description is a flow punctuated by resets rather than a single
+differential equation, and the generator acquires a corresponding jump term in
+$y$. And the quantity released, $X_{\tau-}$, is the state of the chain at a
+stopping time rather than a parameter of the model: what the rupture finds is
+whatever the conditioned process happens to hold, so its law is the
+quasi-stationary problem of \cref{m:sec:condmeans} evaluated at a random time.
+That is why systems of this kind are approached with the generating-function and
+first-step machinery of \cref{m:sec:methods} rather than closed by simulation
+alone. \Cref{m:fig:sawtooth} shows one realisation.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.86\textwidth]{rupture_sawtooth.pdf}
+\caption{One exact event-driven realisation of the schematic
+\cref{m:eq:mediumdecay,m:eq:mediumjump}, with $\lambda=0.55$, $\mu=0.25$,
+$\rho=0.08$, $X_0=5$, $\delta=0.30$ and $c=0.4$; so that the picture continues
+past the first rupture, the compartment is re-seeded with $X_0$ individuals after
+each one. Upper panel: the compartment contents $X_t$, growing between ruptures
+and collapsing at them. Lower panel: the medium $y(t)$, decaying exponentially
+between ruptures and receiving the impulsive release $c\,X_{\tau-}$ at each.
+Dotted verticals mark the rupture times, aligned across the panels. The releases
+differ in size because each is the compartment's state at the moment its
+catastrophe clock happened to fire, and a rate proportional to the contents
+biases that state upwards, a fuller compartment rupturing sooner. That is why
+\cref{m:eq:mediumjump} cannot be replaced by a fixed increment.}
+\label{m:fig:sawtooth}
+\end{figure}

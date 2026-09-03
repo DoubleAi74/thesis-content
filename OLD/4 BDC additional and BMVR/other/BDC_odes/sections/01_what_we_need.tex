@@ -1,0 +1,198 @@
+% What we need from Chapters 3 and 4a --- spec \S5.1.
+% Boxed formulas of Project_specification.md \S6 with local labels; all
+% later sections reference these. Full derivations: Chapters 3 and 4a.
+
+\section{What we need from Chapters 3 and 4a}
+\label{sec:needed}
+
+This chapter embeds the single-cell theory of Chapters~3 and~4a in a
+population. Nothing new from the single cell is required --- but several of
+its closed forms will be quoted constantly, and they are collected here once,
+boxed, with the labels the rest of the chapter uses. Chapter~3 supplies the
+derivations; Chapter~4a the distribution theory; this section is the
+reference card.
+
+Throughout: $\lambda$, $\mu$, $\delta$ are the intracellular birth, death and
+catastrophe rates per replicative unit; $H$ is the absorbing rupture state;
+$\xt$ the intracellular load, $\wt$ the released count, $\tau$ the burst
+time, and $\Kb$ the burst size. We write $w=\ee^{\theta t}$, and one
+naming decision is made now and kept: the burst-time density, which is
+$\delta J(t)$ in both earlier chapters, is written as $\delta J$ in this
+chapter, because $\varphi$ is reserved for the partial-release fraction of
+\S\ref{sec:boolean}.
+
+\subsection{Roots and identities}
+\label{sec:needed-roots}
+
+The roots of the quadratic $\lambda f^2-(\lambda+\mu+\delta)f+\mu$ are
+\begin{equation}
+a=\eta+\sqrt{\eta^2-\frac{\mu}{\lambda}},\qquad
+b=\eta-\sqrt{\eta^2-\frac{\mu}{\lambda}},\qquad
+\eta=\frac{\lambda+\mu+\delta}{2\lambda},
+\end{equation}
+with $b<1<a$, and the derived constants are
+\begin{equation}
+A=a-1,\qquad B=1-b,\qquad \theta=\lambda(a-b),\qquad \kappa=1+\frac{\delta}{2\lambda}.
+\end{equation}
+The identities that simplify everything downstream are
+\begin{equation}
+\boxed{ab=\frac{\mu}{\lambda},\quad a+b=\frac{\lambda+\mu+\delta}{\lambda},\quad
+AB=\frac{\delta}{\lambda},\quad A+B=a-b,\quad \theta=\lambda(a-b).}
+\label{eq:AB}
+\end{equation}
+
+\subsection{The three fixation functions}
+
+The no-burst probability, the internal-extinction probability, and the
+non-fixation probability are
+\begin{equation}
+\boxed{I(t)=\frac{aB+bAw}{B+Aw},\qquad
+D(t)=\frac{ab\,(w-1)}{aw-b},\qquad
+\Ifix(t)=I(t)-D(t)=\frac{(a-b)^2\,w}{(B+Aw)(aw-b)}.}
+\label{eq:IDIhat}
+\end{equation}
+$I(\infty)=D(\infty)=b$ --- $b$ is the probability that the cell clears
+internally without ever bursting --- while $\Ifix(0)=1$,
+$\Ifix'(0)=-(\mu+\delta)$ and $\Ifix(\infty)=0$. The population survival
+kernel of \S\ref{sec:renewal} is $\Ifix$ itself.
+
+\subsection{Moments and mean release}
+
+With $I'=-\delta J$ and $V'=\delta K$,
+\begin{equation}
+\boxed{J(t)=\frac{(a-b)^2\,w}{(B+Aw)^2}=-\frac{\lambda}{\delta}(I-a)(I-b),}
+\label{eq:J}
+\end{equation}
+\begin{equation}
+\boxed{K(t)=\Bigl[1+\frac{2\lambda}{\delta}(1-I)\Bigr]J
+=\frac{2\lambda}{\delta}(\kappa-I)J,}
+\label{eq:K}
+\end{equation}
+and the cumulative mean release, a quadratic in $1-I$ alone,
+\begin{equation}
+\boxed{V(t)=(1-I)\Bigl[1+\frac{\lambda}{\delta}(1-I)\Bigr].}
+\label{eq:V}
+\end{equation}
+Its late-time value, the total expected output of one cell, is
+\begin{equation}
+\boxed{V_\infty=\frac{a(1-b)}{a-1}=\frac{aB}{A}
+=\frac{\lambda-\mu}{\delta}(1-b)+1,
+\qquad
+\mean{\Kb\mid\text{burst}}=\frac{V_\infty}{1-b}=\frac{a}{a-1}.}
+\label{eq:Vinf}
+\end{equation}
+Note again that $V_\infty$ counts the internally cleared cells with their
+release of zero; the conditional mean removes them.
+
+\subsection{Distribution-level facts}
+
+Three results of Chapter~4a are used as black boxes here. First, the
+burst-time density is
+\begin{equation}
+-I'(t)=\delta J(t),
+\label{eq:phi}
+\end{equation}
+defective with total mass $1-b$. Second, the burst size, unconditional,
+obeys
+\begin{equation}
+\pr{\Kb=k}=\frac{\delta}{\lambda}\,a^{-k},\qquad k\ge1,
+\label{eq:burstlaw}
+\end{equation}
+with the mass $b$ at ``no burst''; conditioned on bursting this becomes
+$(a-1)a^{-k}$, which is exactly the quasi-stationary distribution of the
+load (both are geometric on $\{1,2,\ldots\}$ with ratio $1/a$). Third,
+given that the burst occurs at time $t$, its size is a size-biased draw
+from the state probabilities:
+\begin{equation}
+\boxed{\mean{\Kb\mid\tau=t}=\frac{K(t)}{J(t)}
+=1+\frac{2\lambda}{\delta}\bigl(1-I(t)\bigr),}
+\label{eq:sizebias}
+\end{equation}
+tending at late time to $(a+1)/(a-1)$, the size-biased quasi-stationary
+mean.
+
+\subsection{The second moment of the release}
+
+The whole-host variance prediction of \S\ref{sec:open-problems} starts from
+\begin{equation}
+\boxed{\mean{\wt^2}
+=\frac{2(\lambda-\mu)}{\delta}V
+-\frac{\lambda+\mu}{\delta}I
+-K
++\frac{\lambda+\mu}{\delta}
++1,}
+\label{eq:EW2}
+\end{equation}
+and $\mathrm{Var}(\wt)=\mean{\wt^2}-V^2$.
+
+\subsection{The mean productive lifetime}
+
+The integral of the survival kernel, used in \S\ref{sec:peff-section} to
+anchor the effective parameters, is
+\begin{equation}
+\boxed{\mean{T_{\rm prod}}=\int_0^\infty\Ifix(t)\,\dd t
+=\frac{1}{\lambda}\log\frac{a}{a-1}
+=\frac{1}{\lambda}\log\mean{\Kb\mid\text{burst}}.}
+\label{prop:lifetime}
+\end{equation}
+
+\subsection{Multiplicity of infection}
+
+A cell founded by $k$ particles releases superlinearly more. Its moments
+and release flux are
+\begin{equation}
+J_k(t)=kJ(t)I(t)^{k-1},\qquad
+K_k(t)=kK(t)I(t)^{k-1}+k(k-1)J(t)^2I(t)^{k-2},
+\end{equation}
+\begin{equation}
+\boxed{g_k(t)=\delta K_k(t)
+=\delta\lrb{kK I^{k-1}+k(k-1)J^2I^{k-2}},}
+\label{eq:gk}
+\end{equation}
+and its lifetime yield, for $k\ge2$,
+\begin{equation}
+\boxed{V_\infty^{(k)}
+=(1-b^k)
++\frac{2\lambda}{\delta}\Biggl[\frac{1}{k+1}-b^k+\frac{k\,b^{k+1}}{k+1}\Biggr]
++k(k-1)\frac{\lambda}{\delta}\int_1^b (x-a)(x-b)\,x^{k-2}\,\dd x,}
+\label{eq:Vk}
+\end{equation}
+simplifying to $V_\infty^{(k)}=k+\lambda/\delta$ when $\mu=0$. The
+conditional mean burst $V_\infty^{(k)}/(1-b^k)$ increases with $k$:
+multiply infected cells burst more often, and bigger.
+
+\subsection*{Scope}
+
+Everything in this section is quoted; the derivations live in Chapters~3
+and~4a, and the verification of the population-level consequences of what
+follows is recorded in Appendix~\ref{app:verification}. The population
+notation of this chapter --- $\Icell$, $\Vfree$, $\gamma$, $c$, $T$,
+$p$, $d_{\Icell}$ --- is chosen to avoid collision with all of the above,
+and is collected in Table~\ref{tab:notation-pop}.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{tabular}{@{}llp{0.44\textwidth}@{}}
+\toprule
+Symbol & Meaning & Notes \\
+\midrule
+$T$ & target-cell count & held fixed \\
+$\gamma$ & infection rate & \\
+$\Icell,\Vfree$ & infected cells, free particles & population counts \\
+$c$ & virion clearance & \\
+$d_{\Icell}$ & infected-cell removal (phenomenological) & not $\delta$ \\
+$p$, $p_{\rm eff}(r)$ & constant / effective release rate & \\
+$g(a)$ & release kernel, $\delta K(a)$ & expected flux at age $a$ \\
+$S(a)$ & survival kernel, $\Ifix(a)$ & \\
+$q$ & $\gamma T/(\gamma T+c)$, infection success & branching \\
+$m$ & $qV_\infty$, branching mean offspring & \\
+$L$ & $a(1-b)=a-\mu/\lambda$, flooding parameter & \\
+$\varphi$ & boolean partial-release fraction (\S\ref{sec:boolean}) & \\
+$\zeta$ & intensity decay rate of Model~10 (\S\ref{sec:self-excite}) & not $\kappa$ \\
+\bottomrule
+\end{tabular}
+\caption{Population-level notation of this chapter.}
+\label{tab:notation-pop}
+\end{table}

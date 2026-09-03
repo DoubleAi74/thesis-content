@@ -1,0 +1,34 @@
+\section{Introduction}
+\label{sec:introduction}
+
+A population can disappear by ordinary deaths. It can also end for a different reason: one individual may trigger an event that stops the whole process. That event might be detection, intervention, or some other absorbing mechanism; the physical name depends on the application. The mathematical question is simpler: if individuals of two types contribute different amounts to the instantaneous catastrophe rate, what is the probability that the event has not happened by a finite time? The answer depends on how long each type is present, not only on the terminal counts, so that a lineage which grew early and then died can contribute more catastrophe exposure than a small lineage which remains alive. The natural object is therefore an average of exponential weights for total type-specific exposure: an occupation-time transform, with one weight for each type. Because any individual can trigger the same absorbing event, the model keeps a branching mechanism while the observable is global.
+
+A concrete setting is the early intracellular phase of \textit{Yersinia pestis} within macrophages. Under that reading, type~1 is an early intracellular state, conversion is progressive physiological adaptation rather than a genetic mutation, and type~2 is a later adapted state; catastrophe stands for irreversible loss of intracellular containment (macrophage burst, release of the bacterial load, or another terminal failure of the compartment), as distinct from ordinary bacterial death. The adapted phase could be more strongly associated with that endpoint, and unequal type-specific rates then let us compare that idea with alternatives; the biological background and the regimes are in \cref{sec:biology}. The exact avoidance probability simply asks how long containment can persist under any such mechanism.
+
+The underlying population process is the familiar two-type birth--death model with one-way conversion. A type-1 individual can give birth, die, or change into type~2; a type-2 individual can give birth or die. Multitype branching processes provide the general setting \cite{AthreyaNey1972}. Antal and Krapivsky obtained an exact finite-time generating function for this triangular two-type process and used the hypergeometric structure created by its backward equations \cite{AntalKrapivsky2011}. Their calculation follows terminal population counts; they obtain a pair of probability generatng functions. Here we keep the same triangular structure and add type-specific routes to an absorbing catastrophe. The shared skeleton and the precise equation-level map to their system are set out in \cref{app:AK-recovery}; the short point is that their object and ours differ, so setting $\delta_1=\delta_2=0$ in the present initial-value problem does not recover their generating functions. 
+
+The extension gives the following two coupled nonlinear equations, derived in \eqref{eq:S-unscaled} and \eqref{eq:G-unscaled}:
+\begin{align*}
+\frac{\dd S}{\dd t}
+&=\lambda_1S^2-(\lambda_1+\mu_1+\nu+\delta_1)S
++\mu_1+\nu G,\\
+\frac{\dd G}{\dd t}
+&=\lambda_2G^2-(\lambda_2+\mu_2+\delta_2)G
++\mu_2,
+\end{align*}
+with $S(0)=G(0)=1$. The second equation is autonomous, which is why an exact calculation remains possible.
+
+\begin{samepage}
+The derivation proceeds as follows.
+\begin{itemize}[leftmargin=1.6em,itemsep=0.25em,topsep=0.35em]
+\item Solve the type-2 equation as a rational function of an exponentially decaying variable.
+\item Substitute that solution into the type-1 equation, leaving a non-autonomous Riccati equation.
+\item Shift by the long-time type-1 root, then linearise the Riccati equation by a logarithmic derivative.
+\item Change independent variable to the type-2 coordinate $z_2$, so that the linear equation becomes the Gauss hypergeometric equation.
+\end{itemize}
+The special function is forced by the reduction: it appears because the type-2 probability has one moving rational pole.
+\end{samepage}
+
+The principal result is a closed finite-time expression for the probability of avoiding catastrophe from one initial type-1 individual, with unequal type-specific catastrophe rates allowed. We also obtain the corresponding type-2 probability, identify both infinite-time limits, and treat the boundaries where either birth rate vanishes or type~2 cannot cause catastrophe. The calculation is exact within the model; what catastrophe \emph{means} depends on the application. One reading, developed in \cref{sec:biology}, takes early and adapted intracellular phenotypes of \textit{Y.\ pestis}, with containment failure as the absorbing event. The formulae themselves do not depend on that reading.
+
+The paper is organised around the derivation. \Cref{sec:model} defines the process, gives its occupation-time representation, and derives the backward equations. \Cref{sec:autonomous} solves the autonomous equation. The hypergeometric reduction and the main formula appear in \cref{sec:main_result}, which closes with a short mathematical interpretation. \Cref{sec:biology} then develops an intracellular application and compares catastrophe-rate regimes. Boundary cases and zero-birth formulae are collected in \cref{app:limits}; the map to Antal--Krapivsky is \cref{app:AK-recovery}. A short conclusion and four technical appendices complete the paper.

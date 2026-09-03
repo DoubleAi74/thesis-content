@@ -1,0 +1,118 @@
+\section{An exponential--rational hypergeometric integral}
+\label{app:hypergeometric-integral}
+
+The geometric-series derivation of \(\Psi\) in
+\cref{sec:transfer-birth-death} is the shortest route to the generating function.
+Direct integration of the rational characteristic leads to the following more
+general identity.
+
+\begin{proposition}
+\label{prop:hypergeometric-integral}
+Let \(h,k,p,q\) be real constants with \(hk\neq0\), \(p\neq0\) and
+\(h/k>0\).  On any interval on which the denominator is non-zero,
+\begin{equation}
+  \int
+  \frac{\e^{h\tau}}{p+q\e^{k\tau}}\,\dd\tau
+  =
+  \frac{\e^{h\tau}}{ph}\,
+  {}_2F_1\!\left(
+    1,\frac hk;\frac hk+1;
+    -\frac qp\e^{k\tau}
+  \right)+C,
+  \label{eq:hypergeometric-integral}
+\end{equation}
+where the hypergeometric function is continued from its principal power series
+along the interval.  In particular, the Euler-integral proof below applies
+directly while
+\(-q\e^{k\tau}/p\notin[1,\infty)\).
+\end{proposition}
+
+\begin{proof}
+Use \(v=\e^{k\tau}\), so that
+\(\dd\tau=\dd v/(kv)\).  Then
+\begin{equation}
+  \int\frac{\e^{h\tau}}{p+q\e^{k\tau}}\,\dd\tau
+  =\frac1{pk}
+   \int\frac{v^{h/k-1}}{1+(q/p)v}\,\dd v.
+  \label{eq:hyp-proof-substitution}
+\end{equation}
+Write \(a=h/k>0\).  An antiderivative may be fixed, up to a constant, by
+integrating from \(0\) to \(v\):
+\begin{equation}
+  \frac1{pk}\int_0^v
+  \frac{w^{a-1}}{1+(q/p)w}\,\dd w.
+  \label{eq:hyp-proof-definite}
+\end{equation}
+The lower endpoint is integrable precisely because \(a>0\).  Rescale
+\(w=vu\) to obtain
+\begin{equation}
+  \frac{v^a}{pk}
+  \int_0^1
+  u^{a-1}
+  \{1-zu\}^{-1}\,\dd u,
+  \qquad
+  z=-\frac qp v.
+  \label{eq:hyp-proof-rescale}
+\end{equation}
+
+Euler's integral representation states that, for
+\(\Re(c)>\Re(b)>0\),
+\begin{equation}
+  {}_2F_1(a_0,b;c;z)
+  =
+  \frac{\Gamma(c)}
+       {\Gamma(b)\Gamma(c-b)}
+  \int_0^1
+  u^{b-1}(1-u)^{c-b-1}(1-zu)^{-a_0}\,\dd u.
+  \label{eq:euler-hypergeometric}
+\end{equation}
+Apply it with \(a_0=1\), \(b=a\) and \(c=a+1\).  Since
+\(\Gamma(a+1)=a\Gamma(a)\) and \(\Gamma(1)=1\),
+\begin{equation}
+  \int_0^1\frac{u^{a-1}}{1-zu}\,\dd u
+  =\frac1a\,{}_2F_1(1,a;a+1;z).
+  \label{eq:euler-specialised}
+\end{equation}
+Substituting this into \cref{eq:hyp-proof-rescale}, and using
+\(ka=h\), gives
+\begin{equation}
+  \frac{v^a}{ph}
+  {}_2F_1\!\left(1,\frac hk;\frac hk+1;-\frac qp v\right).
+\end{equation}
+Finally \(v^a=\e^{h\tau}\), which proves
+\cref{eq:hypergeometric-integral} on the Euler domain.  Both sides are analytic
+antiderivatives away from the singular set, so continuation along any admissible
+interval preserves the identity.
+\end{proof}
+
+\subsection*{Application to the characteristic}
+
+For \(\beta\neq\mu\), write the interior characteristic as
+\begin{equation}
+  x(\tau)
+  =1+(1-\rho)
+    \frac{Z\e^{b\tau}}{1-Z\e^{b\tau}},
+  \qquad
+  \rho=\frac{\mu}{\beta},
+  \qquad b=\beta-\mu.
+  \label{eq:appendix-x-characteristic}
+\end{equation}
+The first term integrates elementarily in
+\(\alpha\int\e^{\alpha\tau}x(\tau)\,\dd\tau\).  Away from
+\(\alpha+b=0\), the second is an instance of
+\cref{prop:hypergeometric-integral} after taking
+\(h=\alpha+b\), \(k=b\), \(p=1\) and \(q=-Z\), together with a factor
+\(\alpha(1-\rho)Z\).  The Euler-domain calculation applies when its stated
+hypotheses hold; elsewhere the identity is continued along the regular
+characteristic.  Algebraic simplification by
+\cref{eq:pochhammer-ratio} returns
+\begin{equation}
+  \alpha\int\e^{\alpha\tau}x(\tau)\,\dd\tau
+  =\e^{\alpha\tau}\Psi(Z\e^{b\tau})+C.
+\end{equation}
+This agrees with \cref{eq:Psi-antiderivative}.  The series proof in the main text
+has the advantage that the cancellation
+\(\alpha+nb=b(n+\delta)\) remains visible; the integral identity has the advantage
+that it applies to other exponential--rational characteristics without rebuilding
+the calculation term by term.  At \(\alpha+b=0\), the same conclusion follows by
+the finite resonant limit described after \cref{eq:abd-resonance}.

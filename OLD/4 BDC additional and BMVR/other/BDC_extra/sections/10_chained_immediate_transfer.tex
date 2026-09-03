@@ -1,0 +1,268 @@
+% Chained immediate transfer --- plan \S4.8 (Phase 2).
+% Sources: N=2 Immediate Transfer content/N_eq_2.tex (historical draft);
+% results proved and verified 2026-08-07 by
+% N=2 Immediate Transfer content/verify_chained_transfer.py (28/28 PASS).
+% Everything displayed here is verified; the suite lives alongside this
+% chapter's source folder.
+
+\section{Chained immediate transfer}
+\label{sec:chained}
+
+\subsection{Setup}
+
+We now couple several cells together in the most austere way possible. Take
+$M$ host cells, all empty save one, which holds a single particle. Each cell
+runs the $\mu=0$ birth--catastrophe process of the previous sections (birth
+$\lambda n$, catastrophe $\delta n$); on rupture, however, the released load
+does not enter an extracellular pool. It is transferred immediately and
+wholesale into a fresh cell, where a new BDC process begins; and so on,
+until every cell has ruptured. There is no extracellular phase, no
+clearance, and no re-infection --- only a chain of bursts.
+
+The motivation is twofold. First, founding censuses can be remarkably small:
+in plague, say, colony-forming units are counted in the hundreds against a
+vast population of macrophages, so a serial, one-cell-at-a-time picture is
+not absurd as a caricature of early pathogenesis. Second, the model is a
+tractable laboratory for multi-cell burst statistics --- the sizes and times
+of successive ruptures --- which interpolate between the single-cell theory
+above and the population models of Part II. Since $\mu=0$, internal
+extinction is impossible and all $M$ ruptures occur almost surely.
+
+Let $r_i$ be the load at the $i$th rupture (the $i$th \emph{rupture size}),
+$t_i$ its time, and $T_i=t_i-t_{i-1}$ the $i$th inter-rupture interval
+(with $t_0=0$). Write
+\begin{equation}
+s=\frac{\delta}{\lambda+\delta},
+\qquad
+\rho=\frac{\lambda}{\lambda+\delta}=1-s.
+\end{equation}
+
+\subsection{The key observation: event types ignore the load}
+\label{sec:key-observation}
+
+When the load is $n$, the next event is a birth with probability
+$\lambda n/(\lambda n+\delta n)=\rho$ and a catastrophe with probability $s$
+--- independent of $n$. Only the holding time depends on the load: it is
+$\mathrm{Exp}\lrb{(\lambda+\delta)n}$. Consequently the sequence of event
+\emph{types} is a sequence of independent coin flips, and the number of
+births $G$ that occur before the catastrophe in a cell founded with any load
+is
+\begin{equation}
+G\sim\mathrm{Geom}_0(s),
+\qquad
+\pr{G=g}=s\,\rho^g,\qquad g=0,1,2,\ldots
+\end{equation}
+(the number of failures before the first success). Each cell in the chain
+contributes an \emph{independent} copy $G_i$ of this variable --- the Markov
+process restarts afresh at every transfer --- and the rupture size of cell
+$i$ is its founding load plus its own births. Since the first cell is
+founded by a single particle,
+\begin{equation}
+r_k = 1 + G_1 + \cdots + G_k,
+\label{eq:rkdecomp}
+\end{equation}
+with $G_1,\ldots,G_k$ i.i.d.\ $\mathrm{Geom}_0(s)$. Everything about the
+rupture sizes follows from this decomposition.
+
+\subsection{Rupture-size laws}
+
+The sum of $k$ i.i.d.\ geometric variables is negative binomial, so
+\eqref{eq:rkdecomp} gives immediately:
+\begin{equation}
+\pr{r_k=n}=\mathcal{A}^{(n)}_{k}\,s^{k}\,\rho^{\,n-1},
+\qquad
+\mathcal{A}^{(n)}_{k}=\binom{n+k-2}{k-1},
+\quad n\ge1.
+\label{eq:rklaw}
+\end{equation}
+The first few cases display the pattern:
+\begin{equation}
+\pr{r_1=n}=s\rho^{n-1}\ \text{(geometric --- matches one-cell BDC)},
+\end{equation}
+\begin{equation}
+\pr{r_2=n}=n\,s^2\rho^{n-1},
+\qquad
+\pr{r_3=n}=\tfrac{n(n+1)}{2}s^3\rho^{n-1},
+\qquad
+\pr{r_4=n}=\tfrac{n(n+1)(n+2)}{6}s^4\rho^{n-1}.
+\end{equation}
+
+Equivalently, the coefficients satisfy the recurrence
+\begin{equation}
+\mathcal{A}^{(n)}_{k}=\sum_{i=1}^{n}\mathcal{A}^{(i)}_{k-1},
+\qquad
+\mathcal{A}^{(i)}_{1}=1,
+\end{equation}
+which is just \eqref{eq:rklaw} conditioned on the value of $r_{k-1}$:
+$\pr{r_k=n}=\sum_i\pr{r_{k-1}=i}\pr{G_k=n-i}$. The closed form
+$\mathcal{A}^{(n)}_{k}=\binom{n+k-2}{k-1}$ then follows by induction from
+the hockey-stick identity --- supplying the proof that the original
+investigation had conjectured but not completed.
+
+\begin{remark}[The coefficient, and a near miss]
+The coefficient in \eqref{eq:rklaw} is easy to miscount. The superficially
+similar expression $\frac{1}{k!}\frac{(n+k-1)!}{(n-1)!}
+=\binom{n+k-1}{k}$ is off by one shift, and is already contradicted by the
+$r_2$ and $r_3$ cases displayed above, which \eqref{eq:rklaw} reproduces
+exactly. The correct coefficient is $\binom{n+k-2}{k-1}$, and it has a
+direct reading: it counts the ways of distributing the $n-1$ births
+accumulated along the chain among its $k$ cells, each cell receiving any
+non-negative number --- the stars-and-bars count for \eqref{eq:rkdecomp}.
+\end{remark}
+
+Further consequences, all verified numerically (see
+\S\ref{sec:chained-verification}):
+\begin{align}
+\mean{r_k}&=1+k\,\frac{\rho}{s}=1+k\,\frac{\lambda}{\delta},
+&
+\mathrm{Var}(r_k)&=k\,\frac{\rho}{s^2},
+\label{eq:rkmoments}\\[0.4em]
+\mean{z^{r_k}}&=z\Bigl(\frac{s}{1-\rho z}\Bigr)^k,
+&
+\sum_{n\ge1}\pr{r_k=n}&=1\ \text{(burst is certain for $\mu=0$)}.
+\label{eq:rkgf}
+\end{align}
+The mean rupture size grows linearly along the chain --- each cell adds one
+expected burst's worth of births, $\lambda/\delta$, to whatever it inherited.
+
+\subsection{Rupture times}
+\label{sec:rupture-times}
+
+The first rupture time inherits the single-cell flux. With $m$ founders, the
+no-rupture probability is $I(t)^m$ by \eqref{eq:Ihatk} (with $\mu=0$,
+$D\equiv0$), so
+\begin{equation}
+\pr{t_1>t}=I(t)^m,
+\qquad
+f_{t_1}^{(m)}(t)=-m\,I(t)^{m-1}I'(t)=m\,I(t)^{m-1}\delta J(t).
+\label{eq:t1m}
+\end{equation}
+For $m=1$ this is the burst-time density $\varphi=\delta J$ of
+\S\ref{sec:burst-time} (which is proper here, since $b=0$). When $\mu>0$,
+the same reasoning distinguishes the two fixation routes, as in the
+original investigation: the \emph{burst-only} time has CDF
+$(1-I(t))/(1-b)$ and density $\delta J(t)/(1-b)$, while the
+\emph{general-fixation} time --- rupture or internal extinction --- has
+density
+\begin{equation}
+\delta J(t)+\mu\,p_1(t),
+\end{equation}
+the extra term being the flux through $1\to0$: only a population of size
+exactly one can die out in a single death event.
+
+\subsection{Inter-rupture intervals}
+
+Given $k$ founders, the interval $T(k)$ until rupture decomposes over the
+holding times: if $G=g$ births precede the catastrophe, the load runs
+through $k,k+1,\ldots,k+g$, so
+\begin{equation}
+T(k)=\sum_{j=k}^{k+G}\xi_j,
+\qquad
+\xi_j\sim\mathrm{Exp}\lrb{(\lambda+\delta)j}\ \text{independent}.
+\end{equation}
+Averaging over $G\sim\mathrm{Geom}_0(s)$, the Laplace transform is
+\begin{equation}
+\Lap{T}(k,u)=\mean{e^{-uT(k)}}
+=\sum_{g\ge0}s\rho^g\prod_{j=k}^{k+g}\frac{(\lambda+\delta)j}{(\lambda+\delta)j+u}.
+\label{eq:LTk}
+\end{equation}
+Writing $u'=u/(\lambda+\delta)$ and unrolling the product with Gamma
+functions, the series sums to a hypergeometric form --- a theme that recurs
+in Chapter~4b, where the effective parameters of the population model are
+likewise expressed through hypergeometric Laplace transforms:
+\begin{equation}
+\Lap{T}(k,u)=\frac{s\,k}{k+u'}\,\Fhyp\Bigl(k+1,1;k+1+u';\rho\Bigr).
+\label{eq:LTk-hyp}
+\end{equation}
+Differentiating \eqref{eq:LTk} at $u=0$ gives the exact mean
+\begin{equation}
+\mean{T(k)}=\sum_{m\ge0}\frac{\rho^m}{(\lambda+\delta)(k+m)},
+\label{eq:meanT}
+\end{equation}
+which is strictly decreasing in $k$: the more a cell inherits, the faster it
+bursts. This quantifies the original investigation's qualitative
+observation that the chain is ``partitioned by reducing intervals of time''.
+For $(\lambda,\delta)=(1,1)$: $\mean{T(1..4)}\approx0.693,0.386,0.273,0.212$
+for fixed founding loads; the chain intervals $T_k$, whose founding loads
+are random, decrease faster still
+($0.691,0.500,0.377,0.292$ in simulation).
+
+\subsection{The second rupture time}
+
+The chain's dependence structure is now visible. The second rupture time is
+$t_2=t_1+T_2$, but $t_1$ and $T_2$ are \emph{not} independent: both are
+functions of $G_1$, the number of births in the first cell. Conditional on
+$G_1=g$, however, the two pieces involve disjoint sets of exponential
+holding times, so their Laplace transforms factor:
+\begin{equation}
+\mean{e^{-ut_2}\mid G_1=g}
+=P_1(1+g,u)\,\Lap{T}(1+g,u),
+\qquad
+P_1(m,u)=\prod_{j=1}^{m}\frac{(\lambda+\delta)j}{(\lambda+\delta)j+u}.
+\end{equation}
+Averaging over $G_1\sim\mathrm{Geom}_0(s)$:
+\begin{equation}
+\Lap{t_2}(u)
+=\sum_{g\ge0} s\rho^g\,P_1(1+g,u)\,\Lap{T}(1+g,u).
+\label{eq:Lt2}
+\end{equation}
+This resolves the question with which the original investigation closed. The
+convolution guessed there,
+$\rho(t_2)=\int f(\tau)\sum_k\pr{r_1=k|\tau}\phi_k(t_2-\tau)\dd\tau$,
+is the same statement in different clothes --- and, as suspected, it is not
+the tractable one. The Laplace form \eqref{eq:Lt2} is; so is the density
+itself, computable exactly as a mixture of hypoexponential densities
+($t_1|G_1$ and $T_2|(G_1,G_2)$ are sums of independent exponentials) and
+verified against simulation in \S\ref{sec:chained-verification}. Moments
+assemble from the pieces, e.g.\
+$\mean{t_2}=\mean{T(1)}+\sum_{n\ge1}\pr{r_1=n}\mean{T(n)}$.
+
+\subsection{Verification record and scope}
+\label{sec:chained-verification}
+
+Every quantitative claim of this section was checked by exact simulation of
+the chained process (the event-type decomposition makes sampling direct):
+the suite \texttt{verify\_chained\_transfer.py} comprises 28 checks across
+three parameter sets --- the coefficient identity (exact integer
+arithmetic); the rupture-size laws for $k=1..4$ against $10^6$ chains;
+moments \eqref{eq:rkmoments}; the \pgf{} \eqref{eq:rkgf}; the $t_1$ density
+\eqref{eq:t1m} vs $\delta J$; the interval transform \eqref{eq:LTk} for
+fixed founders $k\in\{1,2,3,5\}$; the random-founder mixture consistency of
+the chain intervals; the $t_2$ transform \eqref{eq:Lt2}; the exact
+hypoexponential-mixture density of $t_2$ (relative $L^2\approx3\%$ against
+histograms); and the monotone interval means. \textbf{28 checks, all
+passing.}
+
+What remains open, and is stated plainly: the joint laws of $(t_k,r_k)$ for
+general $\mu>0$ (a coefficient machinery with ${}_2F_1$ antiderivatives is
+the route, and the single-cell ingredients are in
+Appendix~\ref{app:technical}), and the joint law of $(t_M,r_M)$ for the full
+$M$-cell chain. For $\mu=0$, the decomposition \eqref{eq:rkdecomp} extends
+the size laws to all $M$ at once, since nothing about it depends on where a
+cell sits in the chain.
+
+\figureflag{F4a.7}{Chained transfer}{%
+\textbf{Purpose:} show the section's two headline structures --- the
+negative-binomial rupture-size laws and the decreasing inter-rupture
+intervals --- in one figure. \textbf{Type:} Python simulation + analytic
+overlay, two panels. \textbf{Content:} panel (a): rupture-size pmfs
+$\pr{r_k=n}$ for $k=1,2,3,4$ with $(\lambda,\delta)=(1,1)$ (so
+$s=\rho=1/2$): histogram bars from exact simulation of $10^6$ chains (the
+event-type decomposition makes sampling direct), with the closed forms
+$\binom{n+k-2}{k-1}s^k\rho^{n-1}$ from \eqref{eq:rklaw} overlaid as
+connected curves. Panel (b): mean inter-rupture intervals
+$\mean{T(k)}=\sum_{m\ge0}\rho^m/((\lambda+\delta)(k+m))$ from
+\eqref{eq:meanT} against $k=1,\ldots,6$, plotted as a decreasing curve,
+with simulated chain-interval means (random founders) overlaid as points to
+show they decrease faster. Adapt the exact-sampling machinery of the
+verification suite (do not modify the suite itself; write a chapter-local
+script). \textbf{Axes:} panel (a): rupture size $n$ (horizontal),
+probability (vertical), legend $k=1..4$; panel (b): $k$ (horizontal), mean
+interval (vertical). \textbf{Style:} unified Python style --- default
+matplotlib with \texttt{tab:} colours, grid alpha 0.25,
+\texttt{tight\_layout}, PDF output, fonts matching the chapter.
+\textbf{Data source:} closed forms \eqref{eq:rklaw}, \eqref{eq:meanT};
+simulation via the event-type decomposition ($G_i$ i.i.d.\
+$\mathrm{Geom}_0(s)$; exponential holding times of rate
+$(\lambda+\delta)n$). \textbf{Placement:} \Secref{sec:chained}, after the
+verification record.}

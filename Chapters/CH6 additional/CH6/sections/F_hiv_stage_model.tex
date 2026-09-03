@@ -1,0 +1,69 @@
+% Appendix F --- the HIV stage model's reaction list and stage equations,
+% moved out of \S6.5 in Phase C so that the body keeps the argument and the
+% diagram while the machinery sits where machinery belongs.
+
+\section{The HIV stage model}
+\label{p:app:hivstages}
+
+\Cref{p:sec:hiv} argues that HIV is not a birth--death--catastrophe process
+but that the skeleton \cref{p:eq:skeleton} still carries it, on kernels
+$(S_{\rm HIV},g_{\rm HIV})$ supplied by an eclipse-structured
+short-productive-pulse model. This appendix records that model explicitly.
+It is a candidate, not a fitted result: the point is to fix which system is
+meant by \cref{p:fig:hiv-stages}.
+
+Write the system as follows. Let
+$L_0$ be a stimulated latently infected cell; two eclipse pathways run in
+parallel, $A$ of high release potential and multi-stage, $B$ low and brief:
+\begin{equation}
+L_0\xrightarrow{\alpha_A}E_1^{(A)},
+\quad
+L_0\xrightarrow{\alpha_B}E^{(B)},
+\quad
+E_j^{(A)}\xrightarrow{\ \omega\ }E_{j+1}^{(A)},
+\quad
+E_n^{(A)}\xrightarrow{\ \omega\ }I^{(A)},
+\quad
+E^{(B)}\xrightarrow{\alpha_B}I^{(B)}.
+\label{p:eq:hiv-paths}
+\end{equation}
+Eclipse cells divide or die without releasing virus,
+\begin{equation}
+E\xrightarrow{\rho_{\rm div}}E+E,
+\qquad
+E\xrightarrow{\mu_E}\varnothing,
+\label{p:eq:hiv-eclipse-events}
+\end{equation}
+with $\rho_{\rm div}\approx\mu_E\approx0.5/$day; productive cells release at
+constant rate and die,
+\begin{equation}
+I^{(A)}\xrightarrow{p_A}I^{(A)}+\Vfree,
+\quad
+I^{(A)}\xrightarrow{\delta_I}\varnothing,
+\quad
+I^{(B)}\xrightarrow{p_B}I^{(B)}+\Vfree,
+\quad
+I^{(B)}\xrightarrow{\delta_I}\varnothing,
+\label{p:eq:hiv-prod-events}
+\end{equation}
+with $p_A\gg p_B$ matching the bimodal release distribution and free virus
+clearing at rate $c$. Suppressing the dual path, the stage equations are
+\begin{equation}
+\ddt{E_j}=\omega E_{j-1}+\rho_{\rm div}E_j-(\mu_E+\omega)E_j,
+\quad j=1,\dots,n,
+\qquad
+\ddt{I^{(A)}}=\omega E_n-\delta_I I^{(A)},
+\label{p:eq:hiv-stage-odes}
+\end{equation}
+with $E_0\equiv0$, the initial cohort entering as $E_1(0)=\alpha_AL_0$, and
+$\Vfree'=p_AI^{(A)}-c\Vfree\ (+\,p_BI^{(B)})$. Division in eclipse is a net
+gain of $+\rho_{\rm div}E_j$ and appears once, not on both sides.
+% AUTHOR-ACTION: the draft wrote -(\mu_E+\rho_div+\omega)E_j against a
+% +\rho_div E_j source, so the division terms cancelled identically and
+% eclipse proliferation had no effect.  Corrected here per plan \S10.1;
+% please confirm against the original derivation.
+% NEEDS-REF: Erlang-eclipse within-host models; the Rong--Feng--Perelson
+% eclipse/age-structure line
+
+
+\FloatBarrier

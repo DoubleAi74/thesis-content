@@ -1,0 +1,16 @@
+% ===========================================================================
+%  chapter.tex --- thesis-ready fragment.
+%  Requires the macros of preamble.tex.
+% ===========================================================================
+
+\chapter{Mathematical introduction}
+\label{m:ch:math-intro}
+
+\input{sections/01_introduction}
+\input{sections/02_preliminaries}
+\input{sections/03_galton_watson}
+\input{sections/04_conditioning}
+\input{sections/05_small_populations}
+\input{sections/06_method_of_characteristics}
+\input{sections/07_synthesis}
+\input{sections/08_appendices}

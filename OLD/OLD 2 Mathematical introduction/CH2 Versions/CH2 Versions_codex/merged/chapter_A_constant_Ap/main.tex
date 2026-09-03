@@ -1,0 +1,47 @@
+\documentclass[11pt]{report}
+\usepackage[margin=1in]{geometry}
+\input{preamble}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+\graphicspath{{figures/}}
+\newcommand{\ChM}{Chapter~M, \emph{Mathematical introduction}}
+\newcommand{\ChA}{Chapter~A, \emph{The constant \(A(p)\)}}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,citecolor=red!55!black,
+  urlcolor=blue!60!black,pdftitle={The constant A(p)},pdfauthor={Adam Aldridge}}
+
+\begin{document}
+\pagenumbering{roman}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering\vspace*{4cm}
+{\LARGE\bfseries The constant \(A(p)\)\par}
+\vspace{6pt}{\large Quasi-stationary amplitude, closed forms, and the Koenigs obstruction\par}
+\vspace{2.5cm}{\large Adam Aldridge\par}
+\vspace{4pt}{Standalone Pass-1 merged chapter\par}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+\tableofcontents\clearpage\pagenumbering{arabic}
+
+\chapter{The constant \texorpdfstring{$A(p)$}{A(p)}}\label{a:ch:Ap}
+\input{sections/01_introduction}
+\input{sections/02_setup_recap}
+\input{sections/03_product_series_bounds}
+\input{sections/05_near_critical_upgrade}
+\input{sections/06_comparison_search}
+\input{sections/08_koenigs_identity}
+\input{sections/09_obstruction_scope_pslq}
+\input{sections/11_practical}
+\input{sections/12_conclusion}
+\appendix
+\input{sections/app_elementary_cases}
+\input{sections/app_closed_form_catalogue}
+
+\FloatBarrier
+\begingroup\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+\end{document}

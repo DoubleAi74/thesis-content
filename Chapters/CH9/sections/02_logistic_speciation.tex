@@ -1,0 +1,377 @@
+% Logistic speciation --- plan \S3.3, "\S2".
+% Sources: 09/03 entire, 09/04 entire, 09/02 (push of the past),
+% 09/01:39-43 (the LSMean figure).
+% Corrections C1 (09/04:7), C2 (09/04:34,35), C3 (09/04:176) applied here.
+% Additions A1 (var:prop:yule-geom), A2 (var:cor:logistic-limit) and A3 (the
+% beta_3 line) are new.
+
+\section{Logistic speciation}
+\label{var:sec:speciation}
+
+\subsection{Variation, and what suppresses it}
+\label{var:sec:variationmotivation}
+
+The premise of the model is Fisher's: variation is in constant supply, and
+what limits the number of distinct types is not the rate at which they arise
+but the severity of the conditions under which they must persist
+\cite{fisher1929genetical}. ``To maintain a stationary variance, fresh
+mutations must be available in each generation'' is his statement of the
+first half; the second half is that selection pressure, acting continuously,
+holds a population near a current optimum and prevents most of that variation
+from establishing. Nietzsche made the same observation from the breeder's
+side, that species given superabundant nourishment ``tend in the most marked
+way to develop variation''
+\cite{nietzsche2013beyond}.
+Read that way, an abundance of resources is less a cause of diversification
+than a withdrawal of what had been suppressing it, and the \emph{speciation
+rate} becomes a function of how much room is left.
+
+That is a claim about the fossil record as much as about breeding. The
+signature --- high early diversification after the opening of ecological
+space, then a slowing --- is the one named by punctuated equilibria
+\cite{eldredge1972punctuated}, and it is the one density-dependent
+diversification models are built to produce \cite{morlon2014phylogenetic}.
+Whether it is the typical pattern, and at what taxonomic level, is not
+settled here.
+
+\subsection{The push of the past}
+\label{var:sec:potp}
+
+There is an existing account of why diversification rates appear high at the
+origin of a clade and decline towards the present, and the model below is a
+response to it rather than a competitor. Mann and Budd, reviewing the
+phenomenon introduced by Nee and co-workers \cite{Nee1994}, name it the push
+of the past \cite{budd2018history}:
+
+\begin{quotation}
+\noindent
+The POTPa emerges as a feature of diversification by the fact that all modern
+clades (tautologically) survived until the present day. This singles them out
+from the total population of clades that could be generated from any
+particular pair of background birth and death rates: clades that happened by
+chance to start off with higher net rates of diversification have
+better-than-average chances of surviving until the present day. As Nee et
+al.\ (1994a) put it, such clades ``got off to a flying start''; and they
+accumulate species faster than one would expect. Once clades become
+established, they are less vulnerable to random changes in the observed
+diversification rate, and this value therefore tends to revert to the
+background rate through time. Long-lived clades thus tend to show high
+observed rates of diversification at their origin, which then decrease to
+their long-term average as the present is approached.
+\end{quotation}
+
+\noindent
+The push of the past is a survivorship effect: the rates never move, and the
+apparent decline is an artefact of conditioning on survival to the present.
+The model of this section supposes instead that the rate really does move,
+declining because the ecological room that permitted the early
+diversification is used up. The two accounts are not exclusive and nothing
+here argues against the first. What the model offers is a second mechanism
+with the same signature, and a distribution against which it might one day be
+told apart from the first \cite{bak1991self}.
+
+\subsection{The model}
+\label{var:sec:speciationmodel}
+
+Let $N(t)$ be the total abundance of individuals across all species, taken as
+a real number on the grounds that it is large compared with the number of
+species, and let it grow logistically,
+\begin{equation}
+\ddt{N}=\varrho N\lrb{1-\frac{N}{K}},
+\qquad N(0)=N_0,\qquad 0<N_0<K,
+\label{var:eq:logistic}
+\end{equation}
+with $K$ the carrying capacity of the environment and $\varrho$ the growth
+rate. Its solution is
+\begin{equation}
+N(t)=\frac{K\ee^{\varrho t}}{\xi+\ee^{\varrho t}},
+\qquad
+\xi=\frac{K}{N_0}-1.
+\label{var:eq:logisticsol}
+\end{equation}
+
+Let $S_t$ count species, with $S_0=1$. Each existing species gives rise to a
+new one independently at the per-species rate $\beta(t)$, and no species
+becomes extinct, so the transitions in a vanishing interval are
+\begin{align}
+\pr{S_{t+\Delta t}-S_t=1\mid S_t=n}&=\beta(t)\,n\,\Delta t+o(\Delta t),
+\label{var:eq:transitions}\\
+\pr{S_{t+\Delta t}-S_t=0\mid S_t=n}&=1-\beta(t)\,n\,\Delta t+o(\Delta t).
+\notag
+\end{align}
+This is the Yule process of \cref{m:sec:yule} with its constant rate replaced
+by a function of time; setting $\beta(t)=\beta$ recovers it exactly. The
+substitution is not new in itself --- taking $\beta(t)=\ee^{-t}$ makes the
+mean of $S_t$ follow Gompertz's 1825 law \cite{gompertz1825xxiv} --- and the
+Yule process was itself introduced in 1925 to model exactly this quantity,
+the number of species within a genus \cite{Yule1925}. What is being tried
+here is a rate tied to the logistic environment:
+\begin{equation}
+\beta(t)=\sigma\bigl(K-N(t)\bigr),
+\label{var:eq:rate1}
+\end{equation}
+which by \cref{var:eq:logisticsol} is
+\begin{equation}
+\beta(t)=\sigma K\,\frac{\xi}{\xi+\ee^{\varrho t}},
+\label{var:eq:ratesolved}
+\end{equation}
+decreasing from $\sigma(K-N_0)$ to zero as the environment fills. The
+coupling runs one way only: the environment sets the speciation clock, and
+$S_t$ does not act back on $N(t)$. The same model appears as a worked example
+in \cref{m:sec:logisticspeciation}, where its mean is recorded; what is added
+here is its distribution.
+
+\begin{remark}[What the rate law is, and is not, claiming]
+\label{var:rem:scope}
+\Cref{var:eq:rate1} treats resource availability as an \emph{index} of
+selective pressure and not as a mechanism. It says that when there is room,
+variants persist more often, and it says nothing about how. The model is
+correspondingly agnostic about the direction of causation: it does not
+distinguish logistic expansion driving diversification from logistic
+expansion merely creating the space in which diversification happens.
+
+Underneath that sits a question of timescale. If population expansion is
+orders of magnitude faster than speciation --- which for most plausible
+parameter values it is --- then the logistic phase is over before the species
+count has moved appreciably, and \cref{var:eq:rate1} is better read as
+setting the initial condition for a density-dependent diversification model
+than as driving the rate through time \cite{morlon2014phylogenetic}. Nothing
+below depends on resolving that, since the mathematics of
+\cref{var:prop:yule-geom} holds for any locally integrable $\beta$, and the
+question is which $\beta$ the biology warrants.
+\end{remark}
+
+\subsection{The marginal law}
+\label{var:sec:marginal}
+
+The first result is that the rate law enters the distribution of $S_t$ only
+through its integral, and that the resulting law is geometric. Write
+\begin{equation}
+\Bint(t)=\int_0^t\beta(u)\,\dd u
+\label{var:eq:Bdef}
+\end{equation}
+for the integrated speciation rate, and assume only that $\beta$ is locally
+integrable and non-negative.
+
+\begin{proposition}[Marginal law of an inhomogeneous Yule process]
+\label{var:prop:yule-geom}
+Let $S_t$ be a pure birth process on $\{1,2,\dots\}$ with $S_0=1$ and
+time-dependent per-capita rate $\beta(t)$. Then $S_t$ is geometric on
+$\{1,2,\dots\}$ with parameter $\ee^{-\Bint(t)}$:
+\begin{equation}
+\pr{S_t=n}=\ee^{-\Bint(t)}\bigl(1-\ee^{-\Bint(t)}\bigr)^{n-1},
+\qquad n\ge1,
+\label{var:eq:geomlaw}
+\end{equation}
+with
+\[
+\ex{S_t}=\ee^{\Bint(t)},
+\qquad
+\var{S_t}=\ee^{\Bint(t)}\bigl(\ee^{\Bint(t)}-1\bigr).
+\]
+\end{proposition}
+
+The proof is the generating-function computation of
+\cref{var:app:pgf}: the forward Kolmogorov equation still yields to the
+method of characteristics, and the \pgf{} is that of a geometric law on
+$\{1,2,\dots\}$ with success parameter $\ee^{-\Bint(t)}$. Three things are
+worth recording here. The first is that the constant-rate Yule
+law \cref{m:eq:yulelaw} is the case $\Bint(t)=\beta t$, so nothing is being
+rebuilt: the substitution $\beta t\mapsto\Bint(t)$ is exact and not merely a
+convenience. The second is that the argument nowhere uses the form of
+$\beta$, only that its integral exists, so two rate laws with the same
+integral to time $t$ give the same distribution at $t$ however differently
+they arrived there. The third is that the variance falls out of the same
+line, and had not been recorded before. The standard deviation is
+$\ee^{\Bint}\sqrt{1-\ee^{-\Bint}}$, of the same order as the mean, so to fit
+this model to a single lineage is to fit a mean to one draw from a law whose
+coefficient of variation is close to one.
+
+\subsection{The mean, directly}
+\label{var:sec:mean}
+
+With the proposition in hand $\ex{S_t}=\ee^{\Bint(t)}$ is a corollary, and it
+is also \cref{m:eq:meanodeinhom} with $\mu\equiv0$. The direct derivation is
+retained as a check on the integral that follows.
+
+Over a vanishing interval the mean after is the mean before plus the expected
+change, and by \cref{var:eq:transitions} the expected change is
+$\beta(t)\ex{S_t}\Delta t+o(\Delta t)$. Dividing by $\Delta t$ and letting it
+vanish,
+\begin{equation}
+\ddt{}\ex{S_t}=\beta(t)\ex{S_t},
+\label{var:eq:meanode}
+\end{equation}
+which separates. With $\ex{S_0}=1$ the solution is $\ex{S_t}=\ee^{\Bint(t)}$,
+and for the logistic rate law \cref{var:eq:ratesolved} the integral is
+elementary:
+\begin{equation}
+\int\frac{\dd t}{\xi+\ee^{\varrho t}}
+=\frac{1}{\xi}\lrb{t-\frac{1}{\varrho}\ln\lrb{\xi+\ee^{\varrho t}}},
+\label{var:eq:intbeta}
+\end{equation}
+so that
+\begin{equation}
+\Bint(t)=\sigma K\lrb{t-\frac{1}{\varrho}\ln\lrb{\xi+\ee^{\varrho t}}
++\frac{1}{\varrho}\ln\lrb{\xi+1}},
+\qquad
+\ex{S_t}=\ee^{\sigma Kt}
+\lrb{\frac{\xi+1}{\xi+\ee^{\varrho t}}}^{\sigma K/\varrho}.
+\label{var:eq:Bt}
+\end{equation}
+
+\subsection{The limit law}
+\label{var:sec:limit}
+
+The question the model was built to answer is what happens at late time, when
+$\beta$ has fallen to nothing and the species count has stopped moving. Since
+$S_t$ is non-decreasing and its mean is bounded, it converges almost surely
+to a finite limit; the content of the following is that the limit is proper
+and its law is known.
+
+\begin{corollary}[Limit law under the logistic rate]
+\label{var:cor:logistic-limit}
+Under \cref{var:eq:rate1}, $\Bint(t)$ converges as $t\to\infty$, to
+\begin{equation}
+\Bint(\infty)=\frac{\sigma K}{\varrho}\ln\lrb{\frac{K}{N_0}},
+\label{var:eq:Binf}
+\end{equation}
+and $S_\infty$ is geometric on $\{1,2,\dots\}$ with
+\begin{equation}
+\ex{S_\infty}=\lrb{\frac{K}{N_0}}^{\sigma K/\varrho}.
+\label{var:eq:limitmean}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+From \cref{var:eq:Bt},
+\[
+t-\frac{1}{\varrho}\ln\lrb{\xi+\ee^{\varrho t}}
+=-\frac{1}{\varrho}\ln\lrb{1+\xi\ee^{-\varrho t}}
+\;\longrightarrow\;0 ,
+\]
+so $\Bint(t)\to(\sigma K/\varrho)\ln(\xi+1)$, and $\xi+1=K/N_0$. The law is
+\cref{var:eq:geomlaw} with $\Bint(t)$ replaced by its limit, which is
+legitimate because $S_t$ increases to $S_\infty$ and the geometric
+probabilities are continuous in the parameter.
+\end{proof}
+
+The dependence on the parameters is now explicit, and it is simpler than the
+five constants $\sigma,K,\varrho,N_0,\xi$ suggest: only two dimensionless
+groups survive. The first is $K/N_0$, the room the genus had at the outset,
+so that a clade founded into a nearly empty environment integrates more
+unused capacity than one founded into a full one and ends with more species.
+The second is $\sigma K/\varrho$, the speciation capacity per unit of
+population growth rate, which sets how much of that room is converted before
+it closes; doubling the growth rate and the speciation coefficient together
+changes nothing. That is the answer to the question posed but not settled
+when the model was written --- how the asymptotic behaviour depends on the
+parameters and their interplay --- and it is an answer about the whole
+distribution rather than about the mean alone.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{fig02b_logspec_limit/fig02b}
+\caption{What \cref{var:cor:logistic-limit} says, drawn from the closed form.
+Panel~(a): the law of $S_\infty$ is geometric, so most of its mass sits at
+small counts however large the mean, and its coefficient of variation is close
+to one --- fitting this model to a single clade is fitting a mean to one draw
+from that. Panel~(b): the expected final count
+$\ex{S_\infty}=(K/N_0)^{\sigma K/\varrho}$ depends on the five constants
+$\sigma,K,\varrho,N_0,\xi$ only through the two dimensionless groups on the
+axes, so every point on a contour is a genus with the same expected diversity
+reached from different parameters.}
+\label{var:fig:logspec-limit}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{fig02_logspec_mean/fig02}
+\caption{Mean species count \cref{var:eq:Bt} for $N_0=1,2,5$, with $K=10$,
+$\varrho=1$ and $\sigma=0.08$; dashed lines are the limits
+$(K/N_0)^{\sigma K/\varrho}$. A smaller founding abundance leaves more
+integrated unused capacity, so the limiting mean is higher. This is the
+pure-birth model of \cref{var:eq:transitions}, not the birth--death numerical
+variant recorded at \cref{m:fig:lsmean}.}
+\label{var:fig:lsmean}
+\end{figure}
+
+\subsection{The other rate laws}
+\label{var:sec:altrates}
+
+The form \cref{var:eq:rate1} was one of five candidates written down when the
+model was set up. The others were
+\begin{align}
+\beta_2(t)&=\sigma\bigl(K-N(t)\bigr)+\eta, &
+\beta_3(t)&=\sigma\,\ddt{N}, \notag\\
+\beta_4(t)&=\sigma\,\ddt{N}+\eta, &
+\beta_5(t)&=\sigma\bigl(K_t-N(t)\bigr),
+\label{var:eq:altrates}
+\end{align}
+with $\eta$ a constant floor and $K_t$ a capacity switching at random. The
+motivation for $\beta_3$ and $\beta_4$ is that a mutation event needs a
+replication event, so speciation might track the rate of population increase
+rather than the room remaining; the floor $\eta$ in $\beta_2$ and $\beta_4$
+is a baseline propensity to vary that survives the environment filling up.
+\Cref{var:prop:yule-geom} settles two of the four immediately, because it
+asks only for an integral.
+
+For $\beta_3$ the integral is the total change in abundance:
+\begin{equation}
+\Bint(\infty)=\sigma\int_0^\infty N'(u)\,\dd u=\sigma\,(K-N_0),
+\label{var:eq:beta3}
+\end{equation}
+so $S_\infty$ is again geometric, with mean $\ee^{\sigma(K-N_0)}$. The
+comparison with \cref{var:eq:limitmean} is worth a moment. Under $\beta_1$
+the limiting mean is a power of $K/N_0$ and under $\beta_3$ an exponential of
+$K-N_0$, so the first is sensitive to the \emph{ratio} of capacity to
+founding abundance and the second to their \emph{difference}; a model fitted
+under one and read under the other would be badly wrong for large $K$.
+
+For $\beta_2$ and $\beta_4$ the floor makes $\Bint(t)\sim\eta t$, which
+diverges, and there is then no limit law: $S_t$ remains geometric at every
+finite time with parameter $\ee^{-\Bint(t)}\to0$, and the species count grows
+without bound, eventually at the constant-rate Yule rate $\eta$. That is a
+statement about the model, not a defect of the analysis: a floor on the
+speciation rate says diversification never stops, and a process that never
+stops has no final species count for a distribution to be about.
+
+$\beta_5$ is the one that remains genuinely open, and the proposition says
+why. If $K_t$ switches at random then $\Bint(t)$ is itself a random variable,
+and \cref{var:eq:geomlaw} holds conditionally on it. Unconditionally $S_t$ is
+a \emph{mixture} of geometric laws over the law of $\Bint(t)$,
+\begin{equation}
+\pr{S_t=n}=\ex{\ee^{-\Bint(t)}\bigl(1-\ee^{-\Bint(t)}\bigr)^{n-1}},
+\label{var:eq:mixture}
+\end{equation}
+so that the problem becomes finding the law of the integrated rate under the
+switching regime. For a finite-state Markov switching $K_t$ that is a
+Markov-modulated integral and is tractable; for anything else it is not
+obviously so. Of five candidate rate laws, two are now closed, two are
+explained non-results, and one is a well-posed problem.
+
+The pattern across all five is the same one: nothing about a moving
+speciation rate is difficult so long as its integral is deterministic, and
+everything about it is difficult once the integral is not.
+
+\paragraph{Open questions.}\label{var:rem:open-speciation}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em,topsep=0.2em]
+\item \textbf{The mixture at $\beta_5$.} What is the law of $\Bint(t)$ when
+$K_t$ switches between finitely many values at exponential rates, and what
+does the resulting mixture \cref{var:eq:mixture} do to the tail of $S_t$?
+This is the question in this section most worth taking up, and it asks for a
+Markov-modulated integral rather than for a new model.
+\item \textbf{Identifiability.} Since only $\Bint(t)$ enters
+\cref{var:eq:geomlaw}, no observation of $S_t$ at a single time can separate
+$\sigma$, $K$ and $\varrho$ beyond the two groups of
+\cref{var:eq:limitmean}. What a time series of $S_t$ at several times does
+identify, and whether $\beta_1$ and $\beta_3$ can be told apart from one, is
+not known.
+\item \textbf{The timescale question of \cref{var:rem:scope}.} Whether
+population expansion and speciation are separated by orders of magnitude in
+any clade for which both are measurable, and therefore whether the model
+describes a rate or an initial condition, is an empirical question this
+chapter cannot settle.
+\end{enumerate}
+
+\FloatBarrier

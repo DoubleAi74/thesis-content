@@ -1,0 +1,105 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+% Top-align content on float-only pages (avoids large centred white space above tall figures).
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{8pt plus 2fil}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{fontawesome5}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\allowdisplaybreaks
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\E}{\mathbb E}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\e}{\mathrm e}
+\newcommand{\R}{\mathsf R}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={Type-specific catastrophe rates in a two-type branching process: an exact hypergeometric formula},
+  pdfauthor={}
+}
+% Caption-only external explorers: restrained ink + hand-pointer affordance.
+\definecolor{ExplorerLink}{HTML}{1F4E79}
+\newcommand{\explorerlink}[2]{%
+  \href{#1}{%
+    \textcolor{ExplorerLink}{%
+      #2%
+      \hspace{0.28em}\raisebox{0.08ex}{\footnotesize\faHandPointer}%
+    }%
+  }%
+}
+
+\title{Type-specific catastrophe rates in a two-type branching process:\\
+an exact hypergeometric formula}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-2.5em}
+
+\begin{abstract}
+For a continuous-time two-type birth--death process, we derive the exact finite-time probability that catastrophe has not yet occurred. Type~1 changes irreversibly into type~2, and an individual of either type can trigger a global absorbing catastrophe. Because the catastrophe rate depends on both populations along the path, the probability is an occupation-time transform. Its backward equations are triangular: the type-2 equation is autonomous, and substituting its solution into the type-1 equation leaves a Riccati equation. After linearisation, this becomes the Gauss hypergeometric equation. A Wronskian-normalised form keeps the coefficient enforcing the initial condition regular. The calculation also gives the probability of avoiding catastrophe forever and covers the zero-birth and zero-catastrophe-rate boundaries. With the appropriate initial data, the zero-catastrophe case recovers the two-type branching equations of Antal and Krapivsky. As one reading, the types may describe early and adapted intracellular phenotypes of \textit{Yersinia pestis}, with catastrophe representing irreversible loss of macrophage containment. The formula is exact for any type-specific rate ordering, without an asymptotic or small-rate approximation.
+\end{abstract}
+
+\tableofcontents
+
+\input{sections/01_introduction}
+\input{sections/02_model}
+\input{sections/03_autonomous}
+\input{sections/04_main_result}
+\input{sections/07_biological_application}
+\input{sections/08_conclusion}
+\input{sections/appendices}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

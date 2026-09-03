@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phase Space Analysis of the Logistic Map</title>
+    <style>
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #1a1a1a;
+        --accent-color: #2c5282;
+        --path-color: #c53030;
+        --border-color: #000000;
+        --font-serif: "Times New Roman", Times, serif;
+        --font-sans: "Inter", -apple-system, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-serif);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      header {
+        padding: 2vh 0 1vh 0;
+        text-align: center;
+        border-bottom: 1px solid #e2e8f0;
+        flex-shrink: 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+
+      .equation {
+        font-style: italic;
+        font-size: 1.1rem;
+        color: #444;
+        margin-top: 5px;
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 3vw;
+        padding: 0 4vw;
+        min-height: 0;
+      }
+
+      .figure-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .canvas-wrapper {
+        height: 60vh;
+        aspect-ratio: 1.3 / 1;
+        border: 1px solid var(--border-color);
+        background: #fff;
+        display: flex;
+      }
+
+      .canvas-wrapper.square {
+        aspect-ratio: 1 / 1;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .figure-label {
+        margin-top: 10px;
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #666;
+      }
+
+      .controls {
+        padding: 2vh 0 3vh 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+        background: #fdfdfd;
+        border-top: 1px solid #eee;
+        flex-shrink: 0;
+        font-family: var(--font-sans);
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        width: 280px;
+      }
+
+      .control-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        font-size: 0.8rem;
+        color: #555;
+        font-weight: 600;
+      }
+
+      .value-display {
+        font-family: monospace;
+        color: var(--accent-color);
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 3px;
+        background: #ddd;
+        outline: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: var(--accent-color);
+        border-radius: 50%;
+      }
+
+      .error-message {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fee;
+        border: 1px solid #c53030;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-family: var(--font-sans);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="errorMessage" class="error-message">
+      <h2>WebGPU Not Supported</h2>
+      <p>
+        Your browser does not support WebGPU. Please use Chrome 113+ or Edge
+        113+.
+      </p>
+    </div>
+
+    <header>
+      <h1>Logistic Map: Bifurcation & Stability</h1>
+      <div class="equation">f(z) = rz(1 &ndash; z)</div>
+    </header>
+
+    <main>
+      <div class="figure-container">
+        <div class="canvas-wrapper">
+          <canvas id="bifurcationCanvas"></canvas>
+        </div>
+        <div class="figure-label">Figure 1: Bifurcation Diagram</div>
+      </div>
+
+      <div class="figure-container">
+        <div class="canvas-wrapper square">
+          <canvas id="cobwebCanvas"></canvas>
+        </div>
+        <div class="figure-label">Figure 2: Cobweb Iterations</div>
+      </div>
+    </main>
+
+    <div class="controls">
+      <div class="control-group">
+        <div class="control-header">
+          <span>Growth Rate (r)</span>
+          <span class="value-display" id="rLabel">3.0000</span>
+        </div>
+        <input
+          type="range"
+          id="rSlider"
+          min="0"
+          max="4.0"
+          step="0.0001"
+          value="3.0"
+        />
+      </div>
+
+      <div class="control-group">
+        <div class="control-header">
+          <span>Initial State (z₀)</span>
+          <span class="value-display" id="zLabel">0.50</span>
+        </div>
+        <input
+          type="range"
+          id="zSlider"
+          min="0"
+          max="1.2"
+          step="0.01"
+          value="0.5"
+        />
+      </div>
+    </div>
+
+    <script type="module">
+      const MAX_Z = 1.2;
+      const MAX_R = 4.0;
+
+      // Bifurcation diagram shader
+      const bifurcationShaderCode = `
+        struct Uniforms {
+          rValue: f32,
+          width: f32,
+          height: f32,
+          lineWidth: f32,
+        }
+
+        @group(0) @binding(0) var<uniform> uniforms: Uniforms;
+
+        struct VertexOutput {
+          @builtin(position) position: vec4f,
+          @location(0) uv: vec2f,
+        }
+
+        @vertex
+        fn vertexMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
+          var pos = array<vec2f, 6>(
+            vec2f(-1.0, -1.0),
+            vec2f(1.0, -1.0),
+            vec2f(-1.0, 1.0),
+            vec2f(-1.0, 1.0),
+            vec2f(1.0, -1.0),
+            vec2f(1.0, 1.0)
+          );
+          var output: VertexOutput;
+          output.position = vec4f(pos[vertexIndex], 0.0, 1.0);
+          output.uv = (pos[vertexIndex] + 1.0) * 0.5;
+          return output;
+        }
+
+        fn logisticMap(z: f32, r: f32) -> f32 {
+          return r * z * (1.0 - z);
+        }
+
+        @fragment
+        fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
+          let pixelX = input.uv.x * uniforms.width;
+          let pixelY = (1.0 - input.uv.y) * uniforms.height;
+          
+          let r = input.uv.x * 4.0;
+          let maxZ = 1.2;
+          
+          // Check if we're on the vertical line for current r value
+          let rLineX = (uniforms.rValue / 4.0) * uniforms.width;
+          let distToLine = abs(pixelX - rLineX);
+          if (distToLine < uniforms.lineWidth) {
+            return vec4f(0.173, 0.322, 0.51, 1.0); // #2c5282
+          }
+          
+          // Compute bifurcation diagram
+          var z = 0.5;
+          
+          // Warmup iterations
+          for (var i = 0; i < 400; i++) {
+            z = logisticMap(z, r);
+          }
+          
+          // Check if any of the attractor points hit this pixel
+          let yNorm = 1.0 - input.uv.y;
+          let zAtPixel = yNorm * maxZ;
+          
+          for (var i = 0; i < 200; i++) {
+            z = logisticMap(z, r);
+            if (z >= 0.0 && z <= maxZ) {
+              let zNorm = z / maxZ;
+              let diff = abs(zNorm - yNorm);
+              if (diff < 1.5 / uniforms.height) {
+                return vec4f(0.0, 0.0, 0.0, 0.25);
+              }
+            }
+          }
+          
+          return vec4f(1.0, 1.0, 1.0, 1.0);
+        }
+      `;
+
+      // Cobweb diagram shader
+      const cobwebShaderCode = `
+        struct Uniforms {
+          rValue: f32,
+          z0: f32,
+          width: f32,
+          height: f32,
+        }
+
+        @group(0) @binding(0) var<uniform> uniforms: Uniforms;
+
+        struct VertexOutput {
+          @builtin(position) position: vec4f,
+          @location(0) uv: vec2f,
+        }
+
+        @vertex
+        fn vertexMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
+          var pos = array<vec2f, 6>(
+            vec2f(-1.0, -1.0),
+            vec2f(1.0, -1.0),
+            vec2f(-1.0, 1.0),
+            vec2f(-1.0, 1.0),
+            vec2f(1.0, -1.0),
+            vec2f(1.0, 1.0)
+          );
+          var output: VertexOutput;
+          output.position = vec4f(pos[vertexIndex], 0.0, 1.0);
+          output.uv = (pos[vertexIndex] + 1.0) * 0.5;
+          return output;
+        }
+
+        fn logisticMap(z: f32, r: f32) -> f32 {
+          return r * z * (1.0 - z);
+        }
+
+        fn distToSegment(p: vec2f, a: vec2f, b: vec2f) -> f32 {
+          let pa = p - a;
+          let ba = b - a;
+          let h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+          return length(pa - ba * h);
+        }
+
+        @fragment
+        fn fragmentMain(input: VertexOutput) -> @location(0) vec4f {
+          let maxZ = 1.2;
+          let pixelX = input.uv.x * uniforms.width;
+          let pixelY = (1.0 - input.uv.y) * uniforms.height;
+          let pixel = vec2f(pixelX, pixelY);
+          
+          let lineThickness = 1.5;
+          let curveThickness = 1.8;
+          let traceThickness = 1.2;
+          
+          // Grid lines (subtle)
+          let gridColor = vec4f(0.96, 0.96, 0.96, 1.0);
+          for (var i = 1; i < 6; i++) {
+            let gridPos = f32(i) / 6.0;
+            let gridX = gridPos * uniforms.width;
+            let gridY = gridPos * uniforms.height;
+            if (abs(pixelX - gridX) < 0.5 || abs(pixelY - gridY) < 0.5) {
+              return gridColor;
+            }
+          }
+          
+          // Diagonal line y = z (dashed)
+          let diagY = uniforms.height - (input.uv.x * uniforms.height / maxZ);
+          let dashLength = 5.0;
+          let dashPattern = floor(pixelX / dashLength) % 2.0;
+          if (abs(pixelY - diagY) < lineThickness && dashPattern == 0.0) {
+            return vec4f(0.733, 0.733, 0.733, 1.0); // #bbb
+          }
+          
+          // Parabola curve f(z) = rz(1-z)
+          let zAtX = input.uv.x * maxZ;
+          let fz = logisticMap(zAtX, uniforms.rValue);
+          let curveY = uniforms.height - (fz / maxZ) * uniforms.height;
+          if (abs(pixelY - curveY) < curveThickness) {
+            return vec4f(0.0, 0.0, 0.0, 1.0);
+          }
+          
+          // Cobweb trace
+          var z = uniforms.z0;
+          var prevPoint = vec2f((z / maxZ) * uniforms.width, uniforms.height);
+          
+          for (var i = 0; i < 120; i++) {
+            let nz = logisticMap(z, uniforms.rValue);
+            if (abs(nz) > 10.0) { break; }
+            
+            // Vertical line to curve
+            let p1 = vec2f((z / maxZ) * uniforms.width, uniforms.height - (nz / maxZ) * uniforms.height);
+            if (distToSegment(pixel, prevPoint, p1) < traceThickness) {
+              return vec4f(0.773, 0.188, 0.188, 1.0); // #c53030
+            }
+            
+            // Horizontal line to diagonal
+            let p2 = vec2f((nz / maxZ) * uniforms.width, uniforms.height - (nz / maxZ) * uniforms.height);
+            if (distToSegment(pixel, p1, p2) < traceThickness) {
+              return vec4f(0.773, 0.188, 0.188, 1.0); // #c53030
+            }
+            
+            prevPoint = p2;
+            z = nz;
+          }
+          
+          return vec4f(1.0, 1.0, 1.0, 1.0);
+        }
+      `;
+
+      class WebGPURenderer {
+        constructor() {
+          this.device = null;
+          this.bifContext = null;
+          this.cobContext = null;
+          this.bifPipeline = null;
+          this.cobPipeline = null;
+          this.bifUniformBuffer = null;
+          this.cobUniformBuffer = null;
+          this.bifBindGroup = null;
+          this.cobBindGroup = null;
+        }
+
+        async init() {
+          if (!navigator.gpu) {
+            throw new Error("WebGPU not supported");
+          }
+
+          const adapter = await navigator.gpu.requestAdapter();
+          if (!adapter) {
+            throw new Error("No GPU adapter found");
+          }
+
+          this.device = await adapter.requestDevice();
+
+          const bifCanvas = document.getElementById("bifurcationCanvas");
+          const cobCanvas = document.getElementById("cobwebCanvas");
+
+          this.bifContext = bifCanvas.getContext("webgpu");
+          this.cobContext = cobCanvas.getContext("webgpu");
+
+          const format = navigator.gpu.getPreferredCanvasFormat();
+
+          this.bifContext.configure({
+            device: this.device,
+            format: format,
+            alphaMode: "premultiplied",
+          });
+
+          this.cobContext.configure({
+            device: this.device,
+            format: format,
+            alphaMode: "premultiplied",
+          });
+
+          // Create bifurcation pipeline
+          const bifShaderModule = this.device.createShaderModule({
+            code: bifurcationShaderCode,
+          });
+
+          this.bifPipeline = this.device.createRenderPipeline({
+            layout: "auto",
+            vertex: {
+              module: bifShaderModule,
+              entryPoint: "vertexMain",
+            },
+            fragment: {
+              module: bifShaderModule,
+              entryPoint: "fragmentMain",
+              targets: [{ format: format }],
+            },
+            primitive: {
+              topology: "triangle-list",
+            },
+          });
+
+          // Create cobweb pipeline
+          const cobShaderModule = this.device.createShaderModule({
+            code: cobwebShaderCode,
+          });
+
+          this.cobPipeline = this.device.createRenderPipeline({
+            layout: "auto",
+            vertex: {
+              module: cobShaderModule,
+              entryPoint: "vertexMain",
+            },
+            fragment: {
+              module: cobShaderModule,
+              entryPoint: "fragmentMain",
+              targets: [{ format: format }],
+            },
+            primitive: {
+              topology: "triangle-list",
+            },
+          });
+
+          // Create uniform buffers
+          this.bifUniformBuffer = this.device.createBuffer({
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+          });
+
+          this.cobUniformBuffer = this.device.createBuffer({
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+          });
+
+          // Create bind groups
+          this.bifBindGroup = this.device.createBindGroup({
+            layout: this.bifPipeline.getBindGroupLayout(0),
+            entries: [
+              {
+                binding: 0,
+                resource: { buffer: this.bifUniformBuffer },
+              },
+            ],
+          });
+
+          this.cobBindGroup = this.device.createBindGroup({
+            layout: this.cobPipeline.getBindGroupLayout(0),
+            entries: [
+              {
+                binding: 0,
+                resource: { buffer: this.cobUniformBuffer },
+              },
+            ],
+          });
+        }
+
+        resize() {
+          const dpr = window.devicePixelRatio || 1;
+          const bifCanvas = document.getElementById("bifurcationCanvas");
+          const cobCanvas = document.getElementById("cobwebCanvas");
+
+          const bRect = bifCanvas.parentElement.getBoundingClientRect();
+          const cRect = cobCanvas.parentElement.getBoundingClientRect();
+
+          bifCanvas.width = bRect.width * dpr;
+          bifCanvas.height = bRect.height * dpr;
+          cobCanvas.width = cRect.width * dpr;
+          cobCanvas.height = cRect.height * dpr;
+        }
+
+        render(rValue, z0) {
+          const bifCanvas = document.getElementById("bifurcationCanvas");
+          const cobCanvas = document.getElementById("cobwebCanvas");
+          const dpr = window.devicePixelRatio || 1;
+
+          // Update bifurcation uniforms
+          const bifUniforms = new Float32Array([
+            rValue,
+            bifCanvas.width,
+            bifCanvas.height,
+            2 * dpr, // line width
+          ]);
+          this.device.queue.writeBuffer(this.bifUniformBuffer, 0, bifUniforms);
+
+          // Update cobweb uniforms
+          const cobUniforms = new Float32Array([
+            rValue,
+            z0,
+            cobCanvas.width,
+            cobCanvas.height,
+          ]);
+          this.device.queue.writeBuffer(this.cobUniformBuffer, 0, cobUniforms);
+
+          // Render bifurcation diagram
+          const bifEncoder = this.device.createCommandEncoder();
+          const bifPass = bifEncoder.beginRenderPass({
+            colorAttachments: [
+              {
+                view: this.bifContext.getCurrentTexture().createView(),
+                clearValue: { r: 1, g: 1, b: 1, a: 1 },
+                loadOp: "clear",
+                storeOp: "store",
+              },
+            ],
+          });
+          bifPass.setPipeline(this.bifPipeline);
+          bifPass.setBindGroup(0, this.bifBindGroup);
+          bifPass.draw(6);
+          bifPass.end();
+          this.device.queue.submit([bifEncoder.finish()]);
+
+          // Render cobweb diagram
+          const cobEncoder = this.device.createCommandEncoder();
+          const cobPass = cobEncoder.beginRenderPass({
+            colorAttachments: [
+              {
+                view: this.cobContext.getCurrentTexture().createView(),
+                clearValue: { r: 1, g: 1, b: 1, a: 1 },
+                loadOp: "clear",
+                storeOp: "store",
+              },
+            ],
+          });
+          cobPass.setPipeline(this.cobPipeline);
+          cobPass.setBindGroup(0, this.cobBindGroup);
+          cobPass.draw(6);
+          cobPass.end();
+          this.device.queue.submit([cobEncoder.finish()]);
+        }
+      }
+
+      // Main initialization
+      async function main() {
+        const renderer = new WebGPURenderer();
+
+        try {
+          await renderer.init();
+        } catch (e) {
+          console.error("WebGPU initialization failed:", e);
+          document.getElementById("errorMessage").style.display = "block";
+          return;
+        }
+
+        const rSlider = document.getElementById("rSlider");
+        const zSlider = document.getElementById("zSlider");
+        const rLabel = document.getElementById("rLabel");
+        const zLabel = document.getElementById("zLabel");
+
+        function update() {
+          const r = parseFloat(rSlider.value);
+          const z = parseFloat(zSlider.value);
+          rLabel.innerText = r.toFixed(4);
+          zLabel.innerText = z.toFixed(2);
+          renderer.render(r, z);
+        }
+
+        function resize() {
+          renderer.resize();
+          update();
+        }
+
+        window.addEventListener("resize", resize);
+        rSlider.addEventListener("input", update);
+        zSlider.addEventListener("input", update);
+
+        resize();
+      }
+
+      main();
+    </script>
+  </body>
+</html>

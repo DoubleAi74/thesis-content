@@ -1,0 +1,66 @@
+% ===========================================================================
+%  main.tex --- standalone wrapper.
+%
+%  The chapter itself is chapter.tex, a thesis-ready fragment: it opens with
+%  \chapter and uses no preamble of its own.  To place it in the thesis, merge
+%  preamble.tex into the thesis preamble and \input{chapter.tex}.
+%
+%  Cross-references of the form m:... point at the mathematical introduction
+%  and are undefined in this standalone compile by design.
+% ===========================================================================
+
+\documentclass[11pt]{report}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{preamble}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.1em}
+
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={The birth-death-catastrophe process: distribution theory,
+            quasi-stationarity, and burst statistics},
+  pdfauthor={Adam Aldridge}
+}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{4cm}
+{\LARGE\bfseries The birth--death--catastrophe process\par}
+\vspace{6pt}
+{\large Distribution theory, quasi-stationarity, and burst statistics\par}
+\vspace{2.5cm}
+{\large Adam Aldridge\par}
+\vspace{4pt}
+{University of Leeds\par}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+\tableofcontents
+\clearpage
+
+\setcounter{chapter}{4}   % standalone prints as Chapter 5; CH2 remains 1.x
+\input{chapter}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

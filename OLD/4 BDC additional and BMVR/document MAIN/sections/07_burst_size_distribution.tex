@@ -1,0 +1,154 @@
+\section{Burst time and burst size}
+\label{sec:burst-time-size}
+
+The two random quantities that a bursting cell presents to the outside world
+are the time of its rupture and the size of the rupture. Both are now within
+reach of closed forms.
+
+\subsection{Burst time}
+\label{sec:burst-time}
+
+The no-burst probability is $I(t)=\Prob{\tau>t}$, so the density of the
+burst time is
+\begin{equation}
+\varphi(t):=-I'(t)=\delta J(t),
+\label{eq:phi}
+\end{equation}
+using $I'=-\delta J$ from \S\ref{sec:moments-recap}. This density is
+\emph{defective}: since $I(t)\to b$,
+\begin{equation}
+\int_0^\infty\varphi(t)\,\dd t=1-b,
+\end{equation}
+with the remaining mass $b$ sitting at $\tau=\infty$ --- the realisations
+that clear internally without ever bursting. Conditioned on eventual burst,
+the density is $\varphi(t)/(1-b)=\delta J(t)/(1-b)$. Where earlier work
+referred to ``the known pdf of rupture times $\phi(t)$'', it is
+\eqref{eq:phi} that was meant, available all along from $I'=-\delta J$.
+
+\subsection{Burst size}
+\label{sec:burst-size}
+
+The burst size $\Kb$ is the value of $\xt$ immediately before rupture. For
+the burst to occur in state $k$, the process must be in state $k$ and then
+rupture from there; rupturing from state $k$ happens at rate $\delta k$.
+Hence
+\begin{equation}
+\pr{\Kb = k} = \delta k \int_0^\infty p_k(t)\,\dd t.
+\label{eq:burstintegral}
+\end{equation}
+A direct discretisation makes this plain: partitioning time into intervals
+of width $\Delta t$, the probability that the burst occurs during an interval
+in which the process is at $k$ is
+$$
+\pr{\xt=k}\,\pr{\text{rupture in }\Delta t\mid\xt=k}
+=\pr{\xt=k}\,\delta k\,\Delta t,
+$$
+and summing over intervals and passing to the limit $\Delta t\to0$ yields
+\eqref{eq:burstintegral}.
+
+The integral is evaluable in closed form. With $P(t)$ as in \eqref{eq:Pdef},
+\begin{equation}
+\frac{\dd}{\dd t}\Bigl[\frac{P(t)^k}{k\beta}\Bigr]
+=\frac{1}{\beta}P(t)^{k-1}P'(t)
+=\lrb{\frac{a-b}{b-a\ee^{\beta(a-b)t}}}^2
+\ee^{\beta(a-b)t}P(t)^{k-1}
+=p_k(t),
+\label{eq:antideriv}
+\end{equation}
+as one verifies from
+$P'(t)=\beta(a-b)^2\ee^{\beta(a-b)t}/(b-a\ee^{\beta(a-b)t})^2$.
+Therefore, since $P(0)=0$ and $P(\infty)=1/a$,
+\begin{equation}
+\int_0^\infty p_k(t)\,\dd t=\frac{1}{k\beta}\Bigl(\frac{1}{a}\Bigr)^k,
+\end{equation}
+and \eqref{eq:burstintegral} gives the burst-size law.
+
+\begin{theorem}[Burst-size distribution]
+\label{thm:burst}
+Unconditionally (including the mass $b$ of realisations that never burst),
+\begin{equation}
+\pr{\Kb=k}=\frac{\delta}{\beta}\,a^{-k},\qquad k\ge1;
+\label{eq:burstlaw}
+\end{equation}
+conditioned on the burst occurring,
+\begin{equation}
+\pr{\Kb=k\mid\text{burst}}=(a-1)\,a^{-k},\qquad k\ge1.
+\label{eq:burstlaw-cond}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The unconditional form is the computation above. For the conditional form,
+divide \eqref{eq:burstlaw} by the eventual-burst probability $1-b$:
+$$
+\pr{\Kb=k\mid\text{burst}}
+=\frac{(\delta/\beta)\,a^{-k}}{1-b}
+=\frac{AB}{B}\,a^{-k}
+=(a-1)\,a^{-k},
+$$
+using $\delta/\beta=AB$ from \eqref{eq:AB}.
+\end{proof}
+
+No simulation is required; nevertheless two consistency checks close the
+loop pleasantly. First, normalisation:
+$$
+\sum_{k=1}^{\infty}\frac{\delta}{\beta}a^{-k}
+=\frac{\delta}{\beta}\,\frac{1}{a-1}
+=\frac{AB}{A}=B=1-b,
+$$
+matching the eventual-burst probability. Second, the first moment:
+$$
+\sum_{k=1}^{\infty}k\,\frac{\delta}{\beta}a^{-k}
+=\frac{\delta}{\beta}\,\frac{a}{(a-1)^2}
+=\frac{aB}{A}=V_\infty,
+$$
+recovering \eqref{eq:Vinf}. This second check independently validates the
+burst-size law, the formula for $V_\infty$, and the identity
+\eqref{eq:AB} simultaneously.
+
+\subsection{Burst size equals the quasi-stationary distribution}
+\label{sec:burst=qsd}
+
+Compare \eqref{eq:burstlaw-cond} with Theorem~\ref{thm:qsd}: they are the
+same law.
+
+\begin{corollary}[Burst size $=$ QSD]
+\label{cor:burst-qsd}
+The burst-size distribution, conditioned on bursting, is exactly the
+quasi-stationary distribution of the load: both are geometric on
+$\{1,2,\ldots\}$ with ratio $1/a$.
+\end{corollary}
+
+This is not obvious, and it deserves a moment's pause. A burst is a
+\emph{size-biased} draw from the transient load distribution, taken against
+the burst intensity, and then integrated over all burst times; that this
+should land exactly on the conditional limiting distribution is a genuine
+identity, not a definition. The algebra above proves it; a structural
+argument --- presumably relating size-biasing composed with the burst
+intensity to the Yaglom limit \cite{yaglom1947certain} --- would make it
+quotable rather than coincidental, and remains open
+(see \S\ref{sec:open-problems}).
+
+\subsection{Size-biasing and the size of a late burst}
+\label{sec:size-bias}
+
+The size-biasing mechanism is worth stating on its own terms. A cell bursts
+at rate $\delta\xt$, so given that the burst occurs at time $t$, its size is
+a size-biased draw from $p_\cdot(t)$:
+\begin{equation}
+\pr{\Kb=k\mid\tau=t}=\frac{k\,p_k(t)}{J(t)},
+\qquad
+\mean{\Kb\mid\tau=t}=\frac{K(t)}{J(t)}
+=1+\frac{2\beta}{\delta}\lrb{1-I(t)}.
+\label{eq:sizebias}
+\end{equation}
+Taking $t\to\infty$,
+\begin{equation}
+\mean{\Kb\mid\tau=t}\xrightarrow[t\to\infty]{}
+1+\frac{2\beta}{\delta}(1-b)
+=\frac{\langle X^2\rangle_{\rm QS}}{\langle X\rangle_{\rm QS}},
+\end{equation}
+where the second equality follows from \eqref{eq:QSmoments}. A very late
+burst is roughly twice the size of an average one --- the signature of
+size-biasing a geometric law: the cells that survive long are precisely the
+ones that grew large, and large cells burst quickly.

@@ -1,0 +1,36 @@
+% ===========================================================================
+%  tikz_style.tex --- shared TikZ styles for this chapter's schematic figures.
+%
+%  The upstream style file named by the older figure sources no longer exists
+%  on this machine; this replaces it, matching the palette of style_rc.py so
+%  that the TikZ schematics and the matplotlib plots read as one set.
+%      bdc ink        #1a1c1f      bdc soft   #565b62
+%      bdc blue       #0072B2      bdc grid   #e3e6ea
+% ===========================================================================
+
+\definecolor{bdcink}{HTML}{1A1C1F}
+\definecolor{bdcsoft}{HTML}{565B62}
+\definecolor{bdcblue}{HTML}{0072B2}
+\definecolor{bdcgrid}{HTML}{E3E6EA}
+
+\tikzset{
+  % axes and event arrows
+  bdc arrow/.style={
+    draw=bdcink, line width=0.5pt,
+    -{Stealth[length=4.5pt,width=3.2pt]},
+  },
+  % the absorbing rupture state
+  bdc catastrophe/.style={
+    draw=bdcink, line width=0.6pt, circle, fill=bdcgrid,
+    inner sep=1.6pt, minimum size=13pt,
+    font=\small,
+  },
+  % marginal commentary, deliberately quieter than the diagram
+  bdc annotation/.style={
+    text=bdcsoft, font=\small\itshape,
+  },
+  % rate and level labels sitting against the path
+  bdc ratelabel/.style={
+    text=bdcink, font=\small,
+  },
+}

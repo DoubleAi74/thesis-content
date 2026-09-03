@@ -1,0 +1,184 @@
+\section{Closed-form searches and quadratic conjugacy}
+\label{a:app:closed-form-search}
+
+This appendix collects the negative and structural calculations that help interpret
+\(A(p)\) but are not needed for its probabilistic role in the main text.  The
+numerical formulae are approximations only.  Their value is diagnostic: they show
+how little a visually accurate fit to \(A(p)\) determines the singular quantity
+\(1/A(p)\).
+
+\subsection{Exploratory formulae}
+
+Polynomial and rational searches can be constrained to the known endpoints
+\(A(0)=1/2\) and \(A(1/2)=0\).  One of the more economical rational candidates was
+\begin{equation}
+  \widehat A_1(p)
+  =
+  \frac{\tfrac12(1-2p)(1+2p)}
+       {1+\tfrac12p-\tfrac52p^2-\tfrac65p^3+\tfrac65p^4}.
+  \label{a:eq:Ahat1}
+\end{equation}
+The candidate passes through both endpoints.  At the critical endpoint, however,
+\begin{equation}
+  \widehat A_1'(1/2)=-\frac{2}{0.55}\approx-3.636,
+\end{equation}
+whereas \cref{a:thm:A-near-critical} requires the left derivative \(-4\).
+Matching the endpoint values while missing this slope produces an unacceptable
+relative error in \(A\), and hence in \(1/A\), near criticality.
+
+A less restricted symbolic tree search produced many longer formulae with similar
+visual accuracy.  Two representative outputs were
+\begin{multline}
+  \widehat A_2(p)
+  =0.31696448624690005
+  \log\!\Biggl(
+  \Biggl|\cos\!\biggl(
+  \left(\frac{1}{3.19801133824532}\right)^{1/4}\\
+  {}+p\biggl[
+  \sin\!\Bigl(
+    \cos\!\bigl(|p|(0.621865696665606-p)
+    \cos(\e^{\e^p})\bigr)
+  \Bigr)+|p|
+  \biggr]\biggr)\Biggr|
+  \Biggr)
+  +0.5982282661889831
+  \label{a:eq:Ahat2}
+\end{multline}
+and
+\begin{equation}
+  \widehat A_3(p)
+  =
+  \frac{-0.616647881739505\,
+  \e^{-0.552605335919693\,\e^p}}
+  {\sin(\cos p)-|p|}
+  +0.921964323679771.
+  \label{a:eq:Ahat3}
+\end{equation}
+These expressions have no inferential status.  They record a curve-fitting
+exercise and are not proposed identities.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.60\textwidth]{A3_hat_plot.pdf}
+  \caption{The fitted curve \(\widehat A_3\) and product evaluations of \(A(p)\).
+  The discrepancy is barely visible on this scale, although
+  \(\widehat A_3(1/2)\approx9.1\times10^{-4}\) rather than zero and its endpoint
+  slope is approximately \(-3.63\) rather than \(-4\).}
+  \label{a:fig:Ahat3}
+\end{figure}
+
+One can force the correct critical branch by splicing:
+\begin{equation}
+  \widehat A_4(p)
+  =
+  \begin{cases}
+  -0.04011483983619545\,\e^{\e^{2p}}
+    +0.6079994336528085,
+    &p<0.499962,\\[1mm]
+  2-4p,
+    &p\geq0.499962.
+  \end{cases}
+  \label{a:eq:Ahat4}
+\end{equation}
+This construction is a practical surrogate rather than a closed form for \(A\).
+If a splice is needed, the convergent product in \cref{a:eq:prodFormula} is
+preferable on the first branch and the proved asymptotic
+\cref{a:eq:A-near-critical} on the second.
+
+\subsection{Conjugacy with the quadratic family}
+\label{a:app:quadratic-conjugacy}
+
+The logistic family \(f_r(x)=rx(1-x)\) is affinely conjugate to the quadratic
+family
+\begin{equation}
+  P_c(z)=z^2+c.
+\end{equation}
+Set
+\begin{equation}
+  z=r\left(\frac12-x\right).
+  \label{a:eq:logistic-affine-coordinate}
+\end{equation}
+If \(x'=f_r(x)\) and \(z'=r(1/2-x')\), direct substitution gives
+\begin{equation}
+  z'=z^2+c,
+  \qquad
+  c=c(r):=\frac{2r-r^2}{4}.
+  \label{a:eq:logistic-quadratic-conjugacy}
+\end{equation}
+Thus the subcritical branching window \(0<r<1\) maps onto \(0<c<1/4\).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.68\textwidth]{figure1_parameter_conjugacy.pdf}
+  \caption{The parameter correspondence
+  \(c(r)=(2r-r^2)/4\).  The subcritical window \(0<r<1\) maps to
+  \(0<c<1/4\); the elementary monomial and Chebyshev parameters described below
+  lie outside that window.}
+  \label{a:fig:parameter-conjugacy}
+\end{figure}
+
+The interval \(0<c<1/4\) is the real radius of the main cardioid of the
+Mandelbrot set.  Indeed, a fixed point of \(z^2+c\) with multiplier \(r\) has
+coordinate \(z_\ast=r/2\), and its fixed-point equation gives
+\begin{equation}
+  c=z_\ast-z_\ast^2
+   =\frac r2-\frac{r^2}{4}.
+\end{equation}
+Thus the endpoint \(r\uparrow1\) approaches the parabolic cusp \(c=1/4\).
+This observation locates the parameter range but supplies no evidence for a
+closed-form claim.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.88\textwidth]{figure4_mandelbrot_context.png}
+  \caption{The image \(0<c<1/4\) of the subcritical branching interval within
+  the quadratic parameter plane.  The exceptional parameters \(c=0\) and
+  \(c=-2\) are shown for comparison.}
+  \label{a:fig:mandelbrot-context}
+\end{figure}
+
+\subsection{The two elementary comparison cases}
+\label{a:app:elementary-linearizers}
+
+The exceptional quadratic maps conjugate to a monomial or Chebyshev polynomial
+have elementary linearisers.  They provide useful algebraic checks, although
+neither lies in \(0<r<1\).
+
+For \(r=2\), put \(u=1-2x\).  Then
+\begin{equation}
+  1-2f_2(x)=(1-2x)^2=u^2,
+\end{equation}
+and the normalised local lineariser is
+\begin{equation}
+  \psi_2(x)=-\frac12\log(1-2x).
+  \label{a:eq:psi-r2}
+\end{equation}
+It satisfies
+\(\psi_2(f_2(x))=2\psi_2(x)\),
+\(\psi_2(0)=0\) and \(\psi_2'(0)=1\).
+
+For \(r=4\), write \(x=\sin^2\theta\).  The double-angle identity gives
+\begin{equation}
+  f_4(x)=4x(1-x)=\sin^2(2\theta),
+\end{equation}
+so that
+\begin{equation}
+  \psi_4(x)=\{\arcsin(\sqrt{x})\}^2
+  \label{a:eq:psi-r4}
+\end{equation}
+satisfies
+\(\psi_4(f_4(x))=4\psi_4(x)\) and
+\(\psi_4(x)\sim x\) at the origin.
+
+The distinction is categorical.  At \(r=2\) and \(r=4\), the origin has multiplier
+greater than one, and the formulae \cref{a:eq:phi2,a:eq:phi4} are local repelling
+linearisers.  In the branching window, the origin is attracting and
+\cref{a:eq:schroder} defines the attracting Koenigs coordinate.  The elementary
+formulae are therefore comparison cases, not analytic continuations of \(A(p)\).
+
+Finally, \cref{a:thm:main-ht} concerns \(z\mapsto\psi_r(z)\) at fixed \(r\); it
+does not prove that the parameter evaluation \(p\mapsto2\psi_{2p}(1/2)\) is
+non-elementary.  Maintaining this separation is the substantive correction to the
+stronger claim suggested by the original closed-form search.
+
+\FloatBarrier

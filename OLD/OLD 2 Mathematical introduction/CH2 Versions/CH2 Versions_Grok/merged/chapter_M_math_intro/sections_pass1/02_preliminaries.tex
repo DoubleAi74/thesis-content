@@ -1,0 +1,287 @@
+\section{Preliminaries}
+\label{m:sec:prelim}
+
+This section fixes notation and collects the standard results used later. Nothing
+in it is new, and a reader fluent in continuous-time Markov chains and generating
+functions may go straight to \cref{m:sec:gw}. It is included because three things are
+used repeatedly and are easier to state once: that the competition between
+exponential clocks converts rates into probabilities, that a system of forward
+equations for state probabilities becomes a single partial differential equation
+for a generating function, and that the linear birth--death process is solvable by
+exactly the route that \cref{m:sec:moc} will push further. Standard treatments are
+Norris \cite{Norris1997}, Karlin and Taylor \cite{KarlinTaylor1975}, and, closest to
+the applications here, Allen \cite{Allen2010}.
+
+\subsection{Exponential clocks}
+\label{m:sec:exp}
+
+Every model in this thesis is built from events whose rate of occurrence does not
+depend on how long the system has been waiting for them. That single assumption
+forces the exponential distribution.
+
+\begin{definition}[Exponential law]
+\label{m:def:exp}
+A \rv{} $T$ is exponentially distributed with rate $\theta>0$, written
+$T\sim\mathrm{Exp}(\theta)$, if it has density and distribution function
+\begin{equation*}
+f_T(t) = \theta\ee^{-\theta t},
+\qquad
+F_T(t) = 1-\ee^{-\theta t},
+\qquad t\ge0,
+\end{equation*}
+and $f_T(t)=0$ for $t<0$. Its mean is $1/\theta$ and its variance $1/\theta^2$.
+\end{definition}
+
+The property that matters is memorylessness. For $t_1,t_2>0$,
+\begin{equation}
+\label{m:eq:memoryless}
+\pr{T > t_1+t_2 \mid T > t_1}
+= \frac{\ee^{-\theta(t_1+t_2)}}{\ee^{-\theta t_1}}
+= \ee^{-\theta t_2}
+= \pr{T > t_2},
+\end{equation}
+so a clock that has already run for time $t_1$ is statistically indistinguishable
+from a fresh one. The exponential law is the only continuous distribution with this
+property, which is why a process assembled from constant-rate events depends on its
+present state alone and not on its history.
+
+When several events compete, the following two facts organise everything that
+follows. Let $T_1,\dots,T_m$ be independent with $T_i\sim\mathrm{Exp}(\theta_i)$,
+and let $T = \min_i T_i$ be the time of the first event.
+
+\begin{proposition}[Competing clocks]
+\label{m:prop:race}
+With the notation above, write $\Theta = \sum_{i=1}^m\theta_i$. Then
+\begin{equation}
+\label{m:eq:race}
+T \sim \mathrm{Exp}(\Theta),
+\qquad
+\pr{T_k = T} = \frac{\theta_k}{\Theta},
+\end{equation}
+and the identity of the winning clock is independent of $T$.
+\end{proposition}
+
+\begin{proof}
+For the first claim,
+$\pr{T>t} = \prod_i\pr{T_i>t} = \prod_i\ee^{-\theta_i t} = \ee^{-\Theta t}$.
+For the second, condition on the value of $T_k$ and use independence:
+\begin{equation*}
+\pr{T_k = T}
+= \int_0^\infty \theta_k\ee^{-\theta_k u}\prod_{i\neq k}\ee^{-\theta_i u}\,\dd u
+= \theta_k\int_0^\infty \ee^{-\Theta u}\,\dd u
+= \frac{\theta_k}{\Theta}.
+\end{equation*}
+Repeating the calculation with the integral truncated at $t$ gives
+$\pr{T_k=T,\ T>t} = (\theta_k/\Theta)\ee^{-\Theta t}
+= \pr{T_k=T}\pr{T>t}$, which is the asserted independence.
+\end{proof}
+
+\Cref{m:prop:race} is used in two ways. It says that a rate $\theta_k$ becomes a
+probability $\theta_k/\Theta$ as soon as one asks which of several things happened
+rather than when; \cref{m:sec:cts} uses exactly this to identify the replication
+probability $p$ of a discrete-generation model with $\lambda/(\lambda+\mu)$ in a
+continuous-time one. And it is the whole content of the direct simulation method.
+
+\begin{remark}[Direct simulation]
+\label{m:rem:gillespie}
+\Cref{m:prop:race} is an algorithm as well as a theorem. Given the current state,
+compute the rate $\theta_i$ of every possible event and their sum $\Theta$; draw
+$T\sim\mathrm{Exp}(\Theta)$ by inverting the distribution function of
+\cref{m:def:exp} on a uniform variate; draw the event $k$ with probability
+$\theta_k/\Theta$; advance the clock by $T$, apply event $k$, and repeat. Because
+the two draws are independent and the exponential law is memoryless, the resulting
+trajectory has exactly the law of the process. This is Gillespie's direct method
+\cite{Gillespie1977}; it is used in this thesis to check analytical results, never
+to replace them.
+\end{remark}
+
+
+\subsection{First-step analysis}
+\label{m:sec:firststep}
+
+A recurring discrete-time device, used for hitting probabilities and for the
+Galton--Watson extinction probability in \cref{m:sec:gw}, is the \emph{first-step}
+(or one-step) analysis. Let $(X_n)_{n\ge0}$ be a discrete-time Markov chain on a
+countable state space $\mathcal S$, and let $A\subset\mathcal S$ be a target set.
+Write $h_i = \pr{X\text{ hits }A\mid X_0=i}$. Conditioning on the first transition
+and using the Markov property yields the linear system
+\begin{equation}
+\label{m:eq:firststep}
+h_i = 1\quad(i\in A),
+\qquad
+h_i = \sum_{j\in\mathcal S} P_{ij}\,h_j\quad(i\notin A),
+\end{equation}
+where $P$ is the one-step transition matrix. The same idea produces mean hitting
+times, with an inhomogeneous term $+1$ on the right-hand side for transient states.
+In continuous time the analogous identities are obtained from the generator rather
+than from $P$; both versions appear repeatedly below.
+
+\subsection{Continuous-time Markov chains}
+\label{m:sec:ctmc}
+
+Let $\{X_t : t\ge0\}$ be a stochastic process taking values in a countable state
+space $\mathcal S$, which throughout will be a set of population counts or of
+tuples of counts. The process is a \emph{continuous-time Markov chain} if, for all
+times $s,t\ge0$ and all states,
+\begin{equation}
+\label{m:eq:markov}
+\pr{X_{t+s} = j \mid X_t = i,\ \{X_u\}_{u<t}} = \pr{X_{t+s}=j\mid X_t = i},
+\end{equation}
+so that the past influences the future only through the present. The chain is
+\emph{time homogeneous} if the right-hand side depends on $s$ but not on $t$, in
+which case one writes $p_{ij}(s) = \pr{X_{t+s}=j\mid X_t=i}$. All chains in this
+thesis are time homogeneous unless a later chapter says otherwise
+\fwd{inhomog}{, and the time-inhomogeneous case is taken up in the later chapter on
+non-constant rates}.
+
+Such a chain is specified by its \emph{generator}, the matrix $Q = (q_{ij})$ whose
+off-diagonal entries are the rates of the corresponding transitions,
+\begin{equation}
+\label{m:eq:generator}
+q_{ij} = \lim_{\Delta t\to0}\frac{p_{ij}(\Delta t)}{\Delta t}\quad(j\neq i),
+\qquad
+q_{ii} = -\sum_{j\neq i}q_{ij} =: -q_i ,
+\end{equation}
+so that every row of $Q$ sums to zero. Equivalently, and this is the form used to
+define models below,
+\begin{equation}
+\label{m:eq:infinitesimal}
+\pr{X_{t+\Delta t} = j \mid X_t = i} = q_{ij}\,\Delta t + o(\Delta t)
+\qquad (j \neq i),
+\end{equation}
+with the complementary probability $1-q_i\Delta t + o(\Delta t)$ of no transition
+at all. By \cref{m:prop:race} the chain leaves state $i$ after a holding time
+distributed as $\mathrm{Exp}(q_i)$ and then jumps to $j$ with probability
+$q_{ij}/q_i$. A state with $q_i=0$ is \emph{absorbing}: the chain that reaches it
+stays there forever. Extinction and rupture will both be modelled as absorbing
+states, and the whole of \cref{m:sec:qsd} concerns the behaviour of a chain
+conditioned on not yet having been absorbed.
+
+Differentiating the Chapman--Kolmogorov identity
+$p_{ij}(t+\Delta t) = \sum_k p_{ik}(t)p_{kj}(\Delta t)$ with respect to $\Delta t$
+at $\Delta t=0$ gives the \emph{forward Kolmogorov equations},
+\begin{equation}
+\label{m:eq:kolmogorov}
+\ddt{p_{ij}(t)} = \sum_{k} p_{ik}(t)\,q_{kj},
+\qquad\text{that is}\qquad
+\dda{P}{t} = P\,Q .
+\end{equation}
+Written out for a fixed initial state and with $p_j(t)$ for the probability of
+occupying state $j$ at time $t$, \cref{m:eq:kolmogorov} becomes the master equation
+\begin{equation}
+\label{m:eq:master}
+\ddt{p_j(t)} = \sum_{k\neq j}q_{kj}\,p_k(t) - q_j\,p_j(t):
+\end{equation}
+probability flows into state $j$ from every state that can reach it and out of $j$
+at total rate $q_j$. Every model in this thesis is specified by writing down
+\cref{m:eq:infinitesimal} and then reading off \cref{m:eq:master}.
+
+\subsection{Probability generating functions}
+\label{m:sec:pgf}
+
+For a \rv{} $X$ taking values in $\{0,1,2,\dots\}$ with $p_k = \pr{X=k}$, the
+\pgf{} is
+\begin{equation}
+\label{m:eq:pgfdef}
+\phi(z) = \ex{z^X} = \sum_{k=0}^{\infty}p_k z^k ,
+\end{equation}
+which converges at least for $|z|\le1$ since the $p_k$ sum to one. The series
+determines the distribution --- $p_k = \phi^{(k)}(0)/k!$ --- and moments are read
+off at $z=1$:
+\begin{equation}
+\label{m:eq:pgfmoments}
+\phi(1) = 1,
+\qquad
+\phi'(1) = \ex{X},
+\qquad
+\phi''(1) = \ex{X(X-1)} .
+\end{equation}
+Two structural properties do most of the work. If $X$ and $Y$ are independent then
+$\phi_{X+Y} = \phi_X\phi_Y$, so sums become products. And if $N$ is an independent
+count with \pgf{} $\psi$, the random sum $X_1+\dots+X_N$ of independent copies of
+$X$ has \pgf{} $\psi\circ\phi$; composition of generating functions is what makes
+branching processes tractable, and \cref{m:sec:gw} rests on it.
+
+For a pair of counts the definition extends to
+\begin{equation}
+\label{m:eq:pgfbivariate}
+G(x,y) = \ex{x^{X}y^{Y}} = \sum_{i}\sum_{j}\pr{X=i,\,Y=j}\,x^iy^j ,
+\end{equation}
+with marginals recovered by setting the other variable to one. The absorption
+models of \cref{m:sec:moc} track particles inside and outside a compartment and
+therefore need this bivariate form; \cref{m:app:extract} records how to invert it.
+
+When the counts evolve in time, $G$ acquires a time argument,
+$G(x,y,t) = \ex{x^{X_t}y^{Y_t}}$, and the master equation \cref{m:eq:master} for the
+infinite family of state probabilities collapses to a single partial differential
+equation for $G$. The mechanism is uniform: multiply the equation for
+$p_{ij}(t)$ by $x^iy^j$, sum over all states, shift indices so that every sum is
+again of the form \cref{m:eq:pgfbivariate}, and recognise the factors of $i$ and $j$
+produced by the linear rates as derivatives $\partial_x$ and $\partial_y$. Because
+the rates in these models are linear in the counts, the resulting equation is
+always of first order, and the method of characteristics therefore always applies
+in principle. \Cref{m:sec:linbd} carries this out in the simplest case;
+\cref{m:sec:moc} does it three times over.
+
+\subsection{The linear birth--death process}
+\label{m:sec:linbd}
+
+The linear birth--death process is the continuous-time counterpart of the
+Galton--Watson process, and it is the last piece of standard machinery needed.
+Let $X_t$ count individuals, each of which independently gives birth at rate
+$\lambda$ and dies at rate $\mu$. In the notation of \cref{m:eq:infinitesimal} the
+non-zero rates out of state $n$ are
+\begin{equation}
+\label{m:eq:bdrates}
+q_{n,n+1} = \lambda n,
+\qquad
+q_{n,n-1} = \mu n ,
+\end{equation}
+so that $q_n = (\lambda+\mu)n$ and $n=0$ is absorbing. The master equation
+\cref{m:eq:master} reads
+\begin{equation}
+\label{m:eq:bdmaster}
+\ddt{p_n(t)} = \lambda(n-1)p_{n-1}(t) + \mu(n+1)p_{n+1}(t) - (\lambda+\mu)n\,p_n(t).
+\end{equation}
+Multiplying by $z^n$ and summing over $n\ge0$, the three terms become
+$\lambda z^2\partial_zG$, $\mu\,\partial_zG$ and $-(\lambda+\mu)z\,\partial_zG$
+after the index shifts described above, so that
+\begin{equation}
+\label{m:eq:bdpde}
+\pddt{G} = \bigl(\lambda z^2 - (\lambda+\mu)z + \mu\bigr)\pdd{G}{z}
+= (\lambda z-\mu)(z-1)\pdd{G}{z},
+\qquad G(z,0) = z^{N},
+\end{equation}
+for a process started from $N$ individuals. The quadratic coefficient factorises
+with roots $z=1$ and $z=\mu/\lambda$; the same factorisation, in a different
+variable, reappears in \cref{m:sec:absbirthdeath} and is what makes that calculation
+possible. Solving \cref{m:eq:bdpde} along its characteristics gives the classical
+result of Kendall \cite{Kendall1948},
+\begin{equation}
+\label{m:eq:bdsolution}
+G(z,t) = \lrb{\frac{\mu(1-z) - (\mu-\lambda z)\ee^{-(\lambda-\mu)t}}
+{\lambda(1-z) - (\mu-\lambda z)\ee^{-(\lambda-\mu)t}}}^{\!N},
+\qquad \lambda\neq\mu .
+\end{equation}
+Two consequences are needed later. The mean follows from
+\cref{m:eq:pgfmoments} or, more quickly, from the fact that each individual
+contributes independently:
+\begin{equation}
+\label{m:eq:bdmean}
+\ex{X_t} = N\ee^{(\lambda-\mu)t}.
+\end{equation}
+The probability of extinction by time $t$ is $p_0(t) = G(0,t)$, that is
+\begin{equation}
+\label{m:eq:p0t}
+p_0(t) =
+\begin{cases}
+\displaystyle\lrb{\frac{\mu-\mu\ee^{(\mu-\lambda)t}}{\lambda-\mu\ee^{(\mu-\lambda)t}}}^{\!N},
+& \lambda\neq\mu,\\[14pt]
+\displaystyle\lrb{\frac{\lambda t}{1+\lambda t}}^{\!N},
+& \lambda=\mu,
+\end{cases}
+\end{equation}
+the critical case following by taking $\mu\to\lambda$ in the first line. Letting
+$t\to\infty$ recovers the familiar threshold: extinction is certain when
+$\lambda\le\mu$, and occurs with probability $(\mu/\lambda)^N$ when
+$\lambda>\mu$. \Cref{m:sec:cts} takes \cref{m:eq:p0t} as its starting point.

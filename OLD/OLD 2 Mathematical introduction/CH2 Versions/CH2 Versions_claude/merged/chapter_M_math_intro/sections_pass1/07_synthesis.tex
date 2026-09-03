@@ -1,0 +1,71 @@
+\section{Synthesis: what carries forward}
+\label{m:sec:synthesis}
+
+Four things have been assembled in this chapter, and it is worth separating them
+before they are used.
+
+The first is standard apparatus: exponential clocks and the races between them,
+continuous-time Markov chains and their generators, first-step analysis for hitting
+probabilities, generating functions, and the linear birth--death process together
+with the first-order equation \cref{m:eq:bdpde} satisfied by its generating
+function. That equation is the template for every generating-function calculation
+in this thesis.
+
+The second is a working method rather than a result, and it is the one used most
+often. A model is specified by rates; the rates give a generator and a master
+equation; multiplying by $z^i$, or by $x^iy^j$, and summing converts that master
+equation into a single first-order partial differential equation for a generating
+function; and the method of characteristics of \cref{m:sec:mocabsdeath} solves
+equations of that type. \Cref{m:eq:Gabd} shows the route completed on a problem for
+which no shortcut exists, and the same route is followed
+\fwd{bdc}{in the later chapters} when a catastrophe channel is added to the rates
+of \cref{m:eq:bdrates}. \Cref{m:app:extract} supplies the last step, recovering
+time-dependent state probabilities from a generating function given by a formula
+rather than a series.
+
+The third is the quasi-stationary picture. A subcritical binary Galton--Watson
+process is certain to die out, but conditioned on survival its population settles
+to a fixed law whose mean is $1/A(p)$ and whose variance is \cref{m:eq:condvar}.
+Both are expressed entirely in terms of $p$ and the constant
+$A(p) = \lim_n S_n/(2p)^n$. The continuous-time analogue $\Ac(p) = (1-2p)/(1-p)$ is
+elementary, and \cref{m:sec:cts} exhibits it in full, along with the structural
+reason the discrete constant should be harder: in continuous time the survival
+probability is elementary at every time, whereas in discrete time the amplitude is
+the accumulated product of every early nonlinear correction. Everything further
+about $A(p)$ --- its exact product and series representations, the two-sided bounds
+that trap it between $\tfrac12\Ac(p)$ and $2\varepsilon/(1+2\varepsilon)$, the
+near-critical asymptotic $A(p)\sim2(1-2p)$, the failed search for a closed form, and
+the identification of $A(p)$ with a value of the Koenigs linearising function of the
+logistic map --- belongs to \ChA{} and is developed there.
+
+The fourth is a definition and a framework held in reserve. The
+birth--death--catastrophe process of \cref{m:def:bdc} has been defined and its
+generating-function equation \cref{m:eq:bdcpde} written down, and no more; the
+killed-generator viewpoint of \cref{m:sec:killedchain} places it and its relatives
+in a common setting, with the quasi-stationary law appearing as a left eigenvector
+of the killed generator and the survival decay rate as its eigenvalue. The results
+themselves belong to the chapters that need them.
+
+\subsection*{Questions left open here}
+
+Three questions raised by the material above are not settled in this chapter, and
+two of them are proper to it.
+
+Whether a quasi-stationary distribution survives when a birth--death--catastrophe
+process is conditioned on \emph{neither} extinction nor rupture is not settled by
+the argument of \cref{m:sec:bdc}. The two absorbing mechanisms are not
+interchangeable --- \cref{m:eq:bdcsurvivalloss} shows that ordinary death drains
+survival mass only from state $1$ while catastrophe drains it from every positive
+state --- and the joint conditioning is best approached by simulation in the first
+instance.
+
+How tight the Jensen bound \cref{m:eq:bdcguess} is remains a numerical question. A
+sharp answer would make the discrete catastrophe calculation usable in its own
+right rather than merely indicative; \cref{m:rem:notmeanfield} explains why no
+mean-field substitution will supply one.
+
+The third question belongs to \ChA{} and is recorded here only so that it is not
+looked for in this chapter: whether the map $p\mapsto A(p)$, as opposed to the
+Koenigs function in its own argument, admits an elementary description at all.
+
+\FloatBarrier

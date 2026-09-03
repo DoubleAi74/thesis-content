@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <title>Symbolic Regression: Anchored Evolution</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <!-- Prism CSS for Syntax Highlighting -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --text-color: #1a1a1a;
+        --border-color: #e0e0e0;
+        --accent-color: #c0392b;
+        --bg-color: #ffffff;
+        --panel-bg: #fcfcfc;
+        --font-serif: "Georgia", "Times New Roman", serif;
+        --font-mono: "Menlo", "Consolas", "Monaco", monospace;
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .get-code-fixed-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.7rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .get-code-fixed-btn:hover {
+        filter: brightness(1.2);
+      }
+
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+      .modal-content {
+        background: white;
+        width: 100%;
+        max-width: 900px;
+        max-height: 90vh;
+        border-radius: 8px;
+        padding: 30px;
+        position: relative;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #aaa;
+      }
+      .modal-header {
+        margin-bottom: 20px;
+      }
+      .modal-header h2 {
+        font-family: var(--font-serif);
+        margin: 0;
+      }
+      .modal-footer {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        align-items: center;
+      }
+      .action-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .copy-btn {
+        background: #222;
+        color: white;
+      }
+      .download-btn {
+        background: var(--accent-color);
+        color: white;
+      }
+      #copy-status {
+        color: #27ae60;
+        font-size: 0.85rem;
+        display: none;
+      }
+
+      pre[class*="language-"] {
+        border-radius: 6px;
+        font-size: 13px;
+        margin: 0;
+      }
+
+      .layout-container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+        border-right: 1px solid var(--border-color);
+        border-left: 1px solid var(--border-color);
+      }
+
+      .sidebar {
+        width: 320px;
+        background: var(--panel-bg);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 25px;
+        overflow-y: auto;
+        flex-shrink: 0;
+        z-index: 10;
+      }
+
+      h1 {
+        font-family: var(--font-serif);
+        font-size: 1.4rem;
+        margin: 0 0 5px 0;
+        color: #000;
+      }
+      .subtitle {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+      }
+      .control-section {
+        margin-bottom: 25px;
+      }
+      label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        color: #444;
+      }
+      .eqn-container {
+        position: relative;
+        margin-top: 5px;
+      }
+      .equation-box {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 12px;
+        border-radius: 3px;
+        white-space: nowrap;
+        overflow-x: auto;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+      }
+      .equation-box.expanded {
+        white-space: pre-wrap;
+        word-break: break-all;
+        min-height: 120px;
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      .expand-btn {
+        background: transparent;
+        border: 1px solid #ddd;
+        color: #888;
+        padding: 6px 10px;
+        font-size: 0.7rem;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+      }
+      .copy-hint {
+        position: absolute;
+        top: -8px;
+        right: 8px;
+        font-size: 0.65rem;
+        background: #333;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 2px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .eqn-container:hover .copy-hint {
+        opacity: 1;
+      }
+
+      .sidebar-btn {
+        background: #222;
+        color: #fff;
+        border: none;
+        width: 100%;
+        padding: 14px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+      .sidebar-btn:hover {
+        background: #444;
+      }
+
+      .toggle-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        font-size: 0.9rem;
+        user-select: none;
+        margin-bottom: 12px;
+      }
+      .toggle-group input {
+        display: none;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        background: #ccc;
+        border-radius: 11px;
+        transition: background 0.2s;
+      }
+      .toggle-switch::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.2s;
+      }
+      .toggle-group input:checked + .toggle-switch {
+        background: var(--accent-color);
+      }
+      .toggle-group input:checked + .toggle-switch::after {
+        transform: translateX(18px);
+      }
+
+      .slider-group {
+        margin-bottom: 15px;
+      }
+      .slider-group label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .slider-group .slider-value {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--accent-color);
+      }
+      .slider-group input[type="range"] {
+        width: 100%;
+        height: 4px;
+        -webkit-appearance: none;
+        background: #ddd;
+        border-radius: 2px;
+        outline: none;
+        margin-top: 8px;
+      }
+      .slider-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        background: #222;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .helper-text {
+        font-size: 0.75rem;
+        color: #999;
+        font-style: italic;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+      .plot-wrapper {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 20px;
+        overflow: hidden;
+      }
+      #plot {
+        width: 100%;
+        height: 100%;
+      }
+
+      #toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s ease;
+        z-index: 1000;
+      }
+      #toast.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @media (max-width: 900px) {
+        .layout-container {
+          flex-direction: column-reverse;
+          height: auto;
+        }
+        .plot-wrapper {
+          height: 50vh;
+          min-height: 350px;
+        }
+        .sidebar {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="get-code-fixed-btn" onclick="toggleCodeModal(true)">
+      Plot in Python
+    </button>
+
+    <div class="layout-container">
+      <aside class="sidebar">
+        <h1>Symbolic Regression</h1>
+        <div class="subtitle">Discovery with Anchor Points</div>
+
+        <div class="control-section">
+          <label>Metrics</label>
+          <div class="stat-row">
+            <span>Generation</span><span id="genDisplay">0</span>
+          </div>
+          <div class="stat-row"><span>Population</span><span>500</span></div>
+          <div class="stat-row">
+            <span>Best Weighted MSE</span
+            ><span
+              id="mseDisplay"
+              style="color: var(--accent-color); font-weight: bold"
+              >---</span
+            >
+          </div>
+        </div>
+
+        <div class="control-section">
+          <label>Best Solution Model</label>
+          <div class="eqn-container" onclick="copyEquation()">
+            <div class="copy-hint">Click to Copy</div>
+            <div id="eqDisplay" class="equation-box">
+              <span style="color: #aaa; font-style: italic">Ready...</span>
+            </div>
+          </div>
+          <button
+            class="expand-btn"
+            onclick="
+              event.stopPropagation();
+              toggleEquationExpand();
+            "
+          >
+            <span id="expandText">Expand View</span>
+          </button>
+        </div>
+
+        <div class="control-section" style="margin-top: auto">
+          <label>Settings</label>
+          <label class="toggle-group" for="chkIntMode">
+            <span>Integer Mode</span>
+            <input
+              type="checkbox"
+              id="chkIntMode"
+              onchange="restartSimulation()"
+            />
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="toggle-group" for="chkTrails">
+            <span>Show Trials</span>
+            <input
+              type="checkbox"
+              id="chkTrails"
+              checked
+              onchange="updateSettings()"
+            />
+            <span class="toggle-switch"></span>
+          </label>
+          <p class="helper-text">
+            <b>Anchors:</b> Weights for (0, 0.5) and (0.5, 0) are boosted x100.
+          </p>
+          <div class="slider-group">
+            <label
+              ><span>Simplicity Pressure</span
+              ><span class="slider-value" id="penaltyVal">0.0001</span></label
+            >
+            <input
+              type="range"
+              id="penaltySlider"
+              min="0"
+              max="0.0001"
+              step="0.000001"
+              value="0.0001"
+              oninput="updateSettings()"
+            />
+          </div>
+          <div class="slider-group">
+            <label
+              ><span>Mutation Rate</span
+              ><span class="slider-value" id="mutVal">0.25</span></label
+            >
+            <input
+              type="range"
+              id="mutSlider"
+              min="0"
+              max="5"
+              step="0.01"
+              value="0.25"
+              oninput="updateSettings()"
+            />
+          </div>
+          <button
+            class="sidebar-btn"
+            id="btnStart"
+            onclick="toggleSimulation()"
+          >
+            Start Evolution
+          </button>
+        </div>
+      </aside>
+
+      <main class="plot-wrapper">
+        <div id="plot"></div>
+      </main>
+    </div>
+
+    <!-- CODE MODAL -->
+    <div
+      id="codeModal"
+      class="modal-overlay"
+      onclick="handleOverlayClick(event)"
+    >
+      <div class="modal-content">
+        <span class="close-modal" onclick="toggleCodeModal(false)"
+          >&times;</span
+        >
+        <div class="modal-header">
+          <h2>Python plotting code</h2>
+        </div>
+        <pre><code class="language-python" id="pythonSnippet">import numpy as np
+import matplotlib.pyplot as plt
+import re
+
+expr = "PASTE_YOUR_EXPRESSION_HERE"
+
+def replace_abs(expr):
+    while '|' in expr:
+        expr = re.sub(r'\|([^|]+)\|', r'abs(\1)', expr)
+    return expr
+
+expr = expr.replace("ln", "log")
+expr = replace_abs(expr)
+
+safe_namespace = {
+    "x": None,
+    "sin": np.sin,
+    "cos": np.cos,
+    "exp": np.exp,
+    "log": np.log,
+    "sqrt": np.sqrt,
+    "abs": np.abs,
+    "pi": np.pi,
+}
+
+x = np.linspace(0, 0.55, 1000)
+safe_namespace["x"] = x
+
+with np.errstate(all="ignore"):
+    y = eval(expr, {"__builtins__": {}}, safe_namespace)
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, label="Evolved Function", color="red")
+plt.scatter([0, 0.5], [0.5, 0], color="black", zorder=5, label="Anchors")
+plt.grid(True)
+plt.legend()
+plt.show()</code></pre>
+        <div class="modal-footer">
+          <button class="action-btn copy-btn" onclick="copyPythonCode()">
+            Copy Code
+          </button>
+          <span id="copy-status">Copied!</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast">Equation copied to clipboard</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <script>
+      /**
+       * DATA & CONFIG
+       */
+      const rawData = `0.00,0.5
+0.01,0.49744950892200523
+0.02,0.4947961454086841
+0.03,0.49203568028781275
+0.04,0.4891655063931692
+0.05,0.4861804681386442
+0.06,0.4830774611793251
+0.07,0.4798516728499167
+0.08,0.4764965649930478
+0.09,0.4730092271000399
+0.1,0.46938333702446194
+0.11,0.46561045412689755
+0.12,0.46168780095224604
+0.13,0.45760728178648097
+0.14,0.45335797129833433
+0.15,0.44893751974883506
+0.16,0.44433208243911365
+0.17,0.43953758533578097
+0.18,0.43454255921952245
+0.19,0.4293311822253738
+0.2,0.42390081850381817
+0.21,0.4182300784035889
+0.22,0.4123108180947064
+0.23,0.40613172436516815
+0.24,0.399669551694508
+0.25,0.3929162754078347
+0.26,0.38584326351619247
+0.27,0.3784359299789587
+0.28,0.370672189995087
+0.29,0.3625279290473855
+0.3,0.35397672110443756
+0.31,0.3449895164077589
+0.32,0.33553428875892377
+0.33,0.3255756349223103
+0.34,0.31506734776888573
+0.35,0.3039779337611788
+0.36,0.2922446697896221
+0.37,0.2798182518473617
+0.38,0.2666353397344354
+0.39,0.252615526498267
+0.4,0.23768332022995975
+0.41,0.22173411227463893
+0.42,0.20466312830238828
+0.43,0.1863198446038385
+0.44,0.16655284045247842
+0.45,0.1451501913600998
+0.46,0.1218716445414851
+0.47,0.09638121630669728
+0.48,0.06824513327478827
+0.49,0.03687714681581637
+0.5,0.00`;
+
+      const X_train = [],
+        Y_train = [];
+      rawData
+        .trim()
+        .split("\n")
+        .forEach((row) => {
+          const [x, y] = row.split(",").map(Number);
+          X_train.push(x);
+          Y_train.push(y);
+        });
+
+      const CONFIG = {
+        popSize: 500,
+        maxDepth: 4,
+        maxEvolveDepth: 7,
+        mutationRate: 0.25,
+        penaltyCoef: 0.0001,
+        tournamentSize: 5,
+        integerMode: false,
+        showTrails: true,
+        anchorWeight: 100.0, // The "force" applied to specific points
+      };
+
+      const OPS = {
+        "+": (a, b) => a + b,
+        "-": (a, b) => a - b,
+        "*": (a, b) => a * b,
+        "/": (a, b) => (Math.abs(b) < 1e-4 ? 1 : a / b),
+        sin: (a) => Math.sin(a),
+        cos: (a) => Math.cos(a),
+        exp: (a) => Math.exp(Math.min(a, 10)),
+        log: (a) => Math.log(Math.abs(a) + 1e-15),
+        sqrt: (a) => Math.sqrt(Math.abs(a)),
+        abs: (a) => Math.abs(a),
+      };
+
+      const ARITY = {
+        "+": 2,
+        "-": 2,
+        "*": 2,
+        "/": 2,
+        sin: 1,
+        cos: 1,
+        exp: 1,
+        log: 1,
+        sqrt: 1,
+        abs: 1,
+      };
+      const OP_KEYS = Object.keys(OPS);
+
+      class NodeSim {
+        constructor(type, value, left = null, right = null) {
+          this.type = type;
+          this.value = value;
+          this.left = left;
+          this.right = right;
+        }
+        eval(x) {
+          if (this.type === "const" || this.type === "special")
+            return this.value;
+          if (this.type === "var") return x;
+          const v1 = this.left ? this.left.eval(x) : 0;
+          const v2 = this.right ? this.right.eval(x) : 0;
+          return OPS[this.value](v1, v2);
+        }
+        clone() {
+          return new NodeSim(
+            this.type,
+            this.value,
+            this.left?.clone(),
+            this.right?.clone(),
+          );
+        }
+        size() {
+          return 1 + (this.left?.size() || 0) + (this.right?.size() || 0);
+        }
+        depth() {
+          return (
+            1 + Math.max(this.left?.depth() || 0, this.right?.depth() || 0)
+          );
+        }
+        toString(precision = 4) {
+          if (this.type === "special") {
+            if (Math.abs(this.value - Math.PI) < 1e-5) return "π";
+            if (Math.abs(this.value - Math.E) < 1e-5) return "e";
+          }
+          if (this.type === "const")
+            return CONFIG.integerMode
+              ? Math.round(this.value)
+              : parseFloat(this.value.toPrecision(precision));
+          if (this.type === "var") return "x";
+          if (this.value === "log")
+            return `ln(abs(${this.left.toString(precision)}))`;
+          if (ARITY[this.value] === 1)
+            return `${this.value}(${this.left.toString(precision)})`;
+          return `(${this.left.toString(precision)} ${this.value} ${this.right.toString(precision)})`;
+        }
+      }
+
+      /**
+       * CORE EVOLUTIONARY LOGIC
+       */
+      function evaluate(tree) {
+        const preds = X_train.map((x) => tree.eval(x));
+        if (preds.some((v) => !isFinite(v)))
+          return { score: Infinity, mse: Infinity };
+
+        let slope = 1,
+          intercept = 0;
+
+        // 1. Calculate Weights for each point
+        const weights = X_train.map((x, i) => {
+          // Identify Anchor Points: (0, 0.5) and (0.5, 0)
+          const isAnchor =
+            (x === 0 && Y_train[i] === 0.5) || (x === 0.5 && Y_train[i] === 0);
+          return isAnchor ? CONFIG.anchorWeight : 1.0;
+        });
+
+        // 2. Perform Weighted Linear Least Squares (scaling/shifting the function to fit data)
+        if (!CONFIG.integerMode) {
+          let sumW = 0,
+            sumWX = 0,
+            sumWY = 0,
+            sumWXX = 0,
+            sumWXY = 0;
+          for (let i = 0; i < preds.length; i++) {
+            const w = weights[i];
+            sumW += w;
+            sumWX += w * preds[i];
+            sumWY += w * Y_train[i];
+            sumWXX += w * preds[i] * preds[i];
+            sumWXY += w * preds[i] * Y_train[i];
+          }
+          const den = sumW * sumWXX - sumWX * sumWX;
+          if (Math.abs(den) > 1e-9) {
+            slope = (sumW * sumWXY - sumWX * sumWY) / den;
+            intercept = (sumWY - slope * sumWX) / sumW;
+          }
+        }
+
+        // 3. Calculate Weighted MSE
+        let weightedSumSqError = 0;
+        let totalWeight = 0;
+        for (let i = 0; i < preds.length; i++) {
+          const fp = slope * preds[i] + intercept;
+          const err = Y_train[i] - fp;
+          weightedSumSqError += weights[i] * (err * err);
+          totalWeight += weights[i];
+        }
+
+        const weightedMse = weightedSumSqError / totalWeight;
+
+        return {
+          score: weightedMse + tree.size() * CONFIG.penaltyCoef,
+          mse: weightedMse,
+          slope,
+          intercept,
+          tree,
+        };
+      }
+
+      // Generation Utils
+      function generateConst() {
+        if (CONFIG.integerMode)
+          return new NodeSim("const", Math.floor(Math.random() * 21) - 10);
+        return new NodeSim("const", Math.random() * 4 - 2);
+      }
+      function generateTree(depth, maxDepth) {
+        if (depth >= maxDepth || (depth > 0 && Math.random() < 0.3)) {
+          return Math.random() < 0.7
+            ? new NodeSim("var", "x")
+            : generateConst();
+        }
+        const op = OP_KEYS[Math.floor(Math.random() * OP_KEYS.length)];
+        const node = new NodeSim("op", op);
+        node.left = generateTree(depth + 1, maxDepth);
+        if (ARITY[op] === 2) node.right = generateTree(depth + 1, maxDepth);
+        return node;
+      }
+      function mutate(tree) {
+        const t = tree.clone();
+        const rand = Math.random();
+        if (rand < 0.2) {
+          // Swap subtree
+          const list = [];
+          function collect(n) {
+            list.push(n);
+            if (n.left) collect(n.left);
+            if (n.right) collect(n.right);
+          }
+          collect(t);
+          const target = list[Math.floor(Math.random() * list.length)];
+          const replacement = generateTree(0, 2);
+          target.type = replacement.type;
+          target.value = replacement.value;
+          target.left = replacement.left;
+          target.right = replacement.right;
+        } else {
+          // Jitter constants
+          function jitter(n) {
+            if (n.type === "const") n.value += (Math.random() - 0.5) * 0.2;
+            if (n.left) jitter(n.left);
+            if (n.right) jitter(n.right);
+          }
+          jitter(t);
+        }
+        return t;
+      }
+      function crossover(p1, p2) {
+        const c1 = p1.clone();
+        function getNodes(n, l = []) {
+          l.push(n);
+          if (n.left) getNodes(n.left, l);
+          if (n.right) getNodes(n.right, l);
+          return l;
+        }
+        const nodes1 = getNodes(c1);
+        const nodes2 = getNodes(p2);
+        const target = nodes1[Math.floor(Math.random() * nodes1.length)];
+        const source =
+          nodes2[Math.floor(Math.random() * nodes2.length)].clone();
+        target.type = source.type;
+        target.value = source.value;
+        target.left = source.left;
+        target.right = source.right;
+        return c1.depth() > CONFIG.maxEvolveDepth ? p1 : c1;
+      }
+
+      /**
+       * UI & SIMULATION MANAGEMENT
+       */
+      let population = [],
+        generation = 0,
+        isRunning = false,
+        animationId,
+        bestSolution = null;
+
+      function updateSettings() {
+        CONFIG.penaltyCoef = parseFloat(
+          document.getElementById("penaltySlider").value,
+        );
+        CONFIG.mutationRate = parseFloat(
+          document.getElementById("mutSlider").value,
+        );
+        CONFIG.showTrails = document.getElementById("chkTrails").checked;
+        document.getElementById("penaltyVal").textContent =
+          CONFIG.penaltyCoef.toFixed(6);
+        document.getElementById("mutVal").textContent =
+          CONFIG.mutationRate.toFixed(2);
+      }
+
+      function initPopulation() {
+        population = [];
+        for (let i = 0; i < CONFIG.popSize; i++)
+          population.push(generateTree(0, CONFIG.maxDepth));
+        generation = 0;
+      }
+
+      function runGeneration() {
+        if (!isRunning) return;
+        const results = population
+          .map(evaluate)
+          .filter((r) => isFinite(r.score));
+        results.sort((a, b) => a.score - b.score);
+        bestSolution = results[0];
+
+        document.getElementById("genDisplay").innerText = generation;
+        document.getElementById("mseDisplay").innerText =
+          bestSolution.mse.toExponential(4);
+
+        let eqS = bestSolution.tree.toString(4);
+        if (!CONFIG.integerMode) {
+          eqS = `${bestSolution.slope.toFixed(4)} * (${eqS}) + ${bestSolution.intercept.toFixed(4)}`;
+        }
+        document.getElementById("eqDisplay").innerText = eqS;
+
+        updatePlot(results);
+
+        // Elitism + Selection
+        const newPop = results.slice(0, 10).map((r) => r.tree.clone());
+        while (newPop.length < CONFIG.popSize) {
+          const tournament = () => {
+            let b = results[Math.floor(Math.random() * results.length)];
+            for (let k = 0; k < 3; k++) {
+              let c = results[Math.floor(Math.random() * results.length)];
+              if (c.score < b.score) b = c;
+            }
+            return b.tree;
+          };
+          newPop.push(
+            Math.random() < CONFIG.mutationRate
+              ? mutate(tournament())
+              : crossover(tournament(), tournament()),
+          );
+        }
+        population = newPop;
+        generation++;
+        animationId = requestAnimationFrame(runGeneration);
+      }
+
+      function toggleSimulation() {
+        const btn = document.getElementById("btnStart");
+        if (isRunning) {
+          isRunning = false;
+          cancelAnimationFrame(animationId);
+          btn.innerText = "Resume";
+        } else {
+          if (population.length === 0) initPopulation();
+          isRunning = true;
+          btn.innerText = "Stop";
+          runGeneration();
+        }
+      }
+
+      function restartSimulation() {
+        isRunning = false;
+        cancelAnimationFrame(animationId);
+        CONFIG.integerMode = document.getElementById("chkIntMode").checked;
+        initPopulation();
+        toggleSimulation();
+      }
+
+      function updatePlot(results) {
+        const xRange = [];
+        for (let x = 0; x <= 0.55; x += 0.005) xRange.push(x);
+
+        const traces = [
+          {
+            x: X_train,
+            y: Y_train,
+            mode: "markers",
+            marker: { color: "#000", size: 5 },
+            name: "Data",
+          },
+          {
+            x: [0, 0.5],
+            y: [0.5, 0],
+            mode: "markers",
+            marker: { color: "red", size: 10, symbol: "cross" },
+            name: "Anchors",
+          },
+        ];
+
+        if (CONFIG.showTrails) {
+          const allX = [],
+            allY = [];
+          for (let i = 1; i < results.length; i += 15) {
+            const sol = results[i];
+            for (let k = 0; k < xRange.length; k++) {
+              allX.push(xRange[k]);
+              allY.push(sol.slope * sol.tree.eval(xRange[k]) + sol.intercept);
+            }
+            allX.push(null);
+            allY.push(null);
+          }
+          traces.push({
+            x: allX,
+            y: allY,
+            mode: "lines",
+            line: { color: "#ccc", width: 1 },
+            opacity: 0.2,
+          });
+        }
+
+        const yBest = xRange.map(
+          (x) =>
+            bestSolution.slope * bestSolution.tree.eval(x) +
+            bestSolution.intercept,
+        );
+        traces.push({
+          x: xRange,
+          y: yBest,
+          mode: "lines",
+          line: { color: "#c0392b", width: 3 },
+          name: "Best Fit",
+        });
+
+        Plotly.react("plot", traces, layout, {
+          responsive: true,
+          displayModeBar: false,
+        });
+      }
+
+      const layout = {
+        xaxis: { title: "x", range: [-0.05, 0.55] },
+        yaxis: { title: "f(x)", range: [-0.05, 0.55] },
+        margin: { l: 50, r: 20, t: 20, b: 50 },
+        showlegend: false,
+      };
+
+      function toggleCodeModal(show) {
+        document.getElementById("codeModal").style.display = show
+          ? "flex"
+          : "none";
+      }
+      function handleOverlayClick(e) {
+        if (e.target.id === "codeModal") toggleCodeModal(false);
+      }
+      function copyPythonCode() {
+        const code = document.getElementById("pythonSnippet").innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          document.getElementById("copy-status").style.display = "inline";
+          setTimeout(
+            () =>
+              (document.getElementById("copy-status").style.display = "none"),
+            2000,
+          );
+        });
+      }
+      function copyEquation() {
+        let txt = bestSolution.tree.toString(10);
+        if (!CONFIG.integerMode)
+          txt = `(${bestSolution.slope} * (${txt})) + ${bestSolution.intercept}`;
+        navigator.clipboard.writeText(txt).then(() => {
+          const t = document.getElementById("toast");
+          t.classList.add("visible");
+          setTimeout(() => t.classList.remove("visible"), 2000);
+        });
+      }
+      function toggleEquationExpand() {
+        document.getElementById("eqDisplay").classList.toggle("expanded");
+      }
+
+      updateSettings();
+      Plotly.newPlot("plot", [], layout);
+    </script>
+  </body>
+</html>

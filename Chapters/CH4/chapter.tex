@@ -1,0 +1,23 @@
+% ===========================================================================
+%  chapter.tex --- thesis-ready fragment.
+%  Requires the macros of preamble.tex.
+% ===========================================================================
+
+\chapter{The birth--death--catastrophe process}
+\label{bdc:ch:core}
+
+\input{sections/01_introduction}
+\input{sections/02_the_process}
+\input{sections/03_riccati_and_roots}
+\input{sections/04_moments}
+\input{sections/05_i_economy}
+\input{sections/06_burst_statistics}
+\input{sections/07_summary_table}
+\input{sections/08_what_comes_next}
+
+\begingroup
+\renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
+\renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
+\renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
+\input{sections/app_a_limits}
+\endgroup

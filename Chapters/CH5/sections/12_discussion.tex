@@ -1,0 +1,187 @@
+\section{Discussion}
+\label{dist:sec:discussion}
+
+The single-cell description is now complete in distribution: geometric states
+at every time, a geometric quasi-stationary limit, and a burst-size law
+identical to it, with the conditional laws of burst time and burst size, the
+multi-founder extension and the chained-transfer model alongside. What follows
+reads that description into measurement, into two published parameter sets,
+and into what is still open; the population consequences are taken up in
+\ChPop.
+
+\subsection{Single-cell assay predictions for lytic systems}
+\label{dist:sec:discussion-assay}
+
+For a genuinely lytic system --- \yp{}, \ft{}, lytic phage --- a
+limiting-dilution assay, one infected cell per well with counts followed in
+time, measures the single-cell process directly, with no population model
+interposed. The number of new infectious particles released per cell is an
+integer-valued \rv, and its full distribution, not merely its mean,
+determines whether a small inoculum grows into a detectable infection
+\cite{williams2024reproduction,pearson2011stochastic}. The theory makes five
+predictions, all parameter-free given $(\lambda,\mu,\delta)$:
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+\item a fraction $b$ of wells show no release ever --- the mass of internal
+extinction;
+\item the cumulative release in a well is a step function: zero, then a
+single terminal jump;
+\item the jump times follow the density $\delta J(t)/(1-b)$ of
+\cref{dist:eq:phi};
+\item the jump sizes follow the geometric law with ratio $1/a$ --- the
+quasi-stationary distribution, by \cref{dist:thm:identity};
+\item the between-well variance of total release is $\var{W_\infty}$ from
+\cref{dist:eq:ew2}, a quantity no deterministic constant-rate model can
+produce at all.
+\end{enumerate}
+The five are not all of a kind. The second tests a standing assumption rather
+than a derived result --- instantaneous complete release is assumption 3 of
+\cref{dist:sec:assumptions}, and an assay that saw graded release would
+refute the premise before reaching the theory --- and the first is a
+one-parameter consequence of the roots alone. Predictions 3 to 5 are where
+the chapter's own content is exposed: a density, a distribution and a
+variance, each fixed by $(\lambda,\mu,\delta)$ with nothing left to tune.
+Stated as literally as that, the predictions are too strong for a budding
+virus: intermittent budding is not a single terminal burst
+\cite{hataye2019principles}. They belong to lytic hosts, or to the bursting
+endpoint of the spectrum of release models \ChPop{} lays out.
+
+\subsection{The same theory at two extremes}
+\label{dist:sec:two-extremes}
+
+The theory has already been fitted to two intracellular pathogens whose
+parameter estimates sit at opposite ends of what the model allows, and the
+contrast shows how much behaviour is fixed by $(\lambda,\mu,\delta)$ alone.
+\Cref{dist:tab:twoextremes} evaluates the closed forms at both.
+
+\begin{table}[tbp]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+& \ft{} SCHU S4 & \textit{B.~anthracis} \\
+\midrule
+$(\lambda,\mu,\delta)$, h$^{-1}$ & $(0.15,\ 0.01,\ 1.5\times10^{-4})$ & $(0.64,\ 1.64,\ 0.04)$ \\
+$a$ & $1.001$ & $2.66$ \\
+$b$, never bursts & $6.66\,\%$ & $96.24\,\%$ \\
+$\E{\Kb\mid\text{burst}}=a/(a-1)$ & $934$ & $1.60$ \\
+median burst size & $648$ & $1$ \\
+$\E{T_{\rm prod}}$ & $45.6$ h & $0.74$ h \\
+$\E{\tau\mid\text{burst}}$ & $48.4$ h & $0.93$ h \\
+\bottomrule
+\end{tabular}
+\caption{The same three-rate theory at two published parameter sets, from
+\cite{carruthers2020stochastic} and \cite{williams2021anthrax}. Every entry is
+a closed form of this chapter evaluated at those rates:
+\cref{dist:eq:roots,dist:eq:vinf,dist:eq:qsd,dist:eq:tprod,dist:eq:tauburst}.
+The digits shown are those of the evaluation, not of the estimate: each entry
+is exact given the rates in the first row, and inherits whatever uncertainty
+those rates carry. The two columns come from different methods applied to
+different data, so the comparison between them is qualitative even where the
+arithmetic within a column is not.}
+\label{dist:tab:twoextremes}
+\end{table}
+
+For \ft{} strain SCHU S4, modelling of murine challenge data gave
+$\lambda=0.15$, $\mu=0.01$ and $\delta=1.5\times10^{-4}$ per hour
+\cite{carruthers2020stochastic}. At those rates fewer than $7\%$ of infected
+cells fail to burst in the model, and those that rupture release a geometric
+number of bacteria with mean $934$ and median $648$. Bursts of that size sit
+comfortably with the observed ability of doses as low as ten colony-forming
+units to establish infection \cite{oyston2004tularaemia}: on the model's
+account each rupture floods the local environment heavily enough that a small
+inoculum needs only a few rounds of the cycle to reach large numbers.
+
+For \textit{Bacillus anthracis}, approximate Bayesian computation against
+published time series produced very different estimates:
+$\lambda\approx0.64$, $\mu\approx1.64$, $\delta\approx0.04$ per hour
+\cite{williams2021anthrax}. Here death dominates birth, and the model has more
+than $96\%$ of phagocytes clearing their infection without rupturing, the rest
+releasing about $1.6$ bacteria on average. The reported infectious dose,
+$8\times10^3$ to $5\times10^4$ spores \cite{williams2021anthrax}, is orders of
+magnitude above the tularaemia figure, and matches a pathogen whose
+intracellular dynamics destroy far more than they release.
+
+Two rows of \cref{dist:tab:twoextremes} are directly falsifiable, and they are
+the rows the chapter had not previously computed. On these estimates a
+\ft{}-infected macrophage should rupture at around two days post-infection,
+and an anthrax-infected phagocyte, in the rare event that it ruptures at all,
+within the hour. Neither number has a measurement to sit beside it here. What
+would settle them is time-lapse imaging of infected macrophages held to
+rupture, with the time of the release event recorded and the payload counted
+directly; the prediction is sharp enough that a handful of such recordings
+would be decisive, and sharp enough to be wrong.
+% TODO: if a time-lapse rupture study for F. tularensis macrophages can be
+% cited, restore the stronger claim and reference it here.
+Both timings are only as good as the rates they condition on, and those rates
+came from different methods and different data. What the pair shows regardless
+is one three-rate theory spanning the space from near-certain large bursts to
+near-certain clearance with minimal release.
+
+\subsection{What the two probes showed}
+\label{dist:sec:probes}
+
+The two probes of \cref{dist:sec:moi,dist:sec:chained} were asked the same
+question --- how far does the geometric structure reach --- and returned
+opposite answers, which is the more informative outcome.
+
+Multiplicity leaves the structure intact. Lineages are independent until the
+shared clock rings, so $G_k=G^k$ and the load in a multiply infected cell is a
+sum of independent copies of the single-founder load; the bookkeeping changes,
+and two natural guesses about it fail
+(\cref{dist:rem:ihatk,dist:rem:gk}), but the geometric shape does not.
+Chaining destroys it as soon as internal extinction is possible, because the
+$\mu=0$ decomposition needs a cell to have exactly one way to stop and the
+death rate gives it two. \emph{The geometric structure is robust to
+multiplicity and fragile to internal extinction in the chained setting}, and
+the two failures are failures of different things --- a
+counting identity in one case, a decomposition of the process in the other.
+
+\subsection{Open problems}
+\label{dist:sec:open-problems}
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item \textbf{How far the telescoping criterion reaches.}
+\Cref{dist:thm:identity} closes what was an open problem: the identity
+between burst size and the quasi-stationary law has a structural proof, and
+\cref{dist:rem:criterion} states the property that proof uses. Two questions
+survive it. Does that property \emph{characterise} the processes for which
+the identity holds, or is it merely sufficient? And can the identity be
+obtained independently by a Yaglom-type argument
+\cite{yaglom1947certain}, which would connect it to the existence theory
+rather than to the calculus?
+\item \textbf{Chained joint laws for general $\mu$.} The joint laws of
+$(t_k,r_k)$ for $\mu>0$, and the joint law of $(t_M,r_M)$ for the full
+$M$-cell chain, remain open. The coefficient machinery of
+\cref{dist:app:extract} is the available route, and
+\cref{dist:sec:chained-scope} says why the elementary route is not.
+\item \textbf{Logistic intracellular growth.} The standing objection to linear
+birth is that it lets the conditional load grow without bound. The defence is
+that the burst hazard is proportional to load and so regulates it ---
+\cref{dist:thm:qsd} is precisely the statement that the conditional load
+stabilises at $a/(a-1)$ --- but the sensitivity of the burst statistics, and
+of the kernels \ChPop{} will use, to a logistic birth rate remains to be
+checked numerically.
+\end{enumerate}
+
+\subsection{What comes next}
+\label{dist:sec:next}
+
+Everything in this chapter is single-cell. The released particles have so far
+been counted and then forgotten, and that is the approximation \ChPop{}
+removes. There the survival and release statistics derived here become the
+age-structured kernels of a population-level renewal model: cells infected at
+different times contribute to the infected-cell and free-particle pools
+according to $\Ifix(a)$ and $g(a)=\delta K(a)$, in the tradition of
+age-structured renewal running from
+\cite{mckendrick1926applications,vonfoerster1959some}. The constant-rate
+models of viral dynamics then appear as a projection of that renewal system,
+and bursting is compared against budding at the level where the comparison
+matters --- establishment, invasion speed, and what data can and cannot
+identify.
+
+One notational matter is left for later. \fwd{twotype}{\ChTwoTypecap}
+solves a Riccati equation structurally identical to \cref{dist:eq:riccati}
+under unrelated names, as \cref{dist:sec:roots} noted; aligning the two would
+mean renaming $a$ and $b$ throughout this chapter, \ChCore{} and \ChPop, and
+is a thesis-wide decision rather than a local one.

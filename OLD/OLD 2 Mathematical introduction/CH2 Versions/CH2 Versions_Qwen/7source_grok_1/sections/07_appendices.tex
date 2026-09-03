@@ -1,0 +1,90 @@
+\appendix
+\section*{Appendices}
+\addcontentsline{toc}{section}{Appendices}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\setcounter{subsection}{0}
+
+\subsection{An integral identity for the hypergeometric function}
+\label{app:hyp}
+
+An alternative route to \cref{eq:Psidef} integrates the characteristic \(x(\tau)\) as a quotient, splitting the numerator into pieces of the form
+\begin{equation}
+\label{eq:Iform}
+I(\tau) = \int\frac{\ee^{h\tau}}{p+q\,\ee^{k\tau}}\,\dd\tau ,
+\end{equation}
+with \(h,k,p,q\) constant. The bookkeeping is longer than the geometric-series expansion of \cref{sec:absbirthdeath}, but the identity is useful in its own right.
+
+\begin{proposition}
+\label{prop:hypIden}
+For \(h/k>0\) and \(-\tfrac{q}{p}\ee^{k\tau}\notin[1,\infty)\),
+\begin{equation}
+\label{hypIden}
+\int\frac{\ee^{h\tau}}{p+q\ee^{k\tau}}\,\dd\tau
+= \frac{\ee^{h\tau}}{ph}\,{}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1;\,-\frac{q}{p}\ee^{k\tau}} + \text{const}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Use the Euler integral representation
+\begin{equation}
+\label{idenHyp}
+{}_2F_1(a,b;c;z) = \frac{\Gamma(c)}{\Gamma(b)\Gamma(c-b)}\int^1_0 u^{b-1}(1-u)^{c-b-1}(1-zu)^{-a}\,\dd u .
+\end{equation}
+Substitute \(v=\ee^{k\tau}\) in \cref{eq:Iform}, so \(\mathrm{d}\tau=k^{-1}v^{-1}\mathrm{d}v\):
+\begin{equation*}
+I = \frac{1}{pk}\int\frac{v^{h/k-1}}{1+(q/p)v}\,\dd v .
+\end{equation*}
+Writing the antiderivative as a definite integral from \(0\) to \(v\) (convergent at the lower limit because \(h/k>0\)) and rescaling \(w=vu\) produces
+\begin{equation*}
+I = \frac{v^{h/k}}{pk}\int_0^1\frac{u^{h/k-1}}{1+(q/p)vu}\,\dd u .
+\end{equation*}
+The integrand matches \cref{idenHyp} with \(a=1\), \(b=h/k\), \(c=h/k+1\), \(z=-(q/p)v\). Using \(\Gamma(z+1)=z\Gamma(z)\) and restoring \(v=\ee^{k\tau}\) yields \cref{hypIden}.
+\end{proof}
+
+\begin{remark}
+Applied to the two pieces of \cref{xabd} --- the first with \(h=\alpha\), the second with \(h=\alpha+b_1\), both with \(k=b_1\), \(p=(s-x_-)\), \(q=-(s-x_+)\) --- \cref{prop:hypIden} reproduces \cref{eq:Psihyp} after prefactors are carried correctly. Checking \(G(1,1,t)=1\) catches dropped factors invisible at \(t=0\).
+\end{remark}
+
+\subsection{Extracting state probabilities from a generating function}
+\label{app:extract}
+
+A generating function defined by a closed formula rather than an explicit series, for example
+\begin{equation}
+\label{examplePgf}
+G(t;x,y) = \Bigl(\bigl(1-\ee^{-\alpha t}\bigr)x + \ee^{-\alpha t}y\Bigr)^n ,
+\end{equation}
+converts back to
+\begin{equation}
+\label{series1}
+G(t;x,y) = \sum^{\infty}_{i=0}\sum^{\infty}_{j=0} p_{i,j}(t)\,x^iy^j
+\end{equation}
+by repeated partial differentiation, whenever the derivatives exist:
+\begin{equation}
+\label{stateProb}
+p_{i,j}(t) = \frac{1}{i!\,j!}\,\partial_x^i\partial_y^{\,j}G\Big|_{(0,0)} .
+\end{equation}
+
+\subsubsection*{The multilinear case}
+
+Both \cref{eq:Gabsonly} and \cref{eq:Gabsdeath} have the form
+\begin{equation}
+\label{eq:multilinear}
+G(t;x,y) = \bigl(c(t) + f(t)\,x + g(t)\,y\bigr)^n .
+\end{equation}
+Differentiation yields
+\begin{equation}
+\label{eq:derivs}
+\partial_x^{a}\partial_y^{\,b}G = \frac{n!}{(n-a-b)!}\,f^{a}g^{b}\bigl(c+fx+gy\bigr)^{n-a-b}
+\qquad (a+b\le n),
+\end{equation}
+and evaluating at the origin gives the trinomial probabilities
+\begin{equation}
+\label{stateProbSpec}
+p_{i,j}(t) = \frac{n!}{i!\,j!\,(n-i-j)!}\;f(t)^{i}\,g(t)^{j}\,c(t)^{\,n-i-j},
+\qquad i+j\le n.
+\end{equation}
+This is the joint law of \(n\) independent particles, each ending in one of three states with probabilities \(c\), \(f\), and \(g\).
+
+\subsubsection*{Applied to the absorption models}
+
+For absorption only, \(c=0\), \(f=1-\ee^{-\alpha t}\), \(g=\ee^{-\alpha t}\), and \cref{stateProbSpec} recovers the binomial law of \cref{sec:absonly}. For absorption--death the three functions \(c,f,g\) are exactly \(p_{0,0}\), \(p_{1,0}\), and \(p_{0,1}\) of \cref{eq:absdeathstates}, and the joint law is trinomial. The absorption--birth--death generating function of \cref{prop:Gabd} is not multilinear; there \cref{stateProb} must be applied to \cref{eq:Gabd} directly, or coefficients extracted numerically by Cauchy integrals on circles \(|x|=|y|=\rho<1\).

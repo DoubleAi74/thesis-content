@@ -1,0 +1,705 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\E}{\mathbb E}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\e}{\mathrm e}
+\newcommand{\R}{\mathsf R}
+\newcommand{\Xrel}{X_{\mathrm{rel}}}
+\newcommand{\Yrel}{Y_{\mathrm{rel}}}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={Release counts from the killed generating function},
+  pdfauthor={}
+}
+
+\title{Ultimate release counts from the killed generating function}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+\begin{abstract}
+\noindent
+For the two-type birth--death--conversion process with type-specific absorbing catastrophe, let
+$(\Xrel,\Yrel)$ be the intracellular counts released at catastrophe, with the convention
+$(\Xrel,\Yrel)=(0,0)$ when catastrophe never occurs.
+We record their joint law, joint probability generating function, and marginals in terms of the
+killed (defective) generating functions $\mathcal F_i$ and the catastrophe-flux generators
+$\mathcal J_i$ from the catastrophe-aware PGF appendix.
+The construction is exact for any non-negative type-specific rates; in the generic regime
+$\delta_1,\delta_2>0$ the atom at the origin is ordinary extinction before absorption.
+\end{abstract}
+
+\section{Setup and definition}
+
+We work throughout with the continuous-time two-type birth--death--conversion process of the main
+paper: type~$1$ replicates at rate $\lambda_1$, dies at rate $\mu_1$, and converts one-way into
+type~$2$ at rate $\nu$; type~$2$ replicates at rate $\lambda_2$ and dies at rate $\mu_2$.
+In state $(x,y)$ a single global catastrophe occurs at rate $\delta_1x+\delta_2y$ and sends the
+process to the absorbing cemetery $(\R,\R)$. Write $\tau_c$ for the catastrophe time
+(with the usual convention $\tau_c=\infty$ on paths that never absorb).
+
+Let $i\in\{1,2\}$ label the initial type, and write $\Prob_i$, $\E_i$ for the law and expectation
+started from one individual of that type (so $i=1$ means $(X_0,Y_0)=(1,0)$ and $i=2$ means
+$(0,1)$).
+
+\begin{definition}[Ultimate release counts]
+\label{def:release}
+The ultimate type-$1$ and type-$2$ release counts are the random variables
+\begin{equation}
+\label{eq:release-def}
+(\Xrel,\Yrel)
+\;=\;
+\begin{cases}
+\bigl(X_{\tau_c-},\,Y_{\tau_c-}\bigr)
+& \text{on }\{\tau_c<\infty\},\\[0.35em]
+(0,0)
+& \text{on }\{\tau_c=\infty\}.
+\end{cases}
+\end{equation}
+Thus release records the left-limit population at the absorbing event when that event occurs, and
+is set to zero when no release event ever takes place---in particular when the intracellular
+population dies out by ordinary deaths before catastrophe.
+\end{definition}
+
+\begin{remark}[Generic regime versus boundaries]
+\label{rem:generic}
+In the generic regime $\delta_1>0$, $\delta_2>0$, the only way to have $\tau_c=\infty$ is ordinary
+extinction to $(0,0)$ before the catastrophe clock fires. Consequently the atom of
+$(\Xrel,\Yrel)$ at the origin is exactly the forever-avoidance probability, and coincides with
+clearance without release. On certain catastrophe-rate boundaries (for instance $\delta_1=0$),
+paths with $\tau_c=\infty$ need not be extinct; \cref{eq:release-def} still assigns $(0,0)$ on
+those paths, now meaning ``no release event'' rather than ``empty burst''.
+All formulae below remain valid on those boundaries; only the biological reading of the origin atom
+changes.
+\end{remark}
+
+\section{Killed generating function and catastrophe flux}
+
+Recall the killed (defective) generating functions
+\begin{subequations}
+\label{eq:killed-pgf}
+\begin{align}
+\mathcal F_1(x,y,t)
+&=\E_{(1,0)}
+\!\left[x^{X_t}y^{Y_t}\boldsymbol 1_{\{\tau_c>t\}}\right],
+\\
+\mathcal F_2(x,y,t)
+&=\E_{(0,1)}
+\!\left[x^{X_t}y^{Y_t}\boldsymbol 1_{\{\tau_c>t\}}\right],
+\end{align}
+\end{subequations}
+equivalently the occupation-time transforms
+\begin{equation*}
+\mathcal F_i(x,y,t)
+=\E_i\!\left[
+x^{X_t}y^{Y_t}
+\exp\!\left\{-\int_0^t
+(\delta_1X_s+\delta_2Y_s)\,\dd s\right\}\right].
+\end{equation*}
+Their coefficients and total masses are
+\begin{equation}
+\label{eq:killed-coeff}
+p_{m,n}^{(i)}(t)
+:=[x^my^n]\mathcal F_i(x,y,t)
+=\Prob_i\{X_t=m,\,Y_t=n,\,\tau_c>t\},
+\end{equation}
+\begin{equation}
+\label{eq:sigma}
+\sigma_i(t)
+:=\mathcal F_i(1,1,t)
+=
+\begin{cases}
+S(t), & i=1,\\
+G(t), & i=2,
+\end{cases}
+\end{equation}
+so that $1-\sigma_i(t)=\Prob_i\{\tau_c\le t\}$. Write
+\begin{equation}
+\label{eq:sigma-infty}
+\sigma_i(\infty)
+:=\lim_{t\to\infty}\sigma_i(t)
+=
+\begin{cases}
+h, & i=1,\\
+r_{2,-}, & i=2,
+\end{cases}
+\end{equation}
+for the forever-avoidance probabilities of the main theorem.
+
+The catastrophe-flux generating function of the appendix is
+\begin{equation}
+\label{eq:flux-pgf}
+\mathcal J_i(x,y,t)
+=
+\delta_1 x\,\partial_x\mathcal F_i(x,y,t)
++
+\delta_2 y\,\partial_y\mathcal F_i(x,y,t).
+\end{equation}
+Coefficientwise,
+\begin{equation}
+\label{eq:flux-coeff}
+j_{m,n}^{(i)}(t)
+:=[x^my^n]\mathcal J_i(x,y,t)
+=
+(\delta_1 m+\delta_2 n)\,p_{m,n}^{(i)}(t).
+\end{equation}
+From state $(m,n)$ the process is absorbed at rate $\delta_1m+\delta_2n$, so
+$j_{m,n}^{(i)}(t)$ is the joint density (in $t$) of the event
+\[
+\bigl\{\tau_c\in\dd t,\;
+X_{\tau_c-}=m,\;
+Y_{\tau_c-}=n\bigr\}.
+\]
+In particular $j_{0,0}^{(i)}(t)\equiv 0$, since the empty state has catastrophe rate zero.
+Summing over counts recovers the marginal catastrophe-time densities
+\begin{equation}
+\label{eq:flux-total}
+\mathcal J_1(1,1,t)=-S'(t),
+\qquad
+\mathcal J_2(1,1,t)=-G'(t).
+\end{equation}
+
+\section{Joint distribution of the release counts}
+
+\subsection{Point masses}
+
+Integrating the flux density over all future times yields the law of the pre-catastrophe state on
+the event that catastrophe eventually occurs. Adding the forever-avoidance atom at the origin
+completes the law of $(\Xrel,\Yrel)$.
+
+\begin{proposition}[Joint law of ultimate release]
+\label{prop:joint-pmf}
+For each initial type $i\in\{1,2\}$ and all integers $m,n\ge 0$,
+\begin{equation}
+\label{eq:joint-pmf}
+\Prob_i\{\Xrel=m,\,\Yrel=n\}
+=
+\begin{cases}
+\displaystyle
+\sigma_i(\infty),
+& (m,n)=(0,0),\\[1.1em]
+\displaystyle
+\int_0^\infty
+(\delta_1 m+\delta_2 n)\,
+p_{m,n}^{(i)}(t)\,
+\dd t,
+& m+n\ge 1.
+\end{cases}
+\end{equation}
+Equivalently, for every $(m,n)\neq(0,0)$,
+\begin{equation}
+\label{eq:joint-pmf-j}
+\Prob_i\{\Xrel=m,\,\Yrel=n\}
+=
+\int_0^\infty j_{m,n}^{(i)}(t)\,\dd t,
+\end{equation}
+while the origin mass is
+\begin{equation}
+\label{eq:origin-mass}
+\Prob_i\{\Xrel=0,\,\Yrel=0\}
+=
+\Prob_i\{\tau_c=\infty\}
+=
+\sigma_i(\infty).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+On $\{\tau_c<\infty\}$ one has $(\Xrel,\Yrel)=(X_{\tau_c-},Y_{\tau_c-})$. The occupation measure of
+the first entrance to $(\R,\R)$ from the pre-absorption state $(m,n)$ is exactly the integrated
+flux \cref{eq:joint-pmf-j}. Since $j_{0,0}^{(i)}\equiv 0$, no catastrophe mass accumulates at the
+origin. On $\{\tau_c=\infty\}$ the definition assigns $(0,0)$, which contributes the atom
+$\sigma_i(\infty)$. These two pieces partition the sample space, so the displayed probabilities
+sum to one:
+\begin{align*}
+\sum_{m,n\ge 0}
+\Prob_i\{\Xrel=m,\,\Yrel=n\}
+&=
+\sigma_i(\infty)
++
+\int_0^\infty
+\sum_{m,n}
+j_{m,n}^{(i)}(t)\,
+\dd t
+\\
+&=
+\sigma_i(\infty)
++
+\int_0^\infty
+\mathcal J_i(1,1,t)\,
+\dd t
+\\
+&=
+\sigma_i(\infty)
++
+\int_0^\infty
+\bigl(-\sigma_i'(t)\bigr)\,
+\dd t
+=
+\sigma_i(\infty)
++
+\bigl(1-\sigma_i(\infty)\bigr)
+=1,
+\end{align*}
+where the last step uses $\sigma_i(0)=1$ and $\sigma_i\downarrow\sigma_i(\infty)$.
+\end{proof}
+
+\subsection{Joint probability generating function}
+
+\begin{proposition}[Release PGF]
+\label{prop:release-pgf}
+The joint probability generating function of the ultimate release counts is
+\begin{equation}
+\label{eq:release-pgf}
+\begin{aligned}
+\mathcal P_i^{\mathrm{rel}}(x,y)
+&:=
+\E_i\bigl[x^{\Xrel}y^{\Yrel}\bigr]
+\\
+&=
+\sigma_i(\infty)
++
+\int_0^\infty
+\mathcal J_i(x,y,t)\,
+\dd t
+\\
+&=
+\sigma_i(\infty)
++
+\int_0^\infty
+\bigl(
+\delta_1 x\,\partial_x
++
+\delta_2 y\,\partial_y
+\bigr)
+\mathcal F_i(x,y,t)\,
+\dd t.
+\end{aligned}
+\end{equation}
+Consequently the joint masses of \cref{prop:joint-pmf} are recovered by extraction,
+\begin{equation}
+\label{eq:extract}
+\Prob_i\{\Xrel=m,\,\Yrel=n\}
+=
+[x^my^n]\,\mathcal P_i^{\mathrm{rel}}(x,y).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Expand $\mathcal J_i$ by \cref{eq:flux-coeff} and integrate term by term. The constant term of the
+integral vanishes, so the origin coefficient of $\mathcal P_i^{\mathrm{rel}}$ is exactly
+$\sigma_i(\infty)$; every other coefficient is the integrated flux of \cref{eq:joint-pmf-j}.
+\end{proof}
+
+\begin{remark}[Finite horizon]
+If one stops at a fixed observational horizon $T<\infty$ and records
+\begin{equation*}
+(\Xrel^{(T)},\Yrel^{(T)})
+=
+\begin{cases}
+(X_{\tau_c-},Y_{\tau_c-}) & \text{on }\{\tau_c\le T\},\\
+(0,0) & \text{on }\{\tau_c>T\},
+\end{cases}
+\end{equation*}
+the same argument yields the truncated generating function
+\begin{equation}
+\label{eq:release-pgf-T}
+\mathcal P_{i,T}^{\mathrm{rel}}(x,y)
+=
+\sigma_i(T)
++
+\int_0^T
+\mathcal J_i(x,y,t)\,
+\dd t,
+\end{equation}
+with $\mathcal P_i^{\mathrm{rel}}=\lim_{T\to\infty}\mathcal P_{i,T}^{\mathrm{rel}}$ pointwise for
+$|x|\le 1$, $|y|\le 1$.
+\end{remark}
+
+\section{Conditional laws and decomposition}
+
+The appendix records the distribution of the pre-catastrophe state \emph{conditional on
+catastrophe}. That object is the catastrophe part of \cref{eq:release-pgf}, renormalised.
+
+\begin{proposition}[Catastrophe-conditional release]
+\label{prop:conditional}
+Assume $\sigma_i(\infty)<1$. The law of $(\Xrel,\Yrel)$ conditional on eventual catastrophe is
+supported on $\{(m,n):m+n\ge 1\}$ and has probability generating function
+\begin{equation}
+\label{eq:R-cat}
+\mathcal R_i^{\mathrm{cat}}(x,y)
+:=
+\E_i\bigl[
+x^{\Xrel}y^{\Yrel}
+\bigm|
+\tau_c<\infty
+\bigr]
+=
+\frac{
+\displaystyle
+\int_0^\infty
+\mathcal J_i(x,y,t)\,
+\dd t
+}{
+1-\sigma_i(\infty)
+}.
+\end{equation}
+Equivalently, for $m+n\ge 1$,
+\begin{equation}
+\label{eq:conditional-pmf}
+\Prob_i\{\Xrel=m,\,\Yrel=n\mid\tau_c<\infty\}
+=
+\frac{
+\displaystyle
+\int_0^\infty j_{m,n}^{(i)}(t)\,\dd t
+}{
+1-\sigma_i(\infty)
+}.
+\end{equation}
+The unconditional release PGF therefore decomposes as the two-point mixture
+\begin{equation}
+\label{eq:mixture}
+\mathcal P_i^{\mathrm{rel}}(x,y)
+=
+\sigma_i(\infty)
+\cdot 1
++
+\bigl(1-\sigma_i(\infty)\bigr)\,
+\mathcal R_i^{\mathrm{cat}}(x,y),
+\end{equation}
+i.e.\ an atom of mass $\sigma_i(\infty)$ at $(0,0)$, and with complementary mass the
+catastrophe-conditional release law of the appendix (the $T\to\infty$ limit of
+$\mathcal R_{i,T}^{\mathrm{cat}}$).
+\end{proposition}
+
+\begin{proof}
+On $\{\tau_c<\infty\}$ one has $(\Xrel,\Yrel)=(X_{\tau_c-},Y_{\tau_c-})$, so
+\cref{eq:R-cat} is the integrated and renormalised flux already identified in the appendix.
+\Cref{eq:mixture} is then immediate from \cref{eq:release-pgf}.
+\end{proof}
+
+Time-resolved versions are likewise available from the appendix: conditional on
+$\tau_c=t$ in the density sense,
+\begin{equation}
+\label{eq:R-given-t}
+\E_i\bigl[
+x^{X_{\tau_c-}}y^{Y_{\tau_c-}}
+\bigm|
+\tau_c=t
+\bigr]
+=
+\frac{\mathcal J_i(x,y,t)}{\mathcal J_i(1,1,t)},
+\end{equation}
+and therefore
+\begin{equation}
+\label{eq:pmf-given-t}
+\Prob_i\{X_{\tau_c-}=m,\,Y_{\tau_c-}=n\mid\tau_c=t\}
+=
+\frac{j_{m,n}^{(i)}(t)}{\mathcal J_i(1,1,t)}.
+\end{equation}
+Integrating \cref{eq:R-given-t} against the catastrophe-time density
+$\mathcal J_i(1,1,t)=-\sigma_i'(t)$ recovers the numerator of \cref{eq:R-cat}.
+
+\section{Marginal distributions}
+
+The marginal generating functions are the obvious specialisations of
+$\mathcal P_i^{\mathrm{rel}}$.
+
+\begin{corollary}[Marginals of release]
+\label{cor:marginals}
+For each initial type $i$,
+\begin{align}
+\E_i\bigl[x^{\Xrel}\bigr]
+&=
+\mathcal P_i^{\mathrm{rel}}(x,1)
+=
+\sigma_i(\infty)
++
+\int_0^\infty
+\delta_1 x\,\partial_x\mathcal F_i(x,1,t)\,
+\dd t
++
+\int_0^\infty
+\delta_2\,\partial_y\mathcal F_i(x,1,t)\,
+\dd t,
+\label{eq:marg-X}
+\\
+\E_i\bigl[y^{\Yrel}\bigr]
+&=
+\mathcal P_i^{\mathrm{rel}}(1,y)
+=
+\sigma_i(\infty)
++
+\int_0^\infty
+\delta_1\,\partial_x\mathcal F_i(1,y,t)\,
+\dd t
++
+\int_0^\infty
+\delta_2 y\,\partial_y\mathcal F_i(1,y,t)\,
+\dd t.
+\label{eq:marg-Y}
+\end{align}
+The corresponding point masses are
+\begin{align}
+\Prob_i\{\Xrel=m\}
+&=
+[x^m]\,\mathcal P_i^{\mathrm{rel}}(x,1),
+\label{eq:marg-X-pmf}
+\\
+\Prob_i\{\Yrel=n\}
+&=
+[y^n]\,\mathcal P_i^{\mathrm{rel}}(1,y).
+\label{eq:marg-Y-pmf}
+\end{align}
+In particular both marginals carry the common origin atom $\sigma_i(\infty)$, since
+$(\Xrel,\Yrel)=(0,0)$ on $\{\tau_c=\infty\}$.
+Explicitly, for $m\ge 1$,
+\begin{equation}
+\label{eq:marg-X-explicit}
+\Prob_i\{\Xrel=m\}
+=
+\int_0^\infty
+\sum_{n=0}^\infty
+(\delta_1 m+\delta_2 n)\,
+p_{m,n}^{(i)}(t)\,
+\dd t,
+\end{equation}
+and for $n\ge 1$,
+\begin{equation}
+\label{eq:marg-Y-explicit}
+\Prob_i\{\Yrel=n\}
+=
+\int_0^\infty
+\sum_{m=0}^\infty
+(\delta_1 m+\delta_2 n)\,
+p_{m,n}^{(i)}(t)\,
+\dd t,
+\end{equation}
+while
+\begin{equation}
+\label{eq:marg-origin}
+\Prob_i\{\Xrel=0\}
+=
+\sigma_i(\infty)
++
+\int_0^\infty
+\sum_{n=1}^\infty
+\delta_2 n\,
+p_{0,n}^{(i)}(t)\,
+\dd t,
+\end{equation}
+and likewise
+\begin{equation}
+\label{eq:marg-Y-zero}
+\Prob_i\{\Yrel=0\}
+=
+\sigma_i(\infty)
++
+\int_0^\infty
+\sum_{m=1}^\infty
+\delta_1 m\,
+p_{m,0}^{(i)}(t)\,
+\dd t.
+\end{equation}
+(The second summands are the probabilities of catastrophe from a pure type-$2$ or pure type-$1$
+state, respectively; they vanish if the corresponding catastrophe rate is zero.)
+\end{corollary}
+
+\begin{remark}[Joint origin versus marginal origins]
+The event $\{\Xrel=0\}$ is strictly larger than $\{\Xrel=\Yrel=0\}$ whenever catastrophe can
+occur from a state with $X=0$ and $Y\ge 1$. Thus
+$\Prob_i\{\Xrel=0\}\ge\sigma_i(\infty)$, with equality if and only if pure type-$2$ states cannot
+trigger (in particular if $\delta_2=0$). The same remark applies to $\Yrel$ with the roles of the
+types reversed.
+\end{remark}
+
+\section{Means and low-order moments}
+
+Differentiating the release PGF at $(1,1)$ yields moments of the ultimate release.
+Because $\mathcal P_i^{\mathrm{rel}}$ has an atom at the origin, these moments are
+\emph{unconditional} means of released load (including zeros on forever-avoidance paths).
+Conditional means given catastrophe are obtained by dividing by $1-\sigma_i(\infty)$.
+
+\begin{corollary}[Mean released load]
+\label{cor:means}
+Whenever the derivatives exist in a neighbourhood of $(1,1)$,
+\begin{align}
+\E_i[\Xrel]
+&=
+\partial_x\mathcal P_i^{\mathrm{rel}}(1,1)
+=
+\int_0^\infty
+\Bigl(
+\delta_1\,
+\partial_x\bigl(x\,\partial_x\mathcal F_i\bigr)
++
+\delta_2\,
+\partial_x\bigl(y\,\partial_y\mathcal F_i\bigr)
+\Bigr)
+\Big|_{(x,y)=(1,1)}
+\dd t,
+\label{eq:mean-X}
+\\
+\E_i[\Yrel]
+&=
+\partial_y\mathcal P_i^{\mathrm{rel}}(1,1)
+=
+\int_0^\infty
+\Bigl(
+\delta_1\,
+\partial_y\bigl(x\,\partial_x\mathcal F_i\bigr)
++
+\delta_2\,
+\partial_y\bigl(y\,\partial_y\mathcal F_i\bigr)
+\Bigr)
+\Big|_{(x,y)=(1,1)}
+\dd t.
+\label{eq:mean-Y}
+\end{align}
+Equivalently, in coefficient form,
+\begin{align}
+\E_i[\Xrel]
+&=
+\int_0^\infty
+\sum_{m,n\ge 0}
+m\,(\delta_1 m+\delta_2 n)\,
+p_{m,n}^{(i)}(t)\,
+\dd t,
+\label{eq:mean-X-sum}
+\\
+\E_i[\Yrel]
+&=
+\int_0^\infty
+\sum_{m,n\ge 0}
+n\,(\delta_1 m+\delta_2 n)\,
+p_{m,n}^{(i)}(t)\,
+\dd t.
+\label{eq:mean-Y-sum}
+\end{align}
+The conditional means given eventual catastrophe are
+\begin{equation}
+\label{eq:cond-means}
+\E_i[\Xrel\mid\tau_c<\infty]
+=
+\frac{\E_i[\Xrel]}{1-\sigma_i(\infty)},
+\qquad
+\E_i[\Yrel\mid\tau_c<\infty]
+=
+\frac{\E_i[\Yrel]}{1-\sigma_i(\infty)}.
+\end{equation}
+\end{corollary}
+
+(The origin atom does not contribute to either mean.)
+
+\section{Evaluation from the closed killed PGF}
+
+The formulae above are distributional identities: they do not require a closed form for
+$\mathcal F_i$. When the hypergeometric solution of the appendix is available, they become
+explicit integral transforms of that solution.
+
+In the generic regime of the main theorem, after the type-$1$ time scaling
+$\hat t=\lambda_1 t$,
+\begin{align}
+\widehat{\mathcal F}_2(x,y,\hat t)
+&=
+r_{2,-}-\alpha_2
+\frac{z_2(\hat t;y)}{1-z_2(\hat t;y)},
+\label{eq:F2-closed}
+\\
+\widehat{\mathcal F}_1(x,y,\hat t)
+&=
+h-\hat q_2 z
+\frac{K_1W_1'(z)+K_2W_2'(z)}
+{K_1W_1(z)+K_2W_2(z)},
+\quad
+z=z_2(\hat t;y),
+\label{eq:F1-closed}
+\end{align}
+with $z_{2,0}(y)=(y-r_{2,-})/(y-r_{2,+})$,
+$z_2(\hat t;y)=z_{2,0}(y)\,e^{\hat q_2\hat t}$,
+and Wronskian coefficients $(K_1,K_2)$ built from the initial logarithmic derivative
+$L(x,y)=(h-x)/(\hat q_2 z_{2,0}(y))$ as in the appendix.
+Substituting \cref{eq:F1-closed,eq:F2-closed} into \cref{eq:flux-pgf} and integrating in physical
+time (or in $\hat t$, with the Jacobian $1/\lambda_1$) yields
+$\mathcal P_i^{\mathrm{rel}}$ as an explicit improper integral of elementary and hypergeometric
+functions of $(x,y)$. Coefficients may then be read by a bivariate Cauchy integral on a product
+of small circles about the origin, or by series expansion of $\mathcal F_i$ before the time
+integral when a power-series route is preferred.
+
+For numerical work at fixed $(x,y)$, one may equally integrate the killed backward system of the
+appendix for $\mathcal F_i(x,y,\cdot)$ and accumulate the flux integrand of \cref{eq:release-pgf}
+in parallel, without extracting coefficients first. The joint masses
+\cref{eq:joint-pmf} are the special case of integrating the scalar ODEs for each coefficient
+$p_{m,n}^{(i)}(t)$ against the weight $\delta_1m+\delta_2n$.
+
+\section{Summary}
+
+The ultimate release pair $(\Xrel,\Yrel)$ is completely determined by the killed generating
+function through its catastrophe flux:
+\begin{equation}
+\label{eq:summary}
+\boxed{
+\begin{aligned}
+\mathcal P_i^{\mathrm{rel}}(x,y)
+&=
+\E_i\bigl[x^{\Xrel}y^{\Yrel}\bigr]
+=
+\sigma_i(\infty)
++
+\int_0^\infty
+\mathcal J_i(x,y,t)\,
+\dd t,
+\\[0.4em]
+\Prob_i\{\Xrel=m,\,\Yrel=n\}
+&=
+[x^my^n]\,\mathcal P_i^{\mathrm{rel}}(x,y)
+\\
+&=
+\begin{cases}
+\sigma_i(\infty),
+& (m,n)=(0,0),\\[0.35em]
+\displaystyle
+\int_0^\infty
+(\delta_1 m+\delta_2 n)\,
+p_{m,n}^{(i)}(t)\,
+\dd t,
+& m+n\ge 1.
+\end{cases}
+\end{aligned}
+}
+\end{equation}
+The catastrophe-conditional law of the appendix is the same object with the origin atom removed
+and the remaining mass renormalised by $1-\sigma_i(\infty)$. Marginals and moments follow by
+specialising or differentiating $\mathcal P_i^{\mathrm{rel}}$.
+
+\end{document}

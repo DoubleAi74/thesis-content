@@ -1,0 +1,442 @@
+\section{The survival amplitude \texorpdfstring{\(A(p)\)}{A(p)}}
+\label{sec:constant-A}
+
+For \(0<p<1/2\), all of the limiting conditional moments obtained in
+\cref{sec:qsd} depend on the amplitude
+\begin{equation}
+  A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n}.
+  \label{eq:A-def-repeat}
+\end{equation}
+Direct iteration gives accurate values away from criticality, but it does not
+explain the constant and becomes slow as \(p\uparrow1/2\).  We now derive an exact
+product, an exact series, two-sided bounds, a rigorous near-critical asymptotic and
+a structural connection with linearisation in complex dynamics.  These results are
+specific to the binary process and are therefore proved in full.
+
+\subsection{An infinite product}
+\label{sec:A-product}
+
+Put
+\begin{equation}
+  r=2p\in(0,1),
+  \qquad
+  w_n=\frac{S_n}{2}.
+\end{equation}
+Then the survival recursion becomes the logistic map
+\begin{equation}
+  w_{n+1}=f_r(w_n):=rw_n(1-w_n),
+  \qquad w_0=\frac12.
+  \label{eq:logistic-map}
+\end{equation}
+Only the attracting regime \(0<r<1\) is relevant here.  Define
+\(x_n=w_n/r^n\).  Successive ratios telescope:
+\begin{equation}
+  \frac{x_{n+1}}{x_n}
+  =\frac{w_{n+1}}{rw_n}=1-w_n.
+  \label{eq:x-ratio}
+\end{equation}
+Since \(A(p)=2\lim_nx_n\) and \(2x_0=1\), this suggests the following exact
+representation.
+
+\begin{proposition}[Product representation]
+\label{prop:A-product}
+For \(0<p<1/2\),
+\begin{equation}
+  A(p)=\prod_{k=0}^{\infty}(1-w_k)
+  =\frac12\prod_{k=1}^{\infty}\left(1-\frac{S_k}{2}\right).
+  \label{eq:A-product}
+\end{equation}
+The product converges to a strictly positive number.  In particular, the limit in
+\cref{eq:A-def-repeat} exists.
+\end{proposition}
+
+\begin{proof}
+Iteration of \cref{eq:x-ratio} gives
+\begin{equation}
+  x_n=x_0\prod_{k=0}^{n-1}(1-w_k).
+\end{equation}
+Moreover, \(0<w_{n+1}<rw_n\), so \(w_n\leq w_0r^n\).  Hence
+\(\sum_nw_n<\infty\).  An infinite product with factors \(1-w_n\in(0,1)\) has a
+positive limit whenever \(\sum_nw_n\) converges.  Passing to the limit and using
+\(w_0=1/2\) proves both identities in \cref{eq:A-product}.
+\end{proof}
+
+The finite product
+\begin{equation}
+  A_N(p)=\frac12\prod_{k=1}^{N}\left(1-\frac{S_k}{2}\right)
+  \label{eq:A-partial-product}
+\end{equation}
+decreases to \(A(p)\), so every truncation is an upper bound.  A useful lower bound
+comes from \(\prod_k(1-a_k)\geq1-\sum_ka_k\) for \(a_k\in[0,1]\).  Because
+\(w_{k+1}\leq rw_k\),
+\begin{equation}
+  A_N\left(1-\frac{w_{N+1}}{1-r}\right)
+  \leq A(p)\leq A_N,
+  \label{eq:A-product-tail-bound}
+\end{equation}
+whenever the left factor is positive.  The bracket provides a stopping criterion
+that is stronger than merely observing that successive floating-point iterates have
+stopped changing.
+
+\subsection{An exact series and two-sided bounds}
+\label{sec:A-series-bounds}
+
+The product proves existence, but an additive representation is more effective near
+criticality.  Set
+\begin{equation}
+  v_n=\frac{r^n}{S_n}.
+\end{equation}
+Then \(v_n\to1/A(p)\), and the factorised recursion
+\(S_{n+1}=rS_n(1-S_n/2)\) gives
+\begin{align}
+  v_{n+1}-v_n
+  &=\frac{r^{n+1}}{rS_n(1-S_n/2)}-\frac{r^n}{S_n}
+    \notag\\
+  &=\frac{r^n}{2-S_n}.
+  \label{eq:v-increment}
+\end{align}
+Since \(v_0=1\), summation yields an exact series.
+
+\begin{proposition}[Series representation]
+\label{prop:A-series}
+For \(0<p<1/2\),
+\begin{equation}
+  \frac{1}{A(p)}
+  =1+\sum_{n=0}^{\infty}\frac{(2p)^n}{2-S_n}.
+  \label{eq:A-series}
+\end{equation}
+\end{proposition}
+
+The nonlinearity is confined to the denominator, while the numerator is geometric.
+Since \(0<S_n\leq1\), we have
+\begin{equation}
+  \frac12r^n<\frac{r^n}{2-S_n}\leq r^n,
+  \label{eq:A-series-term-bounds}
+\end{equation}
+with strictness on the appropriate side for at least one term.  Write
+\(\varepsilon=1-r=1-2p\).  Summing the geometric bounds and inverting gives the
+following result.
+
+\begin{proposition}[Two-sided bounds]
+\label{prop:A-bounds}
+For \(0<p<1/2\),
+\begin{equation}
+  \frac{\varepsilon}{1+\varepsilon}
+  <A(p)<
+  \frac{2\varepsilon}{1+2\varepsilon}.
+  \label{eq:A-bounds-epsilon}
+\end{equation}
+Equivalently,
+\begin{equation}
+  \frac{1-2p}{2(1-p)}
+  <A(p)<
+  \frac{2(1-2p)}{3-4p}.
+  \label{eq:A-bounds-p}
+\end{equation}
+The lower bound is one half of the continuous-time constant:
+\begin{equation}
+  A(p)>\frac12A_{\mathrm c}(p).
+  \label{eq:A-half-Ac}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+By \cref{eq:A-series-term-bounds},
+\begin{equation}
+  1+\frac{1}{2\varepsilon}
+  <\frac{1}{A(p)}
+  <1+\frac{1}{\varepsilon}.
+\end{equation}
+All quantities are positive, so inversion reverses the inequalities and gives
+\cref{eq:A-bounds-epsilon}.  Substitution of
+\(\varepsilon=1-2p\) gives \cref{eq:A-bounds-p}.  Finally,
+\(A_{\mathrm c}(p)=2\varepsilon/(1+\varepsilon)\) by
+\cref{eq:Ac-definition}, proving \cref{eq:A-half-Ac}.
+\end{proof}
+
+There is also a bound that comes from the support of the conditional population.
+
+\begin{proposition}[Parity bound]
+\label{prop:A-parity}
+For \(0<p<1/2\),
+\begin{equation}
+  A(p)\leq\frac12,
+  \label{eq:A-parity}
+\end{equation}
+and \(A(p)\to1/2\) as \(p\downarrow0\).
+\end{proposition}
+
+\begin{proof}
+For every \(n\geq1\), the binary process has even population size.  Conditional on
+survival, \(Z_n\geq2\), so \cref{eq:conditional-mean-exact} gives
+\(m^n/S_n\geq2\).  Letting \(n\to\infty\) yields \(1/A(p)\geq2\).
+On the other hand, the lower bound in \cref{eq:A-bounds-p} tends to \(1/2\) as
+\(p\downarrow0\); together with \cref{eq:A-parity}, this proves the endpoint limit.
+\end{proof}
+
+The definition is therefore extended continuously by
+\begin{equation}
+  A(0):=\lim_{p\downarrow0}A(p)=\frac12.
+  \label{eq:A-at-zero}
+\end{equation}
+This convention avoids the undefined ratio \(S_n/(2p)^n\) at \(p=0\) itself.
+
+\begin{table}[htbp]
+\centering
+\caption{High-precision values of \(A(p)\), the bounds in
+\cref{prop:A-bounds}, the near-critical approximation \(2(1-2p)\), and the
+conditional mean \(1/A(p)\).  The last column is the number of product factors used
+by the reference calculation.  The values are reproduced by
+\texttt{scripts/reproduce\_numerics.py}.}
+\label{tab:A-values}
+\small
+\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{@{}rrrrrrr@{}}
+\toprule
+\(p\) & \(A_{\mathrm c}/2\) & \(A(p)\) & upper bound & \(2(1-2p)\) & \(1/A(p)\) & factors\\
+\midrule
+0.05   & 0.473684 & 0.486180 & 0.642857 & 1.800000 & 2.0568 & 14\\
+0.10   & 0.444444 & 0.469382 & 0.615385 & 1.600000 & 2.1305 & 20\\
+0.20   & 0.375000 & 0.423895 & 0.545455 & 1.200000 & 2.3591 & 35\\
+0.30   & 0.285714 & 0.353967 & 0.444444 & 0.800000 & 2.8251 & 62\\
+0.40   & 0.166667 & 0.237647 & 0.285714 & 0.400000 & 4.2079 & 143\\
+0.45   & 0.090909 & 0.145069 & 0.166667 & 0.200000 & 6.8933 & 303\\
+0.48   & 0.038462 & 0.068011 & 0.074074 & 0.080000 & 14.7036 & 786\\
+0.49   & 0.019608 & 0.036395 & 0.038462 & 0.040000 & 27.4764 & 1\,591\\
+0.499  & 0.001996 & 0.003944 & 0.003984 & 0.004000 & 253.519 & 16\,095\\
+0.4999 & 0.000200 & 0.000399 & 0.000400 & 0.000400 & 2504.65 & 161\,156\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The near-critical limit}
+\label{sec:A-near-critical}
+
+The bounds in \cref{eq:A-bounds-epsilon} show that \(A(p)\) is of order
+\(\varepsilon\), but leave a factor of two unresolved.  The exact series determines
+the leading constant and the order of the first relative correction.
+
+\begin{theorem}[Near-critical survival amplitude]
+\label{thm:A-near-critical}
+As \(p\uparrow1/2\), with \(\varepsilon=1-2p\downarrow0\),
+\begin{equation}
+  A(p)=2\varepsilon
+  \left[1+O\!\left(\varepsilon\log\frac1\varepsilon\right)\right].
+  \label{eq:A-near-critical}
+\end{equation}
+In particular,
+\begin{equation}
+  A(p)\sim2(1-2p),
+  \qquad
+  \frac{1}{A(p)}\sim\frac{1}{2(1-2p)}.
+  \label{eq:A-leading-asymptotic}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write \(r=1-\varepsilon\).  The identity
+\begin{equation}
+  \frac{1}{2-S_n}=\frac12+\frac{S_n}{2(2-S_n)}
+\end{equation}
+turns \cref{eq:A-series} into
+\begin{equation}
+  \frac1{A(p)}
+  =1+\frac1{2\varepsilon}+D_\varepsilon,
+  \qquad
+  D_\varepsilon
+  :=\sum_{n=0}^{\infty}
+     r^n\frac{S_n}{2(2-S_n)}.
+  \label{eq:A-series-decomposition}
+\end{equation}
+We require only a logarithmic bound on the remainder.  The map
+\(s\mapsto ps(2-s)\) is increasing in both \(p\) and \(s\) on the relevant range,
+so the subcritical survival probability is bounded above by its critical counterpart,
+\(S_n(p)\leq S_n(1/2)\).  From \cref{eq:reciprocal-increment},
+\begin{equation}
+  \frac1{S_{n+1}(1/2)}-\frac1{S_n(1/2)}\geq\frac12,
+\end{equation}
+and hence \(S_n(1/2)\leq2/(n+2)\).  Since \(2-S_n\geq1\),
+\begin{align}
+  0\leq D_\varepsilon
+  &\leq\frac12\sum_{n=0}^{\infty}r^nS_n(p)
+   \leq\sum_{n=0}^{\infty}\frac{r^n}{n+2}
+  \notag\\
+  &=\frac{-\log(1-r)-r}{r^2}
+   =O\!\left(\log\frac1\varepsilon\right).
+  \label{eq:D-epsilon-bound}
+\end{align}
+Factoring \(1/(2\varepsilon)\) from \cref{eq:A-series-decomposition} gives
+\begin{equation}
+  \frac1{A(p)}
+  =\frac1{2\varepsilon}
+   \left[1+2\varepsilon\{1+D_\varepsilon\}\right].
+\end{equation}
+The quantity after the leading one is
+\(O(\varepsilon\log(1/\varepsilon))\); inversion proves
+\cref{eq:A-near-critical}.
+\end{proof}
+
+The proof locates the logarithm that slows convergence to the leading asymptotic.
+Numerically, the ratios \(A/(2\varepsilon)\) are approximately
+\(0.90987,0.98612,0.99814,0.99977,0.999972\) as \(\varepsilon\) decreases from
+\(2\times10^{-2}\) to \(2\times10^{-6}\).  An exploratory fit gives
+\begin{equation}
+  1-\frac{A}{2\varepsilon}
+  \approx\varepsilon\left(\log\frac1\varepsilon+0.78\right),
+  \label{eq:A-empirical-correction}
+\end{equation}
+but the constant \(0.78\) is empirical and is not used subsequently.  The proved
+statement is the order estimate in \cref{eq:A-near-critical}.
+
+\subsection{Discrete and continuous time}
+\label{sec:A-discrete-continuous}
+
+The continuous-time amplitude from \cref{eq:Ac-definition} is
+\begin{equation}
+  A_{\mathrm c}(p)=\frac{1-2p}{1-p}
+  =\frac{2\varepsilon}{1+\varepsilon}.
+  \label{eq:Ac-epsilon}
+\end{equation}
+The lower bound in \cref{eq:A-bounds-epsilon} is exactly
+\(A_{\mathrm c}/2\).  At the strongly subcritical endpoint,
+\begin{equation}
+  \frac{A(p)}{A_{\mathrm c}(p)}\longrightarrow\frac12
+  \qquad(p\downarrow0),
+  \label{eq:A-ratio-zero}
+\end{equation}
+whereas \cref{eq:A-leading-asymptotic,eq:Ac-epsilon} give
+\begin{equation}
+  \frac{A(p)}{A_{\mathrm c}(p)}\longrightarrow1
+  \qquad(p\uparrow\tfrac12).
+  \label{eq:A-ratio-critical}
+\end{equation}
+The factor of two at \(p\downarrow0\) is a support effect.  A surviving binary
+generation contains at least two individuals, while a surviving continuous-time
+population may contain one.  The respective limiting conditional means are therefore
+two and one.  Near criticality this distinction is lower order, and both amplitudes
+share the leading behaviour \(2\varepsilon\).
+
+Computed values of \(A/A_{\mathrm c}\) increase from approximately
+\(0.503,0.528,0.619,0.798,0.928\) to \(0.988\) at
+\(p=0.01,0.1,0.3,0.45,0.49,0.499\), respectively.  This numerical monotonicity is
+descriptive; no monotonicity theorem is required for
+\cref{eq:A-ratio-zero,eq:A-ratio-critical}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.54\textwidth]{dtctA.png}
+  \caption{The elementary continuous-time amplitude \(A_{\mathrm c}(p)\) and
+  numerical values of the discrete-time \(A(p)\).  The additional black curve is
+  an exploratory symbolic-regression approximation discussed in
+  \cref{app:closed-form-search}; it is visually close but fails the critical
+  asymptotic.}
+  \label{fig:A-discrete-continuous}
+\end{figure}
+
+\subsection{Koenigs linearisation}
+\label{sec:A-koenigs}
+
+The product in \cref{eq:A-product} is also the classical linearising coordinate of
+the logistic map.  For \(f_r(z)=rz(1-z)\), \(0<r<1\), Koenigs' theorem
+\cite{Koenigs1884} gives a unique function \(\psi_r\), analytic near the attracting
+fixed point \(0\), such that
+\begin{equation}
+  \psi_r(f_r(z))=r\psi_r(z),
+  \qquad
+  \psi_r(0)=0,
+  \qquad
+  \psi_r'(0)=1.
+  \label{eq:schroeder-koenigs}
+\end{equation}
+The function extends along the attracting basin by the functional equation.  In the
+\(\psi_r\)-coordinate, one nonlinear iteration of \(f_r\) is simply multiplication
+by \(r\).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.70\textwidth]{figure2_koenigs_linearization.png}
+  \caption{Koenigs linearisation.  The coordinate change \(\psi_r\) conjugates the
+  nonlinear map \(f_r\) to multiplication by \(r\), expressing
+  \cref{eq:schroeder-koenigs}.}
+  \label{fig:koenigs-linearisation}
+\end{figure}
+
+\begin{proposition}[The survival amplitude as a Koenigs value]
+\label{prop:A-koenigs}
+For \(0<p<1/2\) and \(r=2p\),
+\begin{equation}
+  A(p)=2\psi_r\!\left(\frac12\right).
+  \label{eq:A-koenigs}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Let \(w_{n+1}=f_r(w_n)\) with \(w_0=1/2\).  Iterating
+\cref{eq:schroeder-koenigs} gives
+\begin{equation}
+  \psi_r(w_0)=\frac{\psi_r(w_n)}{r^n}.
+  \label{eq:koenigs-orbit}
+\end{equation}
+Since \(w_n\to0\) and \(\psi_r(z)/z\to1\) as \(z\to0\),
+\begin{equation}
+  \psi_r(w_0)=\lim_{n\to\infty}\frac{w_n}{r^n}.
+\end{equation}
+But \(w_n=S_n/2\), so multiplication by two gives \cref{eq:A-koenigs}.
+\end{proof}
+
+This identification explains why elementary curve fitting is an unreliable route to
+\(A(p)\).  Becker and Bergweiler's classification
+\cite{BeckerBergweiler1995} shows that Schröder conjugacies of rational maps are
+hypertranscendental outside a short list of exceptional dynamical families.  The
+quadratic maps corresponding to \(r\in(0,1)\) are not exceptional; the conjugacy
+calculation is recorded in \cref{app:quadratic-conjugacy}.  Thus, for each fixed
+\(r\in(0,1)\), the function \(z\mapsto\psi_r(z)\) satisfies no algebraic
+differential equation over the rational functions and, in particular, is not
+elementary.
+
+The conclusion must stop there.  Hypertranscendence in the argument \(z\) does not
+prove that the parameter map
+\begin{equation}
+  p\longmapsto2\psi_{2p}(1/2)=A(p)
+  \label{eq:A-parameter-map}
+\end{equation}
+is non-elementary, because this map varies \(r\) while fixing the argument.  No
+elementary expression for \(A(p)\) is known, and the Koenigs representation gives a
+structural reason not to expect one, but it is not a transcendence theorem for the
+values in \cref{eq:A-parameter-map}.  The exploratory searches and the conjugacy to
+the quadratic family are recorded, with this limitation, in
+\cref{app:closed-form-search}.
+
+\subsection{Computation in practice}
+\label{sec:A-computation}
+
+Away from criticality, the product \cref{eq:A-partial-product} is direct, monotone
+and accompanied by the certified bracket \cref{eq:A-product-tail-bound}.  Near
+criticality the number of factors grows on the scale \(1/(1-2p)\), with an additional
+logarithmic cost if many digits are required.  The final column of
+\cref{tab:A-values} shows this slowdown.
+
+For calculations that do not require a certified product value arbitrarily close to
+criticality, the exact product and the asymptotic can be combined:
+\begin{equation}
+  A(p)\approx
+  \begin{cases}
+    \displaystyle
+    \frac12\prod_{k=1}^{N}\left(1-\frac{S_k}{2}\right),
+      &p<c,\\[4mm]
+    2(1-2p),&c\leq p<\tfrac12.
+  \end{cases}
+  \label{eq:A-practical}
+\end{equation}
+Here \(N\) is chosen from \cref{eq:A-product-tail-bound}, and \(c\) is selected to
+match the required accuracy.  The relative error of the second branch is
+\(O(\{1-2p\}\log\{1/(1-2p)\})\) by \cref{thm:A-near-critical}.  For example,
+Choosing \(c=0.4999\) gives a sub-percent approximation across the whole interval;
+\(c=0.499\) leaves an error of about \(1.4\%\) at the join.  A smooth blend can be
+used if a differentiable surrogate is needed.
+
+All values in this chapter are generated from the product rather than from a fitted
+formula.  The accompanying script uses decimal arithmetic, reports the rigorous tail
+bracket and switches to the asymptotic only when explicitly requested.
+
+\FloatBarrier

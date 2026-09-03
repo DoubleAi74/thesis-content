@@ -1,0 +1,136 @@
+% Appendix B --- verification records (Phase 5).
+% Sources: new_notes3/verify_result_20_1_report.txt (renewal suite;
+% re-run 2026-08-07: 54 checks, 0 FAIL) and
+% N=2 Immediate Transfer content/verify_chained_transfer_report.txt
+% (chained-transfer suite; re-run 2026-08-07: 28 checks, 0 FAIL).
+
+\section{Verification records}
+\label{app:verification}
+
+Every result in this chapter was checked analytically where possible and
+numerically where not. This appendix records the two numerical suites,
+their tallies as of the last run (2026-08-07), and how to reproduce them.
+
+\subsection{Renewal BMVR suite (Result~\ref{res:new-vde})}
+
+The suite \texttt{verify\_result\_20\_1.py} tests the renewal system
+\eqref{eq:Icell}--\eqref{eq:Vfree} at four levels: the integrity of the
+kernels; the reduction to single-cell formulae without reinfection; the
+structural limits that can be checked in closed form; and an independent
+stochastic simulation of a finite cohort. Parameter sets:
+$(\beta,\mu,\delta)\in\{(1,0,0.1),\,(1,0.2,0.05),\,(1,0,0.5),\,
+(1,0.9,0.1),\,(1,0.5,1/3)\}$.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\small
+\begin{tabular}{@{}clp{0.44\textwidth}c@{}}
+\toprule
+ID & Name & What is checked & Result \\
+\midrule
+A & Kernel self-consistency &
+  $V'=g$, $\int g=V_\infty$, $\int\Ihat=\mean{T_{\rm prod}}$, $I'=-\delta J$ &
+  5/5 \\
+B & $\gamma T=0$ cohort &
+  $\Icell=\Icell_0\Ihat$; $\Vfree'=\Icell_0 g-c\Vfree$ vs exact
+  convolution; $c=0\Rightarrow\Vfree=\Icell_0 V(t)$ &
+  15/15 \\
+C & $V$-equation residual &
+  $\Vfree'-\Icell_0 g-\gamma T(\Vfree*g)+c\Vfree\approx0$ on
+  supercritical / subcritical / virion-seed solutions &
+  5/5 \\
+D & Exponential kernels $\equiv$ classical &
+  $S=e^{-da}$, $g=pe^{-da}\Rightarrow$ renewal $=$ BMVR ODE
+  (rel.\ err.\ $<5\times10^{-5}$) &
+  3/3 \\
+E & Growth $=$ characteristic root &
+  late $\log\Vfree$ slope equals $r_*$ solving $r+c=\gamma T\delta\Lap{K}(r)$
+  (rel.\ err.\ $\sim10^{-6}$--$10^{-7}$) &
+  5/5 \\
+F & $R_0$ threshold &
+  $R_0\in\{0.5,\ldots,3\}$: decay iff $R_0<1$, growth iff $R_0>1$ &
+  8/8 \\
+G & $p_{\rm eff}(r_*)$ match &
+  classical ODE with $(p,d)=(p_{\rm eff}(r_*),d_{\rm eff}(r_*))$ shares
+  $r_*$ with the renewal system &
+  4/4 \\
+H & Gillespie cohort &
+  independent BDC cells $+$ clearance; ensemble mean vs renewal
+  (rel.\ $L^2\sim1$--$2\%$) &
+  2/2 \\
+I & Virion-only seed &
+  early $\Vfree\approx V_0e^{-ct}$; $\Icell(0)=0$ then rises &
+  1/1 \\
+J & Lifetime output &
+  $\gamma T=c=0$: $\Vfree(\infty)=V_\infty$ (rel.\ err.\ $<10^{-6}$) &
+  5/5 \\
+K & Well-posedness &
+  non-negative, finite trajectories &
+  1/1 \\
+\midrule
+ & \textbf{Total} & & \textbf{54/54} \\
+\bottomrule
+\end{tabular}
+\end{center}
+(Earlier summaries of this suite quote 53 checks; the present version adds
+one well-posedness check.) One honest gap: a full stochastic
+multi-generation Gillespie check with reinfection ($\gamma T>0$) is not yet
+coded. The reinfection case is already constrained by tests C, E, F, G
+through the characteristic equation, which any correct linear theory must
+satisfy, and agreement is expected by linearity.
+
+\paragraph{Reproduction.}
+\begin{verbatim}
+cd "4 BDC additional and BMVR/new_notes3"
+python3 verify_result_20_1.py
+# writes verify_result_20_1_report.txt, metrics, verify_figures/*.pdf
+\end{verbatim}
+
+\subsection{Chained immediate-transfer suite (\S\ref{sec:chained})}
+
+The suite \texttt{verify\_chained\_transfer.py} samples the chained process
+exactly (the event-type decomposition of \S\ref{sec:key-observation} makes
+simulation direct) and checks every quantitative claim of
+\S\ref{sec:chained} across three parameter sets,
+$(\beta,\delta)\in\{(1,1),\,(1,0.1),\,(2,0.5)\}$.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\small
+\begin{tabular}{@{}clp{0.46\textwidth}c@{}}
+\toprule
+ID & Name & What is checked & Result \\
+\midrule
+A & Coefficient identity &
+  $\binom{n+k-2}{k-1}$ obeys the recurrence (exact integers) & 1/1 \\
+B & Rupture-size laws &
+  $\Prob{r_k=n}$ vs $10^6$ chains, $k=1..4$, SE-unit comparison & 3/3 \\
+C & Moments & $\mean{r_k}=1+k\beta/\delta$, $\mathrm{Var}(r_k)=k\rho/s^2$ & 3/3 \\
+D & PGF & $\mean{z^{r_k}}=z(s/(1-\rho z))^k$ (SE units) & 3/3 \\
+E & First rupture time & histogram vs $\delta J(t)$ & 3/3 \\
+F & Interval transform &
+  fixed founders $k\in\{1,2,3,5\}$: empirical Laplace transform vs the
+  series $/\,{}_2F_1$ form & 3/3 \\
+F2 & Interval mixture &
+  chain intervals $T_2,T_3$ (random founders) vs pmf-weighted $\Lap{T}$ & 3/3 \\
+G & Second rupture time & empirical $\mean{e^{-ut_2}}$ vs $\Lap{t_2}(u)$ & 3/3 \\
+H/H2 & $t_2$ density and mean &
+  exact hypoexponential-mixture density vs histogram
+  (rel.\ $L^2\approx3\%$); exact $\mean{t_2}$ & 3/3 \\
+I & Interval means &
+  strictly decreasing; simulation vs the exact series & 3/3 \\
+\midrule
+ & \textbf{Total} & & \textbf{28/28} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The ${}_2F_1$ cross-check in test F activates only when scipy is available;
+the series itself (which the simulation is compared against) needs only
+numpy.
+
+\paragraph{Reproduction.}
+\begin{verbatim}
+cd "4 BDC additional and BMVR/N=2 Immediate Transfer content"
+python3 verify_chained_transfer.py
+# writes verify_chained_transfer_report.txt, metrics, figures
+\end{verbatim}

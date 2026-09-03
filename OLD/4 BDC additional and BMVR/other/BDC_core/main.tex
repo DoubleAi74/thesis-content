@@ -1,0 +1,162 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[makeroom]{cancel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{changepage}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{8pt plus 2fil}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\allowdisplaybreaks
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+
+
+% Thesis-compatible macros (from Thesis.tex)
+\newcommand{\pgf}{probability generating function}
+\newcommand{\intinf}{\displaystyle\int_0^{\infty}}
+\newcommand{\pr}[1]{{\text{Pr}\left\{#1\right\}}}
+\newcommand{\mean}[1]{{\rm I}\!{\rm E}(#1)}
+\newcommand{\xx}{{\bf X}}
+\newcommand{\xt}{{\xx_t}}
+\newcommand{\ww}{{\bf W}}
+\newcommand{\wt}{{\ww_t}}
+\newcommand{\xs}{{\xx_s}}
+\newcommand{\dd}{{\rm d}}
+\newcommand{\dt}{{\rm d}t}
+\newcommand{\ee}{{\rm e}}
+\newcommand{\ddt}[1]{\displaystyle\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\displaystyle\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\displaystyle\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+\newcommand{\dds}[1]{\displaystyle\frac{\dd #1}{\dd s}}
+\newcommand{\ex}[1]{\mathbb{E}\left(#1\right)}
+\newcommand{\de}{differential equation}
+\newcommand{\rv}{random variable}
+\newcommand{\delt}{\Delta t}
+\newcommand{\ft}{\textit{F.~tularensis}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+\newcommand{\lb}{\left(}
+\newcommand{\rb}{\right)}
+\newcommand{\lrb}[1]{\lb#1\rb}
+\newcommand{\lbs}{\left[}
+\newcommand{\rbs}{\right]}
+\newcommand{\lrbs}[1]{\lbs#1\rbs}
+\newcommand{\xdt}{{\xx_{t+\delt}}}
+\newcommand{\zz}{{\bf Z}}
+\newcommand{\pt}{p_{i,j}(t)}
+\newcommand{\p}{p_{i,j}}
+\newcommand{\lbc}{\left\{ }
+\newcommand{\rbc}{\right\} }
+\newcommand{\lrbc}[1]{\lbc#1\rbc}
+\newcommand{\lrbq}[1]{\hspace{-2pt}\lb#1\rb}
+\newcommand{\pdx}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+\newcommand{\pdxn}[3]{\displaystyle\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+\newcommand{\eec}{{\ee^{\lambda(a-b)t}}}
+\newcommand{\Eqref}[1]{Eq.~\eqref{#1}}
+\newcommand{\Figref}[1]{Figure~\ref{#1}}
+\newcommand{\Tabref}[1]{Table~\ref{#1}}
+\newcommand{\Chapref}[1]{Chapter~\ref{#1}}
+\newcommand{\Secref}[1]{Section~\ref{#1}}
+
+% Unified notation regime (Project_specification.md \S2)
+\newcommand{\Ifix}[1][]{I_{\mathrm{fix}#1}}
+\newcommand{\Kb}{\mathcal{K}}
+\newcommand{\Icell}{\mathcal{I}}
+\newcommand{\Vfree}{\mathcal{V}}
+\newcommand{\Lap}[1]{\widetilde{#1}}
+\newcommand{\Prob}[1]{\mathbb{P}\!\left\{#1\right\}}
+\newcommand{\E}[1]{\mathbb{E}\!\left[#1\right]}
+\newcommand{\Fhyp}{{}_2F_1}
+
+% Figure flag: a compiled-in specification for a figure to be generated
+% later by a figure agent. Do not remove until the figure exists.
+% Overfull boxes INSIDE flag boxes are exempt from the overfull-free
+% acceptance criterion (raggedright + small keep them rare anyway).
+\newcommand{\figureflag}[3]{\par\medskip\noindent
+\fcolorbox{orange!70!black}{orange!6}{\parbox{0.94\linewidth}{%
+\raggedright\small
+\textbf{\textcolor{orange!50!black}{FIGURE FLAG #1 --- #2}}\\[2pt]#3\par}}%
+\par\medskip}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=red!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={The birth-death-catastrophe process: definition and main results},
+  pdfauthor={Adam Aldridge}
+}
+
+\title{The birth--death--catastrophe process:\\
+definition and main results}
+\author{Adam Aldridge}
+\date{Chapter 3 of AA Thesis --- University of Leeds\\Draft compiled \today}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.5em}
+
+\tableofcontents
+\clearpage
+
+\input{sections/02_chapter_introduction.tex}
+\input{sections/03_reference_values.tex}
+\input{sections/04_process_definition.tex}
+\input{sections/05_analytical_quantities.tex}
+\input{sections/06_derivation_of_equations_and_results.tex}
+\input{sections/07_expected_number_of_units_j_t.tex}
+\input{sections/08_variance_and_standard_deviation_of.tex}
+\input{sections/09_variable_dependencies_on.tex}
+\input{sections/10_what_comes_next.tex}
+
+\FloatBarrier
+\begingroup
+\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

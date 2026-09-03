@@ -1,0 +1,75 @@
+\section{Overview}
+\label{m:sec:overview}
+
+This chapter introduces the mathematical framework and the methods used
+throughout the thesis. Its concern is the machinery rather than any single
+application: the process classes in which the models live, and the stock of
+exact arguments by which those processes are analysed. Later chapters build
+their models from the objects defined here, and appeal to the methods developed
+here; the present one aims to make both available in a form that can be cited
+rather than re-derived.
+
+Two questions organise everything below, and it is worth naming them because
+they are not the same question. The first is a \emph{distributional} question:
+given the process, what is the law of the population --- its mean, its variance,
+its full generating function --- at a given time, or in the limit? The second is
+an \emph{absorption} question: does the process reach a given state at all, and
+if so with what probability, or after what time? Extinction, rupture and
+establishment are all absorption questions; growth and quasi-stationarity are
+distributional ones. The methods of \cref{m:sec:methods} split accordingly.
+First-step analysis and its continuous-time companions answer absorption
+questions; generating functions and moment equations answer distributional ones;
+and where a problem mixes the two --- survival \emph{conditioned on} not being
+absorbed, for instance --- the two stocks of methods are used together, as in
+\cref{m:sec:condmean}.
+
+\Cref{m:sec:markov} defines the process classes. Discrete-time Markov chains are
+introduced through simple random walks and Galton--Watson processes; the latter
+is the ancestor of every branching model in the thesis, and is treated here only
+as far as its definition and one-step structure, with the critical theory in
+\cref{m:app:critical} and the deep analysis of its quasi-stationary amplitude
+in \ChA. Continuous-time chains follow, through the Poisson process and the
+birth--death and birth--death--catastrophe processes, the latter carrying the
+second absorbing mechanism --- abrupt rupture --- that several later chapters
+need. Time-inhomogeneous chains, whose rates vary with the clock, are set up
+with the logistic speciation model as the worked instance; and coupled
+ODE--CTMC systems, in which a deterministic flow and a jump process drive one
+another, close the section with the rupture-into-a-medium schematic on which the
+compartment chapters are built.
+
+\Cref{m:sec:methods} then develops the methods, again in two time domains. The
+discrete-time stock --- generating functions, functional iteration, first-step
+analysis --- is set out briefly, because its deeper development belongs to \ChA,
+where the binary Galton--Watson process is analysed by Koenigs-function methods.
+The continuous-time stock is the main technical weight of the chapter: backward
+equations, mean population size, variance and higher moments, hitting
+probabilities, extinction probabilities, and conditional means, all developed
+with the birth--death process as the running example. The conditional-mean
+subsection is where the two halves of the thesis meet: it defines the discrete
+constant $A(p)$ and the quasi-stationary mean $1/A(p)$, derives the elementary
+continuous-time constant $\Ac(p)$ in full, and hands the analysis of $A(p)$
+itself --- product and series representations, bounds, near-critical asymptotic,
+closed-form searches, and the dynamical obstruction to any closed form --- to
+\ChA.
+
+One method crosses the division and receives its own treatment in
+\cref{m:sec:moc}: the method of characteristics, by which the first-order
+partial differential equations satisfied by generating functions are solved. It
+is presented as a four-step recipe and worked through on the absorption--death
+model; the harder members of the family, including the absorption--birth--death
+model whose closed form is an original result of this thesis, are solved in
+\cref{m:app:moc} by the identical procedure, supported by the integral identity
+of \cref{m:app:hyp} and the coefficient-extraction machinery of
+\cref{m:app:extract}. The remaining appendices hold material displaced from the
+main text by the chapter's framework-and-methods organisation --- the critical
+theory of branching, the arithmetic of founding cohorts, the quasi-stationary
+variance, and the discrete catastrophe calculation --- so that nothing the later
+chapters need is lost.
+
+Two conventions run throughout. Processes are specified by their rates and
+nothing else: \cref{m:eq:infinitesimal} for continuous time, the offspring law
+or transition matrix for discrete time, and every property is read off from
+that specification by one of the methods above. And the voice is deliberately
+abstract: the mathematics of a compartment that may rupture does not depend on
+what the compartment contains, and the chapter is written so that later
+chapters are free to supply the biology.

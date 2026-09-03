@@ -1,0 +1,127 @@
+\section{What the theorem does and does not say about \texorpdfstring{$A(p)$}{A(p)}}
+\label{a:sec:scope}
+
+``Closed form'' must itself be made precise before any claim is stated; at least
+four inequivalent readings are in play, and a result for one is not a result for
+another.
+\begin{enumerate}[label=\textup{(\Alph*)},leftmargin=*]
+\item[\textbf{(V)}] the \emph{value} $A(p_0)$ is elementary or algebraic, for a
+fixed rational $p_0$;
+\item[\textbf{(E)}] the \emph{map} $p\mapsto A(p)$ is an elementary function of
+$p$;
+\item[\textbf{(D)}] the map is \emph{differentially algebraic in $p$}, i.e.\
+satisfies some algebraic ODE in $p$;
+\item[\textbf{(S)}] the map is expressible via standard special functions
+($\Gamma$, $\zeta$, ${}_2F_1$, theta or $q$-series).
+\end{enumerate}
+\Cref{a:thm:mainht} speaks to the function $z\mapsto\psi_r(z)$ at fixed $r$, and
+licenses exactly this much: \emph{no evaluation of $A(p)$ can be short-circuited
+through an algebraic differential equation for the lineariser, at any subcritical
+parameter.} It does not, by itself, decide any of (V), (E), (D) or (S). Two gaps
+must be stated plainly.
+
+\paragraph{The value gap.}
+A hypertranscendental function can take elementary --- even algebraic --- values
+at individual points: $\Gamma$ is hypertranscendental by H\"older's theorem, yet
+$\Gamma(\tfrac12)=\sqrt{\pi}$. Nothing so far forbids, say, $A(\tfrac14)$ from
+being an algebraic number. There \emph{is} a genuine values theorem in this circle
+of ideas: Becker and Bergweiler proved in 1993 \cite{Becker1993} that the
+B\"ottcher conjugacy between two polynomials of the \emph{same degree} $d\ge2$
+with algebraic coefficients (not linearly conjugate to monomials or Chebyshev
+polynomials) is transcendental and takes transcendental values at algebraic
+points; Mahler's method drives the proof (for the method, see Nishioka
+\cite{Nishioka1996}). One might hope to transfer this to the Koenigs value
+$\psi_r(\tfrac12)$. It does not transfer, for two independent reasons.
+\emph{Formally}, the Schr\"oder equation pairs an inner map of degree two with an
+outer map --- multiplication by $r$ --- of degree one, so the equal-degree
+hypothesis fails outright. \emph{Structurally}, no easy repair exists: Mahler's
+method balances doubly-exponential analytic decay along an orbit against
+comparable height growth, and in the B\"ottcher setting both exponents run like
+$d^{\,n}$; in the attracting Koenigs setting the orbit
+$w_n=f_r^{\circ n}(\tfrac12)$ decays only geometrically, $|w_n|\sim A\,r^{n}$,
+while the heights of the rational numbers $w_n$ still grow doubly exponentially,
+$h(w_n)\sim C\,2^{\,n}$, and the resulting inequalities run the wrong way at every
+$n$. Note that the obstruction is \emph{not} the germ/basin issue --- the pullback
+of \cref{a:rem:basin} moves the evaluation point arbitrarily deep into the germ at
+the cost of a rational factor --- it is the degree structure of the equation
+itself. The consequence deserves emphasis:
+\begin{center}
+\emph{transcendence --- indeed, even irrationality --- of $A(p_0)$ is at present
+not proved for a single rational $p_0\in(0,\tfrac12)$.}
+\end{center}
+
+\paragraph{The parameter gap.}
+\Cref{a:thm:mainht} says nothing about the map $p\mapsto A(p)$: readings (E) and
+(D) are open. To the best of our knowledge the question is not merely unsolved but
+unaddressed in the literature. The natural machinery --- the parametrised
+differential Galois theory of difference equations of Hardouin and Singer
+\cite{HardouinSinger2008}, designed precisely to detect differential relations in
+auxiliary directions for linear difference equations such as $\sigma\psi=r\psi$
+--- does not apply as it stands, because the derivation $\partial_r$ fails to
+commute with the substitution operator $\sigma\colon w\mapsto f_r(w)$, which
+itself moves with $r$. Nor does any feature of the near-critical asymptotics
+obstruct (E) or (D): logarithmic corrections to \cref{a:eq:Anearcrit} are
+themselves elementary functions of $\varepsilon$.
+
+\subsection{Inverse-symbolic evidence at eleven rational parameters}
+\label{a:sec:pslq}
+
+Since the theorems leave (V) open, the value question was attacked directly by
+integer-relation detection. The values
+\begin{equation*}
+A(p),\qquad p\in\bigl\{\tfrac1{10},\tfrac18,\tfrac16,\tfrac15,\tfrac14,\tfrac3{10},
+\tfrac13,\tfrac38,\tfrac25,\tfrac5{12},\tfrac9{20}\bigr\},
+\end{equation*}
+were computed to more than $1150$ significant digits by two mechanically
+independent routes --- the exact product identity \cref{a:eq:prodFormula} iterated
+to convergence, and a pullback of the orbit into the Koenigs germ followed by
+evaluation of the Koenigs series --- which agreed to at least $1192$ digits at
+every parameter. Each value was then subjected to a PSLQ battery at $\ge200$-digit
+effective rigour:
+\begin{itemize}
+\item \emph{algebraicity}: no integer polynomial relation of degree $\le10$ and
+coefficient height $\le10^{6}$;
+\item \emph{linearity}: no rational linear relation, at height $\le10^{8}$,
+against the constants $\pi$, $\pi^{2}$, $\ln2$, $\ln3$, $\ln5$, $\gamma$,
+$\zeta(3)$, $\sqrt2$, $\sqrt3$, $\sqrt5$, $\ee$, $\ee^{\pi}$,
+$\Gamma(\tfrac13)$, $\Gamma(\tfrac14)$ and Catalan's constant (also tested for
+$1/A$, the quasi-stationary mean itself, and for $A/\varepsilon$);
+\item \emph{bilinearity}: no representation $A=L_1/L_2$ with $L_1,L_2$ integer
+linear forms of height $\le10^{8}$ in a twelve-constant basis (run at $460$
+digits);
+\item \emph{multiplicativity}: no relation
+$A=\ee^{q_0}2^{q_1}3^{q_2}5^{q_3}7^{q_4}\pi^{q_5}$ with rational exponents of
+height $\le10^{10}$;
+\item \emph{cross-parameter}: no rational linear or multiplicative relation
+linking the eleven values to one another (run at $500$ digits).
+\end{itemize}
+In all, $123$ tests returned no relation --- indeed no discovery-stage candidate:
+every PSLQ run terminated on its internal norm bound, so each null carries a
+genuine ``no relation up to the stated height'' guarantee. Throughout, the
+precision head-room (digits divided by basis size) exceeded every height cap by at
+least eight orders of magnitude, so a returned relation would have been meaningful
+rather than numerical noise.\footnote{Computations in \texttt{mpmath} at working
+precisions of $310$--$1200$ digits; scripts, the $1150$-digit values, and the full
+per-test log are archived with the project sources.}
+
+This is finite evidence, and its scope must be stated honestly: it excludes
+low-complexity closed forms over the tested constants, and nothing more. A closed
+form over untested constants ($\Gamma(\tfrac17)$, say, or periods of higher-genus
+curves), or one of height above the caps, would have escaped the search. It is
+evidence for the conjecture, not a proof.
+
+\subsection{The working claim}
+\label{a:sec:workingclaim}
+
+\begin{quote}
+\textit{For every fixed $r=2p\in(0,1)$, the Koenigs linearisation $\psi_r$ is
+hypertranscendental in its own variable (\cref{a:thm:mainht}) --- a theorem, with
+no exceptional parameters in the attracting window, since differentially algebraic
+Schr\"oder functions exist only over repelling fixed points. Consequently no
+elementary expression in $z$ for the conjugacy can be evaluated to produce $A(p)$.
+Whether individual values $A(p_0)$ are transcendental (or even irrational), and
+whether the map $p\mapsto A(p)$ is elementary or differentially algebraic in $p$,
+remain open questions; no closed form under any reading is known, none is
+expected, and eleven rational values resist inverse-symbolic identification
+against standard constants at over $200$-digit rigour.}
+\end{quote}

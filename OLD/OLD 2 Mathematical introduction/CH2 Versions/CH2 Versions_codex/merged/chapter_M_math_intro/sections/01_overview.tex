@@ -1,0 +1,102 @@
+\section{Overview}\label{m:sec:overview}
+
+This chapter introduces the stochastic process classes and analytical methods used
+throughout the thesis.  Its organising distinction is between discrete-time and
+continuous-time Markov chains.  In discrete time, the Galton--Watson process shows
+how independence converts reproduction into functional iteration.  In continuous
+time, exponential holding times and the generator convert event rates into
+Kolmogorov equations, with birth--death and birth--death--catastrophe processes as
+the principal count-valued examples.  The intended framework also includes
+time-inhomogeneous chains and coupled ODE--CTMC systems.  The available sources do
+not yet specify the logistic-speciation or coupled-system models, however, so the
+corresponding subsections mark those gaps explicitly rather than filling them with
+unsupported mathematics.
+\begin{figure}[tbp]
+  \centering
+  \begin{tikzpicture}[
+    font=\small,
+    node distance=6mm,
+    process/.style={draw=blue!60!black, fill=blue!7, rounded corners=3pt,
+      minimum width=6.2cm, minimum height=9mm, align=center},
+    method/.style={draw=teal!65!black, fill=teal!7, rounded corners=3pt,
+      minimum width=6.2cm, minimum height=11mm, align=center},
+    outcome/.style={draw=orange!70!black, fill=orange!9, rounded corners=3pt,
+      minimum width=6.2cm, minimum height=11mm, align=center},
+    flow/.style={-{Stealth[length=2.2mm]}, semithick, draw=gray!70!black}
+  ]
+    \node[process] (dt) {Discrete time: Galton--Watson chain $(Z_n)$};
+    \node[process, right=14mm of dt] (ct)
+      {Continuous time: birth--death and BDC chains $(X_t)$};
+
+    \node[method, below=of dt] (dtm)
+      {PGF composition and first-step analysis\\[-1pt]
+       $\phi_{n+1}=\phi_n\!\circ\!\phi$};
+    \node[method, below=of ct] (ctm)
+      {Generator, backward equations and PGF PDEs\\[-1pt]
+       $\partial_tG=q(z)\,\partial_zG$};
+
+    \node[outcome, below=of dtm] (dto)
+      {Survival recursion and late-time scale\\[-1pt]
+       $S_n\sim A(p)(2p)^n$};
+    \node[outcome, below=of ctm] (cto)
+      {Extinction, conditional means and characteristics\\[-1pt]
+       $\mathbb E[X_t\mid X_t>0]\to1/A_{\mathrm c}(p)$};
+
+    \draw[flow] (dt) -- (dtm);
+    \draw[flow] (dtm) -- (dto);
+    \draw[flow] (ct) -- (ctm);
+    \draw[flow] (ctm) -- (cto);
+    \draw[flow, dashed, <->] (dto.east) -- node[above, font=\footnotesize,
+      fill=white, inner sep=2pt] {comparison} (cto.west);
+  \end{tikzpicture}
+  \caption{The two analytical lanes developed in this chapter.  Discrete
+  functional iteration leads to the constant $A(p)$, while continuous-time
+  generator methods give the explicit comparison constant $A_{\mathrm c}(p)$
+  and the PDEs treated by characteristics.}
+  \label{m:fig:chapter-map}
+\end{figure}
+
+The second half of the chapter is organised by method rather than by process.
+For discrete chains, probability generating functions turn independent sums into
+products and branching into composition, while first-step analysis isolates one
+transition and returns a self-consistent equation.  Together these methods lead to
+the binary Galton--Watson survival recursion and the discrete constant $A(p)$.
+Only the limiting conditional mean requires that constant here; its product,
+series, bounds and Koenigs-function theory remain the subject of \ChA.
+
+For continuous chains, the generator supplies forward and backward equations,
+while generating functions compress an infinite system of state-probability
+equations into a first-order partial differential equation.  The linear
+birth--death process serves as the main example because the same model makes the
+mean, extinction probability, moment calculations and conditioning explicit.  In
+particular, it gives the continuous comparison constant
+\[
+  \Ac(p)=\frac{1-2p}{1-p},
+\]
+which can be derived in closed form and compared directly with the discrete
+$A(p)$ without importing the latter's deeper theory.
+
+The method of characteristics comes last, where it converts a first-order
+generating-function PDE into ordinary differential equations along characteristic
+curves.  The main text works through one absorption--death model whose solution can
+also be obtained independently, so each characteristic step can be checked.  The
+broader absorption catalogue is compressed into
+\cref{m:app:extended-absorption}, preserving the extension without obscuring the
+methodological spine of the chapter.
+
+Two further appendices preserve detail that would otherwise overload this
+introductory route.  Appendix~\ref{m:app:critical-gw} proves the critical
+Galton--Watson survival and total-progeny asymptotics, while the following parts
+record the limiting conditional variance, small-founder effects and the discrete
+rupture calculation.  They support the claims used in the main text without
+transferring the deeper theory of $A(p)$ from \ChA.
+
+Absorption provides the common thread.  Extinction, killing and catastrophe all
+remove mass from the transient state space, while conditioning asks what remains
+visible before that absorption occurs.  This viewpoint connects elementary
+first-step arguments to the spectral language of quasi-stationarity and to the
+generating-function calculations used later in the thesis.  Standard background
+for the continuous-time material is given by Norris \cite{Norris1997}, Karlin and
+Taylor \cite{KarlinTaylor1975}, and Allen \cite{Allen2010}; the branching-process
+background follows Harris \cite{Harris1963} and Athreya and Ney
+\cite{Athreya1972}.

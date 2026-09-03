@@ -1,0 +1,353 @@
+% Flooding advantage and growth-rate trade-off --- plan \S4.12 (Phase 3).
+% Decision: stays in Ch.4 (chapter's population-level climax); Ch.6 takes
+% the evolutionary discussion.
+% Sources: new_notes3 Part E \S22--\S25; new_notes Part II \S13;
+% new_notes2 \S9. All displayed numerical values re-verified 2026-08-07.
+
+\section{The flooding advantage and the growth-rate trade-off}
+\label{sec:flooding}
+
+Does bursting help a pathogen get established? The question belongs to the
+stochastic early phase, where censuses are small and extinction is a real
+threat, and it can now be answered exactly: both the bursting and the
+budding version of the early infection are branching processes whose
+offspring distributions are available in closed form.
+
+\subsection{Offspring of one infected cell}
+
+In the branching approximation each released particle independently either
+infects a target cell (rate $\gamma T$) or is cleared (rate $c$), so it
+infects with probability
+\begin{equation}
+q=\frac{\gamma T}{\gamma T+c}.
+\end{equation}
+The offspring of one infected cell is the burst size $\Kb$, thinned by this
+success probability. The (unconditional) burst-size \pgf{} is, summing the
+law \eqref{eq:burstlaw},
+$G_{\Kb}(z)=b+(\delta/\lambda)\,z/(a-z)$ --- including the mass $b$ of cells
+that never burst --- and thinning replaces $z$ by $y:=1-q+qz$:
+\begin{equation}
+G_{\rm off}(z)=b+\frac{\delta}{\lambda}\,\frac{y}{a-y},
+\qquad y=1-q+qz.
+\label{eq:Goff}
+\end{equation}
+One checks $G_{\rm off}(1)=b+(\delta/\lambda)/(a-1)=b+B=1$. The mean and
+variance of the offspring number are
+\begin{equation}
+m=G_{\rm off}'(1)=q\,V_\infty,
+\qquad
+\mathrm{Var}_{\rm burst}
+=\frac{2q^2V_\infty}{a-1}+qV_\infty-q^2V_\infty^2,
+\label{eq:offmoments}
+\end{equation}
+the variance following from $\mathrm{Var}(\Kb)$ via the limit of
+\eqref{eq:EW2} and the standard composition formula for random sums. When
+$\gamma T\ll c$, $q\approx\gamma T/c$ and $m\approx R_0^{\mathrm{ODE}}$ of
+\eqref{eq:R0ODE}.
+
+\subsection{Extinction probability in closed form}
+
+The extinction probability of a branching process is the smallest root of
+$G_{\rm off}(z)=z$ in $[0,1]$. With $y=1-q+qz$, the fixed-point equation is
+quadratic, $z=1$ is always a root, and the other root gives, for $m>1$,
+\begin{equation}
+z_{\rm ext}^{\rm burst}
+=\frac{a(1-q+qb)-1+q}{q}
+=\frac{a-1}{q}+1-a(1-b).
+\label{eq:zext}
+\end{equation}
+
+\subsection{Comparison with matched-mean budding: the main theorem}
+
+The comparator is the classical picture: a cell with $\mathrm{Exp}(d_{\Icell})$
+lifetime releasing at constant rate $p$. The number it releases is a Poisson
+process stopped at an independent exponential time, hence geometric on
+$\{0,1,2,\ldots\}$ with mean $p/d_{\Icell}$; matched to the bursting cell's
+total output, $p/d_{\Icell}=V_\infty$. Thinning a geometric law leaves a
+geometric law, so the budding offspring number is geometric with the same
+mean $m=qV_\infty$, and its extinction probability is
+\begin{equation}
+z_{\rm ext}^{\rm bud}=\frac{1}{m}\qquad(m>1).
+\end{equation}
+
+\begin{theorem}[The flooding advantage]
+\label{thm:flood}
+Write $L:=a(1-b)=a-\mu/\lambda$, so that $V_\infty=L/(a-1)$. For $m>1$,
+\begin{equation}
+z_{\rm ext}^{\rm burst}-z_{\rm ext}^{\rm bud}
+=\bigl(L-1\bigr)\Bigl(\frac{1}{m}-1\Bigr).
+\label{eq:flood}
+\end{equation}
+Hence bursting strictly lowers the establishment extinction probability,
+relative to matched-mean budding, if and only if $L>1$, i.e.
+\begin{equation}
+\delta(\lambda+\mu)>\lambda\mu
+\qquad\Longleftrightarrow\qquad
+\boxed{\;\frac{1}{\delta}<\frac{1}{\lambda}+\frac{1}{\mu}\;}
+\end{equation}
+(with the convention that the condition holds for all $\delta>0$ when
+$\mu=0$). When $L=1$ the two extinction probabilities are identical for
+every $q$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The identity \eqref{eq:flood} is algebra: substitute \eqref{eq:zext},
+$m=qV_\infty=qL/(a-1)$ and simplify. For the criterion, $L>1$ is
+$a(1-b)>1$, i.e.\ $a>1+\mu/\lambda$; inserting the definition of $a$ and
+squaring (both sides are positive, or the right-hand side is not) yields
+$(\lambda+\mu+\delta)^2-4\lambda\mu>4\lambda^2(1+\mu/\lambda-\eta)^2$, which
+reduces to $\delta(\lambda+\mu)>\lambda\mu$.
+\end{proof}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.76\textwidth]{figures/N4b_4_L_landscape.pdf}
+\caption{Flooding parameter $L(\mu,\delta)$ at $\lambda=1$. The exact
+curve $L=1$, equivalently
+$\delta_*=\lambda\mu/(\lambda+\mu)$, partitions the rate plane into
+$L>1$ and $L<1$. The three marked table points are
+$(\mu,\delta)=(0,0.1)$, $(0.5,1/3)$, and $(0.9,0.1)$, for which
+$L=1.10$, $1.00$, and $0.42$, respectively.}
+\label{fig:N4b_4}
+\end{figure}
+
+Numerically, the identity \eqref{eq:flood} is exact in every case we
+checked:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+$(\lambda,\mu,\delta)$ & $q$ & $z_{\rm ext}^{\rm burst}$ & $z_{\rm ext}^{\rm bud}$ & verdict \\
+\midrule
+$(1,0,0.1)$ & $0.2$ & $0.400$ & $0.455$ & bursting wins ($L=1.10$) \\
+$(1,0.9,0.1)$ & $0.9$ & $0.935$ & $0.844$ & budding wins ($L=0.42$) \\
+$(1,0.5,1/3)$ & $0.6$ & $0.833$ & $0.833$ & tie ($L=1$) \\
+$(1,0.5,1/3)$ & $0.9$ & $0.556$ & $0.556$ & tie ($L=1$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/F4b_2_flooding_regimes.pdf}
+\caption{Extinction probabilities for bursting and matched-mean budding
+across the three flooding regimes. The curves begin at the supercritical
+boundary $m=1$ and their signed gaps follow \eqref{eq:flood}: bursting wins
+for $L>1$, ties budding for $L=1$, and loses for $L<1$. From left to right,
+$(\lambda,\mu,\delta)=(1,0,0.1)$, $(1,0.5,1/3)$, and $(1,0.9,0.1)$.}
+\label{fig:F4b_2_flooding_regimes}
+\end{figure}
+
+For $m\le1$ both processes die out almost surely and the comparison is
+empty; \eqref{eq:flood} changes sign there, an artefact of both formulae
+running outside their domain $[0,1)$, not a reversal of the biology.
+
+% \figureflag{F4b.2}{Flooding advantage: three regimes}{%
+% \textbf{Purpose:} make the three regimes of Theorem~\ref{thm:flood} visible
+% --- bursting wins when $L>1$, ties when $L=1$, loses when $L<1$ --- in a
+% single plot of extinction probabilities against the infection success
+% probability. \textbf{Type:} Python analytic plot. \textbf{Content:}
+% $z_{\rm ext}^{\rm burst}(q)$ from \eqref{eq:zext} against
+% $z_{\rm ext}^{\rm bud}(q)=1/m=1/(qV_\infty)$, for $q$ ranging over the
+% supercritical range of each case, in the three regimes: $L>1$:
+% $(\lambda,\mu,\delta)=(1,0,0.1)$; $L=1$: $(1,0.5,1/3)$; $L<1$:
+% $(1,0.9,0.1)$; one panel per regime, or three curve pairs in one panel;
+% annotate the vertical gap $(L-1)(1/m-1)$ from \eqref{eq:flood} at one
+% representative $q$ per regime, and mark the $m=1$ boundary $q=1/V_\infty$
+% where both curves leave $1$. All curves from the closed forms of this
+% section; values numerically verified at $(q,L)\in\{(0.2,1.10),(0.9,0.42),
+% (0.6,1.0),(0.9,1.0)\}$. \textbf{Axes:} $q$ (horizontal), extinction
+% probability (vertical, 0--1); legend entries ``burst'', ``bud'' per regime.
+% \textbf{Style:} unified Python style --- default matplotlib with
+% \texttt{tab:} colours, grid alpha 0.25, \texttt{tight\_layout}, PDF output,
+% fonts matching the chapter. \textbf{Data source:} closed forms
+% \eqref{eq:zext}, $1/m$; no simulation. \textbf{Placement:}
+% \Secref{sec:flooding}, after the numerical table of the theorem.}
+
+The interpretation is that the flooding advantage is real but bought
+against a risk. Bursting concentrates output into one batch --- lowering
+the offspring variance relative to the geometric output of a budding cell
+--- but it carries the all-or-nothing hazard that the intracellular
+population dies out first, with probability $b$, and the cell releases
+nothing. The condition says the advantage survives exactly when the burst
+timescale $1/\delta$ is shorter than the harmonic-type combination
+$1/(1/\lambda+1/\mu)$ of the birth and death timescales. When $\mu=0$ the
+hazard of internal extinction vanishes and bursting always wins.
+
+\subsection{The boundary $L=1$: a coincidence of laws}
+
+The boundary case is more than a tie of extinction probabilities.
+
+\begin{proposition}
+\label{prop:L1}
+The following are equivalent:
+\begin{equation}
+L=1
+\;\Longleftrightarrow\;
+a=1+\frac{\mu}{\lambda}
+\;\Longleftrightarrow\;
+\delta(\lambda+\mu)=\lambda\mu
+\;\Longleftrightarrow\;
+\frac{1}{\delta}=\frac{1}{\lambda}+\frac{1}{\mu}.
+\end{equation}
+When they hold, the bursting offspring law \eqref{eq:Goff} is
+\emph{exactly geometric} with mean $m$ --- not merely equal in extinction
+probability to the budding comparator. In particular the offspring
+variances coincide, and
+\begin{equation}
+\mathrm{Var}_{\rm bud}-\mathrm{Var}_{\rm burst}
+=\frac{2q^2V_\infty(L-1)}{a-1},
+\label{eq:varorder}
+\end{equation}
+so that at matched mean $m$ the bursting offspring variance is smaller
+than the budding one when $L>1$, equal when $L=1$, and larger when $L<1$.
+\end{proposition}
+
+\begin{proof}
+$L=1$ is $a(1-b)=1$, i.e.\ $a-1=ab=\mu/\lambda$, the chain of equivalences
+above. Under it, $b=\delta/\lambda$ (by \eqref{eq:AB}), and \eqref{eq:Goff}
+collapses:
+$$
+G_{\rm off}(z)=b\Bigl(1+\frac{y}{a-y}\Bigr)=\frac{ab}{a-y}
+=\frac{a-1}{a-y}
+=\frac{(a-1)/a}{1-y/a},
+$$
+using $ab=a-1$. With $y=1-q+qz$,
+$$
+1-\frac{y}{a}=\frac{a-1+q}{a}\Bigl(1-\frac{q}{a-1+q}\,z\Bigr),
+$$
+so
+$$
+G_{\rm off}(z)=\frac{1-r}{1-rz},
+\qquad
+r=\frac{q}{a-1+q}=\frac{m}{1+m},
+\qquad m=\frac{q}{a-1}=qV_\infty,
+$$
+which is the \pgf{} of a geometric law on $\{0,1,2,\ldots\}$ with mean $m$
+--- the same law as the matched budding comparator. The variance identity
+\eqref{eq:varorder} is the difference between the geometric variance
+$m(1+m)$ and \eqref{eq:offmoments}, with $V_\infty=L/(a-1)$.
+\end{proof}
+
+At the boundary, then, bursting and budding are the same branching process
+in different clothes. Away from it, \eqref{eq:varorder} quantifies the
+direction in which they differ.
+
+\subsection{The deterministic growth-rate trade-off}
+\label{sec:r-tradeoff}
+
+Establishment is only half of the story; the other half is how fast an
+established infection grows. Match the two models a second time, now at
+level $R_0$ and at mean productive lifetime: take the budding cell with
+$d_{\Icell}=1/\mean{T_{\rm prod}}$ and $p=V_\infty d_{\Icell}$ --- which
+is exactly $p_{\rm eff}(0)$, so this is the fairest possible classical
+match --- and choose $\gamma T$ (or $c$) so that both models share
+$R_0=2$. Then solve for the deterministic growth rates: $r_{\rm bud}$ from
+the quadratic $(r+d_{\Icell})(r+c)=\gamma Tp$, and $r_{\rm burst}$ from
+the characteristic equation \eqref{eq:char}. In every regime we checked
+--- $L>1$, $L=1$, and $L<1$ --- the ordering is the same:
+\begin{equation}
+r_{\rm bud}>r_{\rm burst}.
+\end{equation}
+With $c=1$ and $R_0=2$:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+$(\lambda,\mu,\delta)$ & $L$ & $d_{\Icell}$ & $r_{\rm bud}$ & $r_{\rm burst}$ \\
+\midrule
+$(1,0,0.1)$ & $1.10$ & $0.417$ & $0.250$ & $0.180$ \\
+$(1,0.5,1/3)$ & $1.00$ & $0.910$ & $0.395$ & $0.294$ \\
+$(1,0.9,0.1)$ & $0.42$ & $0.701$ & $0.343$ & $0.198$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/F4b_3_growth_tradeoff.pdf}
+\caption{Deterministic growth rates at matched $R_0=2$, clearance rate
+$c=1$, and mean productive lifetime. Budding invades faster than bursting
+in all three flooding regimes. The parameter sets
+$(\lambda,\mu,\delta)=(1,0,0.1)$, $(1,0.5,1/3)$, and $(1,0.9,0.1)$ have
+$L=1.10$, $1.00$, and $0.42$, respectively.}
+\label{fig:F4b_3_growth_tradeoff}
+\end{figure}
+
+% \figureflag{F4b.3}{Growth-rate trade-off}{%
+% \textbf{Purpose:} make the trade-off of this subsection visible --- at
+% matched $R_0$ and matched mean productive lifetime, budding invades faster
+% than bursting in every regime. \textbf{Type:} Python analytic bar chart.
+% \textbf{Content:} paired bars of $r_{\rm bud}$ vs $r_{\rm burst}$ for the
+% three parameter sets $(1,0,0.1)$, $(1,0.5,1/3)$, $(1,0.9,0.1)$, with
+% $c=1$, $R_0=2$ and the matched classical parameters
+% $d_{\Icell}=1/\mean{T_{\rm prod}}$, $p=V_\infty d_{\Icell}$, i.e.\
+% $p=p_{\rm eff}(0)$: $r_{\rm bud}$ from the quadratic
+% $(r+d_{\Icell})(r+c)=\gamma Tp$ and $r_{\rm burst}$ from the
+% characteristic equation \eqref{eq:char}. Bar values (verified by direct
+% quadrature of \eqref{eq:char} at flag-writing): $0.250/0.180$,
+% $0.395/0.294$, $0.343/0.198$. Annotate each pair with its $L$ value
+% ($1.10$, $1.00$, $0.42$) to show that the ordering holds on both sides of
+% the flooding boundary. \textbf{Axes:} parameter set (horizontal, labelled
+% with $(\lambda,\mu,\delta)$), growth rate $r$ (vertical); legend entries
+% ``budding'', ``bursting''. \textbf{Style:} unified Python style --- default
+% matplotlib with \texttt{tab:} colours, grid alpha 0.25,
+% \texttt{tight\_layout}, PDF output, fonts matching the chapter.
+% \textbf{Data source:} closed forms of this section; $r_{\rm burst}$ by
+% root-finding on \eqref{eq:char} with $\delta\Lap{K}$ evaluated by
+% quadrature. \textbf{Placement:} \Secref{sec:r-tradeoff}, directly after
+% the trade-off table.}
+
+The mechanism is generation time: the budding cell starts releasing
+immediately, while the bursting cell must first accumulate load, so
+budding's generation times are shorter and its exponential invasion is
+faster --- the same delay that appeared as the eclipse-like lag of
+Figures~\ref{fig:overlay-V} and \ref{fig:growth-phase}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/N4b_6_generation_times.pdf}
+\caption{Generation-time structure behind the first row of
+Figure~\ref{fig:F4b_3_growth_tradeoff}. For
+$(\lambda,\mu,\delta)=(1,0,0.1)$, budding and bursting are matched at
+$R_0=2$, $c=1$, total yield, and mean productive lifetime. The main curves
+are the normalized infection-generation laws, including the common
+extracellular waiting-time component; the inset isolates release age and
+shows why the budding law leads. Its mean generation time is $3.398$
+against $4.089$ for bursting, consistent with
+$r_{\rm bud}=0.250>r_{\rm burst}=0.180$.}
+\label{fig:N4b_6}
+\end{figure}
+
+The two comparisons together give the biological headline. At fixed total
+output per cell, bursting can lower the probability of early extinction
+(when $L>1$) while simultaneously slowing deterministic invasion speed:
+$R_0$ stays fixed, and $z_{\rm ext}$ and $r$ move in opposite directions.
+A pathogen tuning its burst rate $\delta$ faces a genuine trade-off. For
+$\mu>0$, budding beats bursting on extinction until $\delta$ crosses the
+threshold $\delta_*=\lambda\mu/(\lambda+\mu)$ --- the $L=1$ boundary --- beyond
+which bursting takes over; for $\mu=0$ bursting wins on extinction at every
+$\delta$, at the continuing cost of a slower $r$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.74\textwidth]{figures/N4b_5_pareto_extinction_growth.pdf}
+\caption{Parametric extinction--growth trade-off as $\delta$ varies from
+$0.03$ to $0.8$, with $\lambda=1$, $\mu=0$, and clearance rate $c=1$.
+Matching protocol: for each $\delta$, the coupling is reset to fix
+$R_0=2$; the constant-production comparator is then matched in mean yield
+$V_\infty$ and mean producer lifetime $\mathbb{E}[T]$ through
+$d=1/\mathbb{E}[T]$ and $p=V_\infty d$. Increasing $\delta$ raises both
+$r$ and $z_{\rm ext}$, so faster growth is paid for by a higher extinction
+probability.}
+\label{fig:N4b_5}
+\end{figure}
+
+\begin{remark}[Scope of the comparison]
+Both results compare branching structures at fixed offspring mean. They say
+nothing about nonlinear effects --- immune saturation, local depletion of
+targets, Allee-type cooperation --- where other advantages of flooding
+may live; any full account should name and separate the two mechanisms.
+The evolutionary framing, and where this result sits relative to the
+bursting--budding spectrum of Chapter~6, is taken up there.
+\end{remark}

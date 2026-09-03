@@ -1,0 +1,148 @@
+\documentclass[11pt,tikz,border=4pt]{standalone}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds}
+
+\input{../../../../style/tikz_style.tex}
+
+\definecolor{roleblue}{HTML}{1F77B4}
+\definecolor{roleorange}{HTML}{FF7F0E}
+\definecolor{rolepurple}{HTML}{6B4C9A}
+\definecolor{failred}{HTML}{C0392B}
+\definecolor{inkgray}{HTML}{60656D}
+
+\tikzset{
+  spectrum card/.style={
+    draw=black!70,
+    line width=0.8pt,
+    rounded corners=3pt,
+    minimum width=38mm,
+    minimum height=31mm,
+    text width=33mm,
+    align=center,
+    inner sep=2.4mm,
+    font=\footnotesize
+  },
+  stage ribbon/.style={
+    draw=rolepurple!75!black,
+    fill=rolepurple!7,
+    line width=0.8pt,
+    rounded corners=3pt,
+    minimum width=116mm,
+    minimum height=18mm,
+    text width=108mm,
+    align=left,
+    inner sep=2.5mm,
+    font=\footnotesize
+  },
+  contrast card/.style={
+    draw=failred,
+    densely dashed,
+    fill=failred!5,
+    line width=1.05pt,
+    rounded corners=3pt,
+    minimum width=48mm,
+    minimum height=24mm,
+    text width=42mm,
+    align=left,
+    inner sep=2.5mm,
+    font=\footnotesize
+  },
+  mechanism title/.style={font=\small\bfseries,align=center},
+  mechanism note/.style={font=\scriptsize,text=black!68,align=center},
+  tiny arrow/.style={-{Stealth[length=1.4mm,width=1.0mm]},line width=0.65pt},
+  event/.style={circle,fill=roleorange,inner sep=1.25pt},
+  release tick/.style={roleblue,line width=1.15pt}
+}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+
+% Narrative axis: an ordering of release timing, not an ordering of yield.
+\node[font=\bfseries\normalsize] at (8.55,5.58)
+  {Release mechanisms are distinguished by generation-time structure};
+\draw[-{Stealth[length=2.5mm,width=1.8mm]},line width=1.0pt]
+  (0.20,4.72) -- (16.90,4.72);
+\node[anchor=south west,font=\footnotesize,text=roleblue!75!black]
+  at (0.22,4.82) {release spread across cell age};
+\node[anchor=south east,font=\footnotesize,text=roleorange!82!black]
+  at (16.88,4.82) {release concentrated at an event};
+\node[anchor=north,font=\scriptsize,text=black!62] at (8.55,4.57)
+  {timing and variance may differ even when mean lifetime yield is matched};
+
+% Four ordered mechanism cards.
+\node[spectrum card,fill=roleblue!7] (bud) at (1.95,2.75) {
+  \tikz[baseline=-0.4ex]{
+    \draw[black!35,line width=0.45pt] (0,0)--(1.35,0);
+    \foreach \x in {0.12,0.34,0.57,0.80,1.03,1.25}
+      \draw[release tick] (\x,-0.10)--(\x,0.10);}
+  \\[2pt]
+  {\small\bfseries Continuous budding}\\[2pt]
+  many small releases while productive\\[3pt]
+  $g(a)=p\,S(a)$
+};
+
+\node[spectrum card,fill=roleblue!5!rolepurple!7] (pulse) at (6.35,2.75) {
+  \tikz[baseline=-0.4ex]{
+    \draw[black!35,line width=0.45pt] (0,0)--(1.35,0);
+    \foreach \x in {0.16,0.24,0.32,0.83,0.91,0.99,1.07}
+      \draw[rolepurple,line width=1.15pt] (\x,-0.10)--(\x,0.10);}
+  \\[2pt]
+  {\small\bfseries Pulsatile export}\\[2pt]
+  stock--export, ON/OFF, or self-exciting release\\[3pt]
+  clustered but non-terminal
+};
+
+\node[spectrum card,fill=rolepurple!7!roleorange!8] (partial) at (10.75,2.75) {
+  \tikz[baseline=-0.4ex]{
+    \draw[black!35,line width=0.45pt] (0,0)--(1.35,0);
+    \foreach \x/\h in {0.25/0.16,0.63/0.26,1.08/0.36}
+      \draw[roleorange,line width=1.35pt] (\x,-0.10)--(\x,\h);}
+  \\[2pt]
+  {\small\bfseries Recurrent batch release}\\[2pt]
+  boolean partial clear or reset dumps\\[3pt]
+  $X\to X-B$, possibly repeatedly
+};
+
+\node[spectrum card,fill=roleorange!9] (bdc) at (15.15,2.75) {
+  \tikz[baseline=-0.4ex]{
+    \draw[black!35,line width=0.45pt] (0,0)--(1.35,0);
+    \draw[failred,line width=1.65pt] (1.02,-0.11)--(1.02,0.42);
+    \fill[failred] (1.02,0.42) circle (1.15pt);}
+  \\[2pt]
+  {\small\bfseries Absorbing BDC burst}\\[2pt]
+  one load-proportional terminal dump\\[3pt]
+  $g(a)=\delta K(a)$, then absorption
+};
+
+\foreach \n in {bud,pulse,partial,bdc}
+  \draw[black!42,line width=0.55pt] (\n.north) -- ++(0,0.28);
+
+% Stage structure is a timing modifier, not another release mechanism.
+\node[stage ribbon,anchor=west] (stage) at (0.05,-0.08) {
+  \textbf{Stage structure modifies the age kernel}\hfill
+  $E_1\to E_2\to\cdots\to E_n\to I$\\[2pt]
+  \textcolor{black!70}{An eclipse chain delays and reshapes release; it can
+  precede budding, pulsed export, or a burst, but does not by itself choose
+  the release mechanism.}
+};
+
+% HIV is deliberately outside the BDC spectrum.
+\node[contrast card,anchor=west] (hiv) at (12.40,-0.08) {
+  \textcolor{failred}{\textbf{HIV: contrast class, not BDC}}\\[3pt]
+  multi-stage eclipse $\to$ short productive budding pulse\\[3pt]
+  $g_{\rm HIV}$ is \emph{not} $\delta K$; there is no terminal
+  load-proportional dump
+};
+
+\draw[-{Stealth[length=2.0mm,width=1.4mm]},failred,line width=0.85pt]
+  (stage.east) -- (hiv.west)
+  node[midway,above=2pt,font=\scriptsize,fill=white,inner sep=1pt]
+  {shared stage language only};
+
+\end{tikzpicture}
+\end{document}

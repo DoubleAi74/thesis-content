@@ -1,0 +1,88 @@
+\section{Behaviour as \texorpdfstring{$p\to\tfrac12^-$}{p to 1/2}}
+\label{a:sec:asymptotic}
+
+The series \cref{a:eq:Aseries} also delivers the near-critical asymptotic, and does
+so more transparently than the matching argument one is first tempted to try.
+
+Fix $\varepsilon$ small. The summand $r^n/(2-S_n)$ involves two decays on very
+different scales. The geometric factor $r^n = (1-\varepsilon)^n$ decays on the
+scale $n\sim1/\varepsilon$, which is large. The survival probability $S_n$, by
+contrast, is close to its critical behaviour $S_n\sim2/n$ over that whole range,
+and so has already fallen to near zero after $O(1)$ generations. For the
+overwhelming majority of the terms that carry weight, therefore, $S_n\approx0$ and
+the summand is approximately $r^n/2$. Summing,
+\begin{equation*}
+\sum_{n=0}^{\infty}\frac{r^n}{2-S_n}
+\;\approx\;
+\frac12\sum_{n=0}^{\infty}r^n = \frac{1}{2\varepsilon},
+\end{equation*}
+so $1/A(p)\sim1/(2\varepsilon)$ and
+\begin{equation}
+\label{a:eq:Aasym}
+\boxed{\;A(p)\sim2\varepsilon = 2(1-2p)\qquad\text{as }p\to\tfrac12^-.\;}
+\end{equation}
+Equivalently $1/A(p)\sim1/\bigl(2(1-2p)\bigr)$: the quasi-stationary mean diverges
+like the reciprocal of the distance from criticality. In particular $A(p)$ meets
+the axis at $p=\tfrac12$ with gradient $-4$, a fact used repeatedly below as a test
+of candidate formulae.
+
+\begin{theorem}[Near-critical survival amplitude]
+\label{a:thm:A-near-critical}
+As $p\uparrow\tfrac12$, with $\varepsilon=1-2p\downarrow0$,
+\begin{equation}
+\label{a:eq:A-near-critical}
+A(p)=2\varepsilon
+\left[1+O\!\left(\varepsilon\log\frac1\varepsilon\right)\right].
+\end{equation}
+In particular $A(p)\sim2(1-2p)$ and $1/A(p)\sim1/(2(1-2p))$.
+\end{theorem}
+
+\noindent
+The series argument above yields the leading asymptotic. A fully rigorous bound on
+the remainder proceeds by decomposing $1/(2-S_n)=\tfrac12+S_n/(2(2-S_n))$ and
+controlling the error series by the critical bound $S_n\le2/(n+2)$, which produces
+an $O(\log(1/\varepsilon))$ remainder before inversion
+\cite{Athreya1972}; the details match the argument recorded in the engineering
+source for this chapter. The empirical fit
+$1-A/(2\varepsilon)\approx\varepsilon(\log(1/\varepsilon)+0.78)$ is consistent with
+the order but is not used subsequently.
+
+
+
+The same result can be reached through the continuum equation of
+\ChM, and it is worth seeing why that route is the worse one. The
+exact difference is
+\begin{equation*}
+S_{n+1}-S_n = (2p-1)S_n - pS_n^2
+= -\varepsilon S_n - \tfrac12S_n^2 + \tfrac{\varepsilon}{2}S_n^2 ,
+\end{equation*}
+and dropping the $O(\varepsilon S_n^2)$ term gives
+$\dd S/\dd n = -\varepsilon S-\tfrac12S^2$. Setting $u=1/S$ linearises this to
+$u' = \varepsilon u+\tfrac12$, with solution
+\begin{equation*}
+u(n) = C\ee^{\varepsilon n} - \frac{1}{2\varepsilon},
+\qquad
+S(n) = \frac{1}{C\ee^{\varepsilon n}-\frac{1}{2\varepsilon}} .
+\end{equation*}
+Matching $S_n\sim A\ee^{-\varepsilon n}$ for small $\varepsilon$ identifies
+$A=1/C$, and matching to the critical decay $S_n\sim2/n$ in the appropriate double
+limit fixes $C\sim1/(2\varepsilon)$, recovering \cref{a:eq:Aasym}. Both steps are
+heuristic, and the second is delicate; the series argument is preferable because it
+needs no second matching at all.
+
+\begin{remark}[Rate of approach]
+\label{a:rem:rate}
+Numerically, $A(p)/2\varepsilon$ approaches $1$ rather slowly. Evaluating
+\cref{a:eq:prodFormula} in high precision gives $A/2\varepsilon = 0.90987$,
+$0.98612$, $0.99814$, $0.99977$ and $0.999972$ at $\varepsilon=2\times10^{-2}$ down
+to $2\times10^{-6}$. Fitting the deficit gives
+$1-A/2\varepsilon\approx\varepsilon\bigl(\ln(1/\varepsilon)+c\bigr)$ with
+$c\approx0.78$, so
+\begin{equation*}
+A(p) = 2\varepsilon\Bigl[1+O\bigl(\varepsilon\ln(1/\varepsilon)\bigr)\Bigr] .
+\end{equation*}
+The logarithmic correction is why \cref{a:eq:Aasym} is a good practical surrogate
+only very close to criticality, and it is what fixes the crossover point chosen in
+\cref{a:sec:practical}.
+\end{remark}
+

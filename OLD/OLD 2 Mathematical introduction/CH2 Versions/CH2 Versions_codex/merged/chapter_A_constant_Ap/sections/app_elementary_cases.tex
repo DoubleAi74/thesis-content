@@ -1,0 +1,109 @@
+\section{Elementary Koenigs functions at \texorpdfstring{$r=2$ and $r=4$}{r=2 and r=4}}
+\label{a:app:integrable}
+
+These cases lie outside subcritical branching, where $r=2p<1$, but complete the
+classical picture of integrable logistic linearisations.  They also locate the two
+elementary examples within the classification used in the main text.
+
+\subsection{Case \texorpdfstring{$r=2$}{r=2} (logarithmic)}
+
+For $r=2$, the map is $f_2(x)=2x(1-x)$ and the fixed point $0$ has the
+repelling multiplier $2$.  Its linearisation is therefore of Poincar\'e type rather
+than attracting-Koenigs type, but it still has an elementary form.
+
+The affine change $u=1-2x$ conjugates the dynamics to $u\mapsto u^2$.
+Linearising this monomial by the logarithm and returning to $x$ gives
+\begin{equation}
+\label{a:eq:phi2}
+\psi_2(x)=-\frac12\ln(1-2x),
+\end{equation}
+normalised so that $\psi_2(0)=0$ and $\psi_2'(0)=1$.
+
+\textbf{Verification.}
+\begin{align*}
+\psi_2\bigl(f_2(x)\bigr)
+&=
+-\frac12\ln\bigl(1-2\cdot 2x(1-x)\bigr)
+=
+-\frac12\ln\bigl((1-2x)^2\bigr)
+=
+-\ln(1-2x)
+=
+2\psi_2(x).
+\end{align*}
+
+\subsection{Case \texorpdfstring{$r=4$}{r=4} (inverse trigonometric)}
+
+For $r=4$, the fixed point $0$ of $f_4(x)=4x(1-x)$ has the repelling multiplier
+$4$, so the linearisation is again of Poincar\'e type.  Writing
+$x=\sin^2\theta$ gives $f_4(x)=\sin^2(2\theta)$ and therefore doubles the angle.
+This suggests
+\begin{equation}
+\label{a:eq:phi4}
+\psi_4(x)=\bigl(\arcsin\sqrt{x}\bigr)^2
+\end{equation}
+satisfies $\psi_4(f_4(x))=4\psi_4(x)$ on a suitable real domain, and $\psi_4(x)\sim x$ as $x\to0$, so $\psi_4'(0)=1$.
+
+\textbf{Verification.}
+Using $\arcsin(2u\sqrt{1-u^2})=2\arcsin u$ with $u=\sqrt{x}$ (on an appropriate interval),
+\begin{align*}
+\psi_4\bigl(f_4(x)\bigr)
+&=
+\bigl(\arcsin\sqrt{4x(1-x)}\bigr)^2
+=
+\bigl(2\arcsin\sqrt{x}\bigr)^2
+=
+4\psi_4(x).
+\end{align*}
+
+\subsection{Affine conjugacy to \texorpdfstring{$z^2+c$}{z squared plus c}}
+
+\begin{lemma}
+\label{a:lem:affine}
+The logistic map $f_r(x)=rx(1-x)$ is affinely conjugate to $P_c(z)=z^2+c$ with $c=(2r-r^2)/4$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Seek $h(x)=ax+b$ with $h\circ f_r\circ h^{-1}=P_c$. The substitution $x=-z/r+\tfrac12$ (for $r\neq0$) yields a monic quadratic; matching coefficients gives $c=(2r-r^2)/4$.
+\end{proof}
+
+Under this conjugacy, $r=2$ corresponds to the monomial parameter $c=0$, while
+$r=4$ corresponds to the Chebyshev parameter $c=-2$; the latter is also reached
+at $r=-2$.  Neither value lies in the image $c\in(0,\tfrac14)$ of $r\in(0,1)$.
+As \Cref{a:rem:empty} explains, this parameter count is a consistency check rather
+than the proof.  The decisive fact is structural: both elementary cases sit over
+repelling fixed points, which the attracting window excludes.
+
+\subsection{The worked examples inside the Becker--Bergweiler classification}
+
+The classification in \Cref{a:thm:BB-main} places every differentially algebraic
+Schr\"oder function over a repelling fixed point.  Such a function is a M\"obius
+transformation of exponential, cosine or Weierstrass-$\wp$ material, while the
+underlying map is M\"obius-conjugate to $z^{\pm d}$, $\pm T_d$, or a Latt\`es map.
+The two derivations above realise the exponential and cosine families explicitly.
+
+\emph{Case $r=2$.} Inverting \eqref{a:eq:phi2}: $t=-\tfrac12\ln(1-2x)$ gives
+\[
+\varphi_2(t)=\psi_2^{-1}(t)=\frac{1-e^{-2t}}{2},
+\]
+an affine, and hence M\"obius, image of $\exp(-2t)$: the family
+$\exp(\alpha t^{\rho})$ with $\rho=1$ and $\alpha=-2$.  Correspondingly,
+$u=1-2x$ conjugates $f_2$ to $u\mapsto u^2$, and the fixed point has the
+repelling multiplier $2$, as \Cref{a:thm:BB-main}(i) requires.
+
+\emph{Case $r=4$.} Inverting \eqref{a:eq:phi4}: $t=(\arcsin\sqrt{x})^2$ gives
+\[
+\varphi_4(t)=\psi_4^{-1}(t)=\sin^2\!\sqrt{t}=\frac{1-\cos\bigl(2\sqrt{t}\bigr)}{2},
+\]
+a M\"obius image of $\cos(\alpha t^{\rho}+\beta)$ with $\rho=\tfrac12$,
+$\alpha=2$ and $\beta=0$.  The fractional exponent is admissible because
+$\cos(2\sqrt{t})$ is entire in $t$.  Correspondingly, $u=1-2x$ conjugates
+$f_4$ to the second Chebyshev polynomial $T_2(u)=2u^2-1$, and the fixed point has
+the repelling multiplier $4$.
+
+Both examples therefore occupy the positions prescribed by
+\Cref{a:thm:BB-main}: repelling fixed points in the exponential and cosine
+families.  For $r\in(0,1)$ the fixed point is attracting, no classified elementary
+case is available, and \Cref{a:thm:main-ht} gives hypertranscendence of $\psi_r$.
+That distinction underpins the main-text claim for the basin value
+$A(p)=2\psi_{2p}(\tfrac12)$.

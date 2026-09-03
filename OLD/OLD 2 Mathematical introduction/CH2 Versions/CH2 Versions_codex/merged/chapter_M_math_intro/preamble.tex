@@ -1,0 +1,90 @@
+% ===========================================================================
+%  ch2_preamble.tex
+%  Packages and macros required by Chapter 2.
+%  When dropping chapter2.tex into Thesis.tex, merge the contents of this file
+%  into the thesis preamble; duplicates may simply be deleted.
+% ===========================================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+% --- Equation cross-references as bare parenthesised numbers -----------------
+\crefformat{equation}{(#2#1#3)}
+\Crefformat{equation}{(#2#1#3)}
+\crefrangeformat{equation}{(#3#1#4)--(#5#2#6)}
+\crefmultiformat{equation}{(#2#1#3)}{ and (#2#1#3)}{, (#2#1#3)}{ and (#2#1#3)}
+
+% --- Shared style for the cobweb panels of Section 2.3 ----------------------
+\pgfplotsset{
+    ch2plotstyle/.style={
+        width=4.9cm, height=4.9cm,
+        axis lines=left,
+        xlabel={$S$},
+        xmin=0, xmax=1, ymin=0, ymax=1,
+        xtick={0,0.5,1}, ytick={0,0.5,1},
+        grid=major, grid style={dashed, gray!30},
+        samples=100, domain=0:1,
+        thick,
+        tick label style={font=\tiny},
+        label style={font=\small}
+    }
+}
+
+% --- Notation ---------------------------------------------------------------
+% Scalars are set in italic; bold is reserved for vector-valued states, which
+% appear only in the multi-type work of later chapters.
+\newcommand{\pgf}{probability generating function}
+\newcommand{\rv}{random variable}
+\newcommand{\pr}[1]{\mathbb{P}\!\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\!\left(#1\right)}
+\newcommand{\var}[1]{\operatorname{Var}\!\left(#1\right)}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\lrb}[1]{\left(#1\right)}
+\newcommand{\lrbs}[1]{\left[#1\right]}
+\newcommand{\Ac}{A_{\mathrm{c}}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ind}{\mathbf{1}}
+
+% --- Forward references -----------------------------------------------------
+% Every forward reference in this chapter is routed through \fwd, whose first
+% argument is a stable key and whose second is the prose actually typeset.
+% Once the thesis chapter order is fixed, redefining \fwd alone is enough to
+% make every forward reference carry a chapter number.
+\newcommand{\fwd}[2]{#2}
+
+% --- Theorem environments ---------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\allowdisplaybreaks

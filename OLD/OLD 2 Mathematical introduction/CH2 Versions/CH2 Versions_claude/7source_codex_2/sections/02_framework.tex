@@ -1,0 +1,250 @@
+\section{Probability and Markov-process framework}
+\label{sec:framework}
+
+The models in this thesis use two clocks.  Discrete generations are appropriate
+when every individual is replaced at a common update, as in the Galton--Watson
+process.  Continuous time is appropriate when births, deaths, absorptions and
+catastrophes occur asynchronously.  Both descriptions are built from the same
+three operations: condition on what happens next, exploit independence where it
+is present, and package count distributions in generating functions.
+
+\subsection{Counts, conditioning and generating functions}
+
+All random variables are defined on a common probability space
+\((\Omega,\mathcal F,\Prb)\).  For events \(B\) with \(\Prb(B)>0\), conditional
+probability is
+\[
+  \Prb(A\mid B)=\frac{\Prb(A\cap B)}{\Prb(B)}.
+\]
+Repeated use of this identity, either over a partition or at the first event of a
+process, gives the laws of total probability and expectation.  In particular,
+first-step analysis is not a separate trick: it is ordinary conditioning applied
+at the first transition.
+
+For a non-negative integer-valued random variable \(X\), its PGF is
+\begin{equation}
+  G_X(z)=\E[z^X]=\sum_{k=0}^{\infty}\Prb(X=k)z^k,
+  \qquad |z|\leq1.
+  \label{eq:pgf-basic}
+\end{equation}
+The coefficients and first two moments can be recovered by differentiation:
+\begin{align}
+  \Prb(X=k)&=\frac{G_X^{(k)}(0)}{k!},
+  &G_X(1)&=1,
+  &\E[X]&=G_X'(1),
+  \label{eq:pgf-identities}\\
+  \Var(X)&=G_X''(1)+G_X'(1)-\bigl(G_X'(1)\bigr)^2.
+  \nonumber
+\end{align}
+The value \(G_X(0)=\Prb(X=0)\) is especially useful because state \(0\) represents
+extinction in all population models considered here.  If
+\(X=X_1+\cdots+X_N\) is a sum of independent, identically distributed counts,
+then
+\begin{equation}
+  G_X(z)=\prod_{i=1}^{N}G_{X_i}(z)=G_{X_1}(z)^N.
+  \label{eq:pgf-independence}
+\end{equation}
+This factorisation will account for both independent founding lineages and
+independent particles entering a compartment.
+
+Joint counts require no new principle.  For
+\(\boldsymbol X=(X_1,\ldots,X_d)\), define
+\begin{equation}
+  G_{\boldsymbol X}(z_1,\ldots,z_d)
+  =\E\!\left[\prod_{j=1}^{d}z_j^{X_j}\right].
+  \label{eq:multivariate-pgf}
+\end{equation}
+Partial derivatives at the origin recover joint state probabilities, while
+derivatives at \((1,\ldots,1)\) give moments and cross-moments.  The bivariate
+case will later track particles inside and outside a receiving compartment.
+
+\subsection{Exponential clocks and continuous-time chains}
+
+A time-homogeneous CTMC \(X=(X_t)_{t\geq0}\) on a countable state space is
+specified by its generator \(Q=(q_{ij})\).  With the row convention used here,
+\begin{equation}
+  \Prb(X_{t+\Delta t}=j\mid X_t=i)
+  =\delta_{ij}+q_{ij}\Delta t+o(\Delta t),
+  \qquad \Delta t\downarrow0,
+  \label{eq:generator-short-time}
+\end{equation}
+where \(q_{ij}\geq0\) for \(j\neq i\) and
+\(q_{ii}=-\sum_{j\neq i}q_{ij}\).  Thus
+\(q_i\defeq-q_{ii}\) is the total rate of leaving state \(i\).  Conditional on
+the chain being in \(i\), the holding time is \(\Exp(q_i)\), after which the
+next state is \(j\neq i\) with probability \(q_{ij}/q_i\).  An absorbing state
+has \(q_i=0\); population zero is the main example.
+
+This construction rests on the memoryless property of the exponential law.  If
+\(T\sim\Exp(\lambda)\), then
+\[
+  \Prb(T>s+t\mid T>s)=\Prb(T>t)=\e^{-\lambda t}.
+\]
+For independent clocks \(T_r\sim\Exp(a_r)\), their minimum and its identity obey
+\begin{equation}
+  \min_r T_r\sim\Exp\!\left(\sum_r a_r\right),
+  \qquad
+  \Prb\!\left(T_j=\min_rT_r\right)=\frac{a_j}{\sum_r a_r}.
+  \label{eq:exponential-race}
+\end{equation}
+The winning clock is independent of the minimum waiting time.  Equation
+\eqref{eq:exponential-race} is the pathwise meaning of a rate model: one may draw
+one holding time from the total rate and then select the event in proportion to
+its rate.
+
+Let
+\(P_{ij}(t)=\Prb(X_t=j\mid X_0=i)\) and \(P(t)=(P_{ij}(t))\).  Under the usual
+regularity and non-explosion conditions, the transition semigroup satisfies
+\begin{equation}
+  P'(t)=P(t)Q \quad\text{(forward)},
+  \qquad
+  P'(t)=QP(t) \quad\text{(backward)},
+  \qquad P(0)=I.
+  \label{eq:kolmogorov-matrix}
+\end{equation}
+Both equalities hold because \(P(t)=\exp(tQ)\), but their componentwise meanings
+are different.  If \(\boldsymbol p(t)\) is a row vector of state probabilities,
+the forward or master equation is
+\begin{equation}
+  \frac{\dd p_j}{\dd t}=\sum_i p_i(t)q_{ij}.
+  \label{eq:master-general}
+\end{equation}
+It records probability entering state \(j\) through all incoming transitions and
+leaving it through the diagonal rate.  This row convention is retained in every
+continuous-time calculation below.
+
+When an analytic solution is unavailable, \eqref{eq:exponential-race} also gives
+an exact simulation scheme.  In state \(x\), with event propensities \(a_r(x)\),
+draw a holding time from
+\(\Exp(\sum_ra_r(x))\), choose event \(r\) with probability
+\(a_r(x)/\sum_ka_k(x)\), update the state, and repeat.  This is the direct
+Gillespie algorithm.  In this thesis simulation is used to check or evaluate an
+analytical construction, not to conceal an undefined transition mechanism.
+
+\subsection{The linear birth--death baseline}
+\label{sec:linear-bd}
+
+The linear birth--death process is the continuous-time reference model for the
+chapter.  From a population of size \(n\), births occur at total rate \(n\lambda\)
+and deaths at total rate \(n\mu\):
+\begin{equation}
+  q_{n,n+1}=n\lambda,
+  \qquad q_{n,n-1}=n\mu,
+  \qquad q_{nn}=-n(\lambda+\mu),
+  \label{eq:linear-bd-rates}
+\end{equation}
+with \(0\) absorbing.  The per-capita rates are constant, so the mean follows the
+deterministic equation
+\begin{equation}
+  \frac{\dd}{\dd t}\E[X_t]=(\lambda-\mu)\E[X_t],
+  \qquad
+  \E[X_t\mid X_0=N]=N\e^{(\lambda-\mu)t}.
+  \label{eq:linear-bd-mean}
+\end{equation}
+The mean identifies the growth regime but not the probability of establishment;
+that distinction is the reason for retaining the stochastic model
+\cite{Allen2010}.
+
+Write \(p_n(t)=\Prb(X_t=n\mid X_0=N)\).  From
+\eqref{eq:master-general},
+\begin{align}
+  p_0'(t)&=\mu p_1(t),
+  \label{eq:bd-master-zero}\\
+  p_n'(t)&=\lambda(n-1)p_{n-1}(t)
+  +\mu(n+1)p_{n+1}(t)-n(\lambda+\mu)p_n(t),
+  \qquad n\geq1.
+  \label{eq:bd-master}
+\end{align}
+Solving this infinite system term by term is unattractive.  Its time-dependent
+PGF
+\[
+  G_N(z,t)=\sum_{n=0}^{\infty}p_n(t)z^n
+\]
+compresses the system into a single first-order PDE.  Multiplying
+\eqref{eq:bd-master-zero}--\eqref{eq:bd-master} by \(z^n\), summing and shifting
+indices gives
+\begin{equation}
+  \frac{\partial G_N}{\partial t}
+  =(\lambda z-\mu)(z-1)\frac{\partial G_N}{\partial z},
+  \qquad G_N(z,0)=z^N.
+  \label{eq:bd-pgf-pde}
+\end{equation}
+The branching property implies \(G_N=g^N\), where \(g=G_1\).  For
+\(\lambda\neq\mu\), direct solution of \eqref{eq:bd-pgf-pde} gives
+\begin{equation}
+  g(z,t)=
+  \frac{\mu(1-z)-(\mu-\lambda z)\e^{-(\lambda-\mu)t}}
+       {\lambda(1-z)-(\mu-\lambda z)\e^{-(\lambda-\mu)t}}.
+  \label{eq:bd-pgf-solution}
+\end{equation}
+At the critical value \(\lambda=\mu\), the continuous limit of this expression is
+\begin{equation}
+  g(z,t)=1-\frac{1-z}{1+\lambda t(1-z)}.
+  \label{eq:bd-pgf-critical}
+\end{equation}
+Both formulae satisfy \(g(z,0)=z\), \(g(1,t)=1\), and
+\(\partial_zg(1,t)=\e^{(\lambda-\mu)t}\), which recover the initial condition,
+normalisation and mean.
+
+Setting \(z=0\) yields the finite-time extinction probability quoted later:
+\begin{equation}
+  \Prb(X_t=0\mid X_0=N)=
+  \begin{cases}
+    \displaystyle
+    \left[
+      \frac{\mu\bigl(1-\e^{-(\lambda-\mu)t}\bigr)}
+           {\lambda-\mu\e^{-(\lambda-\mu)t}}
+    \right]^N,
+    &\lambda\neq\mu,\\[14pt]
+    \displaystyle
+    \left(\frac{\lambda t}{1+\lambda t}\right)^N,
+    &\lambda=\mu.
+  \end{cases}
+  \label{eq:p0t}
+\end{equation}
+Consequently the ultimate extinction probability from one founder is \(1\) when
+\(\lambda\leq\mu\) and \(\mu/\lambda\) when \(\lambda>\mu\); from \(N\)
+independent founders it is the \(N\)th power of this value.
+
+\subsection{Continuous-time quasi-stationarity}
+\label{sec:cts}
+
+The subcritical case \(\lambda<\mu\) already exhibits the distinction between
+extinction and the state observed before extinction.  Put
+\(\rho=\lambda/\mu<1\).  From \eqref{eq:bd-pgf-solution}, the conditional PGF
+converges to
+\begin{equation}
+  \frac{g(z,t)-g(0,t)}{1-g(0,t)}
+  \longrightarrow
+  \frac{(1-\rho)z}{1-\rho z}
+  \qquad (t\to\infty).
+  \label{eq:ct-yaglom-pgf}
+\end{equation}
+The limiting conditional distribution is therefore geometric on
+\(\{1,2,\ldots\}\):
+\begin{equation}
+  \Prb(X_\infty^{\star}=k)=(1-\rho)\rho^{k-1},
+  \qquad
+  \E[X_\infty^{\star}]=\frac{1}{1-\rho}
+  =\frac{\mu}{\mu-\lambda}.
+  \label{eq:ctsqsmean}
+\end{equation}
+The same limit is obtained from any fixed \(N\geq1\), because at a sufficiently
+late time the event of survival is dominated by one surviving founding lineage.
+
+For comparison with the discrete binary model, parameterise an individual event
+by its probability of being a birth,
+\begin{equation}
+  p=\frac{\lambda}{\lambda+\mu}.
+  \label{eq:rate-to-p}
+\end{equation}
+Then \(\rho=p/(1-p)\), and the reciprocal of the limiting conditional mean is
+\begin{equation}
+  A_{\mathrm c}(p)=1-\rho=\frac{1-2p}{1-p}.
+  \label{eq:Acts}
+\end{equation}
+This continuous-time constant is explicit.  The corresponding discrete constant
+is not, and the difference between them will isolate the effect of replacing
+asynchronous \(\pm1\) events by synchronous binary generations.
+
+\FloatBarrier

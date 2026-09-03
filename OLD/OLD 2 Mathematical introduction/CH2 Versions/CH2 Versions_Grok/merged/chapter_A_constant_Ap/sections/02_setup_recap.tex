@@ -1,0 +1,47 @@
+\section{Standing setup}
+\label{a:sec:setup}
+
+Throughout, $(Z_n)_{n\ge0}$ denotes the binary Galton--Watson process with offspring
+probability generating function
+\begin{equation}
+\label{a:eq:pgfbinary}
+\phi(z) = p z^2 + (1-p),
+\qquad p\in[0,\tfrac12),
+\end{equation}
+started from $Z_0=1$. The mean population is $\ex{Z_n}=(2p)^n$. Writing
+$S_n=\pr{Z_n>0}$ for the survival probability, the first-step relation
+$S_{n+1}=1-\phi(1-S_n)$ specialises to the logistic recursion
+\begin{equation}
+\label{a:eq:SnIter}
+S_{n+1} = 2p\,S_n - p S_n^2,
+\qquad S_0=1.
+\end{equation}
+Extinction is certain for $p\le\tfrac12$ (\ChM). For $p<\tfrac12$ the late-time
+survival probability admits the asymptotic
+\begin{equation}
+\label{a:eq:lateS}
+S_n \sim A(p)\,(2p)^n,
+\qquad
+A(p) = \lim_{n\to\infty}\frac{S_n}{(2p)^n},
+\end{equation}
+and the conditional mean converges to the reciprocal of this constant:
+\begin{equation}
+\label{a:eq:qsmean}
+\ex{Z_n\mid Z_n>0} = \frac{(2p)^n}{S_n}
+\;\xrightarrow{n\to\infty}\;
+\frac{1}{A(p)} .
+\end{equation}
+Existence of the limit $A(p)\in(0,\tfrac12]$ is proved in \cref{a:sec:product} via the
+infinite product. The full derivation of the conditional variance and the Yaglom limit
+is in \ChM; here only \cref{a:eq:Apdef,a:eq:qsmean} are needed.
+
+We adopt the standing convention $A(0):=\lim_{p\downarrow0}A(p)=\tfrac12$ when endpoint
+statements require it. The continuous-time comparison constant
+\begin{equation}
+\label{a:eq:Acts}
+\Ac(p) = \frac{1-2p}{1-p}
+\end{equation}
+was derived in \ChM from the linear birth--death process with
+$p=\lambda/(\lambda+\mu)$; that derivation is not repeated. Write
+$\varepsilon=1-2p$ for the distance from criticality and $r=2p$ for the logistic
+multiplier.

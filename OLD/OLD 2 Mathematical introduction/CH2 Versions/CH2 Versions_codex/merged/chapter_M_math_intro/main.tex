@@ -1,0 +1,42 @@
+\documentclass[11pt]{report}
+\usepackage[margin=1in]{geometry}
+\input{preamble}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+\graphicspath{{figures/}}
+\newcommand{\ChM}{Chapter~M, \emph{Mathematical introduction}}
+\newcommand{\ChA}{Chapter~A, \emph{The constant \(A(p)\)}}
+
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,citecolor=red!55!black,
+  urlcolor=blue!60!black,pdftitle={Mathematical introduction},pdfauthor={Adam Aldridge}}
+
+\begin{document}
+\pagenumbering{roman}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering\vspace*{4cm}
+{\LARGE\bfseries Mathematical introduction\par}
+\vspace{6pt}{\large Branching, quasi-stationarity, and absorption models\par}
+\vspace{2.5cm}{\large Adam Aldridge\par}
+\vspace{4pt}{Standalone Pass-2 restructured chapter\par}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+\tableofcontents\clearpage\pagenumbering{arabic}
+
+\chapter{Mathematical introduction}\label{m:ch:math-intro}
+\input{sections/01_overview}
+\input{sections/02_markov_chains}
+\input{sections/03_methods}
+\appendix
+\input{sections/04_extended_absorption}
+\input{sections/05_branching_details}
+
+\FloatBarrier
+\begingroup\footnotesize
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+\end{document}

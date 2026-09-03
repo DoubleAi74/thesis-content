@@ -1,0 +1,118 @@
+% Chapter 4b discussion --- this chapter's share of draft \S17 per the cut
+% list in Project_specification.md \S5.1: fitting consequences, forward
+% connections, and the population-level open problems. The single-cell
+% assay predictions and open problems live in Chapter 4a's discussion.
+
+\section{Discussion}
+\label{sec:discussion}
+
+This chapter took the completed single-cell theory of Chapters~3 and~4a and
+embedded it in a population. The outcome is a renewal model of within-host
+infection forced by the intracellular process, exact in its kernels; the
+demonstration that the classical constant-rate model is a projection of it,
+valid only one exponential phase at a time; an effective-parameter map whose
+ends differ by orders of magnitude; the invariance of $R_0$ under the
+replacement of budding by bursting; the flooding advantage of bursting at
+establishment, and its price in invasion speed; a spectrum of release models
+connecting the two ends; and the honest boundary of all of it, drawn against
+HIV. What remains is to say what the results imply for the way models are
+fitted, how they connect to the chapters that follow, and what is still
+open.
+
+\subsection{Consequences for fitting practice}
+\label{sec:discussion-fitting}
+
+Three consequences for the way within-host models are fitted to data.
+First, $p$ is not a constant of the pathogen: the effective release rate
+$p_{\rm eff}(r)$ falls monotonically with the epidemic growth rate, from
+$V_\infty/\mean{T_{\rm prod}}$ in the stationary phase towards $\delta$ in
+the acute phase, and fits to acute and set-point data should therefore
+yield systematically different estimates, in a direction and by an amount
+the theory specifies (\S\ref{sec:peff-section}). Second, the eclipse-like
+delay usually inserted into within-host models by hand emerges from the
+intracellular dynamics with no extra parameter; its duration is the mean
+productive lifetime's shadow, $\lambda^{-1}\log\langle X\rangle_{\rm QS}$
+(\eqref{prop:lifetime}). Third, the identifiability negative result of
+\S\ref{sec:identifiability} says that no fit of $(p,d_{\Icell})$ --- from
+any data, at any growth rate --- can recover the three intracellular rates;
+a third observable is required, and the theory names the three cheapest
+ones: the burst-size dispersion (geometric ratio $1/a$), the no-burst
+fraction $b$, and the shape of the release-time density. An estimate of $p$
+alone tells one almost nothing about the cell; an estimate of $p$ plus any
+one of the three tells one something testable. The single-cell assays that
+measure those three observables directly are described in the discussion of
+Chapter~4a, and the biological systems where the estimates have already
+been pushed to both extremes --- \ft{} and \textit{B.~anthracis} --- are
+weighed there as well.
+
+\subsection{Connections forward}
+\label{sec:discussion-forward}
+
+The two-type process of Chapter~5 supplies the most immediate continuation.
+In the GATE regime $\delta_1=0<\delta_2$ --- no burst before conversion ---
+the no-catastrophe probability has a zero initial hazard, then rising:
+that is precisely the eclipse-phase signature which within-host models
+insert by hand, emerging mechanistically, with the eclipse duration set by
+the conversion rate $\nu$. The renewal construction of this chapter is
+ready to receive the two-type kernels; what blocks the way is the two-type
+calculation itself (below). The budding--bursting comparison of
+\S\ref{sec:flooding} finds its evolutionary home in Chapter~6, where the
+spectrum of \S\ref{sec:spectrum} --- partial release, reset catastrophe,
+self-excitation --- provides the intermediate phenotypes a selection
+argument needs; and the nonlinear mechanisms Chapter~7 discusses in the
+Komarova vein (immune saturation, local depletion, the ``all run out at
+once'' intuition) are exactly the effects the branching-structure
+comparison of \S\ref{sec:flooding} deliberately excludes, and should be
+named wherever the flooding advantage is invoked.
+
+\subsection{Open problems}
+\label{sec:open-problems}
+
+Five questions remain open on the population side.
+
+\begin{enumerate}
+\item \textbf{Two-type killed second moments and the two-type $D$.} The
+release kernel of a two-type renewal model needs
+$\mean{X_a^2\mathbf1\{\tau_c>a\}}$, $\mean{X_aY_a\mathbf1\{\tau_c>a\}}$,
+$\mean{Y_a^2\mathbf1\{\tau_c>a\}}$, and the analogue of $D(t)$
+(extinction without catastrophe). The moment hierarchy does not close
+upward, exactly as in one type; the one-type escape was to differentiate
+the Riccati equation, and the two-type route should be to differentiate the
+backward system of Chapter~5. This is the main technical obstacle between
+this chapter and an eclipse-aware renewal BMVR, and it should not be
+assumed easy.
+\item \textbf{The flooding boundary against real parameters.} Map
+$\delta(\lambda+\mu)>\lambda\mu$ for \yp{} in the macrophage, and compute
+the \emph{size} of the advantage from \eqref{eq:flood}: does the pathogen
+sit on the advantageous side, and by how much? The estimates discussed in
+Chapter~4a --- the near-certain bursting of \ft{}, the clearance-dominated
+anthrax case --- suggest that real pathogens sit on both sides of the
+boundary, which is what makes the question worth asking.
+\item \textbf{Population-level variance.} Propagate $\mathrm{Var}(W)$ of
+\eqref{eq:EW2} through the branching structure to a whole-host prediction:
+for single-cell assays the first moments suffice, but for whole-host data
+the variance is the main stochastic signal the BMVR cannot reproduce. The
+integer-valued nature of the offspring count, whose distribution matters
+for establishment \cite{williams2024reproduction}, enters through the same
+quantity.
+\item \textbf{Partial release and the flooding boundary in $\varphi$.}
+Where on the boolean continuum of \S\ref{sec:boolean} does the flooding
+advantage survive? Does the closed-form structure persist at intermediate
+$\varphi$?
+\item \textbf{Literature positioning.} Verify whether Carruthers et al.\
+\cite{carruthers2020stochastic} already couple an intracellular BDC to a
+between-cell model --- the novelty claim of \S\ref{sec:renewal} depends on
+the answer --- and position the renewal embedding against the
+Pearson--Krapivsky--Perelson \cite{pearson2011stochastic},
+Nelson--Gilchrist--Perelson, Gilchrist--Coombs
+\cite{gilchrist2006evolution}, and Heffernan--Wahl lines of work, with the
+BMVR's attribution settled between McLean \cite{mclean1993balance},
+Nowak--Bangham \cite{nowak1996population}, and Perelson et al.
+\end{enumerate}
+
+The single-cell open problems --- a conceptual proof that burst size equals
+the quasi-stationary distribution, the chained joint laws for general
+$\mu$, and the sensitivity of the kernels to logistic intracellular growth
+--- are stated in the discussion of Chapter~4a, where they belong. The two
+lists together are the research agenda that this part of the thesis leaves
+in good order: each problem is named, and each has a route.

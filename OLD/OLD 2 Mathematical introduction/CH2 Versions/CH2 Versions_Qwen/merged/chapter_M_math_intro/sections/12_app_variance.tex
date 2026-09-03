@@ -1,0 +1,104 @@
+\section{Quasi-stationary variance of the binary Galton--Watson process}
+\label{m:app:variance}
+
+\cref{m:sec:condmean} establishes that the subcritical binary Galton--Watson
+process, conditioned on survival, has limiting mean $1/A(p)$. The mean alone
+does not establish quasi-stationarity: to show that the conditional
+\emph{distribution} settles we need at least the second moment, and this
+appendix computes it.
+
+\subsection*{The second moment}
+
+For a \rv{} $X$ the moment generating function is $\ex{\ee^{tX}}$, which in
+terms of the \pgf{} is $\phi(\ee^t)$. Write $M_n(t) = \phi_n(\ee^t)$ for the
+moment generating function of $Z_n$, so that moments are recovered by
+\begin{equation}
+\label{m:eq:mgfmoments}
+\ex{Z_n^{\,\rho}} = \dda{^{\rho}}{t^{\rho}}M_n(t)\bigg|_{t=0} .
+\end{equation}
+For the binary offspring law \cref{m:eq:pgfbinary} the first-generation function
+is
+\begin{equation}
+\label{m:eq:mgf1}
+M_1(t) = \phi(\ee^t) = p\,\ee^{2t} + (1-p),
+\end{equation}
+whose second derivative at $t=0$ is $4p$, so $\ex{Z_1^2}=4p$. Reaching
+generation $n$ requires a little more. Since $\phi_n$ is the $n$-fold
+composition of $\phi$,
+\begin{equation*}
+M_n(t) = \phi\bigl(\phi(\dots\phi(\ee^t)\dots)\bigr),
+\end{equation*}
+and differentiating by the chain rule gives a product of $n+1$ factors,
+\begin{equation}
+\label{m:eq:dmgf1}
+M_n'(t) = \phi'\bigl(\phi_{n-1}(\ee^t)\bigr)\cdot\phi'\bigl(\phi_{n-2}(\ee^t)\bigr)
+\cdots\phi'\bigl(\phi_1(\ee^t)\bigr)\cdot\phi'(\ee^t)\cdot\ee^t .
+\end{equation}
+Now $\phi'(z) = 2pz$ for the binary law, so each factor collapses,
+\begin{equation*}
+\phi'\bigl(\phi_k(\ee^t)\bigr) = 2p\,\phi_k(\ee^t) = 2p\,M_k(t),
+\qquad
+\phi'(\ee^t) = 2p\,\ee^t ,
+\end{equation*}
+and \cref{m:eq:dmgf1} becomes
+\begin{equation}
+\label{m:eq:dmgf2}
+M_n'(t) = (2p)^n\,M_{n-1}(t)\,M_{n-2}(t)\cdots M_1(t)\,\ee^{2t} .
+\end{equation}
+Before differentiating again, note that every factor on the right equals one at
+$t=0$: $M_k(0)=1$ for all $k$, and $\ee^0=1$. That is what makes the second
+derivative tractable. Differentiating the product gives a sum of $n$ terms, each
+identical to \cref{m:eq:dmgf2} except that a single factor has been
+differentiated, and at $t=0$ all the undifferentiated factors become one,
+leaving
+\begin{equation*}
+M_n''(0) = (2p)^n\lrbs{M_{n-1}'(0) + M_{n-2}'(0) + \cdots + M_1'(0) + 2}.
+\end{equation*}
+But $M_k'(0)$ is the mean population at generation $k$, namely $(2p)^k$, so
+\begin{equation*}
+M_n''(0) = (2p)^n\lrbs{(2p)^{n-1} + \cdots + (2p) + 2}
+= (2p)^n\lrbs{\sum_{i=0}^{n-1}(2p)^i + 1}.
+\end{equation*}
+Summing the finite geometric series and rearranging,
+\begin{equation}
+\label{m:eq:secondMoment}
+\ex{Z_n^2} = (2p)^n\lrb{1+\frac{1}{1-2p}} - (2p)^{2n}\lrb{\frac{1}{1-2p}} .
+\end{equation}
+The minus sign is not optional: at $n=1$ the expression must return
+$\ex{Z_1^2}=4p$, and it does.
+
+\subsection*{Late-time variance}
+
+From $\var{Z_n} = \ex{Z_n^2}-\ex{Z_n}^2$ and \cref{m:eq:secondMoment},
+\begin{equation*}
+\var{Z_n} = (2p)^n\lrb{1+\frac{1}{1-2p}} - (2p)^{2n}\lrb{\frac{1}{1-2p}} - (2p)^{2n},
+\end{equation*}
+and for $2p<1$ the terms in $(2p)^{2n}$ are negligible beside $(2p)^n$ at large
+$n$, so $\var{Z_n}\to(2p)^n\bigl(1+1/(1-2p)\bigr)$. It is tempting to read
+stationarity of the conditional variance straight off that, but the step is not
+available: the conditional variance is not the unconditional one divided by
+anything simple. Start instead from the conditional moments, using
+\cref{m:eq:lateS} in each:
+\begin{align*}
+\ex{Z_n^2\mid Z_n>0} &= \frac{\ex{Z_n^2}}{S_n}
+\;\xrightarrow{n\to\infty}\;
+\frac{(2p)^n\lrb{1+\frac{1}{1-2p}}}{A(p)(2p)^n}
+= \frac{1}{A(p)}\lrb{1+\frac{1}{1-2p}},\\[4pt]
+\ex{Z_n\mid Z_n>0} &= \frac{\ex{Z_n}}{S_n}
+\;\xrightarrow{n\to\infty}\;
+\frac{1}{A(p)} .
+\end{align*}
+Both limits are finite, so the conditional variance tends to a constant:
+\begin{equation}
+\label{m:eq:condvar}
+\var{Z_n\mid Z_n>0} \;\longrightarrow\;
+\frac{1}{A(p)}\lrb{1+\frac{1}{1-2p}} - \frac{1}{A(p)^2} .
+\end{equation}
+The first two moments of the conditional population therefore both stabilise,
+and the Yaglom theorem quoted in \cref{m:sec:condmean} supplies the full
+quasi-stationary distribution whose first moments these are. Note that
+\cref{m:eq:condvar}, like \cref{m:eq:qsmean}, is expressed entirely in terms of
+$p$ and the single unknown constant $A(p)$, whose analysis is the subject of
+\ChA.
+
+\FloatBarrier

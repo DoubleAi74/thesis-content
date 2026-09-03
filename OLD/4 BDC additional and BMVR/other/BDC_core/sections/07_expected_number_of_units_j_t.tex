@@ -1,0 +1,74 @@
+\section{Moment equations for $J(t)$ and $V(t)$}
+\label{sec:moments}
+
+The closed forms of Theorems~\ref{thm:J} and~\ref{thm:V} were stated in
+Section~\ref{sec:analytical}, and the relation $I'=-\delta J$ that connects
+them was derived in Section~\ref{sec:forwardI}. Here we derive the remaining
+moment equations, which are obtained by tracking how the expectations change
+over a short interval $\delt$.
+
+\subsection{Rate of change of $J$}
+
+Individual realisations of the stochastic process $\xt$ vary greatly. When
+comparing a large number side by side (assuming $\lambda > \mu$), some counts
+will have collapsed to $0$ while those remaining climb higher and higher.
+Despite this, we can quantify the expected value of the process over time ---
+call it $J(t) = \mean{\xt\;|\;\xx_0=1}$.
+
+By looking to the list of possible events over a period $\delt$, we can write
+down the relationship describing how $\mean{\xt}$ changes:
+$$\mean{\xx_{t+\delt}} = \mean{\xt} + \mean{\xx_{t+\delt}-\xt};$$
+the expected value of $\xx_{t+\delt}$ is what it was at time $t$, plus the
+expected change during the interval $[t, t+\delt]$.
+\begin{equation}
+\label{ddJ}
+\mean{\xx_{t+\delt}} = \mean{\xt} + \mean{\lambda\delt\,\xt - \mu\delt\,\xt - \delta\delt\,\xt\cdot\xt}.
+\end{equation}
+The final component, $-\delta\delt\,\xt\cdot\xt$, represents the probability
+that a rupture occurs during the interval, $\delta\delt\,\xt$, multiplied by
+the change to $\xt$ --- in this case $-\xt$, the complete elimination of the
+intracellular population. Rearranging (\ref{ddJ}), we find
+$$\frac{\mean{\xx_{t+\delt}} - \mean{\xt}}{\delt} = \lambda\mean{\xt} - \mu\mean{\xt} - \delta \mean{\xt^2},$$
+which, evaluated in the limit $\delt \to 0$, becomes
+\begin{equation}
+\label{ddJ2}
+\ddt{J} = (\lambda - \mu) J - \delta K(t),
+\end{equation}
+with $K(t) = \mean{\xt^2}$.
+
+\subsection{Rate of change of $V$, and its solution}
+
+Recall from Section~\ref{sec:process_definition} the secondary process $\wt$,
+the number of units expelled following rupture: $\wt$ remains at $0$ unless the
+associated process $\xt$ undergoes a catastrophe, and with probability $1-b$
+this happens eventually, in which case $\wt$ jumps from $0$ to the value of
+$\xt$ immediately prior to expulsion. By reasoning analogous to that which
+derived (\ref{ddJ2}),
+\begin{equation}
+\label{ddV}
+\ddt{V} = \delta K(t),
+\end{equation}
+where $V(t) = \mean{\wt}$: the expected released count increases exactly when
+rupture occurs, and then by the pre-rupture load.
+
+Equations (\ref{ddJ2}) and (\ref{ddV}) combine to give
+$$\ddt{J} = (\lambda - \mu) J - \ddt{V},$$
+which, with (\ref{ddIJ}), rearranges into
+$$\ddt{V} = -\frac{(\lambda - \mu)}{\delta}\ddt{I} - \ddt{J}.$$
+Then, integrating,
+$$V(t) = -\frac{(\lambda - \mu)}{\delta}I(t) - J(t) + \text{const},$$
+and finally, with initial conditions $V(0) = 0$ and $J(0)=I(0)=1$,
+\begin{equation}
+\label{Voft}
+V(t) = \frac{(\lambda - \mu)}{\delta}\big[1-I(t)\big] -J(t)+1,
+\end{equation}
+which is the first form stated in Theorem~\ref{thm:V}; the equivalent form
+$(1-I)[1+\frac{\lambda}{\delta}(1-I)]$ follows on replacing $I'$ with the
+Riccati right-hand side of \eqref{ddII} and collecting terms.
+
+In late time, $V(t)$ tends to
+$$V_{\infty} = \frac{(\lambda - \mu)}{\delta}\big[1-b\big] +1 = \frac{aB}{A},$$
+as $I\to b$ and $J\to0$, which can be interpreted as the expected rupture size
+counting all realisations, the dead ones included with a release of zero. When
+$\mu = 0$, every realisation ruptures and
+$$V_\infty = 1 +\frac{\lambda}{\delta}.$$

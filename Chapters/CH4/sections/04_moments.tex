@@ -1,0 +1,308 @@
+\section{Moments}
+\label{bdc:sec:moments}
+
+We now turn from the fates of the cell to the numbers it carries and releases.
+At first sight their moments appear awkward. Since the catastrophe rate grows
+with the population, the equation for each load moment calls for the moment
+above it. One would normally expect an open hierarchy and, sooner or later, a
+closure approximation. The Riccati equation offers a way around this.
+
+\begin{remark}[Why closed forms exist]
+\label{bdc:rem:closure}
+Let $J(t)=\ex{X_t}$ and $K(t)=\ex{X_t^2}$. Their moment equations begin
+\[
+\dot J=(\lambda-\mu)J-\delta K,
+\qquad
+\dot K=2(\lambda-\mu)K+(\lambda+\mu)J-\delta\ex{X_t^3},
+\]
+and the pattern continues. The hierarchy is genuinely open. However, the
+non-catastrophe probability obeys the autonomous equation
+\cref{bdc:eq:riccatifact}, while $J=-I'/\delta$. Differentiating that scalar
+equation produces $K$ in terms of $I$ and $J$, without introducing the third
+moment. Repeated differentiation does the same at higher orders. Thus the open
+hierarchy remains present, but it need not be truncated; it can be approached
+from the closed equation for $I$. \Cref{bdc:prop:polynomial} later states the
+general result.
+\end{remark}
+
+The calculation has a natural order. We first recover the mean load from $I$,
+then use its derivative to obtain the second moment. The release moments follow
+from balance equations in which the same higher-order terms appear and can be
+eliminated.
+
+\subsection{The mean load}
+\label{bdc:sec:J}
+
+The link between $I$ and the load is especially direct. Since $H$ is entered
+from state $n$ at rate $\delta n$, the forward equation for the catastrophe
+state is
+\[
+\ddt{}\pr{X_t=H}
+=\delta\sum_{n\ge1}n\,p_n(t)
+=\delta J(t).
+\]
+Because $I(t)=1-\pr{X_t=H}$,
+\begin{equation}
+\label{bdc:eq:IJ}
+\ddt{I}=-\delta J.
+\end{equation}
+The slope of the non-catastrophe curve is therefore the negative mean load,
+scaled by the per-unit catastrophe rate. Differentiating \cref{bdc:eq:I}, or
+substituting the Riccati equation into \cref{bdc:eq:IJ}, gives the closed form.
+
+\begin{theorem}[The mean load]
+\label{bdc:thm:J}
+The expected number of replicative units present at time $t$ is
+\begin{equation}
+\label{bdc:eq:J}
+J(t)=\ex{X_t}
+=\frac{(a-b)^2\,w}{(B+Aw)^2}
+=-\frac{\lambda}{\delta}(I-a)(I-b).
+\end{equation}
+\end{theorem}
+
+The second expression will be the more useful one: it places $J$ directly on
+the Riccati phase line. From the initial load of one, the mean may first rise as
+productive paths grow, but it eventually returns to zero as absorption becomes
+certain. This fall does not mean that the remaining productive cells are
+empty. It means that there are progressively fewer of them, as
+\cref{bdc:rem:Jmixes} made clear.
+
+To expose the second moment, consider the expected change of $X_t$ over
+$\Delta t$. A birth adds one at rate $\lambda X_t$, a death removes one at rate
+$\mu X_t$, and a catastrophe removes the whole numerical load at rate
+$\delta X_t$. Hence
+\[
+\ex{X_{t+\Delta t}}
+=\ex{X_t}
++\ex{\lambda\Delta t\,X_t-\mu\Delta t\,X_t
+-\delta\Delta t\,X_t^2}
++o(\Delta t),
+\]
+and therefore
+\begin{equation}
+\label{bdc:eq:ddJ}
+\ddt{J}=(\lambda-\mu)J-\delta K(t),
+\qquad K(t):=\ex{X_t^2}.
+\end{equation}
+The term $-\delta K$ is the distinctive one. A large load is both costly when
+removed and more likely to be removed, so its contribution is quadratic.
+
+\subsection{The second moment}
+\label{bdc:sec:K}
+
+Although \cref{bdc:eq:ddJ} couples $J$ to $K$, it can be read in reverse because
+$J$ is already known. Differentiate \cref{bdc:eq:IJ}:
+\begin{equation}
+\label{bdc:eq:Kder1}
+\ddt{J}=-\frac{1}{\delta}\frac{\dd^2I}{\dd t^2}.
+\end{equation}
+Differentiating the Riccati equation gives
+\[
+\frac{\dd^2I}{\dd t^2}
+=\bigl[-(\lambda+\mu+\delta)+2\lambda I\bigr]\ddt{I},
+\]
+and using $I'=-\delta J$ once more,
+\begin{equation}
+\label{bdc:eq:Kder2}
+\frac{\dd^2I}{\dd t^2}
+=(\lambda+\mu+\delta)\delta J-2\lambda\delta I J.
+\end{equation}
+Equations~\cref{bdc:eq:Kder1,bdc:eq:Kder2} imply
+\[
+\ddt{J}=-(\lambda+\mu+\delta)J+2\lambda I J.
+\]
+Comparison with \cref{bdc:eq:ddJ} then gives
+\[
+(\lambda-\mu)J-\delta K
+=-(\lambda+\mu+\delta)J+2\lambda I J,
+\]
+from which $K$ follows without ever computing $\ex{X_t^3}$.
+
+\begin{theorem}[The second moment of the load]
+\label{bdc:thm:K}
+Let $\kappa=1+\delta/(2\lambda)$. Then
+\begin{equation}
+\label{bdc:eq:K}
+K(t)=\ex{X_t^2}
+=\Bigl[1+\frac{2\lambda}{\delta}(1-I)\Bigr]J
+=\frac{2\lambda}{\delta}(\kappa-I)J,
+\end{equation}
+and, after substituting \cref{bdc:eq:J},
+\begin{equation}
+\label{bdc:eq:KI}
+K(I)
+=\frac{2\lambda^2}{\delta^2}(I-\kappa)(I-a)(I-b).
+\end{equation}
+\end{theorem}
+
+As a polynomial in $I$, the second moment shares the roots $a$ and $b$ with
+the mean. Its third root $\kappa$ lies just above unity, outside the interval
+$(b,1]$ traced by the process.
+
+\subsection{The mean release}
+\label{bdc:sec:V}
+
+The released count $W_t$ remains at zero until rupture and then takes the load
+present at that instant. A rupture from state $n$ increases $W_t$ by $n$ at rate
+$\delta n$, and so
+\begin{equation}
+\label{bdc:eq:ddV}
+\ddt{V}=\delta K(t),
+\qquad V(t):=\ex{W_t}.
+\end{equation}
+Release is driven by the second moment rather than the first: fuller cells
+release more and are also more liable to rupture.
+
+Combining \cref{bdc:eq:ddV} with \cref{bdc:eq:ddJ} eliminates $K$:
+\[
+\ddt{J}=(\lambda-\mu)J-\ddt{V}.
+\]
+Since $J=-I'/\delta$,
+\[
+\ddt{V}
+=-\frac{\lambda-\mu}{\delta}\ddt{I}-\ddt{J},
+\]
+which can be integrated immediately.
+
+\begin{theorem}[The mean release]
+\label{bdc:thm:V}
+With $V(0)=0$ and $J(0)=I(0)=1$,
+\begin{equation}
+\label{bdc:eq:V}
+V(t)=\ex{W_t}
+=\frac{\lambda-\mu}{\delta}[1-I(t)]-J(t)+1
+=(1-I)\Bigl[1+\frac{\lambda}{\delta}(1-I)\Bigr].
+\end{equation}
+Its late-time value is
+\begin{equation}
+\label{bdc:eq:Vinf}
+V_\infty
+=\lim_{t\to\infty}V(t)
+=\frac{\lambda-\mu}{\delta}(1-b)+1
+=\frac{aB}{A}.
+\end{equation}
+When $\mu=0$, this reduces to $V_\infty=1+\lambda/\delta$.
+\end{theorem}
+
+The form in $I$ follows by substituting \cref{bdc:eq:J} into the first
+expression and using \cref{bdc:eq:identities}. Notice that $V_\infty$ averages
+over every realisation. Paths which die internally contribute zero, so it is not
+yet the mean conditional burst size; that distinction is taken up in
+\cref{bdc:sec:conditioning}.
+
+\subsection{Load and release together}
+\label{bdc:sec:JV}
+
+\Cref{bdc:fig:jv} restores the two familiar time courses alongside the
+parametric view. In time, $J$ rises and falls while $V$ accumulates. Eliminating
+time shows the same movement as one trajectory in the $(J,V)$ plane. The two
+panels are complementary: the first makes the timing legible, and the second
+shows how intracellular load is exchanged for expected release.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{F4_JV_parametric.pdf}
+\caption{Mean intracellular load and release for $\lambda=1$, $\mu=0.2$ and
+$\delta=0.05$. (a) The time courses $J(t)$ and $V(t)$: the load first grows and
+then disappears, while release increases to $V_\infty=13.99$. (b) The same
+solution as the parametric path $(J(t),V(t))$, with selected times marked.}
+\label{bdc:fig:jv}
+\end{figure}
+
+The second moment of the release is obtained by the same elimination: a
+rupture from state $n$ raises $W_t^2$ from zero to $n^2$ at rate $\delta n$,
+so $\ex{W_t^2}$ is driven by the third load moment, which is already present
+in the equation for $K$. The calculation is in \cref{bdc:app:Wsq}.
+
+\begin{theorem}[The second moment of the release]
+\label{bdc:thm:Wsq}
+The second moment of the released count is
+\begin{equation}
+\label{bdc:eq:Wsq}
+\ex{W_t^2}
+=\frac{2(\lambda-\mu)}{\delta}V
+-\frac{\lambda+\mu}{\delta}I
+-K+\frac{\lambda+\mu}{\delta}+1.
+\end{equation}
+\end{theorem}
+
+\subsection{Variances}
+\label{bdc:sec:variances}
+
+The variances now require only
+$\var{Y}=\ex{Y^2}-\ex{Y}^2$. For the load,
+\begin{equation}
+\label{bdc:eq:VarX}
+\var{X_t}
+=K(t)-J(t)^2
+=\frac{2\lambda}{\delta}(\kappa-I)J-J^2,
+\end{equation}
+and for the release,
+\begin{equation}
+\label{bdc:eq:VarW}
+\var{W_t}
+=\frac{2(\lambda-\mu)}{\delta}V
+-\frac{\lambda+\mu}{\delta}I
+-K+\frac{\lambda+\mu}{\delta}+1-V^2.
+\end{equation}
+Since $J$, $K$ and $V$ are functions of $I$, the two variances are as well.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{F4_mean_sd_XW.pdf}
+\caption{Means and one-standard-deviation envelopes for (a) the intracellular
+load $X_t$ and (b) the released count $W_t$, with
+$\lambda=1$, $\mu=0.2$ and $\delta=0.05$. Lower envelopes are clipped at the
+support boundary zero.}
+\label{bdc:fig:meansd}
+\end{figure}
+
+\Cref{bdc:fig:meansd} shows why these expressions are worth carrying. The
+spread of the intracellular load soon exceeds its mean. At late times, variation
+in $W_t$ reflects a mixture of paths that never ruptured and paths that released
+a sometimes large load. Neither panel is well described by its central curve
+alone.
+
+\FloatBarrier
+
+\subsection{The pair \texorpdfstring{$(X_t,W_t)$}{(Xt,Wt)}}
+\label{bdc:sec:pair}
+
+The two components have now been treated separately. Their joint behaviour has
+a useful degeneracy: internal load and released load cannot be positive at the
+same time.
+
+\begin{corollary}[Exclusion, and the covariance]
+\label{bdc:cor:exclusion}
+At every $t$, $X_tW_t\equiv0$ almost surely under the numerical-load convention
+of \cref{bdc:sec:notation}. Before rupture $W_t=0$, and after rupture the state
+is $H$ with numerical load zero. Hence $\ex{X_tW_t}=0$ and
+\begin{equation}
+\label{bdc:eq:cov}
+\cova{X_t,W_t}=-J(t)V(t)\le0.
+\end{equation}
+\end{corollary}
+
+The sum $X_t+W_t$ has a similarly plain interpretation. It counts particles
+currently held inside the intact cell together with particles already released.
+It does not count particles lost through internal death, and it is not a
+cumulative count of all births.
+
+\begin{corollary}[Current internal and released yield]
+\label{bdc:cor:yield}
+The mean number of particles either still inside or already released is
+\begin{equation}
+\label{bdc:eq:yield}
+\ex{X_t+W_t}
+=1+\frac{\lambda-\mu}{\delta}[1-I(t)].
+\end{equation}
+\end{corollary}
+
+Algebraically, \cref{bdc:eq:yield} is a rearrangement of
+\cref{bdc:eq:V}. Probabilistically, it describes the surviving inventory of the
+process: the founder, together with the net contribution of births and deaths
+accumulated before time $t$ or rupture. This is the quantity whose late-time
+limit underlies $V_\infty$.
+
+\FloatBarrier

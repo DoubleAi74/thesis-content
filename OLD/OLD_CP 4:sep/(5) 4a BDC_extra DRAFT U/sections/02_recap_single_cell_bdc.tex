@@ -1,0 +1,260 @@
+% What we need from Chapter 3 --- spec \S4.1 row 2.
+% Boxed formulas from Project_specification.md \S6; pointers to Chapter 3;
+% no proofs beyond one-liners. All correction-history remarks deleted.
+
+\section{What we need from Chapter 3}
+\label{sec:recap}
+
+Chapter~3 defined the birth--death--catastrophe process and derived its
+principal single-cell quantities in closed form. This chapter builds on that
+foundation, and everything it needs is restated here, boxed, so that what
+follows is self-contained. Derivations are at most sketched; the full
+accounts live in Chapter~3, to which each box points.
+Section~\ref{sec:notation-tab} fixes the notation used throughout; the
+remaining subsections collect the closed forms that will be quoted
+repeatedly.
+
+\subsection{Canonical notation}
+\label{sec:notation-tab}
+
+The notation of this chapter is collected in Table~\ref{tab:notation}; it is
+the notation of Chapter~3, unchanged. When, in Chapter~4b, the single-cell
+theory is joined to a population model, further symbols are introduced
+there, chosen to avoid collisions with these.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{tabular}{@{}llp{0.44\textwidth}@{}}
+\toprule
+Symbol & Meaning & Notes \\
+\midrule
+$\lambda,\mu,\delta$ & birth, death, catastrophe rates (per capita) & \\
+$\xt$ & intracellular count (CTMC) & \\
+$H$ & absorbing rupture state & \\
+$\wt$ & released count from one cell & $0$ until burst \\
+$\tau$ & burst time (possibly $\infty$) & \\
+$\Kb$ & burst size (random variable) & never bare $K$, since $K(t)=\mean{\xt^2}$ \\
+$I(t)$ & $\Prob{\text{no burst by }t}$ & \\
+$D(t)$ & $\Prob{\text{cleared internally, no burst}}$ & $= p_0(t)$ \\
+$\Ifix(t)$ & $\Prob{\xt\notin\{0,H\}} = I(t)-D(t)$ & productive infection \\
+$J(t),K(t)$ & $\mean{\xt}$, $\mean{\xt^2}$ & \\
+$V(t)$ & $\mean{\wt}$, cumulative mean release & \\
+$a,b$ & characteristic roots, $b<1<a$ & \\
+$A,B,\theta$ & $a-1$, $1-b$, $\lambda(a-b)$ & \\
+$\kappa$ & $1+\delta/(2\lambda)$ & appears in $K(t)$ and $K(I)$ \\
+$w$ & $\ee^{\theta t}$ & the recurring exponential \\
+\bottomrule
+\end{tabular}
+\caption{Canonical notation for this chapter (Chapter~3's regime).}
+\label{tab:notation}
+\end{table}
+
+\subsection{Process definition and the joint process}
+
+One cell, one intracellular population. The count $\xt$ is a continuous-time
+Markov chain on $\{0,1,2,\ldots\}\cup\{H\}$ which, from any state $n\ge1$,
+jumps
+\begin{align*}
+n &\to n+1 &&\text{at rate } \lambda n \quad\text{(birth)},\\
+n &\to n-1 &&\text{at rate } \mu n \quad\text{(death)},\\
+n &\to H &&\text{at rate } \delta n \quad\text{(catastrophe)}.
+\end{align*}
+Both $0$ and $H$ are absorbing: the population either clears itself
+internally, or the cell ruptures. Unless stated otherwise we start from a
+single founder, $X_0=1$. The process of classical references
+\cite{brockwell1982birth,karlin1982linear,di2008note} is slightly more
+general (immigration, distributed catastrophe sizes); the specialisation
+above is the one with the closed-form family we need.
+
+% \figureflag{F4a.1}{Joint-process schematic}{%
+% \textbf{Purpose:} display the object of this chapter --- the joint process
+% $(X_t,W_t)$ --- at a glance: the stochastic growth of the load, the burst at
+% $\tau$, and the jump of the released count from $0$ to $X_{\tau^-}$.
+% \textbf{Type:} TikZ schematic, inline with chapter fonts. \textbf{Content:}
+% a horizontal time axis; one representative sample path of $X_t$ drawn as a
+% step function starting at $X_0=1$, wandering up and down through states
+% $1,2,\ldots$, terminating in a vertical jump to a marked state $H$ at time
+% $\tau$; below it, on a second axis, the corresponding path of $W_t$: zero
+% until $\tau$, then a vertical jump to the level $X_{\tau^-}$ and a flat
+% continuation thereafter; annotate $\tau$, $X_{\tau^-}$, and label the state
+% $H$ with an ellipse as in Chapter~3's transition diagram. \textbf{Labels:}
+% $t$ on the horizontal axis; $X_t$ and $W_t$ on the two vertical axes;
+% annotations $\tau$, $X_{\tau^-}$, $H$. \textbf{Style:} TikZ, inline with
+% chapter fonts, black paths, the burst jump optionally emphasised in colour.
+% \textbf{Placement:} \Secref{sec:recap}, in the ``Process definition and the
+% joint process'' subsection, after the transition-rate display.}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/F4a_1_joint_process.pdf}
+\caption{A representative path of the joint process $(X_t,W_t)$.  The
+intracellular load follows a birth--death path until rupture at time $\tau$,
+when $X_t$ enters the absorbing state $H$.  At the same instant, the released
+count jumps from zero to the pre-rupture load $X_{\tau^-}$ and remains there.}
+\label{fig:F4a_1_joint_process}
+\end{figure}
+
+The rupture event is what matters for applications, so we record the release
+count alongside the load. Let $\tau$ be the time of catastrophe (possibly
+$\tau=\infty$ if the population clears internally first). The released count
+$\wt$ is
+\[
+\wt = \begin{cases}
+0, & t<\tau,\\
+X_{\tau^-}, & t\ge\tau,
+\end{cases}
+\]
+that is, at rupture the whole pre-burst load is dumped and then held. All
+single-cell release quantities in this chapter are functionals of the joint
+process $(\xt,\wt)$.
+
+\subsection{Roots and the workhorse identity}
+
+Write
+\begin{equation}
+\eta=\frac{\lambda+\mu+\delta}{2\lambda},\qquad
+a=\eta+\sqrt{\eta^2-\tfrac{\mu}{\lambda}},\qquad
+b=\eta-\sqrt{\eta^2-\tfrac{\mu}{\lambda}},
+\end{equation}
+the two roots of the quadratic $\lambda f^2-(\lambda+\mu+\delta)f+\mu$, and
+set
+\begin{equation}
+A:=a-1>0,\qquad B:=1-b>0,\qquad \theta:=\lambda(a-b)
+=\sqrt{(\lambda+\mu+\delta)^2-4\lambda\mu}.
+\end{equation}
+Vieta's relations give $ab=\mu/\lambda$ and
+$a+b=(\lambda+\mu+\delta)/\lambda$, and the identity that will do most of
+the algebraic work in this chapter is
+\begin{equation}
+AB=(a-1)(1-b)=(a+b)-ab-1=\frac{\delta}{\lambda},
+\qquad A+B=a-b.
+\label{eq:AB}
+\end{equation}
+That $b<1<a$ always is immediate from
+$\lambda(1-a)(1-b)=\lambda\lrb{1-(a+b)+ab}=-\delta<0$, which places $1$
+strictly between the two roots.
+
+\subsection{Three fixation functions}
+\label{sec:fixation-funcs}
+
+There are three absorbing-behaviour probabilities, not two, and it pays to
+name all of them:
+\begin{definition}
+\begin{equation}
+I(t)=\Prob{\text{no burst by }t},\qquad
+D(t)=\Prob{\text{internal extinction by }t,\ \text{no burst}},
+\end{equation}
+\begin{equation}
+\Ifix(t)=\Prob{\xt\notin\{0,H\}}=I(t)-D(t),
+\end{equation}
+the last being the probability that the cell is still productively infected.
+\end{definition}
+
+Both $I$ and $D$ satisfy the same Riccati equation
+\begin{equation}
+\ddt{I}=\lambda(I-a)(I-b)=\mu-(\lambda+\mu+\delta)I+\lambda I^2,
+\label{eq:riccati}
+\end{equation}
+differently initialised ($I(0)=1$, $D(0)=0$); the branching term $I^2$ comes
+from the two independent daughter lineages that a birth of the founder
+creates. Solving by separation of variables and writing
+$w:=\ee^{\theta t}\ge1$ gives the boxed triplet
+\begin{equation}
+\boxed{I(t)=\frac{aB+bAw}{B+Aw},\qquad
+D(t)=\frac{ab\,(w-1)}{aw-b},\qquad
+\Ifix(t)=\frac{(a-b)^2\,w}{(B+Aw)(aw-b)}.}
+\label{eq:IDIhat}
+\end{equation}
+The limits are $I(\infty)=D(\infty)=b$, $\Ifix(\infty)=0$, with
+$\Ifix(0)=1$ and $\Ifix'(0)=-(\mu+\delta)$ --- at the instant of founding,
+the productive state is lost only by death or catastrophe of the single
+founder. An independent confirmation of the third formula arrives in
+\S\ref{sec:state-probs}: the state probabilities $p_n(t)$ sum over $n\ge1$
+to exactly the right-hand side of \eqref{eq:IDIhat}.
+
+\subsection{Moments and mean release}
+\label{sec:moments-recap}
+
+The hazard of bursting at time $t$ is $\delta$ times the current load, so
+$I'(t)=-\delta J(t)$; inserting the Riccati equation \eqref{eq:riccati}
+then gives the mean
+\begin{equation}
+\boxed{J(t)=\mean{\xt}=-\frac{1}{\delta}\ddt{I}
+=\frac{(a-b)^2\,w}{(B+Aw)^2}
+=-\frac{\lambda}{\delta}(I-a)(I-b),}
+\label{eq:J}
+\end{equation}
+with $J(0)=1$ now manifest. The second moment,
+\begin{equation}
+\boxed{K(t)=\mean{\xt^2}=\Bigl[1+\tfrac{2\lambda}{\delta}(1-I)\Bigr]J
+=\frac{2\lambda}{\delta}(\kappa-I)J,\qquad \kappa=1+\frac{\delta}{2\lambda},}
+\label{eq:K}
+\end{equation}
+follows from the moment hierarchy: one checks by differentiation, using
+\eqref{eq:riccati}, that the right-hand side satisfies
+$K'=2(\lambda-\mu)K+(\lambda+\mu)J-\delta\mean{\xt^3}$ with the third moment
+eliminated exactly as in Chapter~3.
+
+The cumulative mean release $V(t)=\mean{\wt}$ increases only at rupture
+events, and a rupture from state $n$ occurs at rate $\delta n$ and releases
+$n$ particles, so the expected release flux is $\delta\mean{\xt^2}$:
+\begin{equation}
+V'(t)=\delta K(t),\qquad V(0)=0.
+\end{equation}
+Integrating with \eqref{eq:J}--\eqref{eq:K} yields the simplification
+\begin{equation}
+\boxed{V(t)=(1-I)\Bigl[1+\tfrac{\lambda}{\delta}(1-I)\Bigr],}
+\label{eq:V}
+\end{equation}
+a quadratic in $(1-I)$ alone --- no $J$, no separate $\mu$. The equivalent
+Chapter~3 form $V=\frac{\lambda-\mu}{\delta}(1-I)-J+1$ reduces to this one
+upon substituting $J=-(\lambda/\delta)(I-a)(I-b)$ and using \eqref{eq:AB}.
+
+The lifetime mean release and the conditional mean burst size are
+\begin{equation}
+\boxed{V_\infty=\frac{a(1-b)}{a-1}=\frac{aB}{A}
+=\frac{\lambda-\mu}{\delta}(1-b)+1,
+\qquad
+\mean{\Kb\mid\text{burst}}=\frac{V_\infty}{1-b}=\frac{a}{a-1}.}
+\label{eq:Vinf}
+\end{equation}
+A small point with large consequences: $V_\infty$ is
+$\mean{\Kb\mathbf 1\{\text{burst}\}}$, and so \emph{includes} the
+realisations that cleared internally and released nothing (a mass $b$ at
+$0$). The conditional mean removes them. When $\mu=0$: $b=0$,
+$a=1+\delta/\lambda$, and $V_\infty=1+\lambda/\delta$ coincides with the
+conditional mean --- a coincidence that, as we shall see, one should not
+lean on.
+
+\subsection{Second moment of the release}
+\label{sec:EW2-sec}
+
+For the assay predictions of the discussion we will need $\mean{\wt^2}$.
+The release variable jumps once, from $0$ to $X_{\tau^-}$, so
+$\ddt{}\mean{\wt^2}=\delta\mean{\xt^3}$. The third moment is eliminated via
+the second-moment ODE,
+$K'=2(\lambda-\mu)K+(\lambda+\mu)J-\delta\mean{\xt^3}$, giving
+\[
+\ddt{}\mean{\wt^2}=2(\lambda-\mu)K+(\lambda+\mu)J-K'
+=\ddt{}\lrb{\frac{2(\lambda-\mu)}{\delta}V-\frac{\lambda+\mu}{\delta}I-K},
+\]
+In the second equality we used $V'=\delta K$ together with
+$J=-\delta^{-1}I'$. Integrating from $0$ with
+$(I,J,K,V,\mean{W^2})(0)=(1,1,1,0,0)$ --- in particular $K(0)=\mean{X_0^2}=1$ ---
+\begin{equation}
+\boxed{\mean{\wt^2}
+=\frac{2(\lambda-\mu)}{\delta}V
+-\frac{\lambda+\mu}{\delta}I
+-K
++\frac{\lambda+\mu}{\delta}
++1,}
+\label{eq:EW2}
+\end{equation}
+and $\mathrm{Var}(\wt)=\mean{\wt^2}-V^2$. As a check, take $\mu=0$ and
+$t\to\infty$: then $I,K\to0$ and $V\to1+\lambda/\delta$, so \eqref{eq:EW2}
+gives $\mean{W_\infty^2}=2\lambda^2/\delta^2+3\lambda/\delta+1$, which is
+exactly the second moment of the geometric burst-size law of
+\S\ref{sec:burst-size} with success probability
+$s=\delta/(\lambda+\delta)$, whose second moment is $(2-s)/s^2$.

@@ -1,0 +1,96 @@
+% ===========================================================================
+%  preamble.tex --- packages and macros for the birth--death--catastrophe
+%  chapter.  Derived from the house preamble, CH2/preamble.tex; where the two
+%  disagreed, Chapter 2 won.
+%  When this chapter is dropped into the thesis, merge the contents of this
+%  file into the thesis preamble; duplicates may simply be deleted.
+% ===========================================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage[hypcap=false]{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\graphicspath{{figures/}}
+
+% --- Equation cross-references as bare parenthesised numbers -----------------
+\crefformat{equation}{(#2#1#3)}
+\Crefformat{equation}{(#2#1#3)}
+\crefrangeformat{equation}{(#3#1#4)--(#5#2#6)}
+\crefmultiformat{equation}{(#2#1#3)}{ and (#2#1#3)}{, (#2#1#3)}{ and (#2#1#3)}
+
+% --- Notation ---------------------------------------------------------------
+% Scalars are set in italic; bold is reserved for vector-valued states, which
+% appear only in the multi-type work of later chapters.
+\newcommand{\pgf}{probability generating function}
+\newcommand{\rv}{random variable}
+\newcommand{\pr}[1]{\mathbb{P}\!\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\!\left(#1\right)}
+\newcommand{\var}[1]{\operatorname{Var}\!\left(#1\right)}
+\newcommand{\cova}[1]{\operatorname{Cov}\!\left(#1\right)}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\lrb}[1]{\left(#1\right)}
+\newcommand{\lrbs}[1]{\left[#1\right]}
+\newcommand{\ind}{\mathbf 1}
+
+% --- Chapter-specific notation ----------------------------------------------
+% \Ifix is the non-fixation probability; its optional argument carries the
+% founder count, as in \Ifix[,k].  \Kb is the burst size; note that K(t) is
+% the second moment of the load, a different object.
+\newcommand{\Ifix}[1][]{I_{\mathrm{fix}#1}}
+\newcommand{\Kb}{\mathcal{K}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+\newcommand{\ft}{\textit{F.~tularensis}}
+
+% --- Cross-chapter references -----------------------------------------------
+% Backward references to the mathematical introduction.  Redefining these is
+% all that thesis integration requires.
+\newcommand{\ChM}{the mathematical introduction}
+\newcommand{\ChMcap}{The mathematical introduction}
+
+% Readable standalone fallbacks for labels defined in the mathematical
+% introduction.  Copied from CH2/sections/02_markov_chains.tex, which uses the
+% same device for labels defined in Section 1.3.  In the assembled thesis the
+% real cleveref target is used; compiled alone, the second argument prints.
+\providecommand{\mextref}[2]{%
+  \ifcsname r@#1\endcsname\cref{#1}\else#2\fi}
+
+% --- Forward references to later modelling chapters -------------------------
+% Every forward reference is routed through \fwd, whose first argument is a
+% stable key and whose second is the prose actually typeset.  Keys in use
+% here: singlecell (the PGF/QSD/burst-law chapter), population (the renewal
+% population chapter).
+\newcommand{\fwd}[2]{#2}
+
+% --- Theorem environments ---------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\allowdisplaybreaks

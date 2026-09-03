@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Genetic Algorithm Polynomial Fit</title>
+    <!-- Load Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f0f0f0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      /* Container for the plot to ensure centering */
+      #plot {
+        width: 600px;
+        height: 600px;
+      }
+      .controls {
+        width: 100%;
+        max-width: 600px;
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      button {
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .stats {
+        margin-left: auto;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Genetic Algorithm: Polynomial Regression</h2>
+      <p>
+        Attempting to fit a polynomial function (rational coefficients) to the
+        dataset.
+      </p>
+
+      <div id="plot"></div>
+
+      <div class="controls">
+        <button id="btnStart" onclick="startSimulation()">
+          Start / Restart
+        </button>
+        <div class="stats">
+          Generation: <span id="genCount">0</span> | Best Score:
+          <span id="bestScore">---</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * DATA PREPARATION
+       */
+      const rawData = `0.01,0.49744950892200523
+0.02,0.4947961454086841
+0.03,0.49203568028781275
+0.04,0.4891655063931692
+0.05,0.4861804681386442
+0.06,0.4830774611793251
+0.07,0.4798516728499167
+0.08,0.4764965649930478
+0.09,0.4730092271000399
+0.1,0.46938333702446194
+0.11,0.46561045412689755
+0.12,0.46168780095224604
+0.13,0.45760728178648097
+0.14,0.45335797129833433
+0.15,0.44893751974883506
+0.16,0.44433208243911365
+0.17,0.43953758533578097
+0.18,0.43454255921952245
+0.19,0.4293311822253738
+0.2,0.42390081850381817
+0.21,0.4182300784035889
+0.22,0.4123108180947064
+0.23,0.40613172436516815
+0.24,0.399669551694508
+0.25,0.3929162754078347
+0.26,0.38584326351619247
+0.27,0.3784359299789587
+0.28,0.370672189995087
+0.29,0.3625279290473855
+0.3,0.35397672110443756
+0.31,0.3449895164077589
+0.32,0.33553428875892377
+0.33,0.3255756349223103
+0.34,0.31506734776888573
+0.35,0.3039779337611788
+0.36,0.2922446697896221
+0.37,0.2798182518473617
+0.38,0.2666353397344354
+0.39,0.252615526498267
+0.4,0.23768332022995975
+0.41,0.22173411227463893
+0.42,0.20466312830238828
+0.43,0.1863198446038385
+0.44,0.16655284045247842
+0.45,0.1451501913600998
+0.46,0.1218716445414851
+0.47,0.09638121630669728
+0.48,0.06824513327478827
+0.49,0.03687714681581637
+0.5,0.0044555971049409825`;
+
+      const Pvals = [];
+      const Avals = [];
+
+      // Parse Data
+      const rows = rawData.trim().split("\n");
+      rows.forEach((row) => {
+        const parts = row.split(",");
+        Pvals.push(parseFloat(parts[0]));
+        Avals.push(parseFloat(parts[1]));
+      });
+
+      /**
+       * GENETIC ALGORITHM CONFIGURATION
+       */
+      const NumBases = 100;
+      const N = 50; // Population size
+      const mutRate = 0.3;
+      const numGenerations = 1000;
+      let population = [];
+      let generationCount = 0;
+      let animationId = null;
+
+      // Helper: Gaussian Random (Box-Muller transform)
+      function randomNormal(mean, std) {
+        let u = 0,
+          v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        const num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        return num * std + mean;
+      }
+
+      function generateRandomSolution() {
+        let chrom1 = new Array(NumBases)
+          .fill(0)
+          .map(() => Math.floor(randomNormal(0, 5)));
+        let chrom2 = new Array(NumBases)
+          .fill(0)
+          .map(() => Math.floor(randomNormal(0, 5)));
+        chrom2 = chrom2.map((val) => (val === 0 ? 1 : val));
+
+        // Initial Conditions
+        chrom1[0] = 1;
+        chrom2[0] = 2;
+
+        return [chrom1, chrom2];
+      }
+
+      function evaluatePolynomial(P, solution) {
+        let polyOut = 0;
+        const chrom1 = solution[0];
+        const chrom2 = solution[1];
+
+        for (let i = 0; i < NumBases; i++) {
+          let n1 = chrom1[i];
+          let n2 = chrom2[i];
+          if (n2 !== 0) {
+            polyOut += (n1 / n2) * Math.pow(P, i);
+          }
+        }
+        return polyOut;
+      }
+
+      function scoreSolution(solution) {
+        let sumSqDiff = 0;
+        for (let i = 0; i < Pvals.length; i++) {
+          const P = Pvals[i];
+          const A = Avals[i];
+          const polyVal = evaluatePolynomial(P, solution);
+          sumSqDiff += Math.pow(A - polyVal, 2);
+        }
+
+        const mse = sumSqDiff / Pvals.length;
+        const fromZeroSq = Math.pow(evaluatePolynomial(0.5, solution), 2);
+
+        return mse + fromZeroSq * 100;
+      }
+
+      function chooseRandFromOrder(size) {
+        let probs = [];
+        let prSum = 0;
+        for (let i = 1; i <= size; i++) {
+          let val = 1 / i;
+          probs.push(val);
+          prSum += val;
+        }
+
+        const rand = Math.random() * prSum;
+        let sum = 0;
+        for (let i = 0; i < size; i++) {
+          sum += probs[i];
+          if (rand < sum) return i;
+        }
+        return size - 1;
+      }
+
+      function mutate(child) {
+        for (let chromIndx = 0; chromIndx < 2; chromIndx++) {
+          for (let baseIndx = 1; baseIndx < NumBases; baseIndx++) {
+            if (Math.random() < mutRate) {
+              const mutation = Math.floor(randomNormal(0, 5));
+              child[chromIndx][baseIndx] += mutation;
+              if (chromIndx === 1 && child[chromIndx][baseIndx] === 0) {
+                child[chromIndx][baseIndx] += mutation;
+                if (child[chromIndx][baseIndx] === 0)
+                  child[chromIndx][baseIndx] = 1;
+              }
+            }
+          }
+        }
+        return child;
+      }
+
+      function crossover(parent1, parent2) {
+        let child = [new Array(NumBases).fill(0), new Array(NumBases).fill(0)];
+        for (let chromIndx = 0; chromIndx < 2; chromIndx++) {
+          for (let baseIndx = 0; baseIndx < NumBases; baseIndx++) {
+            child[chromIndx][baseIndx] =
+              Math.random() < 0.5
+                ? parent1[chromIndx][baseIndx]
+                : parent2[chromIndx][baseIndx];
+          }
+        }
+        return child;
+      }
+
+      function makeNewGeneration(populationSorted) {
+        let newPop = [];
+        newPop.push(JSON.parse(JSON.stringify(populationSorted[0]))); // Keep best
+
+        for (let i = 0; i < N - 1; i++) {
+          const parent1 = populationSorted[chooseRandFromOrder(N)];
+          const parent2 = populationSorted[chooseRandFromOrder(N)];
+          let child = crossover(parent1, parent2);
+          child = mutate(child);
+          newPop.push(child);
+        }
+        return newPop;
+      }
+
+      /**
+       * VISUALIZATION & LOOP
+       */
+
+      function getLayout() {
+        return {
+          title: "Genetic Algorithm Converging Polynomials",
+          width: 600, // Physical width
+          height: 600, // Physical height
+          xaxis: {
+            title: "P",
+            range: [0, 0.6],
+            constrain: "domain",
+          },
+          yaxis: {
+            title: "A(P)",
+            range: [0, 0.6],
+            scaleanchor: "x", // This ensures 1 unit X = 1 unit Y
+            scaleratio: 1,
+          },
+          showlegend: false,
+        };
+      }
+
+      function initPlot() {
+        const traceData = {
+          x: Pvals,
+          y: Avals,
+          mode: "markers",
+          type: "scatter",
+          name: "Data",
+          marker: { color: "blue", size: 6 },
+        };
+        Plotly.newPlot("plot", [traceData], getLayout());
+      }
+
+      function updatePlot(sortedPop) {
+        const X = [];
+        for (let p = 0; p <= 0.6; p += 0.01) X.push(p);
+
+        const traces = [];
+
+        // Data Points
+        traces.push({
+          x: Pvals,
+          y: Avals,
+          mode: "markers",
+          type: "scatter",
+          marker: { color: "blue", size: 6 },
+        });
+
+        // Top solutions
+        const numToShow = Math.min(sortedPop.length, 20);
+
+        for (let i = numToShow - 1; i >= 0; i--) {
+          const sol = sortedPop[i];
+          const Y = X.map((x) => evaluatePolynomial(x, sol));
+          const isBest = i === 0;
+
+          traces.push({
+            x: X,
+            y: Y,
+            mode: "lines",
+            type: "scatter",
+            line: {
+              color: isBest ? "red" : "black",
+              width: isBest ? 3 : 1,
+            },
+            opacity: isBest ? 1 : 0.15,
+          });
+        }
+
+        Plotly.react("plot", traces, getLayout());
+      }
+
+      function runGeneration() {
+        const scores = population.map((sol, index) => ({
+          index: index,
+          score: scoreSolution(sol),
+        }));
+
+        scores.sort((a, b) => a.score - b.score);
+        const sortedPop = scores.map((s) => population[s.index]);
+        const bestMSE = scores[0].score;
+
+        document.getElementById("genCount").innerText = generationCount;
+        document.getElementById("bestScore").innerText = bestMSE.toFixed(6);
+
+        updatePlot(sortedPop);
+
+        population = makeNewGeneration(sortedPop);
+        generationCount++;
+
+        if (generationCount < numGenerations) {
+          animationId = requestAnimationFrame(runGeneration);
+        }
+      }
+
+      function startSimulation() {
+        if (animationId) cancelAnimationFrame(animationId);
+
+        population = [];
+        for (let i = 0; i < N; i++) {
+          population.push(generateRandomSolution());
+        }
+        generationCount = 0;
+
+        initPlot();
+        runGeneration();
+      }
+
+      initPlot();
+    </script>
+  </body>
+</html>

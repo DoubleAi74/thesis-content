@@ -1,0 +1,24 @@
+\section{Introduction and roadmap}
+\label{sec:ch2-introduction}
+
+Deterministic rate equations describe a population well once its numbers are large, and badly once they are not. When counts are of order one---in early infection, and in small-population regimes generally---extinction is an event of genuine probability rather than a limiting curiosity, and the typical size of those lineages that are still alive can differ sharply from the unconditional mean. Branching processes supply the natural stochastic language for that setting, because they track whole lineages rather than an averaged density. This chapter develops the background used throughout the thesis---Markovian population models, quasi-stationarity, and analytical tools for continuous-time generating functions---and then, at greater length, the discrete-time constant $A(p)$ that organises subcritical Galton--Watson behaviour conditional on survival.
+
+The material is arranged in three reading paths, sharing one chapter numbering; the split concerns only what a given reader must carry forward.
+
+\begin{enumerate}[label=\textbf{Path~\Alph*.}, leftmargin=*, itemsep=0.4em]
+\item \textbf{Shared core (preliminaries through checkpoint).}
+Definitions and results every thesis reader should take: a short Markov/\pgf\ toolkit; discrete branching and the definition of $A(p)$; continuous-time birth--death quasi-stationarity, including the continuous analogue of $A(p)$; survivability for small initial cohorts; and a brief checkpoint. Conditional laws and quasi-stationary means are introduced where they first arise rather than stockpiled in the preliminaries.
+
+\item \textbf{Method of characteristics.}
+A self-contained analytical ladder for probability generating functions of continuous-time absorption models (with and without birth and death). It sits after the core because it is a full technical development, not because it is dispensable: readers who will work with those \pgf\ partial differential equations should treat Path~B as required. Catastrophe structure for full BDC models is developed in later chapters.
+
+\item \textbf{The constant $A(p)$ and the Koenigs obstruction.}
+Optional depth: numerics and representations for $A(p)$, the absence of a known elementary closed form, and the link to the Koenigs function of the logistic map. The core will already \emph{state} that no comparably elementary closed form for discrete $A(p)$ is available, while the constant itself remains well defined and computable; Path~C supplies the representations, the numerical evidence, and the mechanism behind that gap.
+\end{enumerate}
+
+\noindent
+A short chapter appendix holds the heavy derivations---discrete moments, long characteristic calculations, Koenigs detail---each labelled by the path it supports.
+
+Two classical regimes will recur. In slightly supercritical branching, the chance of eventual survival is highly sensitive to the initial number of individuals, a fact with an obvious reading for early infection. In the subcritical regime extinction is certain, and yet the population size conditional on non-extinction can settle into a quasi-stationary picture; the reciprocal of that conditional mean is explicit for continuous-time birth--death, whereas in discrete time it is encoded by $A(p)$. The discrete factor is the analytically harder of the two, and the chapter returns to it in full only in Path~C.
+
+What follows is written so that a reader with standard undergraduate probability and ordinary differential equations can proceed without the rest of the thesis in hand. Forward references to later chapters are kept minimal; the aim is a reusable stochastic structure rather than a catalogue of which later section cites which formula.

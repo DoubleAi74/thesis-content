@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yaglom's Limit: Vanilla JS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+      body {
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 12px 30px;
+        line-height: 1.5;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+      }
+      .header h1 {
+        font-weight: normal;
+        font-size: 1.3rem;
+        margin: 0;
+      }
+      .header .badge {
+        display: inline-block;
+        background: #e6b800;
+        color: #333;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        margin-left: 8px;
+        vertical-align: middle;
+        font-weight: bold;
+      }
+
+      .ui-panel {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        background: #fcfcfc;
+        border: 1px solid #efefef;
+        padding: 8px 20px;
+        margin-top: 6px;
+        margin-bottom: 12px;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .controls-left {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 16px;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .controls-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding-left: 20px;
+        border-left: 1px solid #eee;
+        width: 200px;
+        flex-shrink: 0;
+      }
+
+      .perf-info {
+        font-size: 0.65rem;
+        color: #888;
+        text-align: center;
+        line-height: 1.4;
+        min-width: 180px;
+        font-variant-numeric: tabular-nums;
+      }
+      label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #888;
+        margin-bottom: 2px;
+      }
+
+      .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 180px;
+        gap: 0;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        position: relative;
+      }
+
+      .vis-wrapper,
+      .hist-wrapper {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        min-height: 0;
+      }
+
+      #pathCanvas,
+      #chartCanvas,
+      #histCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #pathCanvas {
+        z-index: 1;
+      }
+      #chartCanvas {
+        z-index: 2;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        font-size: 0.7rem;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .swatch {
+        width: 20px;
+        height: 2px;
+      }
+      .box {
+        width: 10px;
+        height: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .math {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+      }
+      input[type="range"] {
+        cursor: pointer;
+        width: 100%;
+      }
+      button {
+        padding: 10px 24px;
+        background: #111;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+      button:hover {
+        background: #333;
+      }
+      button:disabled {
+        background: #999;
+        cursor: not-allowed;
+      }
+
+      .caption {
+        margin-top: 8px;
+        font-size: 0.75rem;
+        color: #666;
+        text-align: center;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 6px;
+      }
+
+      .error-msg {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        color: #856404;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Subcritical Branching Processes: Conditional Limiting Mean</h1>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="swatch" style="background: rgba(0, 0, 0, 0.2)"></div>
+          Realizations
+        </div>
+        <div class="legend-item">
+          <div class="swatch" style="background: #005bb5; height: 3px"></div>
+          <span class="math">E[Z<sub>n</sub>|Z<sub>n</sub>>0]</span>
+        </div>
+        <div class="legend-item">
+          <div class="swatch" style="border-top: 2px dashed #cc0000"></div>
+          <span class="math">1/A (Yaglom's Limit)</span>
+        </div>
+        <div class="legend-item">
+          <div class="box" style="background: #c1121f"></div>
+          Survivors
+        </div>
+        <div class="legend-item">
+          <div class="box" style="background: #669bbc"></div>
+          Extinct
+        </div>
+      </div>
+    </div>
+
+    <div id="error-container"></div>
+
+    <div class="main-layout">
+      <div class="vis-wrapper">
+        <canvas id="pathCanvas"></canvas>
+        <canvas id="chartCanvas"></canvas>
+      </div>
+      <div class="hist-wrapper">
+        <canvas id="histCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="ui-panel">
+      <div class="controls-left">
+        <div class="control-group">
+          <label
+            >Probability <span class="math">(p)</span>:
+            <span
+              id="p-label"
+              class="math"
+              style="color: #005bb5; font-weight: bold"
+              >0.495000</span
+            ></label
+          >
+          <input
+            type="range"
+            id="p-slider"
+            min="0"
+            max="99900"
+            step="1"
+            value="62950"
+          />
+        </div>
+        <div class="control-group">
+          <label
+            >Time <span class="math">(T)</span>:
+            <span id="t-label">400</span> generations</label
+          >
+          <input
+            type="range"
+            id="t-slider"
+            min="10"
+            max="5000"
+            step="10"
+            value="400"
+          />
+        </div>
+        <div class="control-group">
+          <label
+            >Ensemble <span class="math">(N)</span>:
+            <span id="n-label">5000</span></label
+          >
+          <input
+            type="range"
+            id="n-slider"
+            min="100"
+            max="100000"
+            step="100"
+            value="5000"
+          />
+        </div>
+        <div class="control-group">
+          <label>Rendered Paths: <span id="render-label">5000</span></label>
+          <input
+            type="range"
+            id="render-slider"
+            min="0"
+            max="100000"
+            step="10"
+            value="5000"
+          />
+        </div>
+      </div>
+      <div class="controls-right">
+        <button id="regen-btn">Regenerate</button>
+        <div class="perf-info">
+          <div id="perf-display">Simulation: --ms</div>
+          <div id="render-info">--</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const chartCanvas = document.getElementById("chartCanvas");
+      const pathCanvas = document.getElementById("pathCanvas");
+      const histCanvas = document.getElementById("histCanvas");
+
+      const pSlider = document.getElementById("p-slider"),
+        nSlider = document.getElementById("n-slider"),
+        tSlider = document.getElementById("t-slider"),
+        renderSlider = document.getElementById("render-slider");
+
+      const pLabel = document.getElementById("p-label"),
+        nLabel = document.getElementById("n-label"),
+        tLabel = document.getElementById("t-label"),
+        renderLabel = document.getElementById("render-label");
+
+      const regenBtn = document.getElementById("regen-btn");
+      const perfDisplay = document.getElementById("perf-display");
+      const renderInfo = document.getElementById("render-info");
+      const errorContainer = document.getElementById("error-container");
+
+      let chart;
+      let lastSimResult = null;
+
+      // --- MATHEMATICAL FUNCTIONS ---
+
+      // Iteratively find the fixed point ratio for the theoretical limit
+      function computeOneOverA(p, tol = 1e-8, maxIter = 10000) {
+        let s = 1.0;
+        let expected = 1.0;
+        let prevRatio = 0;
+
+        for (let n = 1; n <= maxIter; n++) {
+          // Generating function f(s) = (1-p) + p*s^2
+          // Since we look at probability of extinction sequence:
+          // This logic approximates the conditional mean behavior
+          // by comparing the decay of Survival Prob vs Expectation.
+          s = 2 * p * s - p * s * s;
+          expected *= 2 * p;
+          const ratio = expected / s;
+          if (n > 50 && Math.abs(ratio - prevRatio) < tol) {
+            return ratio;
+          }
+          prevRatio = ratio;
+        }
+        return prevRatio;
+      }
+
+      function getPFromSlider() {
+        const t = pSlider.value / 100000;
+        const k = 4.6438;
+        const p = 0.5 * (1 - Math.pow(1 - t, k));
+        return Math.min(0.5, p);
+      }
+
+      // --- CPU SIMULATION ---
+
+      function runSimulationCPU() {
+        return new Promise((resolve) => {
+          // Use setTimeout to allow UI to update before heavy calc (prevents immediate freeze on button click)
+          setTimeout(() => {
+            const t0 = performance.now();
+            const p = getPFromSlider();
+            const N = parseInt(nSlider.value);
+            const T = parseInt(tSlider.value);
+            const maxT = T + 1;
+
+            // Flattened array for all trajectories [N * (T+1)]
+            // Uint32 is sufficient (population rarely explodes in subcritical)
+            const trajData = new Uint32Array(N * maxT);
+
+            // Stats accumulators
+            const totalSums = new Float64Array(maxT);
+            const survSums = new Float64Array(maxT);
+            const survCounts = new Uint32Array(maxT);
+            const maxPops = new Uint32Array(maxT);
+
+            // Run Simulation
+            for (let i = 0; i < N; i++) {
+              let population = 1;
+              const offset = i * maxT;
+
+              // Set t=0
+              trajData[offset] = 1;
+              totalSums[0] += 1;
+              survSums[0] += 1;
+              survCounts[0]++;
+              if (1 > maxPops[0]) maxPops[0] = 1;
+
+              for (let t = 0; t < T; t++) {
+                if (population === 0) {
+                  // Population extinct, remains 0 for rest of time
+                  // Array is zero-initialized, so we just skip logic
+                  // But we still need to record the zero in the stats?
+                  // Adding 0 to sums does nothing.
+                  // We don't increment survCounts.
+                  // We do nothing.
+                } else {
+                  // Calculate next generation
+                  // Each individual produces 2 offspring with prob p, 0 with prob 1-p.
+                  // Next Pop = 2 * (Number of individuals who split)
+                  // This is 2 * Binomial(population, p)
+
+                  let nextPop = 0;
+
+                  // Exact discrete Binomial: each individual independently
+                  // produces 2 offspring with prob p, 0 with prob 1-p
+                  for (let k = 0; k < population; k++) {
+                    if (Math.random() < p) nextPop += 2;
+                  }
+
+                  population = nextPop;
+                  trajData[offset + t + 1] = population;
+
+                  // Update stats
+                  totalSums[t + 1] += population;
+                  if (population > 0) {
+                    survSums[t + 1] += population;
+                    survCounts[t + 1]++;
+                    if (population > maxPops[t + 1])
+                      maxPops[t + 1] = population;
+                  }
+                }
+              }
+            }
+
+            // Process Stats for Chart
+            const condMean = [];
+            const uncondMean = [];
+            let globalMax = 0;
+
+            for (let t = 0; t < maxT; t++) {
+              uncondMean.push(totalSums[t] / N);
+              condMean.push(
+                survCounts[t] > 0 ? survSums[t] / survCounts[t] : null,
+              );
+              globalMax = Math.max(globalMax, maxPops[t]);
+            }
+
+            // Final Counts for Histogram
+            const finalCounts = {};
+            for (let i = 0; i < N; i++) {
+              const val = trajData[i * maxT + T];
+              finalCounts[val] = (finalCounts[val] || 0) + 1;
+            }
+
+            const t1 = performance.now();
+            perfDisplay.innerText = `Simulation time: ${(t1 - t0).toFixed(1)}ms (${N.toLocaleString()} trajectories)`;
+
+            resolve({
+              trajData,
+              condMean,
+              uncondMean,
+              globalMax,
+              finalCounts,
+              p,
+              N,
+              T,
+            });
+          }, 0);
+        });
+      }
+
+      function calculateA(x) {
+        const C1 = 0.31696448624690005;
+        const C2_DIVISOR = 3.19801133824532;
+        const C3 = 0.621865696665606;
+        const C4 = 0.5982282661889831;
+        // Term: (1 / 3.19...)^(1/4)
+        const termFourthRoot = Math.pow(1 / C2_DIVISOR, 0.25);
+
+        // Term: e^(e^x)
+        // Warning: This grows super fast. JavaScript handles up to ~1.79e308.
+        // e^(e^1.5) ~= 88, e^(e^2) ~= 1618, e^(e^3) ~= 4.8e8
+        const doubleExp = Math.exp(Math.exp(x));
+
+        // Term: |x| * (0.62... - x) * cos(e^(e^x))
+        const innerCosArg = Math.abs(x) * (C3 - x) * Math.cos(doubleExp);
+
+        // Term: sin(cos(...))
+        const sinTerm = Math.sin(Math.cos(innerCosArg));
+
+        // Term: x * [sin(...) + |x|]
+        const bracketTerm = sinTerm + Math.abs(x);
+        const xMultiplied = x * bracketTerm;
+
+        // Main Cosine Argument
+        const mainCosArg = termFourthRoot + xMultiplied;
+
+        // Term: ln( |cos(...)| )
+        const absCos = Math.abs(Math.cos(mainCosArg));
+
+        // Handle undefined log(0) - although probability of hitting exact 0 is low
+        if (absCos < 1e-15) return NaN;
+
+        const logTerm = Math.log(absCos);
+
+        // Final Result
+        return C1 * logTerm + C4;
+      }
+
+      function compA(p) {
+    // Numerator: (1/2)(1 - 2p)(1 + 2p)
+    // Note: (1-2p)(1+2p) is a difference of squares equivalent to (1 - 4p^2)
+    const numerator = 0.5 * (1 - 2 * p) * (1 + 2 * p);
+
+    // Denominator: 1 + (1/2)p - (5/2)p^2 - (6/5)p^3 + (6/5)p^4
+    // Using ** for exponents (ES6 standard)
+    const denominator = 1 + (0.5 * p) - (2.5 * p ** 2) - (1.2 * p ** 3) + (1.2 * p ** 4);
+
+    return numerator / denominator;
+}
+
+
+      // --- VISUALIZATION ---
+
+      function drawPathsAndHist() {
+        if (!lastSimResult) return;
+        const data = lastSimResult;
+        const maxPaths = parseInt(renderSlider.value);
+        renderLabel.innerText = maxPaths;
+
+        const dpr = window.devicePixelRatio || 1;
+        const pRect = pathCanvas.getBoundingClientRect();
+        pathCanvas.width = pRect.width * dpr;
+        pathCanvas.height = pRect.height * dpr;
+        const pCtx = pathCanvas.getContext("2d");
+        pCtx.scale(dpr, dpr);
+        pCtx.clearRect(0, 0, pRect.width, pRect.height);
+
+        const xAxis = chart.scales.x;
+        const yAxis = chart.scales.y;
+
+        pCtx.lineWidth = 1;
+
+        // Draw Paths
+        // To avoid drawing 100k paths and killing the browser, we step through data
+        const totalAvail = data.N;
+        const step =
+          maxPaths > 0
+            ? Math.max(1, Math.floor(totalAvail / maxPaths))
+            : totalAvail + 1;
+
+        if (maxPaths > 0) {
+          const rowSize = data.T + 1;
+          let count = 0;
+
+          for (let i = 0; i < totalAvail && count < maxPaths; i += step) {
+            count++;
+
+            // Color logic: if extinct at end, blueish; if surviving, reddish
+            // (Optional visual flair, keeping it simple gray/black as per original request style or specific styling)
+            // Original code used rgba(0,0,0,0.15)
+            pCtx.strokeStyle = "rgba(0, 0, 0, 0.15)";
+
+            pCtx.beginPath();
+            let x = xAxis.getPixelForValue(0);
+            let val = data.trajData[i * rowSize];
+            let y = yAxis.getPixelForValue(val);
+            pCtx.moveTo(x, y);
+
+            let isDead = false;
+
+            for (let g = 0; g < data.T; g++) {
+              const nextVal = data.trajData[i * rowSize + g + 1];
+              const nx = xAxis.getPixelForValue(g + 1);
+              const ny = yAxis.getPixelForValue(nextVal);
+
+              // Draw Stepped Line
+              pCtx.lineTo(nx, y); // Horizontal
+              pCtx.lineTo(nx, ny); // Vertical
+
+              y = ny;
+              if (nextVal === 0 && val === 0) {
+                isDead = true;
+                break; // Stop drawing flat line at 0
+              }
+              val = nextVal;
+            }
+            pCtx.stroke();
+          }
+        }
+
+        // Draw Histogram
+        const hRect = histCanvas.getBoundingClientRect();
+        histCanvas.width = hRect.width * dpr;
+        histCanvas.height = hRect.height * dpr;
+        const hCtx = histCanvas.getContext("2d");
+        hCtx.scale(dpr, dpr);
+        hCtx.clearRect(0, 0, hRect.width, hRect.height);
+
+        const pixelStep = Math.abs(
+          yAxis.getPixelForValue(1) - yAxis.getPixelForValue(0),
+        );
+        // Clamp pixelStep to prevent overlapping/invisibility
+        const barHeight = Math.max(1, pixelStep);
+
+        const barMaxWidth = hRect.width - 30;
+        // Logarithmic width scaling
+        const getW = (c) =>
+          (Math.log10(1 + c) / Math.log10(1 + data.N)) * barMaxWidth;
+
+        // Iterate through unique final counts
+        // Since Y axis can be huge, we only draw bars that exist or are in view
+        const yMax = chart.scales.y.max;
+
+        for (const [popStr, count] of Object.entries(data.finalCounts)) {
+          const pop = parseInt(popStr);
+          if (pop > yMax) continue;
+
+          const w = getW(count);
+          const yPos = yAxis.getPixelForValue(pop);
+
+          hCtx.fillStyle = pop === 0 ? "#669bbc" : "#c1121f";
+
+          // Center bar on the tick
+          hCtx.fillRect(0, yPos - barHeight / 2, w, barHeight);
+        }
+
+        renderInfo.innerText = `Rendering: ${Math.min(data.N, maxPaths).toLocaleString()} paths | N=${data.N.toLocaleString()}`;
+      }
+
+      async function updateAll() {
+        regenBtn.disabled = true;
+        regenBtn.textContent = "Simulating...";
+
+        try {
+          const data = await runSimulationCPU();
+
+          const t = pSlider.value / 100000;
+const k = 4.6438;
+const pDisplay = Math.min(0.49999999, 0.5 * (1 - Math.pow(1 - t, k)));
+pLabel.innerText = pDisplay.toFixed(8);
+          nLabel.innerText = data.N.toLocaleString();
+          tLabel.innerText = data.T;
+
+          // Calculate theoretical limit
+          //console.log(data.p)
+          let limitValue;
+          if (data.p > 0.499) {
+            limitValue = compA(data.p) ** -1;
+          } else {
+            limitValue = computeOneOverA(data.p);
+          }
+          
+          // const limitValue = calculateA(data.p) ** -1;
+          
+          const limitLine = Array(data.T + 1).fill(limitValue);
+
+          if (chart) chart.destroy();
+
+          chart = new Chart(chartCanvas, {
+            type: "line",
+            data: {
+              labels: Array.from({ length: data.T + 1 }, (_, i) => i),
+              datasets: [
+                {
+                  data: data.condMean,
+                  borderColor: "#005bb5",
+                  borderWidth: 3,
+                  pointRadius: 0,
+                  stepped: true,
+                  z: 10,
+                },
+                // Red Dashed Theoretical Limit Line
+                {
+                  data: limitLine,
+                  borderColor: "#cc0000",
+                  borderWidth: 2,
+                  borderDash: [6, 4],
+                  pointRadius: 0,
+                  stepped: false,
+                  z: 5,
+                },
+                {
+                  data: data.uncondMean,
+                  borderColor: "#555",
+                  borderWidth: 1,
+                  borderDash: [2, 2],
+                  pointRadius: 0,
+                  stepped: true,
+                  z: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: false,
+              scales: {
+                x: {
+                  type: "linear",
+                  min: 0,
+                  max: data.T,
+                  title: { display: true, text: "Generation (n)" },
+                },
+                y: {
+                  min: -0.5,
+                  // Add some headroom for the chart
+                  max: Math.max(
+                    8,
+                    Math.ceil(data.globalMax * 1.01),
+                    Math.ceil(limitValue * 1.1),
+                  ),
+                  title: { display: true, text: "Pop Size (Zn)" },
+                  ticks: { stepSize: 1 },
+                },
+              },
+              plugins: { legend: { display: false } },
+            },
+          });
+
+          lastSimResult = data;
+          drawPathsAndHist();
+        } catch (e) {
+          console.error(e);
+          errorContainer.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${e.message}</div>`;
+        } finally {
+          regenBtn.disabled = false;
+          regenBtn.textContent = "Regenerate Simulation";
+        }
+      }
+
+      // Initialization
+      (() => {
+        try {
+          // Event Listeners
+          // pSlider.oninput = () => {
+          //   pLabel.innerText = getPFromSlider().toFixed(8);
+          // };
+          pSlider.oninput = () => {
+  const t = pSlider.value / 100000;
+  const k = 4.6438;
+  const p = 0.5 * (1 - Math.pow(1 - t, k));
+  const pCapped = Math.min(0.49999999, p);  // Cap display at visibly < 0.5
+  pLabel.innerText = pCapped.toFixed(8);
+};
+          // For sliders that change simulation parameters, trigger full update on change (mouse up)
+          pSlider.onchange = updateAll;
+          nSlider.onchange = updateAll;
+          tSlider.onchange = updateAll;
+
+          // For visual-only sliders, just redraw canvas
+          renderSlider.oninput = drawPathsAndHist;
+
+          regenBtn.onclick = updateAll;
+          window.onresize = () => {
+            if (chart) chart.resize();
+            drawPathsAndHist();
+          };
+
+          // Initial run
+          updateAll();
+        } catch (e) {
+          errorContainer.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${e.message}</div>`;
+        }
+      })();
+    </script>
+  </body>
+</html>

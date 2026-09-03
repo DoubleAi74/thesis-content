@@ -1,0 +1,99 @@
+\chapter{Extended absorption catalogue}\label{m:app:extended-absorption}
+
+The main text uses absorption--death as its single worked characteristics example.
+This appendix retains the neighbouring models in a more compact form, preserving
+the progression from a finite independent-particle system to an infinite-state
+branching system without interrupting the framework-and-methods architecture.
+
+\section{Absorption only}\label{m:app:absorption-only}
+
+Let $X_t$ and $Y_t$ count particles inside and outside a compartment.  In the
+absorption-only model, each of the $Y_t$ exterior particles moves inside at rate
+$\alpha$.  Starting from $(X_0,Y_0)=(0,N)$, the generating function satisfies
+\begin{equation}
+  \pddt{G}=\alpha(x-y)\pdd{G}{y},
+  \qquad G(x,y,0)=y^N.
+  \label{m:eq:absorption-only-pde}
+\end{equation}
+Each initial particle remains outside until an exponential clock of rate $\alpha$
+rings, and the particles act independently.  Hence
+\begin{equation}
+  G(x,y,t)=
+  \left[\bigl(1-\ee^{-\alpha t}\bigr)x+\ee^{-\alpha t}y\right]^N.
+  \label{m:eq:Gabsonly}
+\end{equation}
+Thus $X_t$ is binomial with parameters $N$ and $1-\ee^{-\alpha t}$, with
+$Y_t=N-X_t$.  In this finite system, the independence argument is simpler than
+solving the PDE that the same assumptions produce.
+
+\section{Absorption--birth--death}\label{m:app:absorption-birth-death}
+
+Now retain absorption at rate $\alpha$ for each exterior particle, and let each
+interior particle give birth at rate $\lambda$ and die at rate $\mu$.  The
+generating-function equation becomes
+\begin{equation}
+  \pddt{G}
+  =(\lambda x^2-(\lambda+\mu)x+\mu)\pdd{G}{x}
+   +\alpha(x-y)\pdd{G}{y},
+  \qquad G(x,y,0)=y^N.
+  \label{m:eq:abd-pde}
+\end{equation}
+An absorbed particle may now initiate an unbounded branching population, so the
+finite three-state shortcut used in the worked example no longer closes.
+
+A parameter-regular representation follows by conditioning on the absorption time.
+Let $F(x,t)$ be the one-ancestor interior birth--death PGF solving
+\cref{m:eq:bd-backward}.  One initial exterior particle either remains outside to
+time $t$, or is absorbed and leaves an interior process for the remaining time.
+Therefore
+\begin{equation}
+  g(x,y,t)=\ee^{-\alpha t}y
+  +\alpha\ee^{-\alpha t}\int_0^t\ee^{\alpha v}F(x,v)\,\dd v,
+  \qquad
+  G(x,y,t)=g(x,y,t)^N.
+  \label{m:eq:abd-convolution}
+\end{equation}
+This formula remains valid at $\lambda=\mu$ and at resonant parameter values, where
+a separated special-function expression would require a limiting interpretation.
+It also makes the normalisation checks immediate:
+\[
+  G(x,y,0)=y^N,
+  \qquad G(1,1,t)=1,
+  \qquad
+  G(1,y,t)=\bigl[\ee^{-\alpha t}y+1-\ee^{-\alpha t}\bigr]^N.
+\]
+The fuller derivation expresses the characteristic integral through a Gauss
+hypergeometric function and treats the associated resonance and
+analytic-continuation domains.  Those details are retained in the donor material
+but are not needed for the single-method introduction here.
+
+\section{Recovering state probabilities}\label{m:app:coefficient-extraction}
+
+For any bivariate PGF analytic at the origin,
+\begin{equation}
+  p_{i,j}(t)=[x^iy^j]G(x,y,t)
+  =\frac{1}{i!j!}
+  \left.
+  \frac{\partial^{i+j}G}{\partial x^i\partial y^j}
+  \right|_{x=y=0}.
+  \label{m:eq:bivariate-coefficient}
+\end{equation}
+In particular, if
+\[
+  G(x,y,t)=\bigl(c(t)+f(t)x+g(t)y\bigr)^N,
+\]
+then
+\begin{equation}
+  p_{i,j}(t)=
+  \frac{N!}{i!j!(N-i-j)!}
+  f(t)^i g(t)^j c(t)^{N-i-j},
+  \qquad i+j\leq N.
+  \label{m:eq:trinomial-extraction}
+\end{equation}
+For absorption--death, the functions $c,f,g$ are the three coefficients inside the
+parentheses in \cref{m:eq:Gabsdeath}, so the joint state law is trinomial.  By
+contrast, \cref{m:eq:abd-convolution} is not multilinear in $x$ for
+absorption--birth--death; its remaining univariate coefficients must be recovered
+by differentiation, truncated-series convolution or Cauchy extraction.
+
+\FloatBarrier

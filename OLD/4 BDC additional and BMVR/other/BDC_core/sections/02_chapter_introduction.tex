@@ -1,0 +1,124 @@
+\section{Introduction}
+
+We aim to understand the stochastics of those infections which exploit a lytic
+mechanism in their initial pathogenesis: infectious agents that use intracellular
+environments to their proliferative advantage. The importance of stochasticity
+here can hardly be overstated. During the first handful of replicative cycles
+there is an exaggerated chance that an infection dies out before it gets started,
+and a deterministic treatment risks glossing over this perilous beginning, its
+variables venturing smoothly between one bacterium and none. To grasp
+\textit{why} \textit{Y.~pestis}, and other pathogens like it, do what they do,
+we must account for the interplay of chance and fortune in the smallest
+populations. It is for this reason that we have selected the
+birth--death--catastrophe process as our tool of inquiry.
+
+Study of the birth--death--catastrophe (BDC) process and its dynamics forms a
+central focus of this thesis. Here we present a series of results and analyses
+associated with its behaviour. As a continuous-time, discrete-state Markov
+chain, the BDC process found its origin in a paper by Brockwell, Gani and
+Resnick published in 1982 \cite{brockwell1982birth}. During the late 1970s and
+early 1980s, attempts were being made to describe unpredictable population
+collapses using stochastic process theory:
+\begin{quotation}
+``There has recently been a great deal of interest in the development and
+analysis of stochastic models for the growth of populations which are subject to
+catastrophes due either to death or large-scale emigrations''
+\cite{brockwell1982birth}.
+\end{quotation}
+Prior to that work, models had largely incorporated deterministic growth
+interspersed by stochastic reductions --- sudden drops, the sizes and times of
+which were defined in distribution (see, for example, the models of Pakes and
+collaborators from the late 1970s). These suffered from the peculiarities of
+modelling discrete populations with continuous random variables, and so attempts
+were made to employ a step process instead: a continuous-time Markov chain in a
+discrete state space.
+
+In fact, the model presented in that 1982 paper is a generalisation of what we
+refer to as the BDC process. Not only did it also include immigration events ---
+single steps up occurring as a Poisson process with constant rate --- but the
+catastrophic steps down in population count were sized as random i.i.d.\
+variables, with a few basic distributions investigated. In our case, the
+catastrophe event reduces the population directly to $0$, or to a special
+post-catastrophe state $H$; in either case causing fixation.
+
+Our interest in the birth--death--catastrophe process stems from within-host
+infection modelling. Like others before us, we are interested
+in the pathogenic behaviour of intracellular replication and bursting. Our agent
+of focus, \textit{Y.~pestis}, finds its way into host macrophages and replicates
+there, before ultimately lysing the cell so that the population of infectious
+bacteria can traverse the extracellular matrix and continue its exploitative
+fight for survival. ``Catastrophe'' here names the cell-bursting event, which
+becomes increasingly likely as the intracellular population expands. Carruthers
+and collaborators worked on the same model with focus on the agent
+\textit{Francisella tularensis} \cite{carruthers2020stochastic}, and similar
+work has been directed towards the pathogenesis of salmonella. The mathematical
+backbone of these models rests on the classical theory of birth-and-death
+processes and their killed variants
+\cite{karlin1957classification,karlin1982linear,di2008note}.
+
+Our particular interest is the potential importance of this replication and
+bursting strategy, along with other behaviours of \textit{Y.~pestis}, for an
+advantage in early pathogenesis --- getting a foothold when numbers are few,
+before a serious immune response arrives. Those questions return in
+Chapters~4a and~4b, where the single-cell theory developed here is completed and
+then embedded in a population model; for the purposes of the present chapter, we
+take the birth--death--catastrophe process as an abstract model, unbound by any
+specific application. We will present a number of mathematical results which
+quantify the stochastics of its growth and fixation over time.
+
+\subsection*{Further interest}
+
+Interest in the dynamics of catastrophic population decline is nothing new.
+Towards the end of the 18th century, Thomas Malthus published his fears of
+impending societal collapse. He worried that a geometrically growing census
+would be less and less supported by only arithmetic development in food
+production, ultimately resulting in mass famine. In the relevant literature,
+such population reductions by external factors are termed ``positive checks'',
+as opposed to the ``preventative checks'' by which individuals have fewer
+children to account for resource scarcity.
+
+In 1755, just 11 years before Thomas Malthus was born, Lisbon experienced a
+substantial earthquake that devastated the city. Voltaire includes a graphic
+scene of this in his allegorical novel \textit{Candide}. Perhaps catastrophe was
+on the mind of the age, and maybe the anxiety was justified. France, after all,
+was on the brink of revolution:
+
+\begin{quotation}
+``War had created such social systems of unprecedented complexity that they
+exceeded the capacities of their internal regulatory mechanisms to orchestrate
+the behaviours of their parts. When, as in France, administrative chaos became
+too great and the government collapsed --- an event easily measured by the
+financial crisis of 1788 --- society exploded.'' \cite{artigiani1987revolution}
+\end{quotation}
+
+This quote is from a paper which attempts to apply Prigogine's theory of
+dissipative structures to the evolution of culture and societal norms through
+revolutions. It is perhaps ambitious, and lacking in empirical merit, but it has
+a certain appeal. Similarly, we are curious about the prospect that the BDC
+process, or a variant of it, can be taken in allegory to illustrate a general
+behaviour observed in dissipative structures present across multiple dynamic
+phenomena.
+
+We have also been interested in the role of catastrophic events in triggering
+evolutionary transitions. A notable example is the KT boundary, where
+65 million years ago much of life on earth was wiped out by an asteroid,
+setting the stage for a mass proliferation and diversification of mammals.
+
+It has also been postulated that the catastrophes of plague in Europe and their
+aftermath contributed to advancements in technology and culture --- most recently
+by James Belich, who argues that previous estimates for the scale of population
+decline sit below the real figure, claiming the initial wave saw a death of at
+least 50\% of the European population in the decade following 1345. With such a
+sudden elimination of so many people, labour was in reduced supply. It has been
+hypothesised that a subsequent necessity to do more work with fewer people
+encouraged a number of mechanical inventions; these, along with higher wages,
+might have contributed to the improved prosperity and the cultural advancements
+seen in the renaissance and the enlightenment periods. It is even said that the
+Lisbon earthquake and its cleanup spurred advancements in geographical
+techniques: damage to buildings was diligently recorded by locality, providing
+new light on the concept of an epicentre.
+
+These evolutionary echoes of catastrophe will be touched on again when, in
+Chapter~4b, we compare the bursting strategy against its alternatives. For now,
+let us take a step back, and then forward, into the mathematics of the
+birth--death--catastrophe process.

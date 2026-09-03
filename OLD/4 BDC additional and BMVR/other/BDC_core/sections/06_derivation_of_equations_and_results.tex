@@ -1,0 +1,141 @@
+\section{Derivation of equations and results}
+\label{sec:derivations}
+
+The closed forms of Section~\ref{sec:analytical} all descend from one Riccati
+equation, obtained twice over --- once for $I$ and once for $D$ --- with
+different initial conditions. We derive that equation, solve it, and then
+assemble the remaining results from it.
+
+\subsection{The Riccati equation for $I(t)$}
+
+Considering what may happen during an interval of duration $\delt$ after
+$t=0$, we can write down
+$$I(0+\delt) = \mu \delt + [1 - (\lambda + \mu + \delta)\delt] I(0) + \lambda\delt\, {I(0)}^2 + o(\delt).$$
+The single initial unit may die, divide, cause rupture, or do nothing at all;
+each possibility is accounted for on the right-hand side, with the respective
+event probabilities multiplied by the updated non-rupture likelihoods --- as if
+the process were beginning anew. In the case that a rupture occurred, this value
+is obviously $0$; if the unit dies, non-rupture is certain, contributing the
+$\mu\delt$ term; if a birth takes place, the non-rupture probability assumes
+the value $I_2(0)$, which, by the branching property, equals ${I(0)}^2$.
+Because the model is homogeneous in time, the relation maintains applicability
+in subsequent intervals $[t, t+\delt]$:
+$$I(t+\delt) = \mu \delt + [1 - (\lambda + \mu + \delta)\delt] I(t) + \lambda\delt\, {I(t)}^2 + o(\delt).$$
+Rearranging yields
+$$\frac{I(t+\delt) -I(t)}{\delt} = \mu - (\lambda + \mu + \delta) I(t) + \lambda {I(t)}^2 + \frac{o(\delt)}{\delt},$$
+which, in the limit as $\delt\to 0$, becomes
+\begin{equation}
+\label{ddII}
+\ddt{I} = \mu - (\lambda + \mu + \delta) I + \lambda {I}^2,
+\end{equation}
+a Riccati equation. Its quadratic right-hand side factorises through the roots
+$a$ and $b$ defined in Section~\ref{sec:reference}, giving the equivalent form
+\begin{equation}
+\label{ddIIfact}
+\ddt{I} =\lambda\lrb{I-a}\lrb{I-b}.
+\end{equation}
+Plotting $\dd I/\dd t$ against $I$ gives an intuitive picture of why $I(t)$
+tends to $b$ at late time: $b$ is the stable root, and any trajectory starting
+at $I(0)=1<a$ runs downhill towards it.
+
+The identities collected in \Eqref{eq:identities} fall out of this
+factorisation. Expanding $\lambda(I-a)(I-b)$ and comparing coefficients with
+\eqref{ddII} gives, by Vieta's formulas,
+$$ab=\frac{\mu}{\lambda},\qquad a+b=\frac{\lambda+\mu+\delta}{\lambda}.$$
+The two derived constants $A=a-1$ and $B=1-b$ then combine as
+$$AB = (a-1)(1-b) = a + b - ab - 1
+= \frac{\lambda+\mu+\delta}{\lambda} - \frac{\mu}{\lambda} - 1
+= \frac{\delta}{\lambda},$$
+while $A+B=(a-1)+(1-b)=a-b$ and $\theta=\lambda(a-b)$ are immediate from the
+definitions. These four identities are the bookkeeping that makes every closed
+form in the chapter collapse to its shortest shape, and they are worth
+committing to memory.
+
+\subsection{Solving the Riccati equation}
+
+Since the right-hand side of \eqref{ddIIfact} is a product of linear factors,
+the equation separates:
+$$\int \frac{\dd I}{(I-a)(I-b)} = \lambda t + \text{const}.$$
+The partial-fraction decomposition
+$$\frac{1}{(I-a)(I-b)} = \frac{1}{a-b}\lrb{\frac{1}{I-a}-\frac{1}{I-b}}$$
+integrates the left-hand side to $(a-b)^{-1}\log\frac{I-a}{I-b}$, so every
+solution satisfies
+\begin{equation}
+\label{eq:riccati_ratio}
+\frac{I(t)-a}{I(t)-b} = \frac{I(0)-a}{I(0)-b}\,\ee^{\lambda(a-b)t} = \frac{I(0)-a}{I(0)-b}\,w.
+\end{equation}
+With $I(0)=1$, the ratio on the right is $(1-a)/(1-b)=-A/B$, and solving
+\eqref{eq:riccati_ratio} for $I(t)$ reproduces the closed form of
+Theorem~\ref{thm:I}:
+\begin{equation}
+\label{formI}
+I(t) = \frac{aB + bA\,w}{B + A\,w}.
+\end{equation}
+(Some treatments of this process label the two roots $I_+$ and $I_-$; the
+correspondence is $I_+=a$ and $I_-=b$, and we use $a$, $b$ throughout.)
+
+\subsection{The internal-extinction probability $D(t)$}
+
+The probability $D(t)=p_0(t)$ that the process has died out internally by time
+$t$ satisfies the \textit{same} Riccati equation as $I$, with a different
+initial condition. The first-step decomposition is identical in structure: if
+the first unit dies, the process sits at $0$ with certainty; if it divides,
+both descendant families must die out, an event of probability $D(t)^2$; if it
+causes a rupture, the process is at $H$ and not at $0$. Hence
+\begin{equation}
+\label{ddD}
+\ddt{D} = \mu - (\lambda + \mu + \delta) D + \lambda D^2,\qquad D(0)=0.
+\end{equation}
+In the ratio form \eqref{eq:riccati_ratio}, the initial ratio is now
+$(0-a)/(0-b)=a/b$, so
+$$\frac{D(t)-a}{D(t)-b} = \frac{a}{b}\,w,$$
+and solving for $D(t)$ gives the closed form of Theorem~\ref{thm:D}:
+$$D(t) = \frac{ab(w-1)}{aw-b}.$$
+That $I$ and $D$ obey the same differential equation is not a coincidence: both
+are ``survival-type'' quantities for the same process, distinguished only by
+which absorbing state is counted as survival, and the shared equation is what
+makes their difference simplify so cleanly.
+
+\subsection{The non-fixation probability $\Ifix(t)$}
+
+With $I$ and $D$ in hand, $\Ifix=I-D$ could be written down immediately; but the
+direct derivation is worth recording, because it exposes the structure that the
+multi-founder formulas of Section~\ref{sec:analytical} inherit. A first-step
+decomposition for $\Ifix$ differs from the two above in the birth branch: after
+a division, non-fixation of the pair requires that \textit{neither} family
+fixates, whether by death or by rupture, and that event has probability
+$I^2-D^2$, not $\Ifix^2$. Thus
+\begin{equation}
+\label{ddIfix}
+\ddt{\Ifix} = -(\lambda + \mu + \delta)\Ifix + \lambda\lrb{I^2 - D^2},\qquad \Ifix(0)=1,
+\end{equation}
+where the death and catastrophe branches contribute nothing, each sending the
+process to one of the absorbing states. Subtracting \eqref{ddD} from
+\eqref{ddII} yields the same equation, confirming $\Ifix = I - D$. The closed
+form follows by algebra:
+$$\Ifix(t) = I(t) - D(t) = \frac{aB + bAw}{B+Aw} - \frac{ab(w-1)}{aw-b} = \frac{(a-b)^2\,w}{(B+Aw)(aw-b)}.$$
+The limits read off from this expression agree with the definition:
+$\Ifix(0)=(a-b)^2/[(A+B)(a-b)]=1$, and $\Ifix(t)\to0$ as $w\to\infty$, since
+the numerator grows like $w$ while the denominator grows like $w^2$.
+Differentiating \eqref{ddIfix} at $t=0$ gives the initial slope
+$\Ifix'(0)=-(\lambda+\mu+\delta)+\lambda=-(\mu+\delta)$, the total rate at
+which a productive realisation is lost at the first instant. When $\mu=0$ we
+have $b=0$ and $D\equiv0$, and \eqref{ddIfix} collapses to the Riccati
+equation for $I$ itself.
+
+\subsection{The forward relation $I'=-\delta J$}
+\label{sec:forwardI}
+
+One further relation, connecting the non-catastrophe probability to the mean
+load, will be used repeatedly. The forward Kolmogorov equation for the
+probability of the rupture state is
+$$\ddt{}\pr{\xt = H} = \delta\sum_{n\ge1} n\,p_n(t) = \delta J(t):$$
+the state $H$ is entered from every productive state $n$, at rate $\delta n$.
+Since $I(t)=1-\pr{\xt=H}$, this gives immediately
+\begin{equation}
+\label{ddIJ}
+\ddt{I} = -\delta J,
+\end{equation}
+which is the first of the key ODEs of Section~\ref{sec:reference} in a second
+guise, and from which $J(t)=-\delta^{-1}I'(t)$ follows by differentiation of
+\eqref{formI}, as claimed in Theorem~\ref{thm:J}.

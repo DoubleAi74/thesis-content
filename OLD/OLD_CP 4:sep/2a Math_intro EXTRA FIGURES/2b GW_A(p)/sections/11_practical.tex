@@ -1,0 +1,53 @@
+\section{Computing \texorpdfstring{$A(p)$}{A(p)} in practice}
+\label{a:sec:practical}
+
+In the absence of an exact formula we are left with approximation, and the two
+regimes identified above suggest how to split the work.
+
+Over most of the interval, direct iteration is entirely satisfactory: the infinite
+product \cref{a:eq:prodFormula} converges quickly, its partial products bound $A(p)$
+from above at every order, the tail bound \cref{a:eq:producttailbound} supplies a
+matching lower bound and hence a stopping certificate, and modest numbers of
+iterations give many digits. The difficulty is confined to a neighbourhood of
+$p=\tfrac12$, and the binding constraint is that as the process is
+defined ever closer to criticality its lifetime, though still finite, grows
+enormously, and $S_n$ recedes to zero ever more slowly. The iteration must be
+carried to a generation at which $S_n$ is essentially unchanging, and
+\cref{a:tab:Avals} shows what that costs: about $10^2$ iterations at $p=0.2$,
+$10^3$ at $p=0.45$, but nearly $5\times10^5$ at $p=0.4999$.
+
+The remedy is to hand the near-critical region to the asymptotic
+\cref{a:eq:Anearcritical}, which is exact in the limit and cheap everywhere:
+\begin{equation}
+\label{a:eq:Apractical}
+A(p) \approx
+\begin{cases}
+\displaystyle \frac12\prod_{k=1}^{N}\lrb{1-\frac{S_k}{2}}, & p<p_\ast,\quad N\gg1,\\[14pt]
+2-4p, & p\ge p_\ast,
+\end{cases}
+\end{equation}
+with the crossover $p_\ast$ chosen just below $\tfrac12$. \Cref{a:rem:rate}
+indicates where to put it. The relative error of the asymptotic is about
+$\varepsilon\log(1/\varepsilon)$ by \cref{a:thm:nearcritical}, so at
+$p_\ast = 0.4999$ (that is $\varepsilon = 2\times10^{-4}$) the asymptotic is already
+accurate to about two parts in $10^3$, while the product still converges in a few
+hundred thousand iterations. Any $p_\ast$ in the range $0.499$ to $0.4999$ gives a
+scheme accurate to better than one per cent throughout, and the two branches can be
+blended over a narrow window if continuity of the derivative matters.
+
+First, use the product rather than the raw ratio $S_n/(2p)^n$: only the product
+comes with the certificate \cref{a:eq:producttailbound}.
+
+Second, stop on the certificate, not on apparent convergence. In the near-critical
+regime successive floating-point iterates cease to differ long before the tail is
+genuinely negligible, and a stopping rule based on observed change silently returns
+the wrong answer. The bracket in \cref{a:eq:producttailbound} costs one extra
+multiplication and removes the failure mode.
+
+Third, if the quantity actually needed is the quasi-stationary mean $1/A$ rather
+than $A$ itself --- as it usually is --- then the series \cref{a:eq:Aseries}
+computes it directly, and its partial sums increase to the answer, giving the
+complementary one-sided bound.
+
+This is the recipe used for the numerical values quoted throughout this chapter
+and in \ChM, including \cref{a:tab:Avals}.

@@ -1,0 +1,31 @@
+\section{Further considerations}
+
+From 
+\begin{align}
+\mean{K} &= \mean{K| \tau > t} \pr{\tau > t} + \mean{K| \tau < t}\pr{\tau<t},\\
+&= \mean{K|\tau > t} I(t) + \frac{V(t)}{1 - I(t)} \lrb{1 - I(t)},
+\end{align}
+We find,
+$$\mean{K| \tau > t}  = \frac{\mean{K} - V(t)}{I(t)}   =   \frac{  \sum^{\infty}_{k} k \pr{K = k}  - V(t)}{I(t)}$$
+
+Note: $\mean{K} = V_{\text{inf}} = \frac{\lambda - \mu}{\delta} \lrb{1 - I_-} + 1$ (check). Actually, there is some complication. $V(t) = \mean{\yt}$ where $\yt$ is the number of agents ``released''. Basically, at the rupture event, the value of $\xt$ immediately before catastrophe becomes the value of $\yt$. $\yt$ is otherwise 0. What I'm getting at is that $V(t\to \infty)$ does not only represent the average burst size. When $\mu > 0$, some processes will go extinct without catastrophe. In these cases, $\yt$ will remain 0. $V(t) = \mean{\yt}$ captures these processes in its quantity. So if we want to extract the true burst size mean from $V(t)$, we must somehow condition on the processes that did reach rupture. 
+
+$$V(t) = \mean{\yt}$$ 
+Whether the catastrophe event has taken place or not can be represented by the truth of $\yt>0$, as the minimum burst size is 1. Rupture has occurred with probability $1 - I(t)$.
+$$\mean{\yt} = \mean{\yt|\yt > 0}(1-I(t)) + {\mean{\yt | \yt = 0}}I(t)$$
+Since $ {\mean{\yt | \yt = 0}} = 0,$
+$$\mean{\yt} = \mean{\yt|\yt > 0}(1-I(t))$$
+$$ \mean{\yt|\yt > 0} = \frac{\mean{\yt}}{1-I(t)}.$$
+This can be thought of as $\mean{\text{Burst size } | \text{ burst has happened}}$. Note equivalence to a term written above:
+$$\mean{K | \tau < t} =\frac{V(t)}{1-I(t)}. $$
+So, the overall expected burst size --- the expected size of an arbitrarily generated burst --- is the late time value of this expression: 
+$$\mean{K} = \lim_{t\to \infty} \lrb{\mean{K| \tau < t}} = \frac{V_{\text{inf}}}{1 - I_-}.$$
+$$\mean{K} = \frac{\frac{\lambda - \mu}{\delta}(1-I_-) + 1}{1-I_-} = \frac{\lambda - \mu}{\delta} + \frac{1}{1-I_-}.$$
+
+Hence, 
+$$\mean{K|\tau > t} = \frac{\frac{V_{\text{inf}}}{1 - I_-} - V(t)}{I(t)} =  \frac{\frac{\lambda - \mu}{\delta} + \frac{1}{1-I_-} - V(t)}{I(t)}.$$
+
+Though, there is a curious circularity to this which I'm yet to fully understand. Look what happens when we take $\mean{K|\tau> t}$ at its late time value. 
+
+$$\lim_{t\to\infty}\mean{K|\tau > t} = \frac{\frac{V_{\text{inf}}}{1 - I_-} - V_{\text{inf}}}{I_-}  = \frac{V_{\text{inf}}}{1 - I_-} = \mean{K}$$
+Maybe this is an obvious result, but I am yet to fully grasp why.

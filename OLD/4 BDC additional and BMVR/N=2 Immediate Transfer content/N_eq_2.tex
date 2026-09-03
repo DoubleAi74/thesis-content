@@ -1,0 +1,449 @@
+
+
+
+
+
+
+
+\section{$N = 2$ case}
+
+The following will be a summary of our analytical progress in understanding the chained bursting model. 
+
+We are exploring this area in pursuit of a more general aim to compare and contrast budding and bursting assumptions in models of bacterial and viral pathogenesis. Budding dynamics are widely used in the modelling of viral dynamics. They generally assume that cells and free virions are well mixed, that host cells can be simply infected or not, and that infected cells release new free virions at a steady rate.\par
+The bursting assumption models we have been looking at are quite different. Infected cells contain a changeable number of pathogenic particles. In our case, these intracellular dynamics follow a standard birth-death process, or just a birth process, excluding death for tractability. Pathogen isn't released steadily as in budding; the entire content of a host cell is released at its time of rupture, and this event may be brought on by the resident infection itself. \par
+So far, we have been successful in describing the mean behaviour of a single host cell through the course of its infection. Our next steps will be in trying to quantify the dynamics of an infection that spreads through a population of host cells. Perhaps in a well-mixed setting, or even with some spatial component. For now, we have simplified the line of questioning to free up tractability. We have considered a chained infection assumption whereby at the rupture of an infected cell, its entire contents are immediately transferred into another host cell from the population. This repeats until one by one, all of the host cells have been infected and have ruptured. 
+
+
+
+\subsubsection*{Specifying the model}
+
+
+To begin with, there are $M$ macrophages, all but one empty with the exception containing a single pathogenic particle. 
+
+This might be quite a reasonable initial condition given that the number of colony-forming units in some diseases is small ($\mathcal{O}(100)$) compared to the number of immune cells in the body.
+
+
+Macrophage resident pathogenic particles are subject to a standard birth-death process (for now, we consider only the no-death case), and there is also the possibility of a rupture event. This catastrophe will occur at a rate proportional to the number of intracellular particles. On rupture, a macrophage will release all of its pathogenic load, usually into the surrounding extracellular medium, but for our purposes, we assume that it is all immediately transferred into another macrophage, where again a birth-death and rupture process will take place. 
+
+In this way, supposing there is no pathogenic extinction (a certainty in the no-death case), the process will see a total of M macrophage rupture events, of increasing pathogenic load and partitioned by reducing intervals of time. 
+
+Considering the ith of these M catastrophe events, what sort of questions can we ask? So far, we have had some success in describing the rupture counts; the number of pathogenic particles present at the time of a given rupture. For the $i$th of such events, we label this count, $r_i$. And indeed, we have been able to describe the distribution of this quantity for each $i$. There is some technicality to the general case, $i = M$, but this will be covered below. 
+
+The other obvious method of description is in the times at which these catastrophes occur. We assign the label, ti, to the time at which the $i$th rupture takes place. These, along with the interval times, $T_i = t_i - t_{i-1}$, make up the current focus for our analysis. 
+
+
+
+
+
+
+
+\subsubsection*{Results on rupture size distributions}
+
+
+
+
+It was possible to write a general formula for the coefficients!
+
+$$\mathcal{P}(r_k) = \mathrm{Prob}\{r_k = n|X_0=1\}$$
+
+$$\mathcal{P}(r_1) = \left(\frac{\delta}{\delta + \lambda}\right)^{} \left(\frac{\lambda}{\delta + \lambda}\right)^{n-1}$$
+
+$$\mathcal{P}(r_2) = n\left(\frac{\delta}{\delta + \lambda}\right)^{2} \left(\frac{\lambda}{\delta + \lambda}\right)^{n-1}$$
+
+$$\mathcal{P}(r_3) = \frac{n(n+1)}{2}\left(\frac{\delta}{\delta + \lambda}\right)^{3} \left(\frac{\lambda}{\delta + \lambda}\right)^{n-1}$$
+
+$$\mathcal{P}(r_4) = \frac{n(n+1)(n+2)}{6}\left(\frac{\delta}{\delta + \lambda}\right)^{4} \left(\frac{\lambda}{\delta + \lambda}\right)^{n-1}$$
+
+
+$$\mathcal{P}(r_k) = \mathcal{A}^{(n)}_{k}\left(\frac{\delta}{\delta + \lambda}\right)^{k} \left(\frac{\lambda}{\delta + \lambda}\right)^{n-1}$$
+
+
+$$\mathcal{A}^{(n)}_{k} = \sum^{n}_{i=1}\mathcal{A}^{(i)}_{k-1}, \hspace{10pt} \mathcal{A}^{(i)}_{1} = 1 \;\; \forall i $$
+ and  $\mathcal{A}^{(i)}_2 = i$ because $\sum_{i=1}^n \mathcal{A}_1^{(i)}= \sum_{i=1}^n 1 = n$
+$$\mathcal{A}^{(n)}_{k} =  \frac{1}{k!}\frac{(n+k-1)!}{(n-1)!}$$
+You can see the pattern of this result emerging in $n=1,2,3$ and 4. Perhaps it is possible to prove it by induction.
+
+
+\vspace{20pt}
+
+\subsubsection*{Towards rupture time distributions}
+
+In the chained model, the first cell will rupture at some time, $t_1$, distributed according to the probability density function (pdf), $\mathcal{F}_{1}(t) = -\frac{\mathrm{d}S}{\mathrm{d}t}$. This being for the case in which there is only a single initial bacterium. More generally, if $X_0 = m$ rather than 1, the first rupture time would be distributed according to,
+$$\mathcal{F}_{m}(t) = -mS^{m-1}\frac{\mathrm{d}S}{\mathrm{d}t}.$$
+We obtain this by differentiating the cumulative density function, $\mathcal{C}(t) = 1 - S^m$. $S(t)$ being the probability that a cell containing one initial bacterium is still alive at time $t$;  $1 - S^m$, the probability that the cell is \textbf{not} alive given it began with $m$ units.\par
+
+The second rupture event wil take place at time, $t_2$, a duration constituted by $t_1$, and the second cellular lifetime, $t_2 - t_1$. Let us call this latter quantity $\tau_1$; the time until the next rupture following the first. \par
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{$N = 2$ results --- Part 1}
+
+
+
+We are talking about a model in which the dynamics are that of a standard BDC process. Until the time of the first rupture, everything is identical with BDC. But here, we consider the case in which on ``rupture'', all replicative units immediately find themselvs, as it were, in a new cell. That is, at this instant, a new BDC process is started with an initial condition set by the ``burst size'' of the previous. \par
+We define the random variables $r_1$ \& $t_1$ as the burst size and time of the initial process; $r_2$ \& $t_2$ are the burst size and time of a ``second'' BDC process starting at time $t_1$, with initial condition, $r_1$.  \par
+We have above determined the discrete distribution of 
+$$\pr{r_1 = k_1} =    \frac{1}{k!}\frac{(n+k-1)!}{(n-1)!}    \left(\frac{\delta}{\delta + \lambda}\right)^{k} \left(\frac{\lambda}{\delta + \lambda}\right)^{n-1}.$$
+Then, given the second process starts with an initial condition distributed as such, to describe the distribution of secondary burst sizes, we sum over the possible start points, weighted by their likelihood:
+$$\pr{r_2 = k_2} = \sum_{k=1}^\infty \pr{r_2 = k_2 | r_1 = k_1}\pr{r_1 = k_1}$$
+
+
+There is more than one way to determine the distribution of intitial burst sizes. One is as we've seen above: considering the chain of events that causes a particular outcome. Another, uses a time integral over the probability of being in a particular state at a particular time multiplied by the probability density function of rupture times. 
+
+This is like Multiplying the probability of being in a given state at a given time, and the probability of the rupture hapening at that time. 
+$$\pr{r_1 = k_1} = \int_0^{\infty}{\mathcal{F}_{1}(t)\pr{\xt = k_1}}\dd t$$
+Also,
+$$\pr{r_1 = k_1} = \delta k_1\int_0^{\infty}{\pr{\xt = k_1}}\dd t$$
+Which aries from a similar logic. I'd like to confirm that these give the same result.\par
+for present purpouses, we want to write a formula for the rupture size probabilities given an arbitrary initial condition:
+$$\pr{r_2 = k_2 | r_1 = k_1}.$$
+can use any of the 3:
+
+
+
+
+\subsubsection*{1}
+
+$$\pr{r_1 = k_1} = \delta k_1\int_0^{\infty}{\pr{\xt = k_1}}\dd t$$
+Can be explained with the following logic. 
+We begin by discretising time into $[0,\delt , 2 \delt , \dots]$. And for each time interval, consider the probability of the process being in state $k$, and undergoing catastrophe. If we sum 
+
+$$\sum_{i=0}^\infty \pr{\xx_{i\delt} = k}\pr{\xx_{(i+1)\delt} = H|\xx_{i\delt} = k},$$
+the probability of a particular burst size taking place in each time interval, it gives us the overall probability of ending up with that value of $r_1$. Taking a sum like this gives the probability that the rupture takes place in any of the intervals in which the process is at the particular state, $k_1$.\par
+When taken in the limit at $\delt \to 0$, this sum becomes an integral, and with 
+$$\pr{\xx_{(i+1)\delt} = H|\xx_{i\delt} = k} = \delta k \delt$$
+the form of this is as above:
+$$\pr{r_1 = k_1} = \delta k_1\int_0^{\infty}{\pr{\xt = k_1}}\dd t.$$
+For clarity, it's taken that,
+$$\lim_{\delt\to0}\lrb{\sum^\infty_{i=0} \pr{\xx_{i\delt} = k} \delt} = \int^{\infty}_0  \pr{\xx_{t} = k} \dd t.$$
+
+
+\subsubsection*{2}
+$$\pr{r_1 = k_1} = \int_0^{\infty}{\mathcal{F}_{1}(t)\pr{\xt = k_1}}\dd t$$
+
+
+\subsubsection*{3}
+
+$$\pr{r_1 = k_1} =  \lrb{\frac{\delta}{\delta + \lambda}} \lrb{\frac{\lambda}{\delta + \lambda}}^{k_1-1}$$
+
+
+\subsubsection*{For more than one initial replicative unit}
+
+Now let us consider the case of more than one initial unit. A formula for 
+$$\pr{r_1 = k_1| \xx_0 = k_0}, \;\; (k_0\neq 1)$$
+May allow us to formulate an expression for $\pr{r_2 = k_2}$, the second rupture size distribution.
+
+
+$$\pr{r_1 = k_1| \xx_0 = k_0} = \int_0^{\infty}{\mathcal{F}_{k_0}(t)\pr{\xt = k_1| \xx_0 = k_0}}\dd t$$
+
+
+
+\subsubsection{Deriving the second rupture size distribution}
+
+$$\pr{r_2 = k_2} = \sum^{\infty}_{k_1 = 1} \pr{r_2 = k_2 | r_1 = k_1} \pr{r_1 = k_1}$$
+Then, the three potential formulas for: (taking number 2 for example)
+$$\pr{r_2 = k_2| r_1 = k_1} = \int_0^{\infty}{\mathcal{F}_{k_1}(t)\pr{\xt = k_2| \xx_0 = k_1}}\dd t$$
+(Actually, number 1 is better:)
+$$\pr{r_2 = k_2| r_1 = k_1}  = \delta k_2 \int_0^{\infty}\pr{\xt = k_2 | \xx_0 = {k_1}}\dd t$$
+Then
+$$\pr{\xt = k_1| \xx_0 = k_0}$$
+can be found using the pgf (with exponent relating initial condition).\\
+
+\subsubsection{Finding the state probability formula to integrate}
+We have the probability generating function:
+$$G(z,t) = \lrbs{\frac{ab\lrb{1 - \ee^{\beta (a-b) t}} + z\lrb{b\ee^{\beta(a-b) t} -a} }{ b-a\ee^{\beta(a-b)t} - z\lrb{1 - \ee^{\beta(a-b)t}}   }}^k$$
+where the initial condition is found in the exponent, $\xx_0 = k$. As done in Jonty's paper, we can write this, dividing $(b-a\ee^{\beta(a-b) t})$, as
+\begin{equation}
+\label{G127}
+G(z,t)  = \lrbs{\frac{ab\gamma(t) + v(t) z }{ 1- \gamma(t)z }}^k.
+\end{equation}
+Using 
+$$\frac{1}{1-x} = 1+x+x^2+x^3+\dots,$$
+and 
+$$\lrb{\frac{1}{1-x}}^2 = \ddt{}\lrb{\frac{1}{1-x}},$$
+it can be shown that 
+$$\lrb{\frac{1}{1-x}}^k   = \frac{1}{(k-1)!} \sum^\infty_{n=0} \frac{(k-1+n)!}{n!} x^n.$$
+Hence, with (\ref{G127}), 
+
+$$G(z,t)  = \lrb{ab\gamma(t) + v(t) z }^k \lrb{ \frac{1}{(k-1)!} \sum^\infty_{n=0} \frac{(k-1+n)!}{n!} \lrb{\gamma(t) z}^n}$$
+(note: the coefficient in the sum can be written, ${ k-1+n \choose n } = \frac{(k-1+n)!}{n! (k-1)!}$.)\par
+Then, with the binomial expansion,
+$$\lrb{ab\gamma(t) + v(t) z}^k =  \sum^{k}_{m=0} {k\choose m} \lrb{ab\gamma(t)}^{k-m} \lrb{v(t) z}^m.$$
+So $G(z,t)$ can be written as 
+$$G(z,t) =   \lrb{ \sum^{k}_{m=0} {k\choose m} \lrb{ab\gamma(t)}^{k-m} \lrb{v(t) z}^m   } \lrb{   \sum^\infty_{n=0} { k-1+n \choose n } \lrb{\gamma(t) z}^n}$$
+
+
+
+
+
+\subsubsection{Extracting the power series coefficients}
+
+We can use 
+$$\Theta_m  = {k \choose m} (ab)^{k-m} \gamma(t)^{k-m} v(t)^m  \;\;\text{ and }\;\; \Omega_n = {k-1+n \choose n} \gamma(t)^n$$
+to write
+
+$$G(z,t) = \lrb{\sum^k_{m=0} \Theta_m z^m} \lrb{\sum^{\infty}_{n=0}  \Omega_n z^n}.$$
+We are interested in extracting the sequential power series, $a_0 + a_1 z+ a_2z^2+ \dots$. Because $G$ is a probability generating function, these coefficients, $a_i$, are state-probabilities of the described BDC model. To do so, we can note that in the product of sums above, a term of order $H$ in $z$ will be constituated by all parings for which $m+n = H$. If the left hand sum were infinite ($k\to\infty$), these coefficients would simply be
+
+$$\sum^H_{i=0} \Theta_{(H-i)} \Omega_i $$
+$$\lrb{G(z,t) = \sum^\infty_{H=0} \lrbs{\sum^H_{i=0} \Theta_{(H-i)} \Omega_i  }z^H   }$$
+But because $k$ is taken to be finite, the coefficients will differ depending on whether $H$ is less than $k$. The change can be represented as follows.
+$$\begin{cases}
+\displaystyle
+\sum^H_{i=0} \Theta_{(H-i)} \Omega_i ,&  \hspace{10pt} H<k\\
+\displaystyle
+\sum^k_{i=0} \Theta_{(k-i)} \Omega_{i+H-k}, &  \hspace{10pt}  H\geq k
+\end{cases}$$
+Or, as 
+$$\sum^{\min(H,k)}_{i=0} \Theta_{(k-i)} \Omega_{i+ \max(0,H-k)},$$
+resulting in 
+$$G(z, t) =  \sum^\infty_{H=0} \lrbs{\sum^{\min(H,k)}_{i=0} \Theta_{(k-i)} \Omega_{i+ \max(0,H-k)}}z^H.$$
+The question of whether these coefficients are integratable can be reduced to whether the following intagration is possible.
+$$\int \gamma(t)^n v(t)^m \dd t $$
+for arbitrary $n,m\in \mathbb{N}$. Recaling that 
+
+$$\gamma(t) = \frac{1 - \ee^{\beta(a-b) t}}{b - a \ee^{\beta (a-b) t }},$$
+$$    v(t) = \frac{ b \ee^{\beta(a-b) t} - a}{    b - a \ee^{\beta (a-b) t } }.$$
+
+
+
+\noindent
+Define $c =\beta (a-b)$. Given the question of whether we can integrate 
+
+$$\lrb{\frac{1 - \ee^{ct}}{b - a \ee^{ct }}  }^n  \lrb{ \frac{ b \ee^{c t} - a}{    b - a \ee^{ct } } } ^m$$
+for arbitrary $n, m \in \mathbb{N}$, it proves useful to write the expression as 
+$$\lrb{1 - \ee^{ct}}^n\lrb{b \ee^{ct} - a}^m  \cdot \lrb{  b - a \ee^{c t }}^{-(n+m)}$$
+Using the binomial expansion,
+
+$$\lrb{1 - \ee^{ct}}^n  = \sum_{k=0}^n {n\choose k} \lrb{-\ee^{ct}}^k$$
+
+$$\lrb{b\ee^{ct} - a}^m = \sum_{k=0}^m {m\choose k }\lrb{b \ee^{ct}}^{m-k} \lrb{-a}^k.$$
+Hence, we can represent the left two factors above as a series sum in powers of $(\ee^{ct})^i$:
+
+$$\lrb{1 - \ee^{ct}}^n\lrb{b \ee^{ct} - a}^m  = \sum_{i=0}^{n+m} K_i (\ee^{ct})^i$$
+With constants $K_i$ to be determined. Given this, the possibility of integrating $\gamma(t)^n v(t)^m $ is reduced to integrating 
+$$\frac{\lrb{\ee^{ct}}^i}{ \lrb{b - a\ee^{ct}}^j  }$$
+for $i, j \in \mathbb{N}$. Wolffram Alpha gives this as 
+
+$$\int \frac{\lrb{\ee^{ct}} ^i}{\lrb{b - a\ee^{ct}} ^j} \dd t  = -\frac{i \lrb{\ee^{ct}}^i  \lrb{b-a \ee^{ct}}^{1-j}    {}_2F_1\lrb{1, (1+i) - j; 1 + i; \frac{a\ee^{ct}}{b}}   }{bc}$$
+
+
+
+
+When it comes to the coefficients, $K$
+
+
+\subsection*{Power series expansion relevant to solving the integral}
+
+The purpose of this report is to expand the expression \((1-x)^n \cdot (bx - a)^m\) using the binomial theorem, and to express the result as a series in powers of \(x\). Here, \(n\) and \(m\) are positive integers, while \(a\) and \(b\) are real constants.
+
+\subsection*{Expansion Process}
+
+\subsubsection*{Step 1: Expand \((1-x)^n\)}
+
+The binomial theorem states that for any integer \(n\), the expression \((1-x)^n\) can be expanded as:
+\begin{equation}
+(1-x)^n = \sum_{k=0}^{n} \binom{n}{k} (-1)^k x^k,
+\end{equation}
+where \(\binom{n}{k}\) is the binomial coefficient.
+
+\subsubsection*{Step 2: Expand \((bx - a)^m\)}
+
+Similarly, the expansion of \((bx - a)^m\) using the binomial theorem is given by:
+\begin{equation}
+(bx - a)^m = \sum_{j=0}^{m} \binom{m}{j} b^j x^j (-a)^{m-j}.
+\end{equation}
+
+\subsubsection*{Step 3: Multiply the Series}
+
+To find the expansion of the product \((1-x)^n \cdot (bx - a)^m\), we multiply the two series:
+\begin{equation}
+(1-x)^n \cdot (bx - a)^m = \left( \sum_{k=0}^{n} \binom{n}{k} (-1)^k x^k \right) \cdot \left( \sum_{j=0}^{m} \binom{m}{j} b^j x^j (-a)^{m-j} \right).
+\end{equation}
+
+Expanding the product, we obtain a double sum:
+\begin{equation}
+= \sum_{k=0}^{n} \sum_{j=0}^{m} \binom{n}{k} \binom{m}{j} (-1)^k b^j (-a)^{m-j} x^{k+j}.
+\end{equation}
+
+\subsubsection*{Step 4: Collect Terms in Powers of \(x\)}
+
+Finally, we collect the terms by powers of \(x\) to express the result as:
+\begin{equation}
+\sum_{p=0}^{n+m} \left( \sum_{\substack{k+j=p \\ k \leq n, j \leq m}} \binom{n}{k} \binom{m}{j} (-1)^k b^j (-a)^{m-j} \right) x^p.
+\end{equation}
+
+This double summation provides the coefficients for each power \(x^p\) in the expanded series.
+
+\section*{Power series}
+
+The expansion of the expression \((1-x)^n \cdot (bx - a)^m\) in powers of \(x\) results in a series where the coefficient of \(x^p\) is given by:
+\begin{equation*}
+\sum_{\substack{k+j=p \\ k \leq n, j \leq m}} \binom{n}{k} \binom{m}{j} (-1)^k b^j (-a)^{m-j}.
+\end{equation*}
+This expression allows us to determine the coefficients for any specific power of \(x\) in the expanded form.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{$N = 2$ results --- Part 2}
+
+
+
+
+
+
+
+
+
+
+N=1 and N=2 BDC --- including $t_1$ and $t_2$ distributions.
+
+
+ \subsubsection*{Probability generating function of first burst size, $r_1$}
+ Given the known distribution, 
+ $$\pr{r_1=i} = \frac{\delta}{\lambda}\lrb{\frac{1}{a}}^i, \quad i\geq1,$$
+ The pgf for $r_1$ can be written, 
+ $$G(z) = \sum^{\infty}_{i=0} \pr{r_1=i}  z^i.$$
+We must recall that the above formula only applies for $r\geq1$, not 0. And 
+$$\pr{r_1 = 0} = I_- (=b) $$
+which is the probability of process death. $r_1$ can be thought of as the output size, accounting for all possibilities (including 0). If we wish instead to only consider cases of fixation by rupture, the ``burst only'' size $\hat r_1$ will be described by the above distribution modified by a factor:
+$$\pr{\hat r_1 = i} = \frac{\pr{r_1 = i}}{1- I_-} = \frac{\delta}{\lambda}\lrb{\frac{1}{a}}^i (1-I_-)^{-1},$$
+$(1-I_-)$ being the probability of eventual catastrophe. $\pr{\hat r_1 = 0} = 0$.\par
+Hence, we can construct the pgf for both $r_1$ and $\hat r_1$ as follows. 
+
+$$G_r(z) = I_- + \sum^{\infty}_{i=1} \pr{r=i} z^i = I_- + \frac{\delta}{\lambda}  \sum^{\infty}_{i=1} \lrb{\frac{1}{a}}^i z^i$$
+$$G_{\hat r}(z) = \sum^{\infty}_{i=1} \pr{\hat r=i} z^i = (1 - I_-)^{-1} \frac{\delta}{\lambda}  \sum^{\infty}_{i=1} \lrb{\frac{1}{a}}^i z^i$$
+Each formula contains the series sum,
+$$\sum^{\infty}_{i=1} \lrb{\frac{1}{a} z}^i.$$
+Since, $z$ is taken between 0 and 1, and, $a \geq 1$ (only becoming 1 when $\delta = \mu = 0$), 
+$$\lrb{\frac{1}{a} z} < 1.$$
+And so for relevant parameters, we can use the geometric series formula to condense the above sum:
+$$\lrb{\sum_{k=1}^\infty s^k  = \frac{s}{1-s}},$$ 
+$$\sum^\infty_{i=1}\lrb{\frac{z}{a}}^i = \frac{\frac{z}{a}}{1 - \frac{z}{a}} = \frac{z}{a-z}.$$
+Giving the probability generating functions for $r_1$ \& $\hat r_1$ as 
+$$G_r(z) =  I_- + \frac{\delta}{\lambda} \lrb{\frac{z}{a-z}},$$
+$$G_{\hat r}(z) = (1 - I_-)^{-1} \frac{\delta}{\lambda} \lrb{\frac{z}{a-z}}.$$
+For the second burst size, $r_2$, we have a distribution formula written down in another document. This is quite complicated and hasn't yet been verified. So for now, instead of going on to writing down the probability generating function for that, let us turn to the burst time distributions. 
+
+\subsubsection*{Time distributions of $t_1$ and $t_2$} 
+
+To briefly recall the dynamics in question, there is a standard birth death catastrophe process which ends in either death, or catastrophe at some final value of $\xt$. In the $N=2$ model we're considering, a new BDC process is started at the fixation time of the first, with an initial unit count specified by the previous final value. In the case of fixation by death in the first process, the second process will not commence.\par
+We have so far discussed the random variables of burst size: $r_1$ and $\hat r_1$, in cases of general fixation or conditional on bursting. $r_2$ and $\hat r_2$ are likewise defined for the fixation value of the second process. Here, $\hat r_2$ is once again taken as only pertaining to non-zero outcomes. It therefore requires that the first outcome was also non-death. $r_2$ on the other hand factors in the possibility of the second, or, the first and second process ending in depletion before rupture. A small point could be made that a third random variable can be defined, $\bar r_2$, as encompassing cases of any eventuality in the second process conditioned on a non-zero beginning. That is, first process bursting; second process, any outcome. But we will set aside and ignore this option in the interest of not complicating matters any more than necessary.\par 
+It is important to stress these distinctions between fixation routes because the formulas differ depending which option we consider. With this in mind, let us move on to the end time distributions.\par
+Like with burst sizes, we will make the distinction between general fixation including death ($t_1$), and burst-only times ($\hat t_1$). In each case, we are interested in formulating the probability density function (PDF). Because of course, with these random variables spanning $\{x\in \mathbb{R},\; x\geq 0\}$, their distributions are continuous. As is standard, we can obtain the PDFs via differentiation of the cumulative density functions (CDFs):
+$$f_{\text{PDF}}(t) = \ddt{}{ f_{\text{CDF}}(t)}.$$
+With the CDF being simply the probability that $t_1$ (or $\hat t_1$) is less than $t$; the probability that fixation has already happened. We can construct this using the non-fixation probabilities as there is a clear link between the likelihood of non-fixation, and the chance it has already happened. Taking the general non-fixation probability, $I_e(t)$ (neither burst nor death), the CDF of $t_1$ is simply its complement, 
+$$_{\text{CDF}}f_{t_1}(t) = 1 - I_e(t).$$
+
+\subsubsection*{PDF of $\hat t_1$, burst only time}
+For the burst only version of this, we must make a small additional consideration. Because the non-rupture probability doesn't tend to 0 when $\mu >0$, its mere complement wont constitute a CDF which must ultimately tend to 1 in the limit. The formula of non-catastrophe alone still factors in cases of process death, so for this reason, we must condition on their being no-death; as it were, removing death cases from consideration. With process depletion happening with probability $I_-$, and non-depletion w.p. $1-I_-$, the catastrophe probability given eventual catastrophe is found with the following thinking. ($\xt = H$ is the rupture state)
+
+
+
+\begin{multline*}
+\pr{\xt = H | \;\xx_{\infty} \in \{ H, 0\}} =\\ \pr{\xt=H| \;\xx_{\infty} = H}\pr{\xx_{\infty} = H} + \cancelto{0}{\pr{\xt = H| \;\xx_{\infty} = 0}}\pr{\xx_{\infty} = 0}
+\end{multline*}
+
+
+$$\pr{\text{cat.}|\; \text{eventual cat. or death}} = \pr{\text{cat}|\;\text{eventual cat.}}\pr{\text{eventual cat.}}$$
+So 
+$$\pr{\xt=H| \;\xx_{\infty} = H} = \frac{\pr{\xt = H | \;\xx_{\infty} \in \{ H, 0\}} }{\pr{\xx_{\infty} = H} }.$$
+Hence, the burst only CDF for $\hat t_1$ is given,
+$$_{\text{CDF}}f_{\hat t_1}(t) = \frac{1-I(t)}{1-I_-}.$$
+Here, $I(t)$ is the known standard formula for non-fixation in the BDC process. It can be obtained from either of the following two equation. 
+$$\ddt{I} = \mu - (\lambda+\mu+\delta) I + \lambda I^2,$$
+$$\ddt{I} = - \delta J,$$
+where $J(t) = \mean{\xt}$ is the known formula for the process mean. Derived from the forward Kolmogorov equation for $p_0(t)$, the second of these makes calculating the PDF of $t_1$ straightforward: 
+\begin{align*}
+_{\text{PDF}}f_{\hat t_1}(t) &= \ddt{}{ _{\text{CDF}}f_{\hat t_1}(t)}\\
+&= (1-I_-)^{-1} \ddt{} (1-I(t))\\
+&= \frac{\delta} {1-I_-}J(t).
+\end{align*}
+
+\subsubsection*{PDF of $t_1$, general fixation time}
+For the case of considering fixation by either death or rupture, we must use the probability of general non fixation, $I_e(t)$ (the $e$ standing for ``either''). This formula is similar to the non-bursting probability, and is obtained with analogous reasoning; there are two equations corresponding with those above:
+$$\ddt{I_e} = - (\lambda+\mu+\delta) I_e + \lambda I_e^2,$$
+$$\ddt{I_e} = -\delta J - \mu p_1(t).$$
+The extra term with $p_1(t)$ is added to the forward Kolmogorov equation as representing the possibility of transition to fixation by death, as seen, with rate $\mu$. Again, this equation makes the PDF relatively simple to obtain: 
+\begin{align*}
+_{\text{PDF}}f_{ t_1}(t) &= \ddt{}{ _{\text{CDF}}f_{ t_1}(t)}\\
+&=\ddt{} (1-I_e(t))\\
+&= \delta J(t) + \mu p_1(t).
+\end{align*}
+And this is a known formula with our knowledge of both $J(t)$, and $p_1(t) = \pr{\xt = 1}$ as shown.
+$$J(t) = \frac{(a-b)^2\ee^{\lambda(a-b)t}}{\lrb{(1-b) - (1-a)\ee^{\lambda(a-b)t}}^2} $$
+$$p_1(t) = \lrb{\frac{a-b}{b - a \ee^{\lambda(a-b)t}}}^2 \ee^{\lambda(a-b)t}$$
+($a = I_+, b = I_-$).
+
+\subsubsection*{Second burst time distributions}
+The second rupture time will encompass both the first rupture time and the duration of the second process. We know the distribution of the first rupture time. Then the second process duration will depend on the state which is started at. This itself, the first burst size, is not independent to the first rupture time ($Cov(t_1, r_1) \neq 0$); at least at smaller times, the correlation will be positive. So how do we proceed? It seems we should first find the fixation time distribution conditioned on initial state. Then, somehow it should be possible to combine these in a weighted sum for the overall distribution.
+
+\subsubsection*{Process time conditioned on initial state} 
+Taking for now the general fixation case (death considered), we start with the non-fixation probability given a defined initial condition,
+$$_kI_e(t) = \pr{\xt \neq H |\; \xx_0 = k}.$$
+Without needing to compute the formula, for our purpose, it will be sufficient to write down the FKE equation corresponding to the one used in the previous two examples.  
+$$\ddt{}{_kI_e(t)} =  -\delta \mean{\xt|\;\xx_0 = k} - \mu \pr{\xt = 1|\;\xx_0 = k}.$$
+As before we can simply use the fact that the PDF is minus this expression. Hence, we need only to find the form of the two terms on the right hand side. As it happens, each of these will be obtainable using the probability generating function, $G_k(z,t)$, defined with initial condition, $\xx_0 = k$. Namely,
+
+\begin{itemize}
+\item $\mean{\xt|\;\xx_0 = k} = \frac{\partial G_k}{\partial z}\Big\rvert_{z=1}$
+\item $  \pr{\xt = 1 | \; \xx_0 = k} = \frac{\partial G_k}{\partial z}\Big\rvert_{z=0}$ 
+\end{itemize}
+With the form of $G_k(z,t)$ known, 
+$$G_k(z,t) = \lrbs{\frac{ab\gamma(t) + v(t)z}{1- \gamma(t)z}}^k$$
+where
+$$\gamma(t) = \frac{1 - \ee^{\lambda(a-b)t}}{b - a\ee^{\lambda(a-b)t}}, \quad\quad v(t) = \frac{b\ee^{\lambda(a-b)t} -a}{b - a\ee^{\lambda(a-b)t}}.$$
+The derivative can be computed as follows.
+$$ \frac{\partial G_k}{\partial z} = kG_{k-1}  \frac{\partial G_1}{\partial z}.$$
+And since 
+$$ \frac{\partial G_1}{\partial z} = \frac{(a-b)^2 \eec}{\lrb{b-a\eec- \lrb{1 - \eec }z}^2},$$
+we can write down mean and state probabilities listed above as 
+
+\begin{align*}
+\pr{\xt = 1 | \; \xx_0 = k}  &=  kG_{k-1}(0, t)  \frac{\partial G_1}{\partial z}\Big\rvert_{z=0} =  k\cdot    \lrb{ab\gamma(t)}^{k-1} \cdot \lrb{\frac{(a-b)^2 \eec}{b - a \eec}},
+\end{align*} 
+\begin{multline*}
+\mean{\xt|\;\xx_0 = k} = kG_{k-1}(1, t)  \frac{\partial G_1}{\partial z}\Big\rvert_{z=1}  = \\k\cdot \lrb{\frac{ab\gamma(t) + v(t)}{1 - \gamma(t)} }^{k-1} \cdot \lrb{\frac{(a-b)^2\eec}{(b-1)+(1-a)\eec}}.
+\end{multline*} 
+These giving us the PDF of end time given initial state, $k$:
+
+$$_{\text{PDF}}f^{(k)}_{t_1} (t) =  \delta \mean{\xt|\;\xx_0 = k} + \mu\pr{\xt = 1 | \; \xx_0 = k}. $$
+
+\subsubsection*{Without conditioning on initial condition}
+What about when we know the initial condition only in distribution, from the first process result?\par
+The question is how we combine $_{\text{PDF}}f^{(k)}_{t_1}(t)  \equiv \phi_k(t)$ across varied $k$ acounting for the distribution of first rupture sizes. If we simply want to know the distribution of second process durations, the time from the second process beginning to when it ends, it seems possible to merely apply a weighted sum. 
+$$\sum^{k} \pr{r_1 = k}\phi_k(t).$$
+But it seems things complicate if we want the ``full time'', from the beginning of the first process to the end of the second. This is because the first process time and burst size are not independent. So when summing over burst sizes, the time added in $t_1$ are somehow linked to the burst sizes $r_1$. If I was to guess, it might be possible to do something like this:
+
+$$\sum_k \int_0^\infty \pr{r = k| t_1 = \tau}\lrb{\tau + \phi_k(t)} \dd \tau.$$
+In which case we would only need $\pr{r = k| t_1 = \tau}$ and the two potentially difficult integrals. But I'm not sure this is correct, or whether there might be a better way of thinking about it. Maybe you know something?\par
+
+\vspace{5pt}
+
+Some intuition suggests the formula may be,    
+$$\rho(t_2) = \int^{\infty}_0 f(\tau)\lrb{\sum_k \pr{r_1 = k|\tau} \phi_k(t_2 - t_1)  } \dd t_1.$$
+
+
+\end{document}

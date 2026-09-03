@@ -1,0 +1,195 @@
+% --- Chapter appendices: numbered 2.A, 2.B, ... ------------------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+\section{An integral identity for the hypergeometric function}
+\label{m:app:hyp}
+
+The route to \cref{m:eq:Psidef} taken in \cref{m:sec:absbirthdeath} expands the
+characteristic $x(\tau)$ in a geometric series and integrates term by term. An
+alternative is to integrate the quotient \cref{m:eq:xabd} directly, splitting the
+numerator into two pieces, each of the form
+\begin{equation}
+\label{m:eq:Iform}
+I(\tau) = \int\frac{\ee^{h\tau}}{P+Q\,\ee^{k\tau}}\,\dd\tau
+\end{equation}
+with $h,k,P,Q$ constant. That route is longer and easier to get wrong --- the two
+pieces carry different prefactors, and dropping one produces a formula that still
+satisfies the initial condition while violating $G(1,1,t)=1$ --- but the identity it
+rests on is useful in its own right, so it is recorded and proved here.
+
+\begin{proposition}
+\label{m:prop:hypIden}
+For $h/k>0$ and $-\tfrac{Q}{P}\ee^{k\tau}\notin[1,\infty)$,
+\begin{equation}
+\label{m:eq:hypIden}
+\int\frac{\ee^{h\tau}}{P+Q\ee^{k\tau}}\,\dd\tau
+= \frac{\ee^{h\tau}}{Ph}\,{}_2F_1\lrb{1,\frac{h}{k};\frac{h}{k}+1;\,-\frac{Q}{P}\ee^{k\tau}}
++ \text{const} ,
+\end{equation}
+where the hypergeometric function is continued from its principal power series
+along the interval of integration.
+\end{proposition}
+
+\begin{proof}
+We use the Euler integral representation of the hypergeometric function
+\cite{Olver2010},
+\begin{equation}
+\label{m:eq:idenHyp}
+{}_2F_1(a,b;c;z)
+= \frac{\Gamma(c)}{\Gamma(b)\Gamma(c-b)}\int_0^1 u^{b-1}(1-u)^{c-b-1}(1-zu)^{-a}\,\dd u ,
+\end{equation}
+$\Gamma$ being the gamma function.
+
+Start from \cref{m:eq:Iform} and substitute $v = \ee^{k\tau}$, so that
+$\dd\tau = k^{-1}v^{-1}\dd v$:
+\begin{equation*}
+I = \frac1k\int\frac{v^{h/k}}{P+Qv}\,v^{-1}\dd v
+= \frac{1}{Pk}\int\frac{v^{h/k-1}}{1+\frac{Q}{P}v}\,\dd v .
+\end{equation*}
+Fix the antiderivative by writing this as a definite integral from $0$ to $v$ in a
+dummy variable $w$; the integral converges at the lower limit precisely because
+$h/k>0$:
+\begin{equation*}
+I = \frac{1}{Pk}\int_0^v\frac{w^{h/k-1}}{1+\frac{Q}{P}w}\,\dd w .
+\end{equation*}
+Now rescale, $w = vu$, so that $\dd w = v\,\dd u$ with $v$ held fixed:
+\begin{equation}
+\label{m:eq:backat}
+I = \frac{1}{Pk}\int_0^1\frac{(vu)^{h/k-1}}{1+\frac{Q}{P}vu}\,v\,\dd u
+= \frac{v^{h/k}}{Pk}\int_0^1\frac{u^{h/k-1}}{1+\frac{Q}{P}vu}\,\dd u .
+\end{equation}
+The remaining integrand matches that of \cref{m:eq:idenHyp} with $b = h/k$,
+$c = h/k+1$, $a=1$ and $z = -\tfrac{Q}{P}v$, since then $(1-u)^{c-b-1} = 1$ and
+$(1-zu)^{-a} = \bigl(1+\tfrac{Q}{P}vu\bigr)^{-1}$. Hence, using
+$\Gamma(z+1) = z\Gamma(z)$,
+\begin{equation*}
+\int_0^1\frac{u^{h/k-1}}{1+\frac{Q}{P}u}\,\dd u
+= \frac{\Gamma\!\lrb{\frac hk}\Gamma(1)}{\Gamma\!\lrb{\frac hk+1}}\,
+{}_2F_1\lrb{1,\frac hk;\frac hk+1;-\frac QP v}
+= \frac kh\,{}_2F_1\lrb{1,\frac hk;\frac hk+1;-\frac QP v}.
+\end{equation*}
+Substituting into \cref{m:eq:backat} gives
+\begin{equation*}
+I = \frac{v^{h/k}}{Ph}\,{}_2F_1\lrb{1,\frac hk;\frac hk+1;-\frac QP v},
+\end{equation*}
+and restoring $v = \ee^{k\tau}$ gives \cref{m:eq:hypIden} on the Euler domain.
+Both sides are analytic antiderivatives away from the singular set, so continuation
+along any admissible interval preserves the identity.
+\end{proof}
+
+\begin{remark}
+Applied to the two pieces of \cref{m:eq:xabd} --- the first with $h=\alpha$, the
+second with $h = \alpha+b_1$, and both with $k=b_1$, $P = \sigma-x_-$ and
+$Q = -(\sigma-x_+)$ --- \cref{m:prop:hypIden} reproduces \cref{m:eq:Psihyp} once
+the prefactors $\alpha x_+(\sigma-x_-)$ and $-\alpha x_-(\sigma-x_+)$ are carried
+through correctly. The factor $(\sigma-x_+)/(\sigma-x_-)$ attached to the second
+piece is easily lost, and its loss is invisible at $t=0$; checking $G(1,1,t)=1$
+catches it immediately. At the resonant values $\alpha = n(\mu-\lambda)$ of
+\cref{m:rem:resonance} the same conclusion follows by the finite parameter limit
+described there.
+\end{remark}
+
+\section{Extracting state probabilities from a generating function}
+\label{m:app:extract}
+
+A generating function defined by a formula rather than as an explicit series --- for
+example
+\begin{equation}
+\label{m:eq:examplePgf}
+G(x,y,t) = \Bigl(\bigl(1-\ee^{-\alpha t}\bigr)x + \ee^{-\alpha t}y\Bigr)^n
+\end{equation}
+--- can always be converted back to the form
+\begin{equation}
+\label{m:eq:series1}
+G(x,y,t) = \sum_{i=0}^{\infty}\sum_{j=0}^{\infty}p_{i,j}(t)\,x^iy^j ,
+\end{equation}
+recovering the time-dependent state probabilities. All that is required is that $G$
+be repeatedly partially differentiable in $x$ and $y$.
+
+The reason is the bivariate Maclaurin expansion,
+\begin{equation*}
+f(x,y) = \sum_{k=0}^{\infty}\frac{1}{k!}\sum_{\varrho=0}^{k}\binom{k}{\varrho}
+\partial_x^{\varrho}\partial_y^{\,k-\varrho}f\Big|_{(0,0)}\;x^{\varrho}y^{k-\varrho},
+\end{equation*}
+whose coefficient of $x^iy^j$, taking $k=i+j$ and $\varrho=i$, is
+$\frac{1}{(i+j)!}\binom{i+j}{i}\partial_x^i\partial_y^{\,j}f\big|_{(0,0)}$. Hence
+\begin{equation}
+\label{m:eq:stateProb}
+p_{i,j}(t) = \frac{1}{i!\,j!}\,\partial_x^i\partial_y^{\,j}G\Big|_{(0,0)} .
+\end{equation}
+For completeness, the coefficient is also represented by the bivariate Cauchy
+integral
+\begin{equation}
+\label{m:eq:cauchy2d}
+p_{i,j}(t) = \frac{1}{(2\pi\mathrm i)^2}
+\int_{|x|=\varrho_x}\int_{|y|=\varrho_y}
+\frac{G(x,y,t)}{x^{i+1}y^{j+1}}\,\dd y\,\dd x ,
+\end{equation}
+for circles inside the domain of analyticity; this form is useful for stable
+numerical extraction when derivatives of a special-function representation are
+unwieldy.
+
+\subsection*{The multilinear case}
+
+Both \cref{m:eq:Gabsonly} and \cref{m:eq:Gabsdeath} have the form
+\begin{equation}
+\label{m:eq:multilinear}
+G(x,y,t) = \bigl(c(t) + f(t)\,x + g(t)\,y\bigr)^n ,
+\end{equation}
+for which the derivatives are immediate. Each differentiation lowers the power by
+one and brings down a factor, so
+\begin{equation}
+\label{m:eq:derivs}
+\partial_x^{a}\partial_y^{\,b}G
+= \frac{n!}{(n-a-b)!}\,f^{a}g^{b}\bigl(c+fx+gy\bigr)^{n-a-b}
+\qquad(a+b\le n),
+\end{equation}
+and zero for $a+b>n$. Evaluating at the origin and applying \cref{m:eq:stateProb},
+\begin{equation}
+\label{m:eq:stateProbSpec}
+p_{i,j}(t) = \frac{n!}{i!\,j!\,(n-i-j)!}\;f(t)^{i}g(t)^{j}c(t)^{\,n-i-j},
+\qquad i+j\le n,
+\end{equation}
+and $p_{i,j}=0$ otherwise. This is the trinomial distribution, which is exactly
+what it should be: the $n$ particles are independent, and at time $t$ each is in
+one of three states, with probabilities $c$ (neither inside nor outside --- that
+is, dead), $f$ (inside) and $g$ (outside). Note in particular that the falling
+factorial $n!/(n-i-j)!$ in \cref{m:eq:derivs} is \emph{not} $n^{i+j}$; the two agree
+only to leading order in $n$, and using the latter breaks normalisation.
+
+\subsection*{Applied to the absorption models}
+
+For absorption only, \cref{m:eq:examplePgf}, we have $c=0$, $f = 1-\ee^{-\alpha t}$
+and $g = \ee^{-\alpha t}$. The factor $c^{\,n-i-j}$ then vanishes unless $i+j=n$,
+and \cref{m:eq:stateProbSpec} gives
+\begin{equation*}
+p_{i,j}(t) = \binom{n}{i}\bigl(1-\ee^{-\alpha t}\bigr)^{i}\bigl(\ee^{-\alpha t}\bigr)^{j},
+\qquad i+j=n,
+\end{equation*}
+so $X_t\sim\text{Binomial}\bigl(n,1-\ee^{-\alpha t}\bigr)$ and $Y_t = n-X_t$, as
+anticipated in \cref{m:sec:absonly}.
+
+For absorption--death, \cref{m:eq:Gabsdeath}, the three functions are
+\begin{equation*}
+c(t) = 1-\frac{\mu}{\mu-\alpha}\ee^{-\alpha t} + \frac{\alpha}{\mu-\alpha}\ee^{-\mu t},
+\qquad
+f(t) = \frac{\alpha}{\mu-\alpha}\bigl(\ee^{-\alpha t}-\ee^{-\mu t}\bigr),
+\qquad
+g(t) = \ee^{-\alpha t},
+\end{equation*}
+which are precisely $p_{0,0}$, $p_{1,0}$ and $p_{0,1}$ of
+\cref{m:eq:absdeathstates}, with the continuous equal-rate limit of
+\cref{m:eq:equalrates} when $\alpha=\mu$, so that
+\begin{equation*}
+p_{i,j}(t) = \frac{n!}{i!\,j!\,(n-i-j)!}\;f(t)^{i}g(t)^{j}c(t)^{\,n-i-j} .
+\end{equation*}
+Each particle independently ends up dead, absorbed, or still outside, with those
+three probabilities, and the joint law is trinomial; since $c+f+g=1$, summing over
+$i$ and $j$ recovers one by the multinomial theorem. That the generating function
+factorises in this way is \cref{m:eq:indRelPGF} read backwards.
+
+The absorption--birth--death model does not have the multilinear form
+\cref{m:eq:multilinear}, and its coefficient extraction --- which separates a
+$y$-binomial factor from a univariate convolution --- is recorded with the model
+itself, in \cref{m:sec:recovery}.

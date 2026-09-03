@@ -1,0 +1,291 @@
+\section{The tools}
+\label{sec:tools}
+
+The models of this thesis are built from three ingredients: a count that jumps by one,
+a clock that decides when it jumps, and a generating function that turns an infinite
+system of \de s into a single equation one can hope to solve. This section fixes each
+in turn, in the order in which one needs them, and closes with the linear birth--death
+process --- the continuous-time reference model against which every later construction
+is measured.
+
+\subsection{Exponential clocks and their competition}
+\label{sec:exp}
+
+Waiting times enter first, because everything else is assembled from them. A
+non-negative \rv{} $T$ is exponentially distributed with rate $\lambda>0$, written
+$T\sim\text{Exp}(\lambda)$, when it has density and distribution function
+\begin{equation}
+\label{eq:expdef}
+f_T(x) = \lambda\ee^{-\lambda x},
+\qquad
+F_T(x) = \pr{T\le x} = 1-\ee^{-\lambda x}
+\qquad (x\ge0),
+\end{equation}
+with $\mean{T} = 1/\lambda$ and $\text{Var}(T) = 1/\lambda^2$. The rate is the reciprocal
+of the mean waiting time, and it is the parameter in which models are specified.
+
+The property that earns the exponential law its place is that waiting confers no
+advantage.
+
+\begin{definition}[Memorylessness]
+\label{def:memoryless}
+A non-negative \rv{} $T$ is memoryless if
+\begin{equation}
+\label{eq:memoryless}
+\pr{T > t_1+t_2 \mid T > t_1} = \pr{T > t_2}
+\qquad\text{for all } t_1,t_2>0 .
+\end{equation}
+\end{definition}
+
+\noindent
+For $T\sim\text{Exp}(\lambda)$ this is immediate from \cref{eq:expdef}, since
+$\pr{T>x} = \ee^{-\lambda x}$ and therefore
+\begin{equation*}
+\pr{T > t_1+t_2 \mid T > t_1}
+= \frac{\ee^{-\lambda(t_1+t_2)}}{\ee^{-\lambda t_1}}
+= \ee^{-\lambda t_2} = \pr{T > t_2}.
+\end{equation*}
+Among continuous laws the exponential is the only one with this property, which is why
+a model whose event rates do not depend on elapsed time is an exponential-clock model
+whether or not it was described as one.
+
+Populations offer several events at once --- a birth, a death, an absorption, a
+catastrophe --- so what matters in practice is not a single clock but a race between
+them. Take independent clocks $T_1\sim\text{Exp}(\lambda_1)$ and
+$T_2\sim\text{Exp}(\lambda_2)$. Conditioning on the value of $T_2$ and integrating,
+\begin{equation}
+\label{eq:race2}
+\pr{T_1<T_2}
+= \int_0^{\infty}\!\!\lrb{\int_0^{y}\lambda_1\ee^{-\lambda_1 x}\dd x}\lambda_2\ee^{-\lambda_2 y}\dd y
+= \int_0^{\infty}\!\!\lrb{1-\ee^{-\lambda_1 y}}\lambda_2\ee^{-\lambda_2 y}\dd y
+= \frac{\lambda_1}{\lambda_1+\lambda_2},
+\end{equation}
+while for the time of the first event
+\begin{equation}
+\label{eq:min2}
+\pr{\min\{T_1,T_2\}>x} = \pr{T_1>x}\pr{T_2>x} = \ee^{-(\lambda_1+\lambda_2)x},
+\end{equation}
+so that $\min\{T_1,T_2\}\sim\text{Exp}(\lambda_1+\lambda_2)$. The same two calculations
+run unchanged for $n$ independent clocks with rates $\lambda_1,\dots,\lambda_n$. Writing
+$\Lambda = \sum_i\lambda_i$ for the total rate,
+\begin{equation}
+\label{eq:racen}
+\min_i T_i \sim \text{Exp}(\Lambda),
+\qquad
+\pr{T_i = \min_j T_j} = \frac{\lambda_i}{\Lambda},
+\end{equation}
+and the two are independent: knowing which channel fired first tells one nothing about
+when it fired. Rates therefore do two separate jobs, setting the pace of events through
+$\Lambda$ and apportioning them among channels through the ratios $\lambda_i/\Lambda$.
+
+\begin{remark}[Simulation]
+\label{rem:gillespie}
+\Cref{eq:racen} is also an algorithm. From the current state, compute the rate $a_k$ of
+each available event and their total $\Lambda$; draw a holding time
+$\tau\sim\text{Exp}(\Lambda)$; select event $k$ with probability $a_k/\Lambda$; update
+the state and advance the clock by $\tau$. This is Gillespie's stochastic simulation
+algorithm, and it is exact for the chains defined below. Simulation is used in this
+chapter only to check analysis, and the figures say where.
+\end{remark}
+
+\subsection{Continuous-time Markov chains}
+\label{sec:ctmc}
+
+A stochastic process is a family $\{\xt : t\ge0\}$ of random variables on a common
+probability space. Throughout this thesis the index set is $[0,\infty)$ and the state
+space is a subset of $\{0,1,2,\dots\}$: time runs continuously, and the state is a
+count. The process is a \emph{continuous-time Markov chain} (CTMC) when its future
+depends on its past only through its present,
+\begin{equation}
+\label{eq:markov}
+\pr{\xx_{t_{n+1}} = i_{n+1} \mid \xx_{t_0}=i_0,\dots,\xx_{t_n}=i_n}
+= \pr{\xx_{t_{n+1}} = i_{n+1} \mid \xx_{t_n}=i_n}
+\end{equation}
+for all $0\le t_0<\cdots<t_{n+1}$ and all states $i_0,\dots,i_{n+1}$. Memorylessness is
+what buys \cref{eq:markov}: if every pending event is timed by an exponential clock,
+the elapsed time carries no information, and the present state is a sufficient summary.
+
+Write $p_{ij}(s,t) = \pr{\xt=j\mid\xs=i}$ for the transition probabilities. Every chain
+in this thesis is \emph{time-homogeneous}, meaning that $p_{ij}(s,t)$ depends on $s$ and
+$t$ only through the lag $t-s$, so that we may write $p_{ij}(t)$ and collect these into
+a matrix $P(t)$. Models are not specified by writing $P(t)$ down, however, but by
+writing rates.
+
+\begin{definition}[Infinitesimal generator]
+\label{def:generator}
+The generator of a time-homogeneous CTMC is the matrix $Q=(q_{ij})$ with
+\begin{equation}
+\label{eq:generator}
+q_{ij} = \lim_{\delt\to0^+}\frac{p_{ij}(\delt)}{\delt}\ \ (i\neq j),
+\qquad
+q_{ii} = -\sum_{j\neq i}q_{ij},
+\end{equation}
+whenever these limits exist; equivalently
+$p_{ij}(\delt) = \delta_{ij} + q_{ij}\delt + o(\delt)$.
+\end{definition}
+
+\noindent
+Off-diagonal entries are non-negative and each row sums to zero. The generator also
+recovers the pathwise picture of \cref{sec:exp}: while the chain occupies state $i$ it
+waits an exponential time of rate $\Lambda_i = -q_{ii} = \sum_{j\neq i}q_{ij}$, and it
+then moves to $j$ with probability $q_{ij}/\Lambda_i$. One clock per exit channel, and
+\cref{eq:racen} settles the rest. A state $i$ with $q_{ii}=0$ has no exits at all and is
+called \emph{absorbing}; in a population model the absorbing state is $i=0$, extinction,
+and the whole of this chapter is in one way or another about how a process approaches
+it.
+
+Differentiating the Chapman--Kolmogorov relation gives the forward equations,
+\begin{equation}
+\label{eq:kolmogorov}
+\ddt{p_{ij}(t)} = \sum_{k} p_{ik}(t)\,q_{kj},
+\qquad\text{that is}\qquad
+\dda{P}{t} = P(t)\,Q,
+\qquad P(0)=I .
+\end{equation}
+Conventions for which system is called forward and which backward differ between texts;
+\cref{eq:kolmogorov} is the one used throughout, and it is the useful one here because
+it reads as a balance of probability flow into and out of state $j$. Written for the
+marginal probabilities $p_j(t) = \pr{\xt=j}$ it is the master equation of the model, and
+every derivation in \cref{sec:moc} begins by writing it down.
+
+\subsection{Probability generating functions}
+\label{sec:pgf}
+
+The master equation is an infinite system of coupled \de s, one per state, and solving
+it state by state is rarely possible. The standard remedy is to pack the whole system
+into one analytic object.
+
+\begin{definition}[Probability generating function]
+\label{def:pgf}
+For a \rv{} $\xx$ on $\{0,1,2,\dots\}$ with $\pr{\xx=k}=p_k$, the \pgf{} is
+\begin{equation}
+\label{eq:pgfdef}
+G_{\xx}(z) = \mean{z^{\xx}} = \sum_{k\ge0}p_k z^k,
+\qquad |z|\le1 .
+\end{equation}
+\end{definition}
+
+\noindent
+The series converges on the closed unit disc because the coefficients are probabilities,
+and the distribution can be read back off it by differentiation. Four consequences are
+used constantly:
+\begin{equation}
+\label{eq:pgfrules}
+G_{\xx}(1) = 1,
+\qquad
+G_{\xx}(0) = p_0,
+\qquad
+p_k = \frac{1}{k!}G_{\xx}^{(k)}(0),
+\qquad
+\mean{\xx} = G_{\xx}'(1).
+\end{equation}
+The second of these is the one that motivates the whole apparatus for small populations:
+if $\xx$ is a population size then $G_{\xx}(0)$ is the extinction probability. The
+variance follows from the second derivative,
+$\text{Var}(\xx) = G_{\xx}''(1)+G_{\xx}'(1)-\bigl(G_{\xx}'(1)\bigr)^2$.
+
+A fifth property does the structural work. If $\xx$ and $\yy$ are independent then
+$\mean{z^{\xx+\yy}} = \mean{z^{\xx}}\mean{z^{\yy}}$, so
+\begin{equation}
+\label{eq:pgfindep}
+G_{\xx+\yy}(z) = G_{\xx}(z)\,G_{\yy}(z).
+\end{equation}
+Independent individuals therefore multiply their generating functions, which is why
+generating functions and branching arguments belong together: \cref{eq:pgfindep} is what
+turns \enquote{each of the $n$ founders behaves independently} into an $n$th power.
+
+For a process rather than a single \rv{} the generating function acquires a time
+argument,
+\begin{equation}
+\label{eq:pgfprocess}
+G(z,t) = \mean{z^{\xt}} = \sum_{j\ge0}p_j(t)\,z^j ,
+\end{equation}
+and the extinction probability by time $t$ is $p_0(t) = G(0,t)$. Multiplying the master
+equation \cref{eq:kolmogorov} by $z^j$, summing over $j$ and recognising the resulting
+sums as derivatives of $G$ replaces the infinite system by a single first-order partial
+\de{} for $G(z,t)$. That compression is the analytical centre of this chapter. When two
+counts must be tracked at once --- particles inside a compartment and particles outside
+it, say --- the same construction runs with one variable per count,
+\begin{equation}
+\label{eq:pgfmulti}
+G(x,y,t) = \mean{x^{\xt}y^{\yt}} = \sum_{i\ge0}\sum_{j\ge0}p_{i,j}(t)\,x^iy^j ,
+\end{equation}
+which is the object solved in \cref{sec:moc} and the natural starting point for the
+multi-type models developed later in the thesis.
+
+\subsection{The linear birth--death process}
+\label{sec:lbd}
+
+Everything above can now be exercised on the model that all later constructions extend.
+Let $\xt$ count individuals, each of which independently gives birth at rate $\lambda$
+and dies at rate $\mu$. Because the individuals act independently, the population rates
+are linear in the state,
+\begin{equation}
+\label{eq:lbdrates}
+q_{i,i+1} = i\lambda,
+\qquad
+q_{i,i-1} = i\mu,
+\qquad
+q_{ii} = -i(\lambda+\mu)
+\qquad (i\ge1),
+\end{equation}
+and $i=0$ is absorbing. The master equation \cref{eq:kolmogorov} reads
+\begin{equation}
+\label{eq:lbdmaster}
+\ddt{p_0} = \mu p_1,
+\qquad
+\ddt{p_j} = \lambda(j-1)p_{j-1} - (\lambda+\mu)j\,p_j + \mu(j+1)p_{j+1}
+\qquad (j\ge1),
+\end{equation}
+and sequential solution stalls immediately, since each equation involves its
+neighbours. Multiplying by $z^j$ and summing, as in \cref{sec:pgf}, collapses the system
+to
+\begin{equation}
+\label{eq:lbdpde}
+\pddt{G(z,t)} = (\lambda z-\mu)(z-1)\pdd{G(z,t)}{z},
+\qquad
+G(z,0) = z^N ,
+\end{equation}
+for a process started from $\xx_0=N$ individuals. \Cref{eq:lbdpde} is a first-order
+linear equation of exactly the type solved by the method of characteristics in
+\cref{sec:moc}; here we simply record its solution, which for $\lambda\neq\mu$ is
+\begin{equation}
+\label{eq:lbdG}
+G(z,t) = \lrb{\frac{\mu(1-z) - (\mu-\lambda z)\ee^{(\mu-\lambda)t}}
+                   {\lambda(1-z) - (\mu-\lambda z)\ee^{(\mu-\lambda)t}}}^{N}.
+\end{equation}
+Two checks fix the reading. At $t=0$ the exponentials are unity and the bracket
+collapses to $z$, so $G=z^N$; and at $z=1$ numerator and denominator agree, so $G=1$ and
+probability is conserved. The mean follows from $\mean{\xt} = \partial_z G|_{z=1}$,
+\begin{equation}
+\label{eq:lbdmean}
+\mean{\xt} = N\ee^{(\lambda-\mu)t},
+\end{equation}
+which is the deterministic answer and, on its own, an uninformative one: it reports
+exponential growth or exponential decay and says nothing about the chance of neither.
+
+That information sits at $z=0$. Setting $z=0$ in \cref{eq:lbdG}, and treating the
+critical case $\lambda=\mu$ by taking the limit, gives the probability of extinction by
+time $t$ \cite{Allen2010},
+\begin{equation}
+\label{eq:p0t}
+p_0(t) = G(0,t) = \begin{cases}
+\lrb{\dfrac{\mu - \mu\ee^{(\mu-\lambda)t}}{\lambda - \mu\ee^{(\mu-\lambda)t}}}^{N},
+  & \lambda\neq\mu,\\[12pt]
+\lrb{\dfrac{\lambda t}{1+\lambda t}}^{N}, & \lambda=\mu,
+\end{cases}
+\end{equation}
+and the survival probability $S^{(N)}(t) = 1-p_0(t)$. Letting $t\to\infty$ in
+\cref{eq:p0t} recovers the classical trichotomy: extinction is certain when
+$\lambda\le\mu$, including at $\lambda=\mu$, and occurs with probability
+$(\mu/\lambda)^N$ when $\lambda>\mu$. A population with a per-capita growth advantage
+can still be lost, and the chance of losing it falls only geometrically in the founding
+number $N$.
+
+This process is the continuous-time backbone of the thesis; later chapters add a
+catastrophe channel to \cref{eq:lbdrates} and follow the same route from rates to master
+equation to generating function. The next section takes the other route, replacing the
+exponential clock by a generational one, and asks the same questions of the resulting
+discrete-time process.
+
+\FloatBarrier

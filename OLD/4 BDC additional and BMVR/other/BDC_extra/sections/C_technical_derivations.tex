@@ -1,0 +1,88 @@
+% Appendix C (Chapter 4a) --- technical derivations: V_inf^(k) and PGF
+% coefficient extraction. The hypergeometric Laplace transforms of the
+% kernels live in Chapter 4b's Appendix C.
+
+\section{Technical derivations}
+\label{app:technical}
+
+\subsection{Lifetime yield from $k$ founders}
+\label{app:Vk}
+
+We derive \eqref{eq:Vk}. Start from
+$V_\infty^{(k)}=\int_0^\infty g_k(t)\,\dd t$ with $g_k$ from
+\eqref{eq:gk}, and change variables from $t$ to $x=I(t)$: as $t$ runs
+$0\to\infty$, $I$ runs $1\to b$, and since $\dd I/\dd t=-\delta J$,
+$\dd t=-\dd x/(\delta J)$. The first part of $g_k$ gives
+$$
+\int_0^\infty\delta k K I^{k-1}\dd t
+=\int_b^1 k\,\frac{K}{J}\,x^{k-1}\dd x
+=\int_b^1 k\Bigl(1+\frac{2\lambda}{\delta}-\frac{2\lambda}{\delta}x\Bigr)
+x^{k-1}\dd x,
+$$
+using $K/J=1+2\lambda(1-I)/\delta$. Integrating,
+$$
+=\Bigl(1+\frac{2\lambda}{\delta}\Bigr)(1-b^k)
+-\frac{2\lambda k}{\delta}\,\frac{1-b^{k+1}}{k+1}
+=(1-b^k)+\frac{2\lambda}{\delta}
+\Bigl[\frac{1}{k+1}-b^k+\frac{k\,b^{k+1}}{k+1}\Bigr],
+$$
+where the second line collects terms over the common denominator $k+1$.
+The second part of $g_k$ gives, with
+$J=-\frac{\lambda}{\delta}(I-a)(I-b)$,
+$$
+\int_0^\infty\delta k(k-1)J^2 I^{k-2}\dd t
+=\int_b^1 k(k-1)J\,x^{k-2}\dd x
+=k(k-1)\frac{\lambda}{\delta}\int_1^b (x-a)(x-b)x^{k-2}\dd x,
+$$
+on reversing the limits. Adding the two parts yields \eqref{eq:Vk}. The
+formula also holds at $k=1$ (the integral term vanishes), reducing to
+$V_\infty=(1-b)[1+\lambda(1-b)/\delta]$ of \eqref{eq:Vinf}. When $\mu=0$,
+$b=0$ and the integral simplifies to
+$k(k-1)\frac{\lambda}{\delta}\int_1^0(x-a)x^{k-1}\dd x
+=k(k-1)\frac{\lambda}{\delta}\bigl[\frac{a-1}{k}-\frac{1}{k+1}\bigr]$,
+which combines with the first part to give $k+\lambda/\delta$ --- the
+elementary result of \S\ref{sec:moi}, recovered analytically.
+
+\subsection{PGF coefficient extraction for general initial conditions}
+\label{app:pgf-extract}
+
+The general-$\mu$ route for the chained model of \S\ref{sec:chained} runs
+through the $k$-founder \pgf. From \S\ref{sec:pgf-k-founders} (catastrophe
+convention),
+$$
+G_k(z,t)=\Biggl[\frac{ab\gamma(t)+v(t)z}{1-\gamma(t)z}\Biggr]^k,
+\qquad
+\gamma(t)=\frac{1-\ee^{\theta t}}{b-a\ee^{\theta t}},
+\qquad
+v(t)=\frac{b\ee^{\theta t}-a}{b-a\ee^{\theta t}}.
+$$
+Writing $\Theta_m=\binom{k}{m}(ab)^{k-m}\gamma(t)^{k-m}v(t)^m$ and
+$\Omega_n=\binom{k-1+n}{n}\gamma(t)^n$, the binomial expansion of the
+numerator and the negative-binomial series of $(1-\gamma z)^{-k}$ give
+$G_k(z,t)=(\sum_{m=0}^k\Theta_m z^m)(\sum_{n\ge0}\Omega_n z^n)$, so the
+state-probability coefficients are, with $H$ the power of $z$,
+$$
+[z^H]G_k=
+\sum_{i=0}^{\min(H,k)}
+\Theta_{k-i}\,\Omega_{i+\max(0,H-k)}.
+$$
+The chained burst-size laws then require integrals of the form
+$\int_0^\infty\gamma(t)^n v(t)^m\dd t$ for arbitrary $n,m\in\mathbb{N}$.
+Binomial-expanding the two numerators,
+$$
+(1-\ee^{\theta t})^n(b\ee^{\theta t}-a)^m
+=\sum_{i=0}^{n+m}K_i\,(\ee^{\theta t})^i
+$$
+for explicit constants $K_i$, the problem reduces to the elementary
+building blocks
+$$
+\int\frac{(\ee^{\theta t})^i}{(b-a\ee^{\theta t})^j}\dd t
+=-\frac{i\,(\ee^{\theta t})^i\,(b-a\ee^{\theta t})^{1-j}}
+{b\,\theta}\,
+\Fhyp\Bigl(1,(1+i)-j;1+i;\frac{a\ee^{\theta t}}{b}\Bigr),
+$$
+and the burst-size law for the $k$th rupture follows by summing over the
+initial-condition distribution. For $\mu=0$ this entire machinery collapses
+to the geometric decomposition of \S\ref{sec:key-observation}; for $\mu>0$
+it remains the available route, and the joint laws of $(t_k,r_k)$ are the
+open problem stated in \S\ref{sec:chained-verification}.

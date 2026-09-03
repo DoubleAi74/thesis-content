@@ -1,0 +1,133 @@
+% Chapter 4a discussion --- this chapter's share of draft \S17 per the cut
+% list in Project_specification.md \S4.1: assay predictions + single-cell
+% open problems + biological grounding (Grant_paper.pdf \S4, translated) +
+% forward pointer to Chapter 4b. Fitting consequences, forward connections
+% and the population open problems belong to Chapter 4b's discussion.
+
+\section{Discussion}
+\label{sec:discussion}
+
+This chapter set out to complete the single-cell theory of the
+birth--death--catastrophe process, and that programme is now done: the
+single-cell description is complete in distribution --- geometric states at
+every time, a geometric quasi-stationary limit, and a burst-size law
+identical to it --- with the conditional laws of burst time and burst size,
+the multi-founder extension, and the chained-transfer model alongside. What
+remains is to say what the results imply for measurement, where they have
+already been felt in real systems, and what is still open on the
+single-cell side. The population consequences --- fitting, thresholds, and
+the comparison of bursting with budding --- are taken up in Chapter~4b.
+
+\subsection{Single-cell assay predictions for lytic systems}
+\label{sec:discussion-assay}
+
+For a genuinely lytic system --- \yp{}, \ft{}, lytic phage --- a
+limiting-dilution assay (one infected cell per well, counts followed in
+time) measures the single-cell process directly, with no population model
+interposed. The number of new infectious particles released per infected
+cell is an integer-valued random variable, and its full distribution, not
+merely its mean, is what determines whether a small inoculum grows into a
+detectable infection \cite{williams2024reproduction}; assays of this design
+are where that distribution becomes observable. The theory makes five
+predictions, all of them parameter-free given $(\lambda,\mu,\delta)$:
+\begin{enumerate}
+\item a fraction $b$ of wells show no release ever --- the mass of internal
+extinction;
+\item the cumulative release in a well is a step function: zero, then a
+single terminal jump;
+\item the jump times follow the density $\delta J(t)/(1-b)$;
+\item the jump sizes follow the geometric law with ratio $1/a$ --- the
+quasi-stationary distribution, by Corollary~\ref{cor:burst-qsd};
+\item the between-well variance of total release is $\mathrm{Var}(W_\infty)$
+of \eqref{eq:EW2}, a quantity no deterministic constant-rate model can
+produce at all.
+\end{enumerate}
+One honest caveat: these predictions are too strong for a budding virus as
+literally stated --- intermittent budding is not a single terminal burst ---
+and they should be used for lytic hosts, or as the bursting endpoint of the
+spectrum of release models that Chapter~4b lays out.
+
+\subsection{The same theory at two extremes}
+\label{sec:two-extremes}
+
+The single-cell theory of this chapter has already been fitted to two
+intracellular pathogens whose parameter estimates sit at opposite ends of
+what the model allows, and the contrast is worth recording here because it
+shows how much of the behaviour is fixed by $(\lambda,\mu,\delta)$ alone.
+
+For \ft{} strain SCHU S4, modelling of murine challenge data yielded the
+estimates $\lambda=0.15\,\mathrm{h}^{-1}$,
+$\mu=0.01\,\mathrm{h}^{-1}$ and
+$\delta=1.5\times10^{-4}\,\mathrm{h}^{-1}$
+\cite{carruthers2020stochastic}. In the model with these parameters, fewer
+than $7\%$ of infected cells fail to burst --- the internal-extinction
+probability $b$ is small --- and the burst sizes of the cells that do
+rupture are geometrically distributed with typical sizes in the hundreds of
+bacteria. That prediction sits comfortably with the observed ability of
+doses as low as 10 colony-forming units to establish infection
+\cite{oyston2004tularaemia}: each successful rupture floods the local
+environment with enough bacteria that a small inoculum needs only a few
+rounds of the cycle to reach large numbers. Recent video recordings of
+\ft{}-infected macrophages, showing en-masse release events and direct
+counts of near-rupture payloads, provide observational support for the
+burst-size prediction.
+
+For \textit{Bacillus anthracis}, approximate Bayesian computation against
+published experimental time-series produced the very different estimates
+$\lambda\approx0.64\,\mathrm{h}^{-1}$,
+$\mu\approx1.64\,\mathrm{h}^{-1}$ and
+$\delta\approx0.04\,\mathrm{h}^{-1}$ \cite{williams2021anthrax}. Here
+death dominates birth: the model predicts that more than $96\%$ of
+phagocytes clear their intracellular infection without rupturing, and the
+cells that do rupture release on average only about $1.6$ bacteria each ---
+the value of $\mean{\Kb\mid\text{burst}}=a/(a-1)$ at these parameters. The
+consistent picture is that an infectious dose of $8\times10^3$ to
+$5\times10^4$ spores is required \cite{williams2021anthrax}, orders of
+magnitude above the tularemia figure, and one consistent with a pathogen
+whose intracellular dynamics destroy far more than they release.
+
+These are model-based predictions, and the biological claims rest on the
+parameter estimates they condition on; but the two cases together show that
+the same three-rate theory spans the space from near-certain, large bursts
+to near-certain clearance with minimal release, and that the quantities
+fitted in each case --- the no-burst fraction $b$, the burst-size law, the
+mean conditional burst --- are exactly the assay observables listed above.
+
+\subsection{Open problems}
+\label{sec:open-problems}
+
+Three questions remain open on the single-cell side.
+
+\begin{enumerate}
+\item \textbf{A conceptual proof that burst size equals QSD.} The algebra
+of \S\ref{sec:burst=qsd} is complete; a structural argument --- presumably
+size-biasing composed with the burst intensity, or a Yaglom-type limit
+\cite{yaglom1947certain} --- would turn a coincidence into a theorem one
+can quote.
+\item \textbf{Chained joint laws for general $\mu$.} The
+$\mu=0$ chain of \S\ref{sec:chained} rests on the event-type decomposition,
+which fails once internal extinction is possible. The joint laws of
+$(t_k,r_k)$ for $\mu>0$ --- and the joint law of $(t_M,r_M)$ for the full
+chain --- remain open; a coefficient machinery with ${}_2F_1$
+antiderivatives is the route sketched in \S\ref{sec:chained}.
+\item \textbf{Logistic intracellular growth.} A referee will object that
+linear birth lets the conditional load grow without bound. The defence is
+that the burst hazard is proportional to load and so regulates it --- the
+QSD result is precisely the statement that the conditional load stabilises
+at $a/(a-1)$ --- but the sensitivity of the burst statistics, and of the
+kernels that Chapter~4b will use, to a logistic birth rate remains to be
+checked numerically.
+\end{enumerate}
+
+\subsection*{What comes next}
+
+Everything in this chapter is single-cell. The released particles have so
+far been counted and then forgotten, and that is the approximation the next
+chapter removes. In Chapter~4b, the survival and release statistics derived
+here become the age-structured kernels of a population-level renewal model:
+cells infected at different times contribute to the infected-cell and
+free-particle pools according to $\Ifix(a)$ and $g(a)=\delta K(a)$, the
+constant-rate models of viral dynamics appear as a projection of that
+renewal system, and the bursting strategy is compared against budding at the
+level where the comparison matters --- establishment, invasion speed, and
+what data can and cannot identify.

@@ -1,0 +1,168 @@
+% Why a constant release rate fails --- plan \S4.9 (Phase 3).
+% Rewritten from the original Ch.4 \S9 attempt (preserved in the git-free
+% folder as 09_potential_application_in_bmvr.tex). The old section proposed
+% p = QS mean; this section states precisely why that cannot work, and ends
+% at the door of the renewal formulation (\S\ref{sec:renewal}).
+
+\section{From one cell to a population: why a constant release rate fails}
+\label{sec:why-constant-fails}
+
+The single-cell theory is complete. We now ask what it implies at the level
+of a population of infected cells --- and begin with the standard object it
+is meant to improve upon.
+
+\subsection{The classical BMVR as comparator}
+\label{sec:bmvr-classical}
+
+In the simplified (target-cell-constant) Basic Model of Viral Replication
+\cite{mclean1993balance,nowak1996population,perelson1996hiv}, infected
+cells $\Icell$ and free particles $\Vfree$ obey
+\begin{equation}
+\ddt{\Icell} = \gamma T\,\Vfree - d_{\Icell}\,\Icell,
+\qquad
+\ddt{\Vfree} = p\,\Icell - c\,\Vfree,
+\label{eq:BMVR-classical}
+\end{equation}
+with target cells $T$ held fixed, infection rate $\gamma$, virion clearance
+$c$, and where the two constants that concern us are $p$, the per-cell
+release rate, and $d_{\Icell}$, the infected-cell removal rate. Both are
+phenomenological: they are parameters to be fitted, not quantities derived
+from anything happening inside the cell. The basic reproduction number of
+\eqref{eq:BMVR-classical} is
+\begin{equation}
+R_0=\frac{\gamma T\,p}{c\,d_{\Icell}}.
+\end{equation}
+Every cell, regardless of its age or its contents, releases at the same rate
+$p$ and dies at the same rate $d_{\Icell}$. For a budding virus this is at
+least a plausible picture; for a lytic pathogen it is plainly false. It is
+worth making the budding picture explicit, because it completes the
+comparator that the rest of the chapter is built against.
+
+A budding infected cell experiences two \emph{independent} event types:
+release of one infectious particle, as a Poisson process of rate $p$, and
+death of the cell, as a Poisson process of rate $d_{\Icell}$. The two
+continue side by side until the cell dies. Its single-cell survival and
+cumulative release are then
+\begin{equation}
+I_{\rm bud}(t)=\ee^{-d_{\Icell}t},\qquad
+V_{\rm bud}(t)=\frac{p}{d_{\Icell}}\lrb{1-\ee^{-d_{\Icell}t}},
+\qquad
+\dda{V_{\rm bud}}{I_{\rm bud}}=-\frac{p}{d_{\Icell}}:
+\label{eq:bud-cell}
+\end{equation}
+the mean cell lifetime is $1/d_{\Icell}$, the lifetime release is
+$p/d_{\Icell}$, and the total number a cell releases is geometric on
+$\{0,1,2,\ldots\}$ with
+$\pr{\Kb_{\rm bud}=k}=\frac{d_{\Icell}}{d_{\Icell}+p}
+\bigl(\frac{p}{d_{\Icell}+p}\bigr)^k$ --- the number of successes before
+the terminating death in a sequence of events of which each is a release
+with probability $p/(d_{\Icell}+p)$. All of this is contained in the two
+constants $(p,d_{\Icell})$, which is exactly why the classical model is a
+faithful one-cell limit for a budding pathogen.
+
+The structural contrast with bursting is precise, and it is the engine of
+everything that follows. In budding, release and death are independent
+events: a cell may release many particles and then die with whatever it
+contains lost, or release nothing at all. In bursting, release and death
+are the \emph{same} event: whatever has accumulated is released at once,
+and the cell's productive life ends in that instant. The single-cell
+comparison in detail --- release laws, lifetimes, conditional means --- is
+in Chapter~4a; here the point is that \eqref{eq:BMVR-classical} encodes the
+budding picture exactly, and the question of this part of the chapter is
+what it should be replaced with when release comes in terminal batches.
+
+\subsection{The synchronous cohort}
+\label{sec:sync-cohort}
+
+Consider first a clean special case: $N_0$ cells, all infected at the same
+instant, each running an independent copy of the single-cell process, with
+no reabsorption or extracellular replication. The number still productively
+infected at time $t$ is $N_0\,\Ifix(t)$ (exactly in expectation, and with
+vanishing relative error as $N_0$ grows), and the expected cumulative
+extracellular count is simply
+\begin{equation}
+\Vfree(t)=N_0\,V(t),
+\end{equation}
+since $V(t)$ is the expected release from one cell. In this synchronous
+picture, the release \emph{rate} is $N_0 V'(t)=N_0\delta K(t)$: it depends
+on the age of the cohort, and it is not constant. The classical model's
+$p\Icell$ can mimic such a cohort only by accident, and only briefly.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/N4b_1_constant_release_fails.pdf}
+\caption{Age-dependent release compared with a constant-production
+surrogate for a synchronous cohort of producer units. Both schedules have
+$V_\infty=11$ and $\mathbb{E}[T]=2.398$, with
+$d=1/\mathbb{E}[T]$, $p=V_\infty d$,
+$(\lambda,\mu,\delta)=(1,0,0.1)$, and clearance rate $c=1$.
+(a) The release kernel $g(a)=\delta K(a)$ is delayed relative to
+$p\mathrm{e}^{-da}$ despite the matched lifetime yield.
+(b) Linear clearance preserves the resulting early lag in the free-count
+response.}
+\label{fig:N4b_1}
+\end{figure}
+
+\subsection{The proposal that cannot work}
+\label{sec:proposal-fails}
+
+The natural thought --- and the one originally pursued --- is to replace the
+constant $p$ in \eqref{eq:BMVR-classical} by a constant built from the
+intracellular theory: the quasi-stationary mean,
+\begin{equation}
+p\ \stackrel{?}{=}\ \langle X\rangle_{\rm QS}=\frac{a}{a-1}.
+\label{eq:naive-p}
+\end{equation}
+The intuition is that a long-lived infected cell hovers at the QS level, so
+its bursting should look like release at rate $\langle X\rangle_{\rm QS}$.
+The obstruction is dimensional: $p$ has units of particles per unit time,
+while $\langle X\rangle_{\rm QS}$ is a pure count. Substituting
+\eqref{eq:naive-p} introduces a spurious factor of time into the model.
+Worse, when $\mu=0$ one has $\langle X\rangle_{\rm QS}=V_\infty$ exactly, so
+the proposal substitutes the \emph{total lifetime output} of a cell in place
+of its \emph{output rate}.
+
+Two repairs suggest themselves, and both fail for related reasons. First,
+average the burst size over the burst-time density $\delta J$, the
+density of $\tau$ derived in Chapter~4a:
+\begin{equation}
+\int_0^\infty\delta J(t)\,\mean{\Kb\mid\tau=t}\,\dd t
+=\delta\int_0^\infty K(t)\,\dd t
+=V_\infty,
+\end{equation}
+using \eqref{eq:sizebias} and $V'=\delta K$ --- again a count, not a rate.
+Second, weight the load-dependent flux by the burst-time density,
+$\delta\int\delta J(t)\,\mean{\xt^2\mid\cdot}\,\dd t$: this has the right
+dimensions, but it averages over the wrong measure. The burst-time density
+describes \emph{when a single cell bursts}; what a population release rate
+needs is an average over the \emph{ages of the cells currently infected}.
+In an asynchronous infection those two distributions are not the same, and
+no reweighting of a single-cell count by a single-cell density can fix the
+substitution, because the difficulty is not in the single-cell theory at
+all. It is in the population bookkeeping.
+
+\subsection{What the attempt got right}
+\label{sec:attempt-right}
+
+Strip the failed proposal back and something correct remains. Suppose a
+single infected macrophage founds a chain of infections: when it ruptures,
+each released particle goes on to found a new intracellular process in a new
+cell; these in turn end at different times, and the cycles continue,
+beginning and ending, beginning and ending. After a sufficient time there
+emerges a kind of stationarity: any given release event exhibits a burst
+time and a burst size distributed according to the laws of Chapter~4a, and
+short-duration processes occur more frequently than long ones simply
+because they turn over faster. What we want
+is the overall rate of release events and their sizes --- the quantity that
+should replace the $p\Icell$ term of \eqref{eq:BMVR-classical}.
+
+Two observations from \S\ref{sec:sync-cohort}--\S\ref{sec:proposal-fails}
+organise what follows. First, the expected release flux of a cell of age
+$a$ is not a constant but $\delta K(a)$ --- the burst rate $\delta\xt$ times
+the size $\xt$, averaged. Second, at any host time the infected population
+is a mixture of ages, one cohort for each past moment of infection. The
+correct population model must therefore keep track of \emph{cell age}: how
+many cells were infected when, how many of them are still productive, and
+how much each age class is releasing. That is precisely an age-structured,
+or renewal, formulation, and because both of its ingredients already exist
+in closed form, it is exactly solvable. We take it up next.

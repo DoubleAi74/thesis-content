@@ -1,0 +1,391 @@
+\section{Absorption models and the method of characteristics}
+\label{sec:moc}
+
+When one compartment ruptures, its contents enter a shared medium before they are
+taken up by the compartments that remain.  Treating this transfer as instantaneous
+suppresses both the absorption time and any loss that occurs after uptake.  The
+models below retain an explicit absorption period.  They follow \(X_t\), the number
+of particles inside one receiving compartment, and \(Y_t\), the number still
+outside, from the initial state
+\begin{equation}
+  X_0=0,
+  \qquad Y_0=N.
+  \label{eq:abs-initial-state}
+\end{equation}
+The three models are deliberately laddered.  Pure absorption establishes the
+bivariate PGF.  Interior death adds a third fate but leaves a finite state space.
+Interior birth then makes the state space infinite and turns the PGF equation into
+the non-trivial characteristic problem required by later compartment models.
+
+For all three models write
+\begin{equation}
+  p_{ij}(t)=\Prb(X_t=i,Y_t=j),
+  \qquad
+  G(x,y,t)=\sum_{i,j\geq0}p_{ij}(t)x^iy^j
+  =\E[x^{X_t}y^{Y_t}].
+  \label{pgfDef}
+\end{equation}
+Probabilities with a negative index are understood to be zero.
+
+\subsection{Absorption only}
+\label{sec:absonly}
+
+Suppose each exterior particle is absorbed independently at rate \(\alpha>0\).
+From state \((i,j)\),
+\begin{align}
+  \Prb(\Delta X=1,\Delta Y=-1\mid X_t=i,Y_t=j)
+  &=\alpha j\,\Delta t+o(\Delta t),
+  \label{eq:abs-short-time}\\
+  \Prb(\Delta X=0,\Delta Y=0\mid X_t=i,Y_t=j)
+  &=1-\alpha j\,\Delta t+o(\Delta t).
+  \nonumber
+\end{align}
+The forward equations are therefore
+\begin{equation}
+  \frac{\dd p_{ij}}{\dd t}
+  =\alpha(j+1)p_{i-1,j+1}-\alpha j p_{ij}.
+  \label{eq:abs-master}
+\end{equation}
+Multiplying by \(x^iy^j\), summing and shifting the incoming indices gives
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =\alpha(x-y)\frac{\partial G}{\partial y},
+  \qquad G(x,y,0)=y^N.
+  \label{PDE1}
+\end{equation}
+
+The probabilistic solution is immediate.  One initial particle is still outside
+at time \(t\) with probability \(\e^{-\alpha t}\) and has been absorbed with the
+complementary probability.  Its PGF is therefore
+\[
+  g_1(x,y,t)=\bigl(1-\e^{-\alpha t}\bigr)x+\e^{-\alpha t}y.
+\]
+The \(N\) initial particles act independently, so
+\begin{equation}
+  G(x,y,t)=
+  \left[
+    \bigl(1-\e^{-\alpha t}\bigr)x+\e^{-\alpha t}y
+  \right]^N.
+  \label{eq:Gabsonly}
+\end{equation}
+It follows that
+\(X_t\sim\operatorname{Binomial}(N,1-\e^{-\alpha t})\) and
+\(Y_t=N-X_t\).  Substitution verifies that \eqref{eq:Gabsonly} also solves the
+PDE \eqref{PDE1}.
+
+\subsection{Absorption with interior death}
+\label{sec:absdeath}
+
+Now let each absorbed particle die at rate \(\mu\geq0\).  The additional
+transition \((i,j)\to(i-1,j)\) has rate \(\mu i\), so
+\begin{equation}
+  \frac{\dd p_{ij}}{\dd t}
+  =\alpha(j+1)p_{i-1,j+1}
+  +\mu(i+1)p_{i+1,j}
+  -(\alpha j+\mu i)p_{ij}.
+  \label{eq:absdeath-master}
+\end{equation}
+The bivariate PGF satisfies
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =\mu(1-x)\frac{\partial G}{\partial x}
+  +\alpha(x-y)\frac{\partial G}{\partial y},
+  \qquad G(x,y,0)=y^N.
+  \label{PDE2}
+\end{equation}
+
+For a single initial particle there are three possible states at time \(t\): still
+outside, alive inside, or dead.  Their probabilities are
+\begin{align}
+  q_{\mathrm o}(t)&=\e^{-\alpha t},
+  \label{eq:qoutside}\\
+  q_{\mathrm i}(t)&=
+  \begin{cases}
+    \displaystyle
+    \frac{\alpha}{\mu-\alpha}
+    \bigl(\e^{-\alpha t}-\e^{-\mu t}\bigr),
+    &\mu\neq\alpha,\\[9pt]
+    \alpha t\e^{-\alpha t},&\mu=\alpha,
+  \end{cases}
+  \label{eq:qinside}\\
+  q_{\mathrm d}(t)&=1-q_{\mathrm o}(t)-q_{\mathrm i}(t).
+  \label{eq:qdead}
+\end{align}
+The second line is the convolution of absorption at time \(s\) with survival
+inside for the remaining time \(t-s\); its equal-rate expression is the regular
+limit omitted by a quotient-only formula.  Independence now gives the trinomial
+PGF
+\begin{equation}
+  G(x,y,t)
+  =\bigl[q_{\mathrm d}(t)+q_{\mathrm i}(t)x+q_{\mathrm o}(t)y\bigr]^N.
+  \label{eq:Gabsdeath}
+\end{equation}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{abs1.pdf}
+    \caption{Absorption only.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{abs2.pdf}
+    \caption{Absorption with interior death.}
+  \end{subfigure}
+  \caption{Single-particle state probabilities.  Pure absorption transfers mass
+  from the exterior to the interior.  Adding death makes the interior probability
+  rise and then fall as mass is transferred to the absorbing dead state.}
+  \label{fig:absorption-probabilities}
+\end{figure}
+
+\subsection{Characteristics on the finite-state model}
+\label{sec:mocabsdeath}
+
+The direct solution \eqref{eq:Gabsdeath} provides a controlled test of the method
+of characteristics.  Write \eqref{PDE2} as
+\[
+  -G_t+\mu(1-x)G_x+\alpha(x-y)G_y=0
+\]
+and introduce characteristic coordinates \((\xi,\eta,\tau)\) with initial surface
+\begin{equation}
+  x(0)=\xi,
+  \qquad y(0)=\eta,
+  \qquad t(0)=0.
+  \label{eq:characteristic-initial-surface}
+\end{equation}
+Along a characteristic,
+\begin{equation}
+  \frac{\dd G}{\dd\tau}=0,
+  \qquad
+  \frac{\dd t}{\dd\tau}=-1,
+  \qquad
+  \frac{\dd x}{\dd\tau}=\mu(1-x),
+  \qquad
+  \frac{\dd y}{\dd\tau}=\alpha(x-y).
+  \label{eq:absdeath-characteristics}
+\end{equation}
+The first two equations give \(G=\eta^N\) and \(t=-\tau\).  The third gives
+\begin{equation}
+  1-x=(1-\xi)\e^{-\mu\tau}.
+  \label{eq:absdeath-x-characteristic}
+\end{equation}
+Substitution into the \(y\)-equation, followed by one integrating factor, yields
+for \(\alpha\neq\mu\)
+\begin{equation}
+  y=1-\frac{\alpha}{\alpha-\mu}(1-\xi)\e^{-\mu\tau}
+  +\left[
+      \eta+\frac{\alpha}{\alpha-\mu}(1-\xi)-1
+    \right]\e^{-\alpha\tau}.
+  \label{eq:absdeath-y-characteristic}
+\end{equation}
+Eliminating \(\xi\) and \(\tau\) and solving for the initial coordinate
+\(\eta\) gives
+\[
+  \eta=q_{\mathrm d}(t)+q_{\mathrm i}(t)x+q_{\mathrm o}(t)y.
+\]
+Since \(G=\eta^N\), the characteristic calculation reproduces
+\eqref{eq:Gabsdeath}.  The equal-rate case follows by taking the limit, giving
+\eqref{eq:qinside}; the machinery is therefore fixed before the infinite-state
+model is introduced.
+
+\subsection{Absorption with interior birth and death}
+\label{sec:absbirthdeath}
+
+Finally let each interior particle give birth at rate \(\beta\geq0\) and die at
+rate \(\mu\geq0\).  The three transitions are
+\begin{align*}
+  (i,j)&\longrightarrow(i+1,j-1) &&\text{at rate }\alpha j,\\
+  (i,j)&\longrightarrow(i+1,j)   &&\text{at rate }\beta i,\\
+  (i,j)&\longrightarrow(i-1,j)   &&\text{at rate }\mu i.
+\end{align*}
+Their forward equation is
+\begin{multline}
+  \frac{\dd p_{ij}}{\dd t}
+  =\alpha(j+1)p_{i-1,j+1}
+  +\mu(i+1)p_{i+1,j}
+  +\beta(i-1)p_{i-1,j}\\
+  -(\alpha j+\mu i+\beta i)p_{ij},
+  \label{eq:abd-master}
+\end{multline}
+and the PGF satisfies
+\begin{equation}
+  G_t=
+  \bigl[\mu-(\mu+\beta)x+\beta x^2\bigr]G_x
+  +\alpha(x-y)G_y,
+  \qquad G(x,y,0)=y^N.
+  \label{PDE3}
+\end{equation}
+
+Birth makes infinitely many interior states reachable, but independence has not
+disappeared.  Descendants of distinct exterior particles remain independent, so
+\(G=h^N\), where \(h\) is the PGF generated by one exterior particle.  What has
+changed is that \(h\) is no longer a finite polynomial.
+
+There is a branch-safe representation of \(h\) that is valid for every
+non-negative choice of the rates.  Let \(g(x,u)\) be the PGF of a linear
+birth--death population of age \(u\), started from one interior particle.  From
+\cref{sec:linear-bd},
+\begin{equation}
+  g(x,u)=
+  \begin{cases}
+  \displaystyle
+  \frac{\mu(1-x)-(\mu-\beta x)\e^{-(\beta-\mu)u}}
+       {\beta(1-x)-(\mu-\beta x)\e^{-(\beta-\mu)u}},
+  &\beta\neq\mu,\\[14pt]
+  \displaystyle
+  1-\frac{1-x}{1+\beta u(1-x)},
+  &\beta=\mu.
+  \end{cases}
+  \label{eq:interior-bd-pgf}
+\end{equation}
+If the exterior particle has not been absorbed by time \(t\), it contributes
+\(y\); if absorption occurs at time \(s\leq t\), it initiates an interior process
+of age \(t-s\).  Conditioning on the absorption time therefore gives
+\begin{equation}
+  h(x,y,t)
+  =\e^{-\alpha t}y
+  +\int_0^t\alpha\e^{-\alpha s}g(x,t-s)\,\dd s,
+  \qquad
+  G(x,y,t)=h(x,y,t)^N.
+  \label{eq:abd-integral-solution}
+\end{equation}
+This finite integral is the preferred global formula.  It remains regular when
+\(\beta=\mu\), when \(\beta=0\), and at the resonant rate combinations that make
+individual terms in a special-function expansion singular.
+
+\subsection{Characteristic and hypergeometric form}
+
+The characteristic system for \eqref{PDE3} has the same \(G\), \(t\) and \(y\)
+equations as \eqref{eq:absdeath-characteristics}, while
+\begin{equation}
+  \frac{\dd x}{\dd\tau}
+  =\mu-(\mu+\beta)x+\beta x^2.
+  \label{eq:abd-x-characteristic}
+\end{equation}
+Assume for the moment that \(\beta>0\) and
+\(b\defeq\beta-\mu\neq0\).  The right-hand side factorises as
+\begin{equation}
+  \beta(x-x_+)(x-x_-),
+  \qquad x_+=1,
+  \qquad x_-=\frac{\mu}{\beta},
+  \label{eq:abd-fixed-points}
+\end{equation}
+and separation gives
+\begin{equation}
+  \frac{x-x_+}{x-x_-}
+  =\frac{\xi-x_+}{\xi-x_-}\e^{b\tau}.
+  \label{eq:xratio}
+\end{equation}
+Write
+\[
+  Z=\frac{\xi-x_+}{\xi-x_-},
+  \qquad
+  \zeta(\tau)=Z\e^{b\tau}.
+\]
+Solving \eqref{eq:xratio} for \(x\) gives
+\begin{equation}
+  x(\tau)=x_++(x_+-x_-)
+  \frac{\zeta(\tau)}{1-\zeta(\tau)}.
+  \label{eq:xgeom}
+\end{equation}
+The remaining characteristic is
+\begin{equation}
+  \frac{\dd}{\dd\tau}\bigl(\e^{\alpha\tau}y\bigr)
+  =\alpha\e^{\alpha\tau}x(\tau).
+  \label{eq:yint}
+\end{equation}
+Where \(\lvert\zeta\rvert<1\), expand the quotient geometrically and integrate
+term by term.  With
+\begin{equation}
+  \delta=\frac{\alpha}{b},
+  \qquad
+  \Psi(z)=1+\frac{\alpha}{\beta}
+  \sum_{n=1}^{\infty}\frac{z^n}{n+\delta},
+  \label{eq:Psidef}
+\end{equation}
+one obtains
+\(
+  \alpha\int\e^{\alpha\tau}x(\tau)\dd\tau
+  =\e^{\alpha\tau}\Psi(\zeta(\tau))
+\)
+up to a constant.  At the endpoint \((x,y,t)\), set
+\begin{equation}
+  W=\frac{x-1}{x-\mu/\beta}.
+  \label{eq:Wdef}
+\end{equation}
+Because \(t=-\tau\), the initial characteristic ratio is
+\(Z=W\e^{bt}\).  Solving \eqref{eq:yint} for the initial coordinate \(\eta\)
+and using \(G=\eta^N\) gives the closed expression
+\begin{equation}
+  G(x,y,t)=
+  \left\{
+    \e^{-\alpha t}\bigl[y-\Psi(W)\bigr]
+    +\Psi\bigl(W\e^{bt}\bigr)
+  \right\}^{N}.
+  \label{eq:Gabd}
+\end{equation}
+
+Equation \eqref{eq:Gabd} is first obtained in the joint convergence region
+\begin{equation}
+  |W|<1,
+  \qquad
+  |W|\e^{bt}<1,
+  \label{eq:Psi-series-domain}
+\end{equation}
+with \(n+\delta\neq0\) for every \(n\geq1\).  Within that region it agrees with
+the integral solution \eqref{eq:abd-integral-solution}, and the identity supplies
+its analytic continuation wherever a consistent branch is chosen.  For numerical
+work outside \eqref{eq:Psi-series-domain}, especially in the supercritical regime
+at \(x\leq\mu/\beta\), the finite integral is safer: \(W\) may cross the standard
+hypergeometric branch cut even though the physical PGF remains real and analytic.
+
+The series is a Gauss hypergeometric function.  Since
+\begin{equation}
+  {}_2F_1(1,\delta;\delta+1;z)
+  =\sum_{n=0}^{\infty}\frac{\delta}{n+\delta}z^n,
+  \label{eq:2F1simple}
+\end{equation}
+we may write
+\begin{equation}
+  \Psi(z)
+  =1+\frac{\beta-\mu}{\beta}
+  \left[{}_2F_1(1,\delta;\delta+1;z)-1\right].
+  \label{eq:Psihyp}
+\end{equation}
+This form is compact, but it does not remove the need to specify analytic
+continuation.
+
+Three checks are independent of that representation.  At \(t=0\), the two
+\(\Psi\) terms in \eqref{eq:Gabd} cancel and \(G=y^N\).  At \(x=y=1\),
+\(W=0\) and \(\Psi(0)=1\), giving \(G=1\).  Finally,
+\begin{equation}
+  G(1,y,t)=
+  \bigl[1-\e^{-\alpha t}+\e^{-\alpha t}y\bigr]^N,
+  \label{eq:abd-exterior-marginal}
+\end{equation}
+so \(Y_t\sim\operatorname{Binomial}(N,\e^{-\alpha t})\), as it must: interior
+birth and death cannot alter whether an exterior founder has been absorbed.
+
+Two degenerate cases now have a precise status.  If \(\beta=\mu\), the roots in
+\eqref{eq:abd-fixed-points} coalesce and \(b\), \(\delta\) and \(W\) cannot be used;
+the critical PGF in \eqref{eq:interior-bd-pgf} inserted into
+\eqref{eq:abd-integral-solution} is the exact replacement.  If
+\begin{equation}
+  \alpha=n(\mu-\beta)
+  \qquad\text{for some }n\geq1,
+  \label{eq:abd-resonance}
+\end{equation}
+then a denominator \(n+\delta\) in \eqref{eq:Psidef} vanishes.  The singularity
+is removable in the difference of \(\Psi\) terms in \eqref{eq:Gabd}; its limit
+contains a factor of \(t\) multiplying the resonant exponential.  Again,
+\eqref{eq:abd-integral-solution} evaluates the solution directly without a
+parameter limit.
+
+The progression from \eqref{PDE1} to \eqref{PDE3} is the part that later models
+reuse.  State transitions determine the master equation; the PGF compresses it;
+characteristics expose the closed form where one exists; and the probabilistic
+integral keeps the assumptions and exceptional parameter values explicit.
+
+\FloatBarrier

@@ -1,0 +1,42 @@
+\section{Scope and organisation}\label{m:sec:intro}
+
+This chapter assembles the probabilistic and analytic tools used throughout the
+thesis.  The emphasis is structural: exponential clocks generate continuous-time
+Markov chains; probability generating functions encode branching and compartment
+counts; conditioning on non-absorption produces quasi-stationary laws; and the
+method of characteristics converts first-order generating-function equations into
+explicit solutions.  Population, absorption and catastrophe are treated as
+abstract stochastic mechanisms rather than tied to a particular application.
+
+Two recurring distinctions organise the discussion.  The first is between
+ordinary moments and quantities conditioned on survival.  In a subcritical process
+the unconditional mean tends to zero, while the population seen conditional on
+survival approaches a non-degenerate scale.  The second is between discrete and
+continuous time.  Both descriptions may share an embedded event chain, yet the
+availability of an explicit time parameter can make their survival constants
+analytically quite different.
+
+\Cref{m:sec:prelim} develops exponential clocks, competing events, generators,
+Kolmogorov equations and generating functions, ending with the linear
+birth--death process.  \Cref{m:sec:gw} then treats the binary Galton--Watson
+process, including extinction, the critical lifetime and total progeny.
+\Cref{m:sec:qsd} develops conditioning on late survival and introduces the discrete
+constant
+\[
+  A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n}
+\]
+only to the extent required for the limiting conditional moments.
+
+\Cref{m:sec:small} turns to small founding populations, catastrophe exposure and
+the continuous-time birth--death comparison.  There the closed form
+\(A_{\mathrm c}(p)=(1-2p)/(1-p)\) is derived before it is contrasted with the
+discrete constant.  The product, series, bounds, near-critical analysis,
+closed-form search and Koenigs-function theory of \(A(p)\) are deliberately reserved
+for \ChA.  Finally, \cref{m:sec:moc} develops a ladder of absorption models and
+solves their bivariate generating-function equations by characteristics; the
+appendices record the supporting hypergeometric identity and coefficient
+extraction.
+
+This is the Pass-1 content architecture.  It retains the full harvested toolkit
+spine; a later structural pass may rearrange or compress it, but no such redesign is
+undertaken here.

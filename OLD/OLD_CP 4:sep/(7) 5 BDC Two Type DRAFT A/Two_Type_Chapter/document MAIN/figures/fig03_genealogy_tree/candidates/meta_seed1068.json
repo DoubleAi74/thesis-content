@@ -1,0 +1,43 @@
+{
+  "catastrophe_time": 8.03225,
+  "figure": "fig03_genealogy_tree",
+  "parameters": {
+    "delta1": 0.05,
+    "delta2": 0.08,
+    "lambda1": 1.0,
+    "lambda2": 0.9,
+    "mu1": 0.55,
+    "mu2": 0.5,
+    "nu": 0.4
+  },
+  "process": "continuous-time two-type birth-death-conversion genealogy with global catastrophe",
+  "software": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.4.2",
+    "python": "3.14.3"
+  },
+  "statistics": {
+    "alive_at_horizon": 0,
+    "births": 40,
+    "catastrophe_time": 8.03225,
+    "conversions": 9,
+    "deaths": 24,
+    "horizon": 9.0,
+    "killed_by_catastrophe": 17,
+    "leaves": 41,
+    "max_depth": 16,
+    "seed": 1068,
+    "segments": 90,
+    "type1_branch_length": 24.394266,
+    "type1_segments": 53,
+    "type2_branch_length": 26.947264,
+    "type2_segments": 37
+  },
+  "validation": {
+    "chronology_and_topology": "passed",
+    "irreversible_conversion": "passed",
+    "leaf_identity": true,
+    "simultaneous_catastrophe": "passed",
+    "terminal_identity": true
+  }
+}

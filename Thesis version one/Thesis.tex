@@ -1,0 +1,542 @@
+%input macros (i.e. write your own macros file called MacroFile1.tex)
+%\include{Macros/MacroFile1}
+
+\documentclass[twoside,12pt]{Classes/myThesis}
+
+\usepackage{amssymb,amsthm}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amscd}
+\usepackage{mathrsfs}
+\usepackage{accents}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[all]{xy}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage{bm}
+\usepackage{xfrac}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{listings}
+\usepackage[labelfont=bf]{caption}
+\usepackage[ruled,vlined,algochapter]{algorithm2e}
+\usepackage{tikz}
+\usepackage{microtype}
+\usepackage{array} 
+
+\usepackage[toc,page]{appendix}
+
+
+%\newcommand{\ddt}[1][]{\frac{\textrm{d}#1}{\textrm{d}t}}
+\newcommand{\Eqref}[1]{Eq.~\eqref{#1}}
+\newcommand{\Figref}[1]{Figure~\ref{#1}}
+\newcommand{\Tabref}[1]{Table~\ref{#1}}
+\newcommand{\Chapref}[1]{Chapter~\ref{#1}}
+\newcommand{\Secref}[1]{Section~\ref{#1}}
+\newcommand{\Appref}[1]{Appendix~\ref{#1}}
+\newcommand{\Algref}[1]{Algorithm~\ref{#1}}
+
+\ifpdf
+    \pdfinfo { /Title  (Stochastic branching and catastrophe with applications to intracellular pathogenics and the divergence of species )
+               /Creator (TeX)
+               /Producer (pdfTeX)
+               /Author (Name Email)
+               /CreationDate (D:)  %format D:YYYYMMDDhhmmss
+               /ModDate (D:)
+               /Subject (Thesis for the degree of Doctor of Philosophy)
+               /Keywords (PhD, Thesis)}
+    \pdfcatalog { /PageMode (/UseOutlines)
+                  /OpenAction (fitbh)  }
+\fi
+
+%\title{\normalsize{Stochastic branching and catastrophe\\with applications to intracellular\\pathogenic replication and species divergence}}
+
+\title{\large{
+    Stochastic branching and catastrophe\\
+    \vspace{1pt} % Adjust this to control the spacing between lines
+    with applications to intracellular\\
+    \vspace{1pt} % Adjust as needed
+    pathogenic replication and species divergence
+}}
+
+\ifpdf
+  \author{\href{mailto:email}{Adam Aldridge}}
+  \crest{\includegraphics[width=44mm]{Leeds_Crest.png}}
+  \collegeordept{\href{http://eps.leeds.ac.uk/maths}{Department of Applied Mathematics}}
+  \university{\href{http://www.leeds.ac.uk}{University of Leeds}}
+
+\else
+  \author{Name}
+  \crest{\includegraphics[width=54mm]{Leeds_Crest.eps}}
+  \collegeordept{Department of Applied Mathematics}
+  \university{University of Leeds}
+\fi
+
+
+\degree{Doctor of Philosophy}
+\degreedate{November, 2024}
+
+\hbadness=10000
+\hfuzz=50pt
+\usepackage{StyleFiles/watermark}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+\usepackage{subcaption}    % for subfigures
+
+\usepackage{amsmath}
+
+\usepackage{enumitem}
+\usepackage{float}
+
+
+\usepackage{amsmath,amssymb}
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{arrows, arrows.meta,shapes.misc, positioning, calc}
+
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+
+
+\usepackage[makeroom]{cancel}
+
+
+\pgfplotsset{blankstyle/.style={%
+    major tick length = 0,
+    minor tick length = 0,
+    tick label style={color=white},
+    ylabel near ticks,
+    ylabel style={rotate=-90,xshift=2mm},
+    xlabel style={yshift=2mm},
+    axis x line=bottom,
+    axis y line=left}
+}
+\pgfplotsset{notblankstyle/.style={%
+    minor tick length = 0,
+    ylabel near ticks,
+    ylabel style={rotate=-90,xshift=2mm},
+    xlabel style={yshift=2mm},
+    axis x line=bottom,
+    axis y line=left}
+}
+\definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66}
+
+\newcommand{\pgf}{probability generating function}
+\newcommand{\intinf}{\displaystyle\int_0^{\infty}}
+%\newcommand{\pr}[1]{{\mathbb{P}\left(#1\right)}}
+
+\newcommand{\pr}[1]{{\text{Pr}\left\{#1\right\}}}
+
+\newcommand\mean[1]{{\rm I}\!{\rm E}(#1)}
+\newcommand{\rr}{{\bf R}}
+\newcommand{\xx}{{\bf X}}
+\newcommand{\xt}{{\xx_t}}
+\newcommand{\yy}{{\bf Y}}
+\newcommand{\yt}{{\yy_t}}
+\newcommand{\ww}{{\bf W}}
+\newcommand{\wt}{{\ww_t}}
+
+\newcommand{\xs}{{\xx_s}}
+\newcommand{\vv}{{\bf V}}
+\newcommand{\vt}{{\vv_t}}
+\newcommand{\ddt}[1]{\displaystyle\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\displaystyle\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\displaystyle\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+\newcommand{\dds}[1]{\displaystyle\frac{\dd #1}{\dd s}}
+\newcommand{\dd}{{\rm d}}
+\newcommand{\dt}{{\rm d}t}
+\newcommand{\ee}{{\rm e}}
+\newcommand{\ex}[1]{\mathbb{E}\left(#1\right)}
+\newcommand{\de}{differential equation}
+\newcommand{\rv}{random variable}
+\newcommand{\delt}{\Delta t}
+\newcommand{\ft}{\textit{F.~tularensis}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+
+\newcommand{\Vt}{_{\text{total}} V}
+
+
+\newcommand{\Ic}{ I_{\text{const}}}
+
+
+\newcommand{\lb}{\left(}
+\newcommand{\rb}{\right)}
+\newcommand{\lrb}[1]{\lb#1\rb}
+
+\newcommand{\lbs}{\left[}
+\newcommand{\rbs}{\right]}
+\newcommand{\lrbs}[1]{\lbs#1\rbs}
+
+\newcommand{\xdt}{{\xx_{t+\delt}}}
+
+\newcommand{\zz}{{\bf Z}}
+
+\newcommand{\ydt}{{\yy_{t+\delt}}}
+
+\newcommand{\pt}{p_{i,j}(t)}
+\newcommand{\p}{p_{i,j}}	
+
+
+\newcommand{\lbc}{\left\{ }
+\newcommand{\rbc}{\right\} }
+\newcommand{\lrbc}[1]{\lbc#1\rbc}
+
+\newcommand{\lrbq}[1]{\hspace{-2pt}\lb#1\rb}
+
+\newcommand{\Id}{{I_{\text{death}}}}
+%\newcommand{\If}{{I_{\text{fix}}}}
+
+
+\newcommand{\pdx}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
+\newcommand{\pdxn}[3]{\displaystyle\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+
+
+\newcommand{\eec}{{\ee^{\lambda(a-b)t}}}
+
+
+\usepackage{amsthm} % for theorem environments
+
+\theoremstyle{plain} % theorem style
+\newtheorem{lemma}{Lemma} % define a new theorem environment called "lemma"
+
+
+\usepackage{changepage} % for the adjustwidth environment
+
+
+
+
+
+
+
+
+\begin{document}
+
+\renewcommand\baselinestretch{1.2}
+\baselineskip=18pt plus1pt
+
+\frontmatter
+\ifpdf
+	\pdfbookmark[0]{Cover}{Cover}
+\fi
+\maketitle
+%set the number of sectioning levels that get number and appear in the contents
+
+\vfill
+\noindent
+To my knowledge, nothing has been plagiarised.  And despite it being remarkably helpful in coding,  none of the sentences presented were written with generative AI.   
+\vfill
+
+\pagebreak
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+
+\ifpdf
+	\pdfbookmark[0]{Copyright}{Copyright}
+\fi
+%\include{Copyright/copyright}
+\ifpdf
+	\pdfbookmark[0]{Publications}{Publications}
+\fi
+%\include{Publications/publications}
+\ifpdf
+	\pdfbookmark[0]{Acknowledgements}{Acknowledgement}
+\fi
+%\include{Acknowledgement/acknowledgement}
+\noindent
+\begin{center}
+%Acknolagements 
+\noindent
+Thank you Grant, Martin, and Carmen,\\
+\noindent
+Each individually,  your knowledge and wisdom has shaped me much beyond understanding stochastic process theory. 
+
+Especially Grant,  for always knowing how and when to encourage,  \\ and generally having the patience of a saint. 
+
+Together, you have enriched the lives of countless aspirational students,  and I consider myself as greatly fortunate to have been one of them.\\
+
+\vspace{29pt}
+\noindent
+Mum and Dad\\
+\noindent
+Thanks again for listening to me ramble on ad infinitum about everything and anything I happen to be interested in.  It's been invaluable in shaping my thoughts.\\
+
+
+\vspace{29pt}
+\noindent
+Richard Teall, \\
+For indulging my endless questions, being a patient and attentive guide,  and introducing me to some of the more arcane teachings of the yogavacara and the Gurdjieffiean framework.  Though I have to say you lost me a bit at the 18 trajectoris of the active,  passive and neutralising. 
+
+\vspace{29pt}
+\noindent
+
+\noindent
+I'd like to dedicate this thesis to all the wonderful people,  of the maths satalite office,  Buddhist meditation society,  of the caving club, and elsewhere,  who've been there along the way -- you know who you are.  Thank you for company,  guidance,  and companionship,  through ups and downs,  highs and lows,  for what can best be described as a mutually transformative series of events.
+
+
+
+\end{center}
+
+
+\vfill
+\pagebreak
+
+\ifpdf
+	\pdfbookmark[0]{Abstract}{Abstract}
+\fi
+
+
+\begin{center}
+
+\hspace{0pt}\includegraphics[width =0.74 \textwidth]{poemz.png}
+
+A poem by Harivansh Rai Bachchan I've found interesting and have thought about a lot, especially in the final months, weeks and days of writing.\\
+
+
+\vspace{12pt}
+\noindent
+Perhaps there is some implied causation from "not asking for shade" to the fact that the forest is thick and dense with trees. And in this regard,  there would be an analogy with the birth death catastrophe process: the propensity to "ask" aligning with catastrophe rate $\delta$, and large expected $\xt$ resulting from its diminishment -- the forest being dense and full of trees. \\
+
+\vspace{12pt}
+\noindent
+When one pathway gets selected, the others in potential find themselves no-longer in the current basin of attraction. So without selection,  onward pathways can be numerous.  In the $\xt \to \infty$ limit, the draw from each diminishes to cessation.\\
+
+\vspace{12pt}
+\noindent
+In a further (rather more dubious) potential analogy from here to the Vajrayana theory: the multifarious coloured lights of the bardo of dharmata \cite{trungpa2000tibetan} whizz and pop into a vast yet infinitely sub-divided tapestry,  without centre or circumference.  Leaving the journeyman undelivered,  thus unmarred, and increasingly without scope for reabsorption into the earthbound cycles of birth,  old age,  sickness and death. The essence of the teaching of the BT \cite{trungpa2000tibetan} seems,  as it were,  to "not ask" using means of being distracted by something else... 
+
+\end{center}
+
+\vfill
+
+\pagebreak
+
+
+\noindent
+\textbf{Thesis abstract}
+
+\vspace{0pt}
+\noindent
+The story of Yersinia pestis pathogenesis,  is largely elusive to detailed observation.  Not only is the bacteria sufficiently small to make direct observation challenging,  it is also potently deadly which brings heightened risks to experimentation. \par
+This thesis,  however,  seeks to shed light on the evolved mechanisms of Y. pestis and other pathogens purely on the basis of theory.  It appears that the early stage dynamics of macrophage infiltration and intracellular replication could play a crucial role in the overall pathogenesis.  Serving as a means to facilitate the replication of those initial few colony forming units which enter the body,  the within macrophage environment may give Y. pestis the foot in the door it needs to bring greater probability to its continued proliferation in that body and onto the next.\par
+
+
+Y. pestis,  has evolved to exploit the intracellular
+environment of host macrophages for a temporary replicative advantage,  which, at the outset if its establishment in a host, may be crucial to its overall advantage.  As time progresses and the pathogen's 
+presence becomes known to the body, more aggressive immune cells (neutrophils) are mounted and arrive on the scene of infection.
+At this time, the same mechanism by which Y. pestis used to enter macrophages is turned off, thus protecting it
+from these more hash leukocytes. From here it replicates extracellulary. 
+The present thesis seeks to quantify the significance of this early replicative advantage. 
+
+
+
+In addition, we have sought to understand the dynamics of lytic pathogenesis more generally, as opposed to 
+constant budding release thought to be the mechanism of some viruses.
+Much of the following mathematicical work surrounds the so called Birth Death Catastrophe process about which we have 
+obtained a series of analytical results. \par
+
+Then, also in the theme of early stage dynamics, I propose an inhomogeneous continuous time Markov chain model to descrive the emergence of species over a time characterised by population expansion into a yet unfulfilled domain, or through a period of upheaval following the triggering of an ecological instability. 
+
+Through this, along with other models, I aimed to describe speculative theories of evolution.
+
+
+The logistic speciation model is supplement to work presented by R. Mann in a paper exploring the statistical consequences of the standard birth death process as applied to large clade formation.  When conditioning on survival to the present, those lineages which did persist tend to have experienced a  period of greater than average diversification towards their outset.   This statistical consequence of the standard birth death process is refered to push of the past.  R. Mann and G. Budd propose that this is an overlooked dynamic in the paleontological literature,  which explores the reasons for observed mass origination events such as the Cambrian explosion, the great ordovician expansion, and the radiation and diversification of mammals following the cretaceous tertiary (KT) boundary. 
+They don't dismiss the possibility that causes exist for these mass radiations, they merely comment that this demonstrateble statistical consequence has not yet been fully accounted for in the research.\par
+The Logistic speciation model presented here seeks to face the problem from the other side,  serving as a means to immitate the dynamics by which an early mass diversification might be driven by the availability of resources during the early stages of a population expansion into a new area.\par
+A topical example where such an event may have taken place is the evolution of Y. pestis from Y. pseudotuburculosis during the agricultural revolution \cite{king2009evolution} \cite{mira2006neolithic} where there would have been large populations amassing in villages offereing an abundance of replicative means giving the potential for bacterial genome variation. 
+
+
+
+
+%\include{Abstract/abstract}
+%\ifpdf
+%	\pdfbookmark[0]{Abbreviations}{Abbreviations}
+%\fi
+%\include{Abbreviations/Abbreviations}
+
+
+\ifpdf
+	\pdfbookmark[0]{Table of contents}{TOClabel}
+\fi
+\tableofcontents
+
+
+\mainmatter
+
+
+
+\include{chapter1/introduction}
+
+%%%%%%%%%%\include{chapter2/biological}
+\include{chapter3/mathematical}
+\include{chapter4/BDC1}
+\include{chapter5/BDC2}
+\include{chapter6/BDC3}
+\include{chapter7/burstbudd}
+\include{chapter8/evolution}
+
+\include{chapter9/conclusion}
+
+
+
+\appendix
+
+\include{z-appendix/appendix}
+
+
+
+
+
+
+
+
+
+%\include{Appendix1/Appendix1}
+%\include{Appendix2/Appendix2}
+
+\bibliographystyle{plain}  % or use abbrvnat, unsrtnat, etc.
+%\addcontentsline{toc}{chapter}{References}
+%\renewcommand{\bibname}{References}
+\bibliography{References/references}
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection*{Clear insight and becoming}
+Tought I may as well paste in a poem I spent some time thinking about during the second year. It was in relation to the theory of dissipative structures and the fact that there are times of relative change interspersed by priods of stability: 
+
+\begin{quotation}
+\noindent
+I think you were on to something with memory.\\
+But memory seen in a different light.\\
+A light indeed – penetration;\\
+Sight, into the murky layers of the mind’s undulating debris.\\
+Clarity...\\
+No want of insight.\\
+Expansive vision come the need.
+
+\vspace{10pt}
+
+\noindent
+But how much do you want to see?\\
+One may be desirous to gleam;\\
+To perceive that which lies beyond.\\
+Across the oceans, beneath the seas.\\
+That domain, whither...
+\vspace{10pt}
+
+\noindent
+But pause on where we’ll go, \\
+Where have we been?
+\vspace{10pt}
+
+\noindent
+When we align to a flow of concentration, say\\
+At a time we wish to read,\\
+Memories encoded by imagination –\\
+A gradual divergence,\\
+Off-leads...
+\vspace{10pt}
+
+\noindent
+All of a sudden, ideas fan out.\\
+That seductive deviation,\\
+An obstacle to the breeze; \\
+Then ahead, before your nose, \\
+A rock – in the stream!
+\vspace{10pt}
+
+\noindent
+You stumble, trip, and fall. \\
+Turbulence ensues... 
+\vspace{10pt}
+
+\noindent
+Generative maturation follows \\
+Creative dissipation – \\
+Mingled pathways, delicately intertwining. \\
+Sprightly they dance, tumbling around.\\
+A scattered consciousness,\\
+Progressing – in a dream...
+\vspace{10pt}
+
+\noindent
+(stochasticity from the wheel)
+\vspace{10pt}
+
+\noindent
+Bumbling around in a haze,\\
+I wonder – where are we?\\
+Misty all around, you daze...
+\vspace{10pt}
+
+\noindent
+When at last, you emerge, \\
+Breaking above the fog; \\
+A new illumination – \\
+graduating your clouded phase. 
+\vspace{10pt}
+
+\noindent
+The motion continues, \\
+At last the flow proceeds. 
+\vspace{10pt}
+
+\noindent
+Where were we? \\
+This seems like a beginning, but there was no end.\\
+You see the words on the page.\\
+Back on course before you know it, \\
+You read a line commencing at ease.
+\vspace{10pt}
+
+\noindent
+The breath rises, then falls in dissipation.\\
+Rises once more, up to a peak,\\
+Before the decline: a relaxed deflation.\\
+You welcome the peace, it’s been a long week.
+\vspace{10pt}
+
+\noindent
+Back to the focal point, air through the nostrils,\\
+Calm and centred, horizons abound...\\
+A crisp breeze suggests, subtle its direction.\\
+Regardless what you’ve seen, whither will you seek?
+\end{quotation}
+
+

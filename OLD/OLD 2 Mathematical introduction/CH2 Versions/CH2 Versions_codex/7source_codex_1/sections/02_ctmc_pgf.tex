@@ -1,0 +1,152 @@
+\section{A compact toolkit for jump processes}
+\label{sec:ctmc-pgf}
+
+Only a small amount of general machinery is needed before turning to the models.
+The essential objects are exponential clocks, continuous-time Markov chains,
+generators and probability generating functions.  This section fixes the notation
+and, in particular, the convention used for forward equations.
+
+\subsection{Exponential clocks and competing events}
+
+A non-negative random variable \(T\) has an exponential distribution with rate
+\(\lambda>0\), written \(T\sim\operatorname{Exp}(\lambda)\), when
+\begin{equation}
+  \Prob(T>t)=\e^{-\lambda t},
+  \qquad
+  f_T(t)=\lambda\e^{-\lambda t},
+  \qquad t\geq0.
+  \label{eq:exponential-law}
+\end{equation}
+The mean waiting time is \(1/\lambda\).  The defining survival function also gives
+the memoryless property
+\begin{equation}
+  \Prob(T>s+t\mid T>s)=\Prob(T>t),
+  \qquad s,t\geq0.
+  \label{eq:memoryless}
+\end{equation}
+Consequently, after a period during which no event has occurred, the residual
+waiting time has the same law as it had initially.
+
+The other fact used repeatedly is the exponential race.  Let
+\(T_1,\ldots,T_m\) be independent exponential random variables with respective
+rates \(a_1,\ldots,a_m\), and write \(T=\min_rT_r\).  Independence gives
+\begin{equation}
+  \Prob(T>t)=\prod_{r=1}^{m}\Prob(T_r>t)
+  =\exp\!\left(-t\sum_{r=1}^{m}a_r\right),
+\end{equation}
+so that \(T\sim\operatorname{Exp}(a_0)\), where \(a_0=\sum_ra_r\).  Moreover,
+\begin{equation}
+  \Prob(T_r=T)=\int_0^\infty a_r\e^{-a_rt}
+       \prod_{s\neq r}\e^{-a_st}\dd t
+  =\frac{a_r}{a_0}.
+  \label{eq:exponential-race}
+\end{equation}
+Thus the total rate determines the waiting time and the relative rates determine
+which event occurs.  State-dependent versions of these two statements provide a
+pathwise construction of the jump processes below.
+
+\subsection{Continuous-time Markov chains and generators}
+
+Let \(X=(X_t)_{t\geq0}\) take values in a countable state space \(E\).  It is a
+time-homogeneous \ctmc{} if, for \(s,t\geq0\), its future conditional on the past
+depends only on the present state and the transition probabilities depend only on
+the elapsed time:
+\begin{equation}
+  \Prob(X_{s+t}=j\mid X_s=i,\,X_u,0\leq u<s)
+  =\Prob(X_t=j\mid X_0=i)=:P_{ij}(t).
+  \label{eq:markov-property}
+\end{equation}
+The transition matrices \(P(t)=(P_{ij}(t))\) form a semigroup,
+\(P(s+t)=P(s)P(t)\), with \(P(0)=I\).
+
+The generator \(Q=(q_{ij})\) records the short-time transition rates.  With the
+convention that \(q_{ij}\) is the rate from \(i\) to \(j\),
+\begin{equation}
+  q_{ij}=\lim_{h\downarrow0}\frac{P_{ij}(h)}{h}\qquad(i\neq j),
+  \qquad
+  q_{ii}=-\sum_{j\neq i}q_{ij}.
+  \label{eq:generator}
+\end{equation}
+Hence \(P_{ij}(h)=q_{ij}h+o(h)\) for \(j\neq i\), while
+\(P_{ii}(h)=1+q_{ii}h+o(h)\).  If the chain is in state \(i\), it waits an
+exponential time with rate
+\(q_i=-q_{ii}=\sum_{j\neq i}q_{ij}\) and then moves to \(j\neq i\) with
+probability \(q_{ij}/q_i\).  A state with \(q_i=0\) is absorbing.
+
+For a test function \(f:E\to\mathbb R\), the generator acts as
+\begin{equation}
+  (\mathcal Lf)(i)=\sum_{j\neq i}q_{ij}\{f(j)-f(i)\}.
+  \label{eq:generator-action}
+\end{equation}
+This form makes the event structure visible: each possible jump contributes its
+rate multiplied by the corresponding increment of \(f\).
+
+Write \(p_j(t)=\Prob(X_t=j)\) and regard
+\(\boldsymbol p(t)=(p_j(t))_{j\in E}\) as a row vector.  The forward equations are
+\begin{equation}
+  \frac{\dd p_j}{\dd t}
+  =\sum_{i\neq j}p_i(t)q_{ij}-p_j(t)\sum_{k\neq j}q_{jk},
+  \qquad
+  \boldsymbol p'(t)=\boldsymbol p(t)Q.
+  \label{eq:forward-equations}
+\end{equation}
+The first sum is probability flow into state \(j\); the second is flow out.  For the
+transition matrix itself, the backward and forward equations are respectively
+\begin{equation}
+  P'(t)=QP(t),
+  \qquad
+  P'(t)=P(t)Q.
+  \label{eq:kolmogorov-matrix}
+\end{equation}
+Both hold for the time-homogeneous semigroup under the usual non-explosion and
+domain conditions.  We will work almost entirely with the componentwise forward
+equations \cref{eq:forward-equations}, where the convention is unambiguous.
+
+\subsection{Probability generating functions}
+
+If \(Z\) is a random variable on \(\Nzero\), its \pgf{} is
+\begin{equation}
+  G_Z(z)=\E[z^Z]=\sum_{n=0}^{\infty}\Prob(Z=n)z^n,
+  \qquad |z|\leq1.
+  \label{eq:univariate-pgf}
+\end{equation}
+The distribution and its first two moments can be recovered from
+\begin{align}
+  \Prob(Z=n)&=\frac{G_Z^{(n)}(0)}{n!},
+  &\E[Z]&=G_Z'(1),
+  &\Var(Z)&=G_Z''(1)+G_Z'(1)-G_Z'(1)^2.
+  \label{eq:pgf-recovery}
+\end{align}
+In particular, \(G_Z(0)=\Prob(Z=0)\).  If \(Z_1,\ldots,Z_k\) are independent,
+then the generating function of their sum is the product of their generating
+functions.  This elementary factorisation is the analytical form of the branching
+property used in \cref{sec:galton-watson}.
+
+For a process \(X_t\in\Nzero\), the time-dependent generating function
+\begin{equation}
+  G(z,t)=\E[z^{X_t}]=\sum_{n\geq0}p_n(t)z^n
+  \label{eq:process-pgf}
+\end{equation}
+often converts the infinite system \cref{eq:forward-equations} into one PDE.  For
+example, if state \(n\) jumps to \(n+1\) at rate \(n\lambda\) and to \(n-1\) at rate
+\(n\mu\), multiplication of the forward equations by \(z^n\) and summation give
+\begin{equation}
+  \frac{\partial G}{\partial t}
+  =(\lambda z-\mu)(z-1)\frac{\partial G}{\partial z}.
+  \label{eq:linear-bd-pgf-pde}
+\end{equation}
+The same operation in two dimensions uses
+\begin{equation}
+  G(x,y,t)=\E[x^{X_t}y^{Y_t}]
+  =\sum_{i,j\geq0}p_{i,j}(t)x^iy^j.
+  \label{eq:bivariate-pgf}
+\end{equation}
+Partial derivatives then encode factors of \(i\) and \(j\).  This is why linear
+per-capita event rates lead to first-order PDEs, and why the method of
+characteristics is the natural solution method in \cref{sec:characteristics}.
+
+The generating-function manipulations below may first be read as operations on
+formal power series.  Whenever analytic evaluation is used, the arguments are kept
+inside the unit disc or an analytic continuation is stated explicitly.  This
+distinction becomes important for the hypergeometric representation in
+\cref{sec:abd-hypergeometric}.

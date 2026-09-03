@@ -1,0 +1,146 @@
+\section{Variance and standard deviation of $\xt$ \& $\yt$}
+
+To describe the variance of a random variable, it is standard to use the formula, 
+\begin{equation*}
+\text{Var}(\xt) = \mean{\xt^2} - \mean{\xt}^2.
+\end{equation*}
+And we can apply this to $\xt$ and $\yt$ to quantify the variability of intracellular and extracellular particles as functions of time. 
+
+In each case, we will first require a formula for the expected value of the counts squared,  $\mean{\xt^2}$ and $\mean{\yt^2}$.
+
+
+
+\subsection{Variance of $\xt$}
+
+\subsubsection{Formula for $\mean{\xt^2}$ ($ = K(t)$)}
+
+A formula for $K(t) = \mean{\xt^2}$ is derived in the following way. Taking the time derivative of equations,
+
+ (\ref{ddIJ}): ${\rm d}I/{\rm d}t = -\delta J$, and, 
+ 
+ (\ref{ddII}): ${\rm d}I/{\rm d}t = \mu - (\beta + \mu + \delta) I + \beta I^2$.
+
+\begin{align}
+\label{Kderev1}
+\text{(\ref{ddIJ})}\to&&\ddt{J} = -\frac{1}{\delta}\frac{\dd^2 I}{\dd t^2}&&
+\end{align}
+\begin{align*}
+\text{(\ref{ddII})}\to&& \frac{\dd^2 I}{\dd t^2} = -(\beta + \mu + \delta) \ddt{I} + 2\beta I \ddt{I}.&&
+\end{align*}
+The latter, with ${\rm d}I/{\rm d}t = -\delta J$, becomes
+\begin{equation}
+\label{Kderev2}
+\frac{\dd^2 I}{\dd t^2} = (\beta + \mu + \delta)\beta J- 2\beta \delta I J.
+\end{equation}
+Comparing (\ref{Kderev2}) with (\ref{Kderev1}),
+\begin{equation*}
+%\label{Kderev3}
+\ddt{J} = -(\beta + \mu + \delta) J + 2\beta I J;
+\end{equation*}
+then, this with (\ref{ddJ2}),
+$$(\beta - \mu) J - \delta K = -(\beta + \mu + \delta) J + 2\beta I J.$$
+Rearranging for $K(t)$,
+\begin{equation}
+\label{Kt1}
+K(t) = \frac{2\beta}{\delta}\lrb{1+\frac{\delta}{2\beta} - I}J.
+\end{equation}
+Considering (\ref{ddIIfact}) and (\ref{ddIJ}), this may also be written as
+\begin{equation}
+\label{KtI}
+K(I) = -\frac{2\beta^2}{\delta}\lrb{I-\kappa}\lrb{I-I_-}\lrb{I-I_+}.
+\end{equation}
+with,
+$$\kappa = 1+\frac{\delta}{2\beta}.$$
+
+
+
+\subsubsection{One standard deviation from the mean, $J(t)$}
+With the expectation of $\xt^2$, (\ref{Kt1}), 
+\begin{equation*}
+K(t) = \frac{2\beta}{\delta}\lrb{\kappa- I}J,
+\end{equation*}
+we can write down the variance of $\xt$ using $\text{Var}(\xt) = \mean{\xt^2} - \mean{\xt}^2$:
+\begin{align*}
+\text{Var}(\xt) &= K(t) - {J(t)}^2\\
+&= \frac{2\beta}{\delta}\lrb{\kappa - I}J - J^2.
+\end{align*}
+The standard deviation is then,
+\begin{equation*}
+\text{Std}(\xt) = \sqrt{\frac{2\beta}{\delta}\lrb{\kappa- I}J - J^2}.
+\end{equation*}
+
+
+
+\subsection{Variance of $\yt$}
+
+We can likewise compute the variance of $\yt$ using $\text{Var}(\yt) = \mean{\yt^2} - \mean{\yt}^2$. To begin, we must find a formula for $\mean{\yt^2}$.
+
+
+\subsubsection{Formula for $\mean{\yt^2}$}
+
+
+Accounting for changes to $\yt^2$ over an infinitesimal time $\delt$,
+$$\mean{\yy_{t+\delt}^2} = \mean{\yt^2} + \mean{\yy_{t+\delt}^2 - \yt^2},$$
+we can derive the equation
+\begin{equation}
+\label{meanYt2}
+\ddt{\mean{\yt^2}} = \delta \mean{\xt^3}.
+\end{equation}
+This might seem like a dead end as we have yet do come up with a description of $\mean{\xt^3}$. Though as it happens, the problem can be sidestepped by thinking about the rate of change of $K(t) = \mean{\xt^2}$. An equation for $\dd K/\dd t$ can be derived as follows. 
+\begin{equation}
+\label{meanysq1}
+\mean{\xx_{t+\delt}^2} = \mean{\xt^2} + \mean{\xx_{t+\delt}^2 - \xt^2}
+\end{equation}
+Because of the quadratic, changes in $\xt^2$ require special attention (see table).
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.5} % Increase vertical padding
+\setlength{\tabcolsep}{17pt} % Increase horizontal padding
+\begin{tabular}{|>{\centering\arraybackslash}m{3cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{5cm}|}
+\hline
+Probability of occurrence& Change in $\xt$ & Change in $\xt^2$\\
+\hline
+\hline
+$\beta \xt\delt$& 1 & $(\xt + 1)^2 - \xt^2 = 2\xt + 1$ \\
+\hline
+$\mu \xt\delt$ &-1 & $(\xt - 1)^2 - \xt^2 = -2\xt + 1$\\
+\hline
+$\delta \xt\delt$ & $-\xt$& $(\xt - \xt)^2 - \xt^2 = -\xt^2$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent
+From the possibilities, it can be seen that
+\begin{align*}\mean{\xx_{t+\delt}^2 - \xt^2} &={\rm I}\!{\rm E}\bigg[\beta \xt\delt\cdot(2\xt+1) + \mu \xt\delt\cdot(-2\xt+1) + \delta \xt\delt\cdot(-\xt)\bigg]\\
+&=\bigg[ 2(\beta-\mu)\mean{\xt^2} + (\beta+\mu)\mean{\xt} - \delta\mean{\xt^3} \bigg]\delt
+\end{align*}
+Taking this with (\ref{meanysq1}), the following equation can be obtained in the $\downarrow \delt$ limit.
+$$\ddt{\mean{\xt^2}} = 2(\beta-\mu)\mean{\xt^2} + (\beta + \mu)\mean{\xt} - \delta\mean{\xt^3};$$
+it can also be written,
+\begin{equation}
+\label{ddK2}
+\ddt{K} =2(\beta-\mu)K+ (\beta + \mu)J- \delta\mean{\xt^3}.
+\end{equation}
+With this, and equation (\ref{meanYt2}), we will see that it is possible to derive a formula for $\mean{\yt^2}$. 
+
+Substituting into (\ref{ddK2}) with (\ref{meanYt2}), 
+$$\ddt{K} =2(\beta-\mu)K+ (\beta + \mu)J- \ddt{\mean{\yt^2}}.$$
+Then, using $J = \delta^{-1}\dd I/\dd t$ (\ref{ddIJ}), and $K = \delta^{-1} \dd V / \dd t$ (\ref{ddV}):
+\begin{equation}
+\ddt{\mean{\yt^2}} = 2\frac{(\beta-\mu)}{\delta}\ddt{V}+ \frac{(\beta + \mu)}{\delta}\ddt{I} - \ddt{K}.
+\end{equation}
+Which, with the initial conditions, $(I(0), K(0), V(0), \mean{\yy_0^2}) = (1,0,0,0)$, provides $\mean{\yt^2}$ by integration:
+\begin{equation}
+\label{meanEY2}
+\mean{\yt^2} = 2\frac{\beta-\mu}{\delta} V + \frac{\beta+\mu}{\delta}I + K - \frac{\beta+\mu}{\delta}
+\end{equation}
+
+
+\subsubsection{One standard deviation from the mean, $V(t)$}
+
+Using (\ref{meanEY2}), it is possible to write down a formula for the variance of $\yt$,
+\begin{equation}
+\label{VarY}
+\text{Var}(\yt) = 2\frac{\beta-\mu}{\delta} V + \frac{\beta+\mu}{\delta}I + K - \frac{\beta+\mu}{\delta} - V^2
+\end{equation}

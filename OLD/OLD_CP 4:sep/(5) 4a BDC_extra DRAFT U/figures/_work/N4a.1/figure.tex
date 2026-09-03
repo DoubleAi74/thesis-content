@@ -1,0 +1,119 @@
+\documentclass[11pt,tikz,border=5pt]{standalone}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{tikz}
+\input{../../../../style/tikz_style.tex}
+
+\definecolor{bdcblue}{HTML}{1F77B4}
+\definecolor{bdcorange}{HTML}{FF7F0E}
+\definecolor{bdcred}{HTML}{C0392B}
+\definecolor{bdcpurple}{HTML}{6B4C9A}
+
+\tikzset{
+  characteristic/.style={
+    -{Stealth[length=2.1mm,width=1.5mm]},
+    draw=black!78,
+    line width=0.9pt
+  },
+  datum/.style={circle,fill=bdcblue,draw=white,line width=0.4pt,
+    minimum size=3.2pt,inner sep=0pt},
+  target/.style={circle,fill=bdcpurple,draw=white,line width=0.5pt,
+    minimum size=4.8pt,inner sep=0pt},
+  note card/.style={rounded corners=2pt,line width=0.8pt,inner sep=6pt,
+    align=left,font=\small},
+  tiny heading/.style={font=\bfseries\small,align=left},
+  quiet/.style={font=\small,text=black!65,align=left}
+}
+
+\begin{document}
+\begin{tikzpicture}[font=\small]
+  % Main characteristic domain.  Curves are deliberately schematic: their
+  % geometry records the direction of transport, not a numerical phase portrait.
+  \node[font=\bfseries\normalsize,align=center,anchor=south] at (3.60,5.28)
+    {Initial data are carried forward\\along characteristic curves};
+
+  \path[fill=bdcblue!4,draw=black!45,line width=0.7pt]
+    (0,0) rectangle (7.20,4.80);
+  \node[quiet,anchor=north west] at (0.20,4.58)
+    {solution domain in the $(z,t)$ plane};
+
+  % Axes and the two data-bearing edges.
+  \draw[bdc arrow] (0,0) -- (7.62,0)
+    node[below=2pt,font=\normalsize] {$z$};
+  \draw[bdc arrow] (0,0) -- (0,5.12)
+    node[left=2pt,font=\normalsize] {$t$};
+  \draw[line width=1.6pt,bdcblue] (0.03,0.02) -- (7.17,0.02);
+  \draw[line width=1.6pt,bdcorange] (7.18,0.03) -- (7.18,4.77);
+  \node[font=\small,anchor=north east] at (-0.05,-0.06) {$0$};
+  \node[font=\small,anchor=north] at (7.18,-0.08) {$1$};
+  \node[font=\bfseries\small,text=bdcorange,rotate=90,fill=bdcblue!4,
+    inner sep=1.5pt] at (7.08,2.15) {$z=1$ boundary};
+
+  % Five representative characteristics, with arrowheads showing transport
+  % away from the initial curve.  The family is labelled by s=z(0).
+  \draw[characteristic]
+    (0.66,0.07) .. controls (0.61,1.30) and (0.34,2.95) .. (0.22,4.20);
+  \draw[characteristic]
+    (1.66,0.07) .. controls (1.78,1.30) and (2.28,3.00) .. (2.72,4.20);
+  \draw[characteristic]
+    (2.82,0.07) .. controls (3.02,1.38) and (3.88,3.02) .. (4.52,4.20);
+  \draw[characteristic]
+    (4.04,0.07) .. controls (4.38,1.30) and (5.44,3.02) .. (6.05,4.20);
+  \draw[characteristic]
+    (5.26,0.07) .. controls (5.78,1.25) and (6.85,2.30) .. (7.14,3.32);
+
+  \foreach \x/\lab in {0.66/s_1,1.66/s_2,2.82/s_3,4.04/s_4,5.26/s_5}{
+    \node[datum] at (\x,0.07) {};
+    \node[font=\scriptsize,anchor=north] at (\x,-0.08) {$\lab$};
+  }
+  \node[font=\small,fill=white,inner sep=1.5pt] at (2.05,2.43)
+    {$\mathcal C_{s}$};
+
+  % One queried interior value is visibly traced to its initial datum.
+  \node[target] (query) at (3.57,2.18) {};
+  \node[note card,fill=white,draw=bdcpurple!75] (querynote) at (4.98,2.12)
+    {$G(z,t)\xleftarrow{\;\mathcal C_s\;}G(s,0)$};
+  \draw[-{Stealth[length=1.8mm,width=1.3mm]},draw=bdcpurple,line width=0.8pt]
+    (querynote.west) -- (query);
+
+  % Initial-data board.
+  \node[note card,fill=bdcblue!7,draw=bdcblue!75,
+    text width=6.72cm,anchor=north west] at (0,-0.62)
+    {\textbf{Initial curve: one founder}\hfill $t=0$\\[-1pt]
+     \centering $z(s,0)=s,\qquad G(s,0)=s$\par};
+
+  % Boundary conditions distinguish the rupture conventions without changing
+  % the characteristic geometry in the (z,t) plane.
+  \node[font=\bfseries\normalsize,align=center,anchor=south]
+    at (10.82,5.28) {The $z=1$ boundary records\\the rupture convention};
+
+  \node[note card,fill=bdcred!7,draw=bdcred!80,text width=5.05cm,
+    anchor=north west] (cat) at (8.02,4.70)
+    {\textbf{Catastrophe into $H$}\\[2pt]
+     $G(1,t)=I(t)\leq 1$\\[-1pt]
+     \textcolor{black!65}{defective mass after rupture}};
+
+  \node[note card,fill=bdcblue!7,draw=bdcblue!80,text width=5.05cm,
+    anchor=north west] (kill) at (8.02,2.95)
+    {\textbf{Killing into state $0$}\\[2pt]
+     $G(1,t)=1$\\[-1pt]
+     \textcolor{black!65}{proper probability generating function}};
+
+  \draw[-{Stealth[length=2.0mm,width=1.4mm]},draw=bdcorange,
+    line width=0.9pt] (7.30,3.78) to[out=14,in=180] (cat.west);
+  \draw[-{Stealth[length=2.0mm,width=1.4mm]},draw=bdcorange,
+    line width=0.9pt] (7.30,2.15) to[out=-10,in=180] (kill.west);
+
+  \node[note card,fill=black!3,draw=black!45,text width=5.05cm,
+    anchor=north west] at (8.02,0.84)
+    {\textbf{Shared characteristic}\\[-1pt]\textbf{geometry}\\[2pt]
+     $q(z)=\lambda z^2-(\lambda+\mu+\delta)z+\mu$\\[2pt]
+     $\displaystyle \frac{\mathrm dt}{\mathrm d\tau}=-1,\qquad
+       \frac{\mathrm dz}{\mathrm d\tau}=q(z)$\\[-1pt]
+     \textcolor{black!65}{same $(z,t)$ curves\\for both conventions}};
+
+\end{tikzpicture}
+\end{document}

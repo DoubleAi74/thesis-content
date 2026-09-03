@@ -1,0 +1,29 @@
+\section{Checkpoint: the working toolkit}
+\label{sec:checkpoint}
+
+The sections above form Path~A of the chapter: the shared vocabulary and results used throughout the thesis. Before the longer technical developments begin, it is worth collecting what has now been fixed.
+
+\paragraph{Markov structure.}
+Discrete- and continuous-time Markov chains, absorbing states, rate descriptions for linear birth and death, and the master equation as a balance of probability flux.
+
+\paragraph{Generating functions.}
+The \pgf\ as a transform of a non-negative integer law, together with its two working roles: functional iteration in discrete branching, and, through the master equation, a first-order PDE for linear birth--death.
+
+\paragraph{Criticality.}
+Subcritical, critical, and supercritical regimes in discrete time (through $m=2p$, or a general offspring mean) and in continuous time (through $\beta-\mu$); extinction versus survival; and the way criticality organises quasi-stationary scales near the threshold.
+
+\paragraph{Quasi-stationarity and $A(p)$.}
+In subcritical death-or-division branching, $S_n\sim A(p)(2p)^n$ and $\mean{\zz_n\mid\zz_n\neq 0}\to 1/A(p)$, with a finite limiting conditional variance alongside. In subcritical continuous birth--death, the reciprocal conditional mean is the elementary factor $A_{\mathrm{ct}}=(1-2p)/(1-p)$ under the rate matching $p=\beta/(\beta+\mu)$. The discrete factor is well defined and computable, but not elementary in that same sense; Path~C returns to the fact and to what lies behind it.
+
+\paragraph{Small populations.}
+Survival probabilities with $k$ founders, $S_n^{(k)}=1-({}_1u_n)^k$, are highly sensitive to $k$ near criticality. That sensitivity is what motivates a careful stochastic treatment of early infection and of small-count regimes generally.
+
+\paragraph{How to read what follows.}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Path~B (method of characteristics).}
+Starts from the univariate \pgf\ PDE of Section~\ref{sec:pgf-bridge} and develops the analytical ladder for continuous-time absorption models (with and without birth and death). Required reading for anyone who will use those partial differential equations; full catastrophe structure appears in the later BDC chapters.
+\item \textbf{Path~C ($A(p)$ and Koenigs).}
+Optional depth: representations, numerics, and the closed-form obstruction for discrete $A(p)$. It can be deferred whenever the core contrast above is enough for the application at hand.
+\end{itemize}
+
+The appendix collects the heavy derivations, labelled by path---discrete moments, long characteristic calculations, Koenigs detail. Forward references to later thesis chapters are deliberately sparse, since the toolkit is meant to travel without a dependency table.

@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<!--
+  Two-type Birth–Death–Catastrophe ultimate release visualiser.
+  Computes the unconditional law of (X_rel, Y_rel): pre-catastrophe counts released
+  at absorption, or (0,0) if catastrophe never occurs (forever-avoidance).
+
+    P(X_rel=m, Y_rel=n) = σ_∞                          if (m,n)=(0,0)
+                        = ∫_0^∞ (δ₁ m + δ₂ n) p_{m,n}(t) dt   if m+n ≥ 1
+
+  Coefficients p_{m,n}(t) are obtained by integrating the killed master equations on a
+  truncated lattice {0,…,M}²; the integrated catastrophe flux fills the positive
+  support, and residual no-catastrophe mass at large T is assigned to the origin atom.
+
+  Displays a 2D joint heatmap and dual marginal bar charts.
+  Theme and control chrome match TT_bdc_survival_visualiser.html.
+  Usage: open in any modern browser; drag the seven rate sliders.
+-->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BDC Release Visualiser · X_rel, Y_rel</title>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
+<style>
+  :root{
+    --bg:#ffffff; --panel:#fafafa; --ink:#1a1c1f; --ink-soft:#565b62;
+    --line:#e3e6ea; --line-strong:#d0d4d9; --accent:#0b5cad;
+    --blue:#0072B2; --verm:#D55E00; --ok:#2e7d32; --warn:#b06a00; --err:#9a2820;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --serif:'Iowan Old Style','Palatino Linotype','Book Antiqua',Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --ctrl-w:280px;
+    --page-gutter-left: 24px;
+    --page-gutter-right: 48px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+
+  .wrap{max-width:1760px;margin:0 auto;
+    padding:8px var(--page-gutter-right) 32px var(--page-gutter-left);
+    width:100%;
+    overflow-x:hidden}
+
+  header.masthead{border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:8px}
+  header.masthead h1{font-family:var(--serif);font-weight:600;font-size:18px;margin:0;
+    letter-spacing:.2px}
+  header.masthead .legendrow{margin-top:4px;display:flex;align-items:center;
+    justify-content:space-between;gap:12px;flex-wrap:wrap}
+  header.masthead .legendkey{font-size:11.5px;color:var(--ink-soft);
+    display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .legendkey .sw{display:inline-flex;align-items:center;gap:6px}
+  .legendkey .box{width:11px;height:11px;border-radius:2px;background:var(--blue);opacity:.85}
+  .legendkey .box.v{background:var(--verm)}
+  .legendkey .box.g{background:#5c6b7a}
+  .app{display:grid;gap:10px;grid-template-columns:var(--ctrl-w) minmax(0,1fr);
+    grid-template-areas:"controls main";align-items:start}
+  @media(max-width:760px){
+    .app{grid-template-columns:1fr;grid-template-areas:"controls" "main"}
+  }
+  .controls{grid-area:controls}
+  .main{grid-area:main;min-width:0;max-width:100%;display:flex;flex-direction:column;gap:8px;
+    overflow-x:hidden}
+  /* Side-by-side when both graphs are on — keeps both above the fold */
+  .plotarea{min-width:0;max-width:100%;display:flex;flex-direction:column;gap:8px;
+    overflow-x:hidden;
+    /* fill remaining viewport under compact header */
+    --plot-h: calc(100vh - 92px);
+    /* Fixed heatmap figure size (set in JS to fit the viewport) */
+    --heat-w: 460px;
+    --heat-h: 425px;
+    /* JS replaces this with the measured joint-card height. */
+    --marg-h: calc(var(--heat-h) + 42px);
+    min-height: var(--marg-h);
+  }
+  .plotarea.multi{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:14px;
+    align-items:start;
+    max-width:100%;
+  }
+  @media(max-width:980px){
+    .plotarea.multi{grid-template-columns:1fr;justify-items:center;gap:12px}
+  }
+  .theory{min-width:0;display:flex;flex-direction:column;gap:10px;margin-top:4px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:9px 10px;margin-bottom:8px}
+  .card:last-child{margin-bottom:0}
+  .card h2{font-family:var(--serif);font-size:13px;font-weight:600;margin:0 0 6px;
+    letter-spacing:.2px;color:var(--ink)}
+  .card h2 .sub{font-family:var(--sans);font-weight:400;font-size:11px;color:var(--ink-soft);
+    margin-left:5px}
+
+  details.fold{border:1px solid var(--line);border-radius:6px;background:#fff;margin-bottom:8px}
+  details.fold:last-of-type{margin-bottom:0}
+  details.fold>summary{list-style:none;cursor:pointer;padding:7px 9px;display:flex;
+    align-items:flex-start;justify-content:space-between;gap:8px;user-select:none;
+    font-size:12.5px;line-height:1.3}
+  details.fold>summary::-webkit-details-marker{display:none}
+  details.fold>summary .fold-title{font-weight:600;color:var(--ink);flex:none;min-width:52px}
+  details.fold>summary .fold-sum{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);
+    font-weight:400;text-align:right;line-height:1.35}
+  details.fold>summary .chev{flex:none;color:var(--ink);font-size:16px;font-weight:700;
+    line-height:1;margin-top:0;width:1.1em;text-align:center;transition:transform .12s}
+  details.fold[open]>summary .chev{transform:rotate(90deg)}
+  details.fold[open]>summary{border-bottom:1px solid var(--line)}
+  details.fold .fold-body{padding:8px 9px 6px}
+  details.fold .fold-sum{display:block}
+  details.fold[open]>summary .fold-sum{display:none}
+
+  .slider{margin-bottom:8px}
+  .slider .row1{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+  .slider .name{font-size:12.5px;display:flex;align-items:center;gap:5px}
+  .slider .name .k{min-width:20px;display:inline-block}
+  .slider .hint{color:var(--ink-soft);font-size:10.5px}
+  .slider input[type=number]{width:58px;font-family:var(--mono);font-size:12px;
+    padding:2px 4px;border:1px solid var(--line-strong);border-radius:4px;text-align:right;
+    background:#fff;color:var(--ink)}
+  .slider input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;
+    background:transparent;margin:4px 0 2px;cursor:pointer;outline:none;--fill:var(--accent);--pct:0%}
+  .slider.blue input[type=range]{--fill:var(--blue)}
+  .slider.verm input[type=range]{--fill:var(--verm)}
+  .slider input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:4px;
+    background:linear-gradient(to right,var(--fill) var(--pct),#dfe3e8 var(--pct))}
+  .slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    box-sizing:border-box;width:17px;height:17px;margin-top:-5.5px;border-radius:50%;
+    background:#565b62;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.30);cursor:pointer}
+  .slider input[type=range]::-moz-range-track{height:6px;border-radius:4px;background:#dfe3e8}
+  .slider input[type=range]::-moz-range-progress{height:6px;border-radius:4px;background:var(--fill)}
+  .slider input[type=range]::-moz-range-thumb{box-sizing:border-box;width:17px;height:17px;
+    border-radius:50%;background:#565b62;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.30);cursor:pointer}
+
+  .checks label,.toggle label{display:flex;align-items:center;gap:8px;font-size:12.5px;
+    padding:3px 0;cursor:pointer}
+  .checks input,.toggle input{accent-color:var(--accent);width:14px;height:14px}
+  .checks .dot{width:9px;height:9px;border-radius:50%;flex:none;background:#1f5a3a}
+  .row{display:flex;gap:6px;flex-wrap:wrap}
+  .row.tight{gap:6px}
+  button{font-family:var(--sans);font-size:12.5px;padding:6px 10px;border:1px solid var(--line-strong);
+    border-radius:6px;background:#fff;color:var(--ink);cursor:pointer;
+    transition:background .12s,border-color .12s}
+  button:hover{background:#f0f2f5;border-color:var(--accent)}
+  button.wide{flex:1}
+  button.dl-png{font-size:11.5px;padding:4px 9px;flex:none;white-space:nowrap}
+  .png-tools{display:inline-flex;align-items:center;gap:6px;flex:none}
+  .png-rates-toggle{display:inline-flex;align-items:center;justify-content:center;width:16px;
+    height:26px;line-height:1;cursor:pointer;user-select:none;opacity:.78}
+  .png-rates-toggle:hover{opacity:1}
+  .png-rates-toggle input{display:block;margin:0;width:12px;height:12px;accent-color:var(--ink-soft);cursor:pointer}
+  .tnum{width:68px}
+  .fieldrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12.5px}
+  .fieldrow:last-child{margin-bottom:0}
+  .fieldrow label{color:var(--ink-soft);min-width:72px}
+  .fieldrow input[type=number],.fieldrow select{
+    font-family:var(--mono);font-size:12px;padding:3px 5px;
+    border:1px solid var(--line-strong);border-radius:4px;background:#fff;color:var(--ink)}
+  .fieldrow input[type=number]{width:70px;text-align:right}
+  .fieldrow select{width:100%;font-family:var(--sans);font-size:12.5px}
+
+  .graph-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:4px 6px 2px;display:none;min-width:0;
+    flex-direction:column;overflow:visible}
+  .graph-card.visible{display:flex}
+  .graph-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:1px 3px 2px;min-height:26px;flex:0 0 auto}
+  .graph-head h3{font-family:var(--serif);font-size:12.5px;font-weight:600;margin:0;color:var(--ink)}
+  .graph-head .gsub{font-family:var(--sans);font-weight:400;font-size:10.5px;color:var(--ink-soft);
+    margin-left:5px}
+  .plot-div{width:100%;flex:1 1 auto;min-height:0;height:auto;overflow:visible}
+  /* Marginal card tracks the measured outer height of the joint-law card. */
+  #card-marg{
+    min-width:0;
+    overflow:visible;
+    height:var(--marg-h);
+    max-height:var(--marg-h);
+  }
+  #card-marg .plot-div,
+  #plot-marg{
+    min-height:0;
+    height:100%;
+    overflow:visible;
+  }
+  /* Single graph (only one visible): use full column */
+  .plotarea:not(.multi) .graph-card.visible{height:var(--plot-h);max-height:var(--plot-h)}
+  .plotarea:not(.multi) #card-marg.visible{height:var(--marg-h);max-height:var(--marg-h)}
+
+  /* Joint heatmap: locked outer box (page gutters come only from .wrap) */
+  #card-joint{
+    height:auto;
+    max-height:none;
+    width:var(--heat-w);
+    max-width:min(var(--heat-w), 100%);
+    flex:none;
+    align-self:start;
+    position:relative;
+    padding:6px 8px 8px;
+    box-sizing:border-box;
+    margin:0;
+    overflow:hidden;
+  }
+  #card-joint .plot-div,
+  #plot-joint{
+    width:100%;
+    height:var(--heat-h);
+    max-width:100%;
+    max-height:var(--heat-h);
+    flex:0 0 auto;
+    margin:0 auto;
+    overflow:hidden;
+  }
+  .plotarea:not(.multi) #card-joint{
+    margin:0 auto;
+  }
+  /* Scope clipping to the heatmap only — global overflow:hidden blanked the bars */
+  #plot-joint .js-plotly-plot .plotly,
+  #plot-joint .js-plotly-plot .main-svg,
+  #plot-joint .js-plotly-plot .svg-container{overflow:hidden!important}
+  #plot-marg .js-plotly-plot .plotly,
+  #plot-marg .js-plotly-plot .main-svg,
+  #plot-marg .js-plotly-plot .svg-container{overflow:visible!important}
+
+  .eq{margin:2px 0 6px;overflow-x:auto;overflow-y:hidden;font-size:.78em}
+  .eq .katex-display{margin:.35em 0}
+  .eq .katex{white-space:nowrap}
+  .eq.prom{font-size:.92em;padding:8px 10px;background:#fff;border:1px solid var(--line-strong);
+    border-radius:6px;margin:6px 0 8px}
+  .eq.prom .katex-display{margin:.45em 0}
+  .note{font-size:11.5px;color:var(--ink-soft);margin:4px 0 0}
+  .decomp{font-size:12px}
+  .decomp .blk{margin-bottom:10px}
+  .decomp .blk:last-child{margin-bottom:0}
+  .decomp .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);
+    font-weight:600;margin:0 0 2px}
+  .consts{width:100%;border-collapse:collapse;font-size:12.5px}
+  .consts td{padding:2.5px 3px;border-bottom:1px solid var(--line)}
+  .consts td.sym{width:52%;color:var(--ink)}
+  .consts td.val{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--ink)}
+  .consts tr.hl td{background:#f3f6fa}
+
+  footer{margin-top:20px;color:var(--ink-soft);font-size:11.5px;border-top:1px solid var(--line);
+    padding-top:10px}
+  code{font-family:var(--mono);font-size:11.5px;background:#f0f2f5;padding:1px 4px;border-radius:3px}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1>Two-type Birth–Death–Catastrophe ultimate release</h1>
+    <div class="legendrow">
+      <div class="legendkey">
+        <span class="sw"><span class="box"></span>marginal X<sub>rel</sub></span>
+        <span class="sw"><span class="box v"></span>marginal Y<sub>rel</sub></span>
+        <span class="sw"><span class="box g"></span>joint P(X<sub>rel</sub>, Y<sub>rel</sub>)</span>
+        <span class="sw">origin atom = forever-avoidance</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="controls">
+      <div class="card">
+        <div class="row tight">
+          <button class="wide" id="reset">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Initial lineage</h2>
+        <div class="fieldrow" style="margin:0">
+          <select id="startType" aria-label="Initial lineage type">
+            <option value="1">one type-1 · (1,0)</option>
+            <option value="2">one type-2 · (0,1)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Model rates <span class="sub">per-capita · click to expand</span></h2>
+
+        <details class="fold" id="fold-type1">
+          <summary>
+            <span class="fold-title">Type 1</span>
+            <span class="fold-sum" id="sum-type1"></span>
+            <span class="chev" aria-hidden="true">▸</span>
+          </summary>
+          <div class="fold-body">
+            <div class="slider blue" data-p="lambda1"></div>
+            <div class="slider blue" data-p="mu1"></div>
+            <div class="slider blue" data-p="nu"></div>
+            <div class="slider blue" data-p="delta1"></div>
+          </div>
+        </details>
+
+        <details class="fold" id="fold-type2">
+          <summary>
+            <span class="fold-title">Type 2</span>
+            <span class="fold-sum" id="sum-type2"></span>
+            <span class="chev" aria-hidden="true">▸</span>
+          </summary>
+          <div class="fold-body">
+            <div class="slider verm" data-p="lambda2"></div>
+            <div class="slider verm" data-p="mu2"></div>
+            <div class="slider verm" data-p="delta2"></div>
+          </div>
+        </details>
+
+      </div>
+
+      <div class="card">
+        <h2>Distribution</h2>
+        <div class="fieldrow" style="margin:0 0 8px">
+          <select id="lawMode" aria-label="Release law conditioning">
+            <option value="uncond">Unconditional · include no-rupture</option>
+            <option value="rupture">Conditioned on rupture · τ<sub>c</sub> &lt; ∞</option>
+          </select>
+        </div>
+        <p class="note" id="lawNote">
+          Unconditional: origin atom = ordinary extinction (no release).
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Graphs</h2>
+        <div class="checks">
+          <label><span class="dot"></span>
+            <input type="checkbox" id="g2" checked /> <b>Marginal bars</b>&nbsp; X<sub>rel</sub>, Y<sub>rel</sub></label>
+          <label><span class="dot"></span>
+            <input type="checkbox" id="g1" checked /> <b>Joint heatmap</b>&nbsp; P(m,n)</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Computation</h2>
+        <div class="fieldrow">
+          <label for="cutoff">Count cap M</label>
+          <input type="number" id="cutoff" class="tnum" min="4" max="40" step="1" />
+        </div>
+        <div class="fieldrow">
+          <label for="tmax">T<sub>max</sub></label>
+          <input type="number" id="tmax" class="tnum" min="0.5" step="0.5" />
+          <button id="autoT" title="Auto horizon from rates">auto</button>
+        </div>
+        <p class="note">Lattice {0,…,M}²; integrate killed ODEs to T<sub>max</sub> and accumulate catastrophe flux.</p>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="plotarea multi" id="plotarea">
+        <div class="graph-card visible" id="card-marg" data-graph="marg">
+          <div class="graph-head">
+            <h3>Marginal distributions<span class="gsub" id="margSubtitle">P(X<sub>rel</sub>=k) and P(Y<sub>rel</sub>=k)</span></h3>
+            <div class="png-tools">
+              <button class="dl-png" data-dl="plot-marg" data-name="bdc_release_marginals">PNG</button>
+              <label class="png-rates-toggle" title="Rates"><input class="png-rates" type="checkbox" aria-label="Include rates in downloaded PNG" checked></label>
+            </div>
+          </div>
+          <div class="plot-div" id="plot-marg"></div>
+        </div>
+
+        <div class="graph-card visible" id="card-joint" data-graph="joint">
+          <div class="graph-head">
+            <h3>Joint release law<span class="gsub" id="jointSubtitle">heatmap · P(X<sub>rel</sub>=m, Y<sub>rel</sub>=n)</span></h3>
+            <div class="png-tools">
+              <button class="dl-png" data-dl="plot-joint" data-name="bdc_release_joint">PNG</button>
+              <label class="png-rates-toggle" title="Rates"><input class="png-rates" type="checkbox" aria-label="Include rates in downloaded PNG" checked></label>
+            </div>
+          </div>
+          <div class="plot-div" id="plot-joint"></div>
+        </div>
+      </div>
+
+      <div class="theory">
+        <div class="card decomp">
+          <h2>Closed formula <span class="sub">release law from the killed PGF</span></h2>
+
+          <div class="blk">
+            <p class="lbl">Release random variables</p>
+            <div class="eq" id="eqDef"></div>
+            <p class="note">On forever-avoidance paths there is no release event, so both counts are set to zero.</p>
+          </div>
+
+          <div class="blk">
+            <p class="lbl">Killed (defective) generating function</p>
+            <div class="eq" id="eqF"></div>
+            <p class="note">
+              Coefficients
+              <span id="eqPmnInline"></span>
+              are the catastrophe-free occupation masses.
+              Total mass
+              <span id="eqSigmaInline"></span>
+              is the no-catastrophe probability
+              (<span id="eqSGInline"></span>).
+            </p>
+          </div>
+
+          <div class="blk">
+            <p class="lbl">Catastrophe-flux generating function</p>
+            <div class="eq" id="eqJ"></div>
+            <p class="note">
+              Coefficientwise,
+              <span id="eqJcoeffInline"></span>
+              is the joint density of catastrophe time and the pre-absorption state.
+            </p>
+          </div>
+
+          <div class="blk">
+            <p class="lbl">Closed formula for the release PGF</p>
+            <div class="eq prom" id="eqPgf"></div>
+            <p class="note">
+              Equivalently
+              <span id="eqPgfShortInline"></span>,
+              with forever-avoidance mass
+              <span id="eqSigmaInfInline"></span>
+              (<span id="eqHRInline"></span>.
+            </p>
+          </div>
+
+          <div class="blk">
+            <p class="lbl">Full joint distribution (coefficients)</p>
+            <div class="eq" id="eqLaw"></div>
+            <div class="eq" id="eqExtract"></div>
+          </div>
+
+          <div class="blk">
+            <p class="lbl">Conditioned on rupture (catastrophe, not ordinary extinction)</p>
+            <div class="eq prom" id="eqCond"></div>
+            <p class="note">
+              Renormalises the integrated flux by the catastrophe probability
+              <span id="eqCondNoteInline"></span>.
+              The origin atom is removed: only paths with τ<sub>c</sub> &lt; ∞ contribute.
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Lattice numerics <span class="sub">current run · truncated master equation</span></h2>
+          <table class="consts">
+            <tr><td class="sym">Initial state</td><td class="val" id="v_start">—</td></tr>
+            <tr><td class="sym">Count cap M</td><td class="val" id="v_M">—</td></tr>
+            <tr><td class="sym">Horizon T<sub>max</sub></td><td class="val" id="v_T">—</td></tr>
+            <tr class="hl"><td class="sym">Origin atom σ̂<sub>∞</sub></td><td class="val" id="v_p00">—</td></tr>
+            <tr class="hl"><td class="sym">Catastrophe mass</td><td class="val" id="v_pcat">—</td></tr>
+            <tr><td class="sym">Residual active mass at T</td><td class="val" id="v_res">—</td></tr>
+            <tr><td class="sym">Truncation leak</td><td class="val" id="v_leak">—</td></tr>
+            <tr><td class="sym">E[X<sub>rel</sub>]</td><td class="val" id="v_EX">—</td></tr>
+            <tr><td class="sym">E[Y<sub>rel</sub>]</td><td class="val" id="v_EY">—</td></tr>
+            <tr><td class="sym">Mode (m*, n*)</td><td class="val" id="v_mode">—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>2026 - Adam Aldridge</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const BLUE = "#0072B2";
+  const VERM = "#D55E00";
+  const GRID = "#e6e9ee";
+  // Exact reciprocal of the intended 0.6\textwidth placement scale.
+  const PNG_FONT_SCALE = 1/0.6;
+  const EXPORT_FOOTER_HEIGHT = 44;
+  const EXPORT_BOTTOM_WHITESPACE = 6;
+
+  const RATES = [
+    {key:"lambda1", sym:"\\lambda_1", label:"birth", min:0.01, cls:"blue"},
+    {key:"mu1",     sym:"\\mu_1",     label:"death", min:0,    cls:"blue"},
+    {key:"nu",      sym:"\\nu",       label:"1→2 convert", min:0, cls:"blue"},
+    {key:"delta1",  sym:"\\delta_1",  label:"catastrophe", min:0.001, step:0.001, cls:"blue"},
+    {key:"lambda2", sym:"\\lambda_2", label:"birth", min:0.01, cls:"verm"},
+    {key:"mu2",     sym:"\\mu_2",     label:"death", min:0,    cls:"verm"},
+    {key:"delta2",  sym:"\\delta_2",  label:"catastrophe", min:0.001, step:0.001, cls:"verm"},
+  ];
+  const DEFAULT = {
+    lambda1:1.0, mu1:0.5, nu:0.3, delta1:0.25,
+    lambda2:1.2, mu2:0.4, delta2:0.15
+  };
+
+  const state = {
+    p:{...DEFAULT},
+    start:1,
+    M:18,
+    tmax:12,
+    tmaxAuto:true,
+    g1:true,
+    g2:true,
+    /** "uncond" | "rupture" — rupture = conditioned on τ_c < ∞ */
+    law:"uncond"
+  };
+
+  const el = id => document.getElementById(id);
+  const sliderEls = {};
+  let lastResult = null;
+  const plotInited = {joint:false, marg:false};
+
+  /* Smooth update pipeline:
+     - while dragging: cheap "preview" integrate (small M, Euler, coarse dt)
+     - after idle / on pointer-up: full-quality recompute
+     - generation counter drops stale work if a newer request arrives */
+  let computeGen = 0;
+  let previewTimer = null;
+  let fullTimer = null;
+  let rafPending = false;
+  let dragging = false;
+  let lastPreviewMs = 0;
+
+  function fmt(v, d=4){
+    if(!Number.isFinite(v)) return "—";
+    const a = Math.abs(v);
+    if(a !== 0 && (a < 1e-3 || a >= 1e4)) return v.toExponential(2);
+    return v.toFixed(d);
+  }
+  function fmtExp(v){
+    if(!Number.isFinite(v)) return "—";
+    return v.toExponential(2);
+  }
+  function clamp(v,a,b){ return Math.min(b, Math.max(a, v)); }
+
+  function exportNumber(value,digits=4){
+    const n=Number(value);
+    if(!Number.isFinite(n)) return "—";
+    const text=n.toFixed(digits).replace(/\.?0+$/,"");
+    return text==="-0"?"0":text;
+  }
+  function exportParametersFromResult(res){
+    return {p:{...(res.p||state.p)}};
+  }
+  function exportParameterLines(params){
+    const p=params.p;
+    return [
+      `λ₁=${exportNumber(p.lambda1)}   μ₁=${exportNumber(p.mu1)}   ν=${exportNumber(p.nu)}   δ₁=${exportNumber(p.delta1)}   λ₂=${exportNumber(p.lambda2)}   μ₂=${exportNumber(p.mu2)}   δ₂=${exportNumber(p.delta2)}`
+    ];
+  }
+  function cloneForPngExport(value){
+    if(typeof structuredClone==="function"){
+      try{return structuredClone(value);}catch(_){/* fall through */}
+    }
+    return JSON.parse(JSON.stringify(value,(_key,item)=>
+      ArrayBuffer.isView(item)?Array.from(item):item));
+  }
+  function plainExportArray(value){
+    if(ArrayBuffer.isView(value)) return Array.from(value,item=>plainExportArray(item));
+    if(Array.isArray(value)) return value.map(item=>plainExportArray(item));
+    return value;
+  }
+  function normaliseHeatmapExportData(data){
+    data.forEach(trace=>{
+      if(!trace||String(trace.type).toLowerCase()!=="heatmap") return;
+      ["x","y","z","customdata"].forEach(key=>{
+        if(key in trace) trace[key]=plainExportArray(trace[key]);
+      });
+    });
+    return data;
+  }
+  function addHeatmapSvgFallback(data,layout){
+    const shapes=Array.isArray(layout.shapes)?layout.shapes.slice():[];
+    const colourCanvas=document.createElement('canvas').getContext('2d');
+    const rgba=value=>{
+      colourCanvas.fillStyle='#000000'; colourCanvas.fillStyle=String(value||'#000000');
+      const colour=colourCanvas.fillStyle;
+      if(/^#[0-9a-f]{6}$/i.test(colour)){
+        return [parseInt(colour.slice(1,3),16),parseInt(colour.slice(3,5),16),parseInt(colour.slice(5,7),16),1];
+      }
+      if(/^#[0-9a-f]{3}$/i.test(colour)){
+        return [1,2,3].map(i=>parseInt(colour[i]+colour[i],16)).concat(1);
+      }
+      const match=colour.match(/rgba?\(([^)]+)\)/i);
+      if(match){
+        const parts=match[1].split(',').map(Number);
+        return [parts[0]||0,parts[1]||0,parts[2]||0,Number.isFinite(parts[3])?parts[3]:1];
+      }
+      return [0,0,0,1];
+    };
+    const interpolate=(scale,t)=>{
+      const stops=(Array.isArray(scale)?scale:[[0,'#f7f8fa'],[1,'#0b3d66']])
+        .map(stop=>[Number(stop[0]),rgba(stop[1])]).sort((a,b)=>a[0]-b[0]);
+      const u=Math.max(0,Math.min(1,t));
+      let hi=stops.findIndex(stop=>stop[0]>=u);
+      if(hi<=0) hi=1;
+      if(hi<0) hi=stops.length-1;
+      const lo=hi-1, span=stops[hi][0]-stops[lo][0]||1;
+      const q=Math.max(0,Math.min(1,(u-stops[lo][0])/span));
+      const c=stops[lo][1].map((v,i)=>v+(stops[hi][1][i]-v)*q);
+      return `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${c[3]})`;
+    };
+    const bounds=(values,index)=>{
+      const centre=Number(values[index]);
+      if(values.length===1) return [centre-.5,centre+.5];
+      const left=index===0?centre-(Number(values[1])-centre)/2:(Number(values[index-1])+centre)/2;
+      const right=index===values.length-1?centre+(centre-Number(values[index-1]))/2:(centre+Number(values[index+1]))/2;
+      return [left,right];
+    };
+    data.forEach(trace=>{
+      if(!trace||String(trace.type).toLowerCase()!=="heatmap"||!Array.isArray(trace.z)) return;
+      const x=Array.isArray(trace.x)?trace.x:trace.z[0].map((_,i)=>i);
+      const y=Array.isArray(trace.y)?trace.y:trace.z.map((_,i)=>i);
+      const values=trace.z.flat().map(Number).filter(Number.isFinite);
+      const zmin=Number.isFinite(Number(trace.zmin))?Number(trace.zmin):Math.min(...values);
+      const zmax=Number.isFinite(Number(trace.zmax))?Number(trace.zmax):Math.max(...values);
+      const denom=zmax-zmin||1;
+      const lineWidth=Math.max(Number(trace.xgap)||0,Number(trace.ygap)||0);
+      trace.z.forEach((row,j)=>row.forEach((value,i)=>{
+        const z=Number(value);
+        if(!Number.isFinite(z)||i>=x.length||j>=y.length) return;
+        const [x0,x1]=bounds(x,i),[y0,y1]=bounds(y,j);
+        shapes.push({type:'rect',xref:trace.xaxis||'x',yref:trace.yaxis||'y',
+          x0,x1,y0,y1,layer:'above',
+          line:{color:layout.plot_bgcolor||'#fff',width:lineWidth},
+          fillcolor:interpolate(trace.colorscale,(z-zmin)/denom)});
+      }));
+    });
+    layout.shapes=shapes;
+  }
+  function waitForExportPaint(){
+    return new Promise(resolve=>{
+      let done=false;
+      const finish=()=>{if(!done){done=true;resolve();}};
+      requestAnimationFrame(()=>requestAnimationFrame(finish));
+      setTimeout(finish,80);
+    });
+  }
+  async function waitForEmbeddedPlotImages(host){
+    const sources=Array.from(host.querySelectorAll('image'))
+      .map(image=>image.getAttribute('href')||image.getAttributeNS('http://www.w3.org/1999/xlink','href'))
+      .filter(Boolean);
+    await Promise.all(sources.map(source=>new Promise(resolve=>{
+      const probe=new Image();
+      let done=false;
+      const finish=()=>{if(!done){done=true;resolve();}};
+      probe.onload=finish; probe.onerror=finish; probe.src=source;
+      if(probe.complete) finish();
+      setTimeout(finish,120);
+    })));
+  }
+  function scalePngFontSizes(value,factor,seen=new WeakSet()){
+    if(!value||typeof value!=="object"||seen.has(value)) return;
+    seen.add(value);
+    if(Array.isArray(value)){
+      value.forEach(item=>scalePngFontSizes(item,factor,seen));
+      return;
+    }
+    Object.entries(value).forEach(([key,item])=>{
+      if(key.toLowerCase().endsWith("font")&&item&&typeof item==="object"&&Number.isFinite(Number(item.size))){
+        item.size=Math.round(Number(item.size)*factor*10)/10;
+      }
+      scalePngFontSizes(item,factor,seen);
+    });
+  }
+  async function downloadPlotWithParameters(node,filename,params,options={}){
+    const includeRates=options.includeRates!==false;
+    const baseWidth=1200;
+    const baseHeight=800;
+    const sharesLegendRow=node.id==="plot-marg";
+    const isJointHeatmap=node.id==="plot-joint";
+    const footerHeight=includeRates&&!sharesLegendRow?EXPORT_FOOTER_HEIGHT:0;
+    const data=normaliseHeatmapExportData(cloneForPngExport(node.data||[]));
+    const layout=cloneForPngExport(node.layout||{});
+    const sourceMargin={...(layout.margin||{})};
+    const margin={...sourceMargin};
+    ['l','r','t','b'].forEach(side=>{
+      margin[side]=Math.ceil((Number(sourceMargin[side])||0)*PNG_FONT_SCALE);
+    });
+    const scaledBottomMargin=margin.b;
+    let width=baseWidth+(margin.l-(Number(sourceMargin.l)||0))+(margin.r-(Number(sourceMargin.r)||0));
+    let height=baseHeight+(margin.t-(Number(sourceMargin.t)||0))+
+      (margin.b-(Number(sourceMargin.b)||0))+footerHeight+EXPORT_BOTTOM_WHITESPACE;
+    if(sharesLegendRow){
+      // Keep the downloaded marginal figure at the same aspect ratio as its
+      // newly shortened dashboard card.
+      const card=node.closest('.graph-card');
+      const box=card&&card.getBoundingClientRect();
+      if(box&&box.width>0&&box.height>0) height=Math.round(width*box.height/box.width);
+    }else if(isJointHeatmap){
+      // The x and y ranges are identical. Give them identical pixel domains as
+      // well, so every exported probability cell remains genuinely square.
+      const squareInner=900;
+      width=squareInner+margin.l+margin.r;
+      height=squareInner+margin.t+margin.b+footerHeight+EXPORT_BOTTOM_WHITESPACE;
+    }
+    margin.b+=footerHeight+EXPORT_BOTTOM_WHITESPACE;
+    const annotations=Array.isArray(layout.annotations)?layout.annotations.slice():[];
+    if(includeRates){
+      const paramAnnotation={
+        xref:"paper",yref:"paper",showarrow:false,
+        text:exportParameterLines(params)[0],
+        font:{family:"Arial, Helvetica, sans-serif",size:12,color:"#1a1c1f"}
+      };
+      if(sharesLegendRow){
+        Object.assign(paramAnnotation,{x:1,y:1,xanchor:"right",yanchor:"bottom",align:"right"});
+      }else{
+        Object.assign(paramAnnotation,{x:0.5,y:0,xanchor:"center",yanchor:"top",
+          yshift:-(scaledBottomMargin+10),align:"center"});
+      }
+      annotations.push(paramAnnotation);
+    }
+    if(isJointHeatmap){
+      layout.xaxis={...(layout.xaxis||{}),scaleanchor:"y",scaleratio:1,constrain:"domain"};
+      layout.yaxis={...(layout.yaxis||{}),constrain:"domain"};
+    }
+    Object.assign(layout,{autosize:false,width,height,margin,annotations});
+    scalePngFontSizes(data,PNG_FONT_SCALE);
+    scalePngFontSizes(layout,PNG_FONT_SCALE);
+    if(isJointHeatmap) addHeatmapSvgFallback(data,layout);
+
+    const host=document.createElement("div");
+    host.setAttribute("aria-hidden","true");
+    Object.assign(host.style,{position:"fixed",left:"-10000px",top:"0",width:`${width}px`,height:`${height}px`});
+    document.body.appendChild(host);
+    try{
+      const config={responsive:false,displayModeBar:false,staticPlot:true};
+      await Plotly.newPlot(host,data,layout,config);
+      if(isJointHeatmap){
+        // Heatmap traces contain a raster image layer. Commit it twice and
+        // wait for both layout and image decoding before PNG serialisation.
+        await Plotly.react(host,data,layout,config);
+        await Promise.resolve(Plotly.redraw(host));
+        await waitForExportPaint();
+        await waitForEmbeddedPlotImages(host);
+      }
+      const image=await Plotly.toImage(host,{format:"png",width,height,scale:1});
+      const link=document.createElement("a");
+      link.download=`${String(filename).replace(/\.png$/i,"")}.png`;
+      link.href=image;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }finally{
+      Plotly.purge(host);
+      host.remove();
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Sliders / UI chrome
+     -------------------------------------------------------------------------- */
+  function buildSliders(){
+    RATES.forEach(r => {
+      const host = document.querySelector(`.slider[data-p="${r.key}"]`);
+      const step = r.step || 0.01;
+      host.innerHTML = `<div class="row1">
+          <span class="name"><span class="k" data-sym></span><span class="hint">${r.label}</span></span>
+          <input type="number" min="${r.min}" max="99" step="${step}" />
+        </div>
+        <input type="range" min="${r.min}" max="5" step="${step}" />`;
+      const sym = host.querySelector("[data-sym]");
+      try { katex.render(r.sym, sym); } catch(e){ sym.textContent = r.key; }
+      const num = host.querySelector('input[type=number]');
+      const rng = host.querySelector('input[type=range]');
+      sliderEls[r.key] = {num, rng, min:r.min, step};
+      const onIn = fromRange => {
+        let v = parseFloat(fromRange ? rng.value : num.value);
+        if(!isFinite(v)) v = r.min;
+        v = Math.max(r.min, v);
+        setRate(r.key, v, {live: fromRange || dragging});
+      };
+      rng.addEventListener("pointerdown", () => { dragging = true; });
+      rng.addEventListener("pointerup", () => {
+        dragging = false;
+        scheduleUpdate({forceFull: true});
+      });
+      rng.addEventListener("pointercancel", () => {
+        dragging = false;
+        scheduleUpdate({forceFull: true});
+      });
+      // pointerup can miss if released outside; change fires reliably on commit
+      rng.addEventListener("change", () => {
+        dragging = false;
+        scheduleUpdate({forceFull: true});
+      });
+      rng.addEventListener("input", () => onIn(true));
+      num.addEventListener("input", () => onIn(false));
+      num.addEventListener("change", () => scheduleUpdate({forceFull: true}));
+      num.addEventListener("blur", () => syncSlider(r.key));
+    });
+  }
+  function syncSlider(key){
+    const v = state.p[key], s = sliderEls[key];
+    s.num.value = (+v).toFixed(s.step < 0.01 ? 3 : 2);
+    const clamped = Math.min(5, Math.max(s.min, v));
+    s.rng.value = clamped;
+    const pct = 5 > s.min ? (clamped - s.min) / (5 - s.min) * 100 : 0;
+    s.rng.style.setProperty("--pct", pct.toFixed(2) + "%");
+  }
+  function rateSummary(keys){
+    const map = {lambda1:"λ₁", mu1:"μ₁", nu:"ν", delta1:"δ₁", lambda2:"λ₂", mu2:"μ₂", delta2:"δ₂"};
+    return keys.map(k => {
+      const rate=RATES.find(r=>r.key===k);
+      return `${map[k]}=${(+state.p[k]).toFixed(rate&&rate.step<0.01?3:2)}`;
+    }).join("  ");
+  }
+  function updateFoldSummaries(){
+    const s1 = el("sum-type1"), s2 = el("sum-type2");
+    if(s1) s1.textContent = rateSummary(["lambda1","mu1","nu","delta1"]);
+    if(s2) s2.textContent = rateSummary(["lambda2","mu2","delta2"]);
+  }
+  function setRate(key, v, opts = {}){
+    state.p[key] = v;
+    syncSlider(key);
+    updateFoldSummaries();
+    if(state.tmaxAuto) refreshAutoT();
+    scheduleUpdate({live: !!opts.live});
+  }
+  function autoTmax(p){
+    const rates = [
+      p.lambda1 + p.mu1 + p.nu + p.delta1,
+      p.lambda2 + p.mu2 + p.delta2,
+      Math.max(p.delta1, p.delta2, 1e-6)
+    ].filter(r => r > 1e-9);
+    const slow = Math.min(...rates);
+    let t = 10 / slow;
+    t = clamp(t, 4, 80);
+    return t < 20 ? Math.round(t * 2) / 2 : Math.round(t / 5) * 5;
+  }
+  function refreshAutoT(){
+    state.tmax = autoTmax(state.p);
+    el("tmax").value = state.tmax;
+  }
+  function syncGraphVisibility(){
+    const n = (state.g1 ? 1 : 0) + (state.g2 ? 1 : 0);
+    el("card-joint").classList.toggle("visible", state.g1);
+    el("card-marg").classList.toggle("visible", state.g2);
+    el("plotarea").classList.toggle("multi", n > 1);
+  }
+  function applyState(){
+    RATES.forEach(r => syncSlider(r.key));
+    updateFoldSummaries();
+    el("startType").value = String(state.start);
+    el("cutoff").value = state.M;
+    el("tmax").value = state.tmax;
+    el("g1").checked = state.g1;
+    el("g2").checked = state.g2;
+    if(el("lawMode")) el("lawMode").value = state.law;
+    syncGraphVisibility();
+    updateLawChrome();
+  }
+
+  function updateLawChrome(){
+    const rupture = state.law === "rupture";
+    const note = el("lawNote");
+    if(note){
+      note.innerHTML = rupture
+        ? "Conditioned on rupture: only paths that hit catastrophe (not ordinary extinction)."
+        : "Unconditional: origin atom = ordinary extinction (no release).";
+    }
+    const ms = el("margSubtitle");
+    const js = el("jointSubtitle");
+    if(ms){
+      ms.innerHTML = rupture
+        ? "P(X<sub>rel</sub>=k | τ<sub>c</sub>&lt;∞) and P(Y<sub>rel</sub>=k | τ<sub>c</sub>&lt;∞)"
+        : "P(X<sub>rel</sub>=k) and P(Y<sub>rel</sub>=k)";
+    }
+    if(js){
+      js.innerHTML = rupture
+        ? "heatmap · P(m,n | τ<sub>c</sub>&lt;∞)"
+        : "heatmap · P(X<sub>rel</sub>=m, Y<sub>rel</sub>=n)";
+    }
+  }
+
+  /**
+   * Build the displayed law from the raw integrated flux + origin atom.
+   * Unconditional: (0,0) mass = forever-avoidance; positives = integrated flux.
+   * Rupture-conditioned: renormalise flux by catastrophe mass; drop origin atom.
+   */
+  function viewFromResult(res){
+    if(!res) return null;
+    const M = res.M;
+    const dim = M + 1;
+    const idx = (m, n) => m * dim + n;
+    const joint = new Float64Array(res.joint); // copy
+    const rupture = state.law === "rupture";
+    let Z = 1;
+
+    if(rupture){
+      // Catastrophe mass = total flux on m+n≥1 (equivalently 1 − σ̂_∞ when converged)
+      Z = res.catMass;
+      if(!(Z > 1e-14)){
+        // Degenerate: almost never ruptures
+        joint.fill(0);
+        Z = 1;
+      } else {
+        joint[idx(0, 0)] = 0;
+        for(let i = 0; i < joint.length; i++) joint[i] /= Z;
+      }
+    }
+
+    const margX = new Float64Array(dim);
+    const margY = new Float64Array(dim);
+    let EX = 0, EY = 0, modeM = 0, modeN = 0, modeP = -1;
+    for(let m = 0; m <= M; m++){
+      for(let n = 0; n <= M; n++){
+        const pr = joint[idx(m, n)];
+        margX[m] += pr;
+        margY[n] += pr;
+        EX += m * pr;
+        EY += n * pr;
+        if(pr > modeP){ modeP = pr; modeM = m; modeN = n; }
+      }
+    }
+
+    return {
+      ...res,
+      joint, margX, margY, idx,
+      EX, EY, modeM, modeN, modeP,
+      p00: joint[idx(0, 0)],
+      conditioned: rupture,
+      condMass: rupture ? res.catMass : 1
+    };
+  }
+
+  function paintResult(res, needInit){
+    const view = viewFromResult(res);
+    if(!view) return;
+    updateLawChrome();
+    if(state.g2) plotMarginals(view, needInit);
+    if(state.g1) plotJoint(view, needInit);
+    updateStats(view);
+  }
+
+  /* --------------------------------------------------------------------------
+     Killed master equations on {0,…,M}²
+     opts.quality: "full" | "preview"
+     opts.shouldAbort: () => bool  — bail mid-integrate if a newer request exists
+     -------------------------------------------------------------------------- */
+  function integrateRelease(p, start, M, T, opts = {}){
+    const quality = opts.quality || "full";
+    const preview = quality === "preview";
+    const shouldAbort = opts.shouldAbort || (() => false);
+
+    // Preview: smaller lattice, coarser time step, single Euler stage
+    const Muse = preview ? Math.min(M, 12) : M;
+    const Tuse = preview ? Math.min(T, Math.max(4, T * 0.75)) : T;
+    const dim = Muse + 1;
+    const N = dim * dim;
+    const idx = (m, n) => m * dim + n;
+
+    const pcur = new Float64Array(N);
+    if(start === 1) pcur[idx(1, 0)] = 1;
+    else pcur[idx(0, 1)] = 1;
+
+    const flux = new Float64Array(N);
+    let leak = 0;
+
+    const {lambda1, mu1, nu, delta1, lambda2, mu2, delta2} = p;
+
+    const rateScale =
+      (lambda1 + mu1 + nu + delta1) * Muse +
+      (lambda2 + mu2 + delta2) * Muse +
+      1e-9;
+    // Coarser dt in preview; full quality keeps the stable RK4 scale
+    let dt = preview
+      ? Math.min(0.05, 0.55 / rateScale)
+      : Math.min(0.012, 0.28 / rateScale);
+    dt = Math.max(preview ? 5e-4 : 1.5e-4, dt);
+
+    function rhs(pin, pout){
+      pout.fill(0);
+      let outLeak = 0;
+      for(let m = 0; m <= Muse; m++){
+        for(let n = 0; n <= Muse; n++){
+          const i = idx(m, n);
+          const mass = pin[i];
+          if(mass <= 1e-18) continue;
+
+          const b1 = lambda1 * m;
+          const d1 = mu1 * m;
+          const cv = nu * m;
+          const b2 = lambda2 * n;
+          const d2 = mu2 * n;
+          const cat = delta1 * m + delta2 * n;
+          pout[i] -= (b1 + d1 + cv + b2 + d2 + cat) * mass;
+
+          if(b1 > 0){
+            if(m < Muse) pout[idx(m + 1, n)] += b1 * mass;
+            else outLeak += b1 * mass;
+          }
+          if(d1 > 0 && m > 0) pout[idx(m - 1, n)] += d1 * mass;
+          if(cv > 0 && m > 0){
+            if(n < Muse) pout[idx(m - 1, n + 1)] += cv * mass;
+            else outLeak += cv * mass;
+          }
+          if(b2 > 0){
+            if(n < Muse) pout[idx(m, n + 1)] += b2 * mass;
+            else outLeak += b2 * mass;
+          }
+          if(d2 > 0 && n > 0) pout[idx(m, n - 1)] += d2 * mass;
+        }
+      }
+      return outLeak;
+    }
+
+    // Flux contribution from current mass (used by both Euler and RK4)
+    function accumulateFlux(massArr, h, weight){
+      const w = h * weight;
+      for(let m = 0; m <= Muse; m++){
+        for(let n = 0; n <= Muse; n++){
+          if(m + n === 0) continue;
+          const rate = delta1 * m + delta2 * n;
+          if(rate <= 0) continue;
+          const mass = massArr[idx(m, n)];
+          if(mass > 0) flux[idx(m, n)] += rate * mass * w;
+        }
+      }
+    }
+
+    const k1 = new Float64Array(N);
+    const k2 = preview ? null : new Float64Array(N);
+    const k3 = preview ? null : new Float64Array(N);
+    const k4 = preview ? null : new Float64Array(N);
+    const tmp = preview ? null : new Float64Array(N);
+
+    let t = 0;
+    let steps = 0;
+    const maxSteps = preview ? 12000 : 250000;
+    const checkEvery = preview ? 12 : 32;
+
+    while(t < Tuse - 1e-15 && steps < maxSteps){
+      if(steps % checkEvery === 0 && shouldAbort()){
+        return null; // superseded
+      }
+      const h = Math.min(dt, Tuse - t);
+
+      if(preview){
+        // Forward Euler — ~4× fewer RHS evals than RK4
+        const leak1 = rhs(pcur, k1);
+        accumulateFlux(pcur, h, 1);
+        for(let i = 0; i < N; i++){
+          const next = pcur[i] + h * k1[i];
+          pcur[i] = next > 0 ? next : 0;
+        }
+        leak += h * leak1;
+      } else {
+        const leak1 = rhs(pcur, k1);
+        for(let i = 0; i < N; i++) tmp[i] = pcur[i] + 0.5 * h * k1[i];
+        const leak2 = rhs(tmp, k2);
+        for(let i = 0; i < N; i++) tmp[i] = pcur[i] + 0.5 * h * k2[i];
+        const leak3 = rhs(tmp, k3);
+        for(let i = 0; i < N; i++) tmp[i] = pcur[i] + h * k3[i];
+        const leak4 = rhs(tmp, k4);
+
+        // Heun-style flux using start + RK4 end state
+        accumulateFlux(pcur, h, 0.5);
+        for(let i = 0; i < N; i++){
+          const next = pcur[i] + (h / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+          pcur[i] = next > 0 ? next : 0;
+        }
+        accumulateFlux(pcur, h, 0.5);
+        leak += (h / 6) * (leak1 + 2 * leak2 + 2 * leak3 + leak4);
+      }
+
+      t += h;
+      steps++;
+
+      if(steps % checkEvery === 0){
+        let active = 0, fluxRate = 0;
+        for(let m = 0; m <= Muse; m++){
+          for(let n = 0; n <= Muse; n++){
+            if(m + n === 0) continue;
+            const mass = pcur[idx(m, n)];
+            active += mass;
+            fluxRate += (delta1 * m + delta2 * n) * mass;
+          }
+        }
+        if(active < (preview ? 1e-6 : 1e-8) && fluxRate < (preview ? 1e-6 : 1e-8)){
+          t = Tuse;
+          break;
+        }
+      }
+    }
+
+    if(shouldAbort()) return null;
+
+    const joint = new Float64Array(N);
+    let catMass = 0;
+    for(let m = 0; m <= Muse; m++){
+      for(let n = 0; n <= Muse; n++){
+        const i = idx(m, n);
+        if(m + n === 0) continue;
+        joint[i] = Math.max(0, flux[i]);
+        catMass += joint[i];
+      }
+    }
+
+    let residual = 0;
+    let residualActive = 0;
+    for(let m = 0; m <= Muse; m++){
+      for(let n = 0; n <= Muse; n++){
+        const mass = Math.max(0, pcur[idx(m, n)]);
+        residual += mass;
+        if(m + n > 0) residualActive += mass;
+      }
+    }
+    const p00 = residual;
+    joint[idx(0, 0)] = p00;
+
+    // Pad marginals / joint view to the display cap M so axes stay fixed while previewing
+    const Mdisp = M;
+    const dimDisp = Mdisp + 1;
+    const idxD = (m, n) => m * dimDisp + n;
+    const jointDisp = new Float64Array(dimDisp * dimDisp);
+    const margX = new Float64Array(dimDisp);
+    const margY = new Float64Array(dimDisp);
+    for(let m = 0; m <= Muse; m++){
+      for(let n = 0; n <= Muse; n++){
+        const pr = joint[idx(m, n)];
+        jointDisp[idxD(m, n)] = pr;
+        margX[m] += pr;
+        margY[n] += pr;
+      }
+    }
+
+    let EX = 0, EY = 0, modeM = 0, modeN = 0, modeP = -1;
+    for(let m = 0; m <= Muse; m++){
+      for(let n = 0; n <= Muse; n++){
+        const pr = joint[idx(m, n)];
+        EX += m * pr;
+        EY += n * pr;
+        if(pr > modeP){ modeP = pr; modeM = m; modeN = n; }
+      }
+    }
+
+    const totalMass = catMass + p00;
+    const massCheck = totalMass + leak;
+
+    return {
+      M: Mdisp, Mcomp: Muse, T: t, steps, start, quality, p:{...p},
+      joint: jointDisp, margX, margY, dim: dimDisp,
+      p00, catMass, residual, residualActive, leak,
+      totalMass, massCheck, EX, EY,
+      modeM, modeN, modeP,
+      idx: idxD
+    };
+  }
+
+  /* --------------------------------------------------------------------------
+     Plots
+     -------------------------------------------------------------------------- */
+  function heatmapData(res){
+    const {M, joint, idx} = res;
+    const x = [], y = [], z = [];
+    let zmax = 0;
+    for(let n = 0; n <= M; n++){
+      const row = [];
+      for(let m = 0; m <= M; m++){
+        if(n === 0) x.push(m);
+        const v = +joint[idx(m, n)] || 0;
+        row.push(v);
+        if(v > zmax) zmax = v;
+      }
+      y.push(n);
+      z.push(row);
+    }
+    // Plotly heatmap: z[y][x] with y = n (Y_rel), x = m (X_rel)
+    return {x, y, z, zmax: zmax > 0 ? zmax : 1};
+  }
+
+  /**
+   * Locked heatmap geometry — sized to fit the main pane (not full viewport).
+   * Square plot region: (w − l − r) = (h − t − b).
+   * Recomputed only on window resize — never during slider updates.
+   */
+  // Right margin sized for colorbar strip + monospaced "0.00" labels (never auto-grow)
+  const HEAT_MARGIN = Object.freeze({l: 46, r: 78, t: 16, b: 42});
+  const HEAT_CTRL_W = 280;   // left control column
+  // Keep in sync with CSS --page-gutter-left + --page-gutter-right
+  const HEAT_WRAP_PAD = 24 + 48;
+  const HEAT_GAP = 14;
+  const HEAT_MIN_MARGINAL = 300; // leave room for the bars plot
+  const HEAT_MAX_OUTER = 483;    // prior 420 × 1.15
+  let heatGeom = null; // {inner, w, h, m}
+
+  function computeHeatGeometry(){
+    const m = HEAT_MARGIN;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    // Prefer measuring the main pane so the heatmap never eats the right gutter
+    const mainEl = document.querySelector(".main");
+    const mainW = mainEl && mainEl.clientWidth > 0
+      ? mainEl.clientWidth
+      : Math.max(320, vw - HEAT_CTRL_W - HEAT_WRAP_PAD - 10);
+    // Width left in the main pane after marginals + gap
+    const availBesideMarginal = mainW - HEAT_MIN_MARGINAL - HEAT_GAP;
+    const availH = Math.round((vh - 92) * 0.67);
+
+    let outer = Math.min(
+      HEAT_MAX_OUTER,
+      Math.max(240, availBesideMarginal),
+      availH
+    );
+    // Outer is the Plotly figure size; plot square is outer minus fixed margins
+    let inner = outer - m.l - m.r;
+    const innerH = outer - m.t - m.b;
+    inner = Math.max(180, Math.min(inner, innerH));
+    // Rebuild outer from the square inner so w/h stay consistent
+    const w = inner + m.l + m.r;
+    const h = inner + m.t + m.b;
+    return {inner, w, h, m};
+  }
+
+  function applyHeatGeometry(force){
+    if(!heatGeom || force) heatGeom = computeHeatGeometry();
+    const g = heatGeom;
+    // These custom properties are declared on .plotarea, so set the live
+    // values on that same element (a root-level value would be shadowed).
+    const plotArea=el("plotarea");
+    const sizeHost=plotArea||document.documentElement;
+    sizeHost.style.setProperty("--heat-w", g.w + "px");
+    sizeHost.style.setProperty("--heat-h", g.h + "px");
+    const node = el("plot-joint");
+    if(node){
+      node.style.width = g.w + "px";
+      node.style.height = g.h + "px";
+    }
+    const jointCard=el("card-joint");
+    if(jointCard&&getComputedStyle(jointCard).display!=="none"){
+      const jointHeight=jointCard.getBoundingClientRect().height;
+      if(jointHeight>0) sizeHost.style.setProperty("--marg-h",jointHeight+"px");
+    }
+    return g;
+  }
+
+  /** Fixed 5 colorbar ticks, always exactly 4 characters (e.g. 0.00 … 1.00). */
+  function colorbarTicks(zmax){
+    const zM = zmax > 0 ? zmax : 1;
+    const tickvals = [];
+    const ticktext = [];
+    for(let i = 0; i < 5; i++){
+      const v = zM * (i / 4);
+      tickvals.push(v);
+      // toFixed(2) is constant width for values in [0,1]; clamp display to that form
+      ticktext.push(v.toFixed(2));
+    }
+    return {tickvals, ticktext};
+  }
+
+  function heatTrace(x, y, z, zmax){
+    const ticks = colorbarTicks(zmax);
+    return {
+      type: "heatmap",
+      x, y, z,
+      zsmooth: false,
+      zmin: 0,
+      zmax: zmax,
+      colorscale: [
+        [0, "#f7f8fa"],
+        [0.12, "#d9e8f5"],
+        [0.35, "#7eb6dc"],
+        [0.65, BLUE],
+        [1, "#0b3d66"]
+      ],
+      colorbar: {
+        title: {text: "P", side: "right", font: {size: 11}},
+        // Pixel geometry — independent of tick-string length
+        thicknessmode: "pixels",
+        thickness: 12,
+        lenmode: "fraction",
+        len: 0.85,
+        // Sit entirely in the fixed right margin (paper coords)
+        x: 1.0,
+        xanchor: "left",
+        xpad: 6,
+        y: 0.5,
+        yanchor: "middle",
+        ypad: 0,
+        outlinewidth: 0,
+        bgcolor: "rgba(0,0,0,0)",
+        tickfont: {size: 10, family: "SFMono-Regular, Consolas, Menlo, monospace"},
+        tickformat: ".2f",
+        tickmode: "array",
+        tickvals: ticks.tickvals,
+        ticktext: ticks.ticktext,
+        nticks: 5,
+        showticklabels: true,
+        ticklabeloverflow: "allow",
+        separatethousands: false
+      },
+      hovertemplate:
+        "X_rel = %{x:.0f}<br>Y_rel = %{y:.0f}<br>P = %{z:.6f}<extra></extra>",
+      xgap: 0.5,
+      ygap: 0.5,
+      showscale: true
+    };
+  }
+
+  function heatLayout(res, g){
+    const lo = -0.5;
+    const hi = res.M + 0.5;
+    return {
+      autosize: false,
+      width: g.w,
+      height: g.h,
+      // Fixed margins: right margin is a reserved colorbar gutter — never changes
+      margin: {l: g.m.l, r: g.m.r, t: g.m.t, b: g.m.b, pad: 0, autoexpand: false},
+      paper_bgcolor: "#fff",
+      plot_bgcolor: "#fff",
+      font: {family: "inherit", size: 11, color: "#1a1c1f"},
+      // Domain locked to full plotting area (between margins) so colorbar cannot steal width
+      xaxis: {
+        title: {text: "X_rel = m", standoff: 8},
+        dtick: 1,
+        range: [lo, hi],
+        domain: [0, 1],
+        gridcolor: GRID,
+        zeroline: false,
+        ticks: "outside",
+        fixedrange: true,
+        automargin: false,
+        constrain: "domain"
+      },
+      yaxis: {
+        title: {text: "Y_rel = n", standoff: 8},
+        dtick: 1,
+        range: [lo, hi],
+        domain: [0, 1],
+        gridcolor: GRID,
+        zeroline: false,
+        ticks: "outside",
+        fixedrange: true,
+        automargin: false,
+        constrain: "domain"
+      }
+    };
+  }
+
+  /** Re-assert fixed figure geometry after data updates (Plotly can reflow colorbar). */
+  function lockHeatGeometry(node, res, g){
+    const lo = -0.5;
+    const hi = res.M + 0.5;
+    return Plotly.relayout(node, {
+      autosize: false,
+      width: g.w,
+      height: g.h,
+      margin: {l: g.m.l, r: g.m.r, t: g.m.t, b: g.m.b, pad: 0, autoexpand: false},
+      "xaxis.domain": [0, 1],
+      "yaxis.domain": [0, 1],
+      "xaxis.range": [lo, hi],
+      "yaxis.range": [lo, hi],
+      "xaxis.automargin": false,
+      "yaxis.automargin": false
+    });
+  }
+
+  function plotJoint(res, initial){
+    const node = el("plot-joint");
+    if(!node || !res) return;
+    node._bdcExportParams = exportParametersFromResult(res);
+    const {x, y, z, zmax} = heatmapData(res);
+    const g = applyHeatGeometry(false);
+    const trace = heatTrace(x, y, z, zmax);
+    const layout = heatLayout(res, g);
+    const cfg = {responsive: false, displayModeBar: false};
+    const ticks = colorbarTicks(zmax);
+
+    try {
+      // Prefer full react when (re)initialising — restyle-only was leaving blank heatmaps
+      // after geometry / conditioning changes. Size stays fixed via g.w / g.h.
+      if(!plotInited.joint || initial || !node.data || !node.data[0]){
+        Plotly.newPlot(node, [trace], layout, cfg).then(() => lockHeatGeometry(node, res, g));
+        plotInited.joint = true;
+        return;
+      }
+
+      // Same axis length: update colours + fixed colorbar ticks, then re-lock geometry
+      if(node.data[0].x && node.data[0].x.length === x.length &&
+         node.data[0].y && node.data[0].y.length === y.length){
+        Plotly.restyle(node, {
+          z: [z],
+          zmin: [0],
+          zmax: [zmax],
+          "colorbar.tickformat": [".2f"],
+          "colorbar.tickmode": ["array"],
+          "colorbar.tickvals": [ticks.tickvals],
+          "colorbar.ticktext": [ticks.ticktext],
+          "colorbar.thickness": [12],
+          "colorbar.thicknessmode": ["pixels"],
+          "colorbar.len": [0.85],
+          "colorbar.x": [1.0],
+          "colorbar.xanchor": ["left"],
+          "colorbar.xpad": [6]
+        }, [0]).then(() => lockHeatGeometry(node, res, g));
+        return;
+      }
+
+      Plotly.react(node, [trace], layout, cfg).then(() => lockHeatGeometry(node, res, g));
+      plotInited.joint = true;
+    } catch(err){
+      console.error("plotJoint failed", err);
+      plotInited.joint = false;
+      try {
+        Plotly.newPlot(node, [trace], layout, cfg).then(() => lockHeatGeometry(node, res, g));
+        plotInited.joint = true;
+      } catch(err2){
+        console.error("plotJoint recovery failed", err2);
+      }
+    }
+  }
+
+  function plotMarginals(res, initial){
+    const node = el("plot-marg");
+    if(!node || !res) return;
+    node._bdcExportParams = exportParametersFromResult(res);
+    const {M, margX, margY} = res;
+    const k = [];
+    for(let i = 0; i <= M; i++) k.push(i);
+    // Plain arrays — Plotly can mishandle typed arrays in restyle
+    const yX = Array.prototype.slice.call(margX, 0);
+    const yY = Array.prototype.slice.call(margY, 0);
+
+    const tX = {
+      type: "bar",
+      name: "P(X_rel = k)",
+      x: k,
+      y: yX,
+      marker: {color: BLUE, opacity: 0.78},
+      hovertemplate: "k = %{x}<br>P(X_rel=k) = %{y:.6f}<extra></extra>"
+    };
+    const tY = {
+      type: "bar",
+      name: "P(Y_rel = k)",
+      x: k,
+      y: yY,
+      marker: {color: VERM, opacity: 0.72},
+      hovertemplate: "k = %{x}<br>P(Y_rel=k) = %{y:.6f}<extra></extra>"
+    };
+    const layout = {
+      autosize: true,
+      barmode: "group",
+      margin: {l: 54, r: 16, t: 54, b: 46},
+      paper_bgcolor: "#fff",
+      plot_bgcolor: "#fff",
+      font: {family: "inherit", size: 11.5, color: "#1a1c1f"},
+      xaxis: {
+        title: "count k",
+        dtick: 1,
+        gridcolor: GRID,
+        zeroline: false,
+        automargin: true
+      },
+      yaxis: {
+        title: "probability",
+        rangemode: "tozero",
+        gridcolor: GRID,
+        zerolinecolor: GRID,
+        automargin: true
+      },
+      legend: {
+        orientation: "h",
+        x: 0,
+        xanchor: "left",
+        y: 1.0,
+        yanchor: "bottom",
+        yref: "paper",
+        font: {size: 11},
+        bgcolor: "rgba(255,255,255,0.92)",
+        borderwidth: 0,
+        entrywidthmode: "pixels",
+        entrywidth: 150,
+        tracegroupgap: 16,
+        itemsizing: "constant"
+      },
+      hoverlabel: {namelength: -1},
+      bargap: 0.18,
+      bargroupgap: 0.06
+    };
+    const cfg = {responsive: true, displayModeBar: false};
+
+    try {
+      if(!plotInited.marg || initial || !node.data || node.data.length < 2){
+        Plotly.newPlot(node, [tX, tY], layout, cfg);
+        plotInited.marg = true;
+        // First paint can measure a zero-height flex box — force a reflow resize
+        requestAnimationFrame(() => {
+          if(node.data) Plotly.Plots.resize(node);
+        });
+        return;
+      }
+      if(node.data[0].x && node.data[0].x.length === k.length){
+        Plotly.restyle(node, {y: [yX, yY]}, [0, 1]);
+        return;
+      }
+      Plotly.react(node, [tX, tY], layout, cfg);
+      plotInited.marg = true;
+    } catch(err){
+      console.error("plotMarginals failed", err);
+      plotInited.marg = false;
+      try {
+        Plotly.newPlot(node, [tX, tY], layout, cfg);
+        plotInited.marg = true;
+      } catch(err2){
+        console.error("plotMarginals recovery failed", err2);
+      }
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Theory / stats
+     -------------------------------------------------------------------------- */
+  function renderEquations(){
+    const display = [
+      ["eqDef", String.raw`
+        (X_{\mathrm{rel}},Y_{\mathrm{rel}})
+        =
+        \begin{cases}
+        (X_{\tau_c-},\,Y_{\tau_c-}) & \text{on }\{\tau_c<\infty\} \\[0.3em]
+        (0,0) & \text{on }\{\tau_c=\infty\}
+        \end{cases}
+      `],
+      ["eqF", String.raw`
+        \mathcal F_i(x,y,t)
+        =
+        \mathbb E_i\!\left[
+          x^{X_t} y^{Y_t}
+          \mathbf{1}_{\{\tau_c>t\}}
+        \right]
+        =
+        \mathbb E_i\!\left[
+          x^{X_t} y^{Y_t}
+          \exp\!\left(
+            -\int_0^t (\delta_1 X_s+\delta_2 Y_s)\,ds
+          \right)
+        \right]
+      `],
+      ["eqJ", String.raw`
+        \mathcal J_i(x,y,t)
+        =
+        \delta_1 x\,\partial_x \mathcal F_i(x,y,t)
+        +
+        \delta_2 y\,\partial_y \mathcal F_i(x,y,t)
+      `],
+      ["eqPgf", String.raw`
+        \boxed{
+          \mathcal P_i^{\mathrm{rel}}(x,y)
+          :=
+          \mathbb E_i\!\left[x^{X_{\mathrm{rel}}} y^{Y_{\mathrm{rel}}}\right]
+          =
+          \sigma_i(\infty)
+          +
+          \int_0^\infty
+          \mathcal J_i(x,y,t)\,dt
+        }
+      `],
+      ["eqLaw", String.raw`
+        \mathbb P_i\{X_{\mathrm{rel}}=m,\,Y_{\mathrm{rel}}=n\}
+        =
+        \begin{cases}
+        \sigma_i(\infty)
+        & (m,n)=(0,0) \\[0.55em]
+        \displaystyle
+        \int_0^\infty
+        (\delta_1 m+\delta_2 n)\,
+        p_{m,n}^{(i)}(t)\,
+        dt
+        =
+        \displaystyle
+        \int_0^\infty
+        [x^m y^n]\mathcal J_i(x,y,t)\,
+        dt
+        & m+n\ge 1
+        \end{cases}
+      `],
+      ["eqExtract", String.raw`
+        \mathbb P_i\{X_{\mathrm{rel}}=m,\,Y_{\mathrm{rel}}=n\}
+        =
+        [x^m y^n]\,
+        \mathcal P_i^{\mathrm{rel}}(x,y)
+      `],
+      ["eqCond", String.raw`
+        \boxed{
+          \mathcal R_i^{\mathrm{cat}}(x,y)
+          =
+          \mathbb E_i\!\left[
+            x^{X_{\mathrm{rel}}} y^{Y_{\mathrm{rel}}}
+            \,\big|\,
+            \tau_c < \infty
+          \right]
+          =
+          \frac{
+            \displaystyle
+            \int_0^\infty \mathcal J_i(x,y,t)\,dt
+          }{
+            1-\sigma_i(\infty)
+          }
+        }
+      `]
+    ];
+    display.forEach(([id, tex]) => {
+      const node = el(id);
+      if(!node) return;
+      try {
+        katex.render(tex, node, {displayMode: true, throwOnError: false});
+      } catch(e){ /* ignore */ }
+    });
+
+    const inlines = [
+      ["eqPmnInline", String.raw`p_{m,n}^{(i)}(t)=[x^m y^n]\mathcal F_i(x,y,t)`],
+      ["eqSigmaInline", String.raw`\sigma_i(t)=\mathcal F_i(1,1,t)`],
+      ["eqSGInline", String.raw`\sigma_1=S,\;\sigma_2=G`],
+      ["eqJcoeffInline", String.raw`
+        [x^m y^n]\mathcal J_i
+        =
+        (\delta_1 m+\delta_2 n)\,p_{m,n}^{(i)}(t)
+      `],
+      ["eqPgfShortInline", String.raw`
+        \mathcal P_i^{\mathrm{rel}}
+        =
+        \sigma_i(\infty)
+        +
+        \int_0^\infty
+        (\delta_1 x\,\partial_x+\delta_2 y\,\partial_y)
+        \mathcal F_i\,dt
+      `],
+      ["eqSigmaInfInline", String.raw`\sigma_i(\infty)=\lim_{t\to\infty}\mathcal F_i(1,1,t)`],
+      ["eqHRInline", String.raw`(h\text{ from type }1,\; r_{2,-}\text{ from type }2)`],
+      ["eqCondNoteInline", String.raw`1-\sigma_i(\infty)=\mathbb P_i\{\tau_c<\infty\}`]
+    ];
+    inlines.forEach(([id, tex]) => {
+      const node = el(id);
+      if(!node) return;
+      try {
+        katex.render(tex, node, {displayMode: false, throwOnError: false});
+      } catch(e){ /* ignore */ }
+    });
+  }
+
+  function updateStats(res){
+    el("v_start").textContent = res.start === 1 ? "(1, 0)" : "(0, 1)";
+    el("v_M").textContent = String(res.M);
+    el("v_T").textContent = fmt(res.T, 3);
+    // Always report raw origin / catastrophe masses from the integrate step
+    const rawP00 = res.conditioned ? (1 - res.catMass) : res.p00;
+    // When conditioned, p00 on the view is 0; show raw forever-avoidance in the table
+    el("v_p00").textContent = fmt(res.conditioned ? (lastResult ? lastResult.p00 : rawP00) : res.p00, 6);
+    el("v_pcat").textContent = fmt(res.catMass, 6);
+    el("v_res").textContent = fmtExp(res.residualActive);
+    el("v_leak").textContent = fmtExp(res.leak);
+    el("v_EX").textContent = fmt(res.EX, 5) + (res.conditioned ? " | cat" : "");
+    el("v_EY").textContent = fmt(res.EY, 5) + (res.conditioned ? " | cat" : "");
+    el("v_mode").textContent = `(${res.modeM}, ${res.modeN}) · P=${fmt(res.modeP, 5)}`;
+  }
+
+  function resizePlots(){
+    requestAnimationFrame(() => {
+      // Heatmap geometry only recalculates on window resize (force=true)
+      if(plotInited.joint && el("plot-joint").data){
+        const g = applyHeatGeometry(true);
+        Plotly.relayout(el("plot-joint"), {
+          width: g.w,
+          height: g.h,
+          autosize: false,
+          margin: Object.assign({pad: 0}, g.m)
+        });
+      } else {
+        applyHeatGeometry(true);
+      }
+      // applyHeatGeometry also synchronises the marginal card's outer height
+      // to the joint card, so resize the marginal only after that measurement.
+      if(plotInited.marg && el("plot-marg").data) Plotly.Plots.resize(el("plot-marg"));
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     Orchestration — preview while live, full after settle
+     -------------------------------------------------------------------------- */
+  function snapshotParams(){
+    return {
+      p: {...state.p},
+      start: state.start,
+      M: state.M,
+      tmax: state.tmax
+    };
+  }
+
+  function recompute(opts = {}){
+    const initial = !!opts.initial;
+    const quality = opts.quality || "full";
+    const gen = ++computeGen;
+    const snap = snapshotParams();
+    const t0 = performance.now();
+
+    try {
+      const res = integrateRelease(snap.p, snap.start, snap.M, snap.tmax, {
+        quality,
+        shouldAbort: () => gen !== computeGen
+      });
+      // Superseded by a newer slider move
+      if(!res || gen !== computeGen) return;
+
+      lastResult = res;
+      // Only rebuild axes on first paint or when M changes (preview pads to M)
+      const needInit = initial ||
+        (quality === "full" && plotInited.marg && el("plot-marg").data &&
+          el("plot-marg").data[0] && el("plot-marg").data[0].x &&
+          el("plot-marg").data[0].x.length !== res.M + 1);
+
+      paintResult(res, needInit);
+
+      const ms = performance.now() - t0;
+      if(quality === "preview") lastPreviewMs = ms;
+    } catch(err){
+      if(gen !== computeGen) return;
+      console.error(err);
+    }
+  }
+
+  function scheduleUpdate(opts = {}){
+    const live = !!opts.live || dragging;
+    const forceFull = !!opts.forceFull;
+
+    // Live / drag: paint a cheap preview soon (rAF-throttled)
+    if(live && !forceFull){
+      if(!rafPending){
+        rafPending = true;
+        requestAnimationFrame(() => {
+          rafPending = false;
+          // Skip if a newer full is about to run imminently and we just painted
+          recompute({quality: "preview"});
+        });
+      } else if(!previewTimer){
+        // Fallback throttle if rAF is saturated
+        previewTimer = setTimeout(() => {
+          previewTimer = null;
+          recompute({quality: "preview"});
+        }, 32);
+      }
+      // Always refresh full quality after the user pauses
+      if(fullTimer) clearTimeout(fullTimer);
+      fullTimer = setTimeout(() => {
+        fullTimer = null;
+        recompute({quality: "full"});
+      }, 160);
+      return;
+    }
+
+    // Discrete control change or forced full
+    if(previewTimer){ clearTimeout(previewTimer); previewTimer = null; }
+    if(fullTimer){ clearTimeout(fullTimer); fullTimer = null; }
+    if(forceFull){
+      recompute({quality: "full", initial: !!opts.initial});
+      return;
+    }
+    // Light debounce for non-slider controls
+    fullTimer = setTimeout(() => {
+      fullTimer = null;
+      recompute({quality: "full", initial: !!opts.initial});
+    }, 50);
+  }
+
+  function wireControls(){
+    el("reset").addEventListener("click", () => {
+      state.p = {...DEFAULT};
+      state.start = 1;
+      state.M = 18;
+      state.tmaxAuto = true;
+      state.g1 = true;
+      state.g2 = true;
+      state.law = "uncond";
+      refreshAutoT();
+      applyState();
+      document.querySelectorAll("details.fold").forEach(d => { d.open = false; });
+      // M may match but force axis rebuild after reset
+      plotInited.joint = false;
+      plotInited.marg = false;
+      scheduleUpdate({forceFull: true, initial: true});
+      resizePlots();
+    });
+
+    el("lawMode").addEventListener("change", () => {
+      state.law = el("lawMode").value === "rupture" ? "rupture" : "uncond";
+      updateLawChrome();
+      // No re-integrate: re-normalise last raw result
+      if(lastResult) paintResult(lastResult, false);
+      else scheduleUpdate({forceFull: true});
+    });
+
+    el("startType").addEventListener("change", () => {
+      state.start = parseInt(el("startType").value, 10) === 2 ? 2 : 1;
+      scheduleUpdate({forceFull: true});
+    });
+
+    el("g1").addEventListener("change", () => {
+      state.g1 = el("g1").checked;
+      if(!state.g1 && !state.g2){ state.g2 = true; el("g2").checked = true; }
+      syncGraphVisibility();
+      if(lastResult) paintResult(lastResult, true);
+      else scheduleUpdate({forceFull: true, initial: true});
+      resizePlots();
+    });
+    el("g2").addEventListener("change", () => {
+      state.g2 = el("g2").checked;
+      if(!state.g1 && !state.g2){ state.g1 = true; el("g1").checked = true; }
+      syncGraphVisibility();
+      if(lastResult) paintResult(lastResult, true);
+      else scheduleUpdate({forceFull: true, initial: true});
+      resizePlots();
+    });
+
+    el("cutoff").addEventListener("change", () => {
+      let M = parseInt(el("cutoff").value, 10);
+      if(!isFinite(M)) M = 18;
+      state.M = clamp(M, 4, 40);
+      el("cutoff").value = state.M;
+      // Axis length changes — rebuild plots
+      plotInited.joint = false;
+      plotInited.marg = false;
+      scheduleUpdate({forceFull: true, initial: true});
+    });
+    el("tmax").addEventListener("change", () => {
+      let T = parseFloat(el("tmax").value);
+      if(!isFinite(T) || T <= 0) T = 12;
+      state.tmax = clamp(T, 0.5, 200);
+      state.tmaxAuto = false;
+      el("tmax").value = state.tmax;
+      scheduleUpdate({forceFull: true});
+    });
+    el("autoT").addEventListener("click", () => {
+      state.tmaxAuto = true;
+      refreshAutoT();
+      scheduleUpdate({forceFull: true});
+    });
+
+    document.querySelectorAll(".dl-png").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-dl");
+        const name = btn.getAttribute("data-name") || id;
+        const node = el(id);
+        if(!node || !node.data) return;
+        const ratesToggle=btn.closest(".png-tools")?.querySelector(".png-rates");
+        const includeRates=!ratesToggle||ratesToggle.checked;
+        btn.disabled = true;
+        try {
+          const fallback = {p:{...state.p}};
+          await downloadPlotWithParameters(node, name, node._bdcExportParams || fallback,{includeRates});
+        } catch(error){
+          console.error("PNG export failed:", error);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    window.addEventListener("resize", resizePlots);
+  }
+
+  /* boot */
+  buildSliders();
+  renderEquations();
+  refreshAutoT();
+  applyState();
+  wireControls();
+  applyHeatGeometry(true);
+  recompute({quality: "full", initial: true});
+  resizePlots();
+})();
+</script>

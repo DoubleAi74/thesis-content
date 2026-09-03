@@ -1,0 +1,3068 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="A responsive, deep-zoom phase portrait of the Koenigs function for the complex logistic map, with a Galton-Watson A(p) overlay."
+    />
+    <title>Koenigs Explorer — Logistic-map linearization</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07090f;
+        --panel: #101520;
+        --panel-2: #151c29;
+        --panel-3: #0c111b;
+        --text: #f4f7fb;
+        --muted: #9ba9bb;
+        --faint: #69778a;
+        --line: rgba(184, 202, 224, 0.14);
+        --line-strong: rgba(184, 202, 224, 0.25);
+        --blue: #75a7ff;
+        --cyan: #69e1dc;
+        --green: #84e1a1;
+        --amber: #f4c86a;
+        --violet: #bb91ff;
+        --danger: #ff7a93;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+        --radius: 14px;
+        --topbar-height: 62px;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      body {
+        min-width: 320px;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button,
+      select,
+      input[type="number"] {
+        color: var(--text);
+        background: var(--panel-2);
+        border: 1px solid var(--line-strong);
+        border-radius: 9px;
+      }
+
+      button {
+        min-height: 36px;
+        padding: 0 12px;
+        cursor: pointer;
+        transition:
+          border-color 140ms ease,
+          background 140ms ease,
+          transform 140ms ease;
+      }
+
+      button:hover {
+        background: #1b2535;
+        border-color: rgba(117, 167, 255, 0.55);
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      canvas:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+
+      .app {
+        width: 100%;
+        height: 100dvh;
+        display: grid;
+        grid-template-rows: var(--topbar-height) minmax(0, 1fr);
+      }
+
+      .topbar {
+        position: relative;
+        z-index: 20;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 0 18px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(12, 16, 25, 0.94);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+      }
+
+      .brand {
+        min-width: 0;
+        display: flex;
+        align-items: baseline;
+        gap: 11px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1;
+        letter-spacing: -0.015em;
+        font-weight: 680;
+        white-space: nowrap;
+      }
+
+      .brand .equation {
+        color: var(--muted);
+        font: 12px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        white-space: nowrap;
+      }
+
+      .top-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .top-actions button {
+        min-height: 34px;
+        font-size: 12px;
+      }
+
+      .workspace {
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 312px minmax(0, 1fr);
+      }
+
+      .controls {
+        position: relative;
+        z-index: 10;
+        min-width: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        padding: 18px 16px 24px;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .controls::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .controls::-webkit-scrollbar-thumb {
+        background: #344154;
+        border-radius: 999px;
+      }
+
+      .section {
+        padding: 2px 0 18px;
+      }
+
+      .section + .section {
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-title {
+        margin: 0 0 14px;
+        color: #c9d9ef;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.115em;
+        text-transform: uppercase;
+      }
+
+      .control {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .control:last-child {
+        margin-bottom: 0;
+      }
+
+      .control-head {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .control-head label,
+      .control-head .label {
+        color: #d5deeb;
+        font-size: 12px;
+      }
+
+      .value,
+      output {
+        color: var(--cyan);
+        font: 11.5px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .paired-input {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 74px;
+        gap: 10px;
+        align-items: center;
+      }
+
+      input[type="number"] {
+        width: 100%;
+        min-height: 32px;
+        padding: 5px 7px;
+        font: 11.5px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 18px;
+        margin: 0;
+        accent-color: var(--blue);
+        cursor: pointer;
+      }
+
+      #imag-range {
+        accent-color: var(--violet);
+      }
+
+      #iterations-range {
+        accent-color: var(--green);
+      }
+
+      #grid-range {
+        accent-color: var(--amber);
+      }
+
+      select {
+        width: 100%;
+        min-height: 35px;
+        padding: 5px 9px;
+        font-size: 12px;
+      }
+
+      .mode-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: var(--panel-3);
+      }
+
+      .mode-switch button {
+        min-height: 34px;
+        padding-inline: 8px;
+        border-color: transparent;
+        background: transparent;
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+
+      .mode-switch button[aria-pressed="true"] {
+        border-color: rgba(117, 167, 255, 0.42);
+        background: rgba(117, 167, 255, 0.14);
+        color: var(--text);
+      }
+
+      .camera-control[hidden] {
+        display: none;
+      }
+
+      .surface-controls[hidden] {
+        display: none;
+      }
+
+      .surface-controls {
+        display: grid;
+        gap: 10px;
+        padding: 10px 11px;
+        border: 1px solid rgba(105, 225, 220, 0.2);
+        border-radius: 10px;
+        background: rgba(105, 225, 220, 0.045);
+      }
+
+      .check-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        min-height: 32px;
+        padding: 5px 0;
+        color: #d5deeb;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .check-row input {
+        flex: 0 0 auto;
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: var(--blue);
+      }
+
+      .check-copy {
+        display: grid;
+        gap: 3px;
+      }
+
+      .check-copy small,
+      .help {
+        color: var(--muted);
+        font-size: 10.5px;
+        line-height: 1.45;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .button-row button {
+        min-width: 0;
+        padding-inline: 8px;
+        font-size: 11.5px;
+      }
+
+      .math-note {
+        margin: 0;
+        padding: 11px 12px;
+        color: var(--muted);
+        background: var(--panel-3);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 10.5px;
+        line-height: 1.55;
+      }
+
+      .math-note strong {
+        color: #dce7f5;
+      }
+
+      .math-note code {
+        color: var(--green);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .stage {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 45%, rgba(24, 34, 54, 0.18), transparent 55%),
+          #020308;
+        isolation: isolate;
+      }
+
+      #gl-canvas,
+      #annotation-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      #gl-canvas {
+        z-index: 1;
+        cursor: crosshair;
+        touch-action: none;
+      }
+
+      #gl-canvas.is-dragging {
+        cursor: grabbing;
+      }
+
+      #annotation-canvas {
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .hud {
+        position: absolute;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        pointer-events: none;
+      }
+
+      .hud-top-left {
+        top: 12px;
+        left: 12px;
+      }
+
+      .hud-bottom-left {
+        left: 12px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+      }
+
+      .badge,
+      .coord-readout {
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 9px;
+        border: 1px solid rgba(202, 220, 243, 0.16);
+        border-radius: 8px;
+        background: rgba(5, 8, 14, 0.72);
+        color: #c9d6e7;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        backdrop-filter: blur(12px);
+        font: 10.5px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .badge.deep {
+        color: var(--amber);
+        border-color: rgba(244, 200, 106, 0.3);
+      }
+
+      .badge.preview {
+        color: var(--cyan);
+      }
+
+      .thesis-card {
+        position: absolute;
+        z-index: 5;
+        top: 12px;
+        right: 12px;
+        width: min(308px, calc(100% - 24px));
+        max-height: calc(100% - 24px);
+        overflow: auto;
+        padding: 14px;
+        border: 1px solid rgba(173, 198, 230, 0.2);
+        border-radius: var(--radius);
+        background: rgba(12, 17, 27, 0.88);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px) saturate(1.12);
+        transition:
+          opacity 160ms ease,
+          transform 160ms ease;
+      }
+
+      .thesis-card[hidden] {
+        display: none;
+      }
+
+      .thesis-kicker {
+        margin: 0 0 5px;
+        color: var(--blue);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .thesis-card h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 680;
+        letter-spacing: -0.01em;
+      }
+
+      .formula {
+        margin: 10px 0 12px;
+        padding: 8px 9px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: rgba(5, 9, 15, 0.56);
+        color: #dcecff;
+        text-align: center;
+        font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin: 0 0 12px;
+      }
+
+      .metric {
+        min-width: 0;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: rgba(22, 29, 42, 0.62);
+      }
+
+      .metric dt {
+        margin: 0 0 5px;
+        color: var(--muted);
+        font-size: 9.5px;
+      }
+
+      .metric dd {
+        margin: 0;
+        overflow: hidden;
+        color: var(--text);
+        font: 11px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-variant-numeric: tabular-nums;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .metric:nth-child(2) dd {
+        color: var(--cyan);
+      }
+
+      .metric:nth-child(3) dd {
+        color: var(--green);
+      }
+
+      .chart-wrap {
+        position: relative;
+        height: 112px;
+        margin-bottom: 8px;
+      }
+
+      #a-chart {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 9.5px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .legend-line {
+        width: 14px;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--cyan);
+      }
+
+      .legend-line.asymptotic {
+        background: repeating-linear-gradient(
+          90deg,
+          var(--amber) 0 4px,
+          transparent 4px 7px
+        );
+      }
+
+      .legend-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text);
+        box-shadow: 0 0 0 2px rgba(117, 167, 255, 0.45);
+      }
+
+      .significance {
+        margin: 0;
+        color: #b5c2d2;
+        font-size: 10.5px;
+        line-height: 1.5;
+      }
+
+      .significance strong {
+        color: #ecf3fc;
+      }
+
+      .height-note {
+        margin: -2px 0 10px;
+        padding: 7px 9px;
+        border-left: 2px solid var(--cyan);
+        color: #bfd4e8;
+        background: rgba(105, 225, 220, 0.055);
+        font-size: 10px;
+        line-height: 1.45;
+      }
+
+      .height-note[hidden] {
+        display: none;
+      }
+
+      .invalid-note {
+        display: none;
+        margin: 9px 0 0;
+        padding: 8px 9px;
+        border: 1px solid rgba(255, 122, 147, 0.26);
+        border-radius: 8px;
+        color: #ffb4c1;
+        background: rgba(74, 20, 34, 0.22);
+        font-size: 10px;
+        line-height: 1.45;
+      }
+
+      .thesis-card.is-invalid .invalid-note {
+        display: block;
+      }
+
+      .error-panel {
+        position: absolute;
+        z-index: 30;
+        inset: 50% auto auto 50%;
+        width: min(460px, calc(100% - 32px));
+        transform: translate(-50%, -50%);
+        padding: 18px;
+        border: 1px solid rgba(255, 122, 147, 0.35);
+        border-radius: 12px;
+        color: #ffd8df;
+        background: rgba(44, 12, 22, 0.94);
+        box-shadow: var(--shadow);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .error-panel[hidden] {
+        display: none;
+      }
+
+      .mobile-controls-button {
+        display: none;
+      }
+
+      .controls-scrim {
+        display: none;
+      }
+
+      @media (max-width: 920px) {
+        .brand .equation {
+          display: none;
+        }
+
+        .workspace {
+          grid-template-columns: 278px minmax(0, 1fr);
+        }
+
+        .controls {
+          padding-inline: 14px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        :root {
+          --topbar-height: 56px;
+        }
+
+        .topbar {
+          padding-inline: 12px;
+        }
+
+        .brand h1 {
+          font-size: 15px;
+        }
+
+        .top-actions .desktop-action {
+          display: none;
+        }
+
+        .mobile-controls-button {
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .workspace {
+          position: relative;
+          display: block;
+        }
+
+        .stage {
+          width: 100%;
+          height: 100%;
+        }
+
+        .controls {
+          position: absolute;
+          z-index: 40;
+          inset: 0 auto 0 0;
+          width: min(320px, calc(100% - 44px));
+          border-right: 1px solid var(--line-strong);
+          box-shadow: 18px 0 50px rgba(0, 0, 0, 0.46);
+          transform: translateX(-104%);
+          transition: transform 190ms ease;
+        }
+
+        .controls.is-open {
+          transform: translateX(0);
+        }
+
+        .controls-scrim {
+          position: absolute;
+          z-index: 35;
+          inset: 0;
+          display: none;
+          background: rgba(0, 0, 0, 0.42);
+          backdrop-filter: blur(2px);
+        }
+
+        .controls-scrim.is-open {
+          display: block;
+        }
+
+        .thesis-card {
+          top: 10px;
+          right: 10px;
+          width: min(286px, calc(100% - 20px));
+          max-height: calc(100% - 64px);
+          padding: 12px;
+        }
+
+        .hud-top-left {
+          display: none;
+        }
+
+        .hud-bottom-left {
+          left: 10px;
+          bottom: max(10px, env(safe-area-inset-bottom));
+        }
+      }
+
+      @media (max-width: 470px) {
+        .top-actions button {
+          padding-inline: 9px;
+        }
+
+        .thesis-card {
+          top: auto;
+          bottom: max(48px, calc(env(safe-area-inset-bottom) + 42px));
+          max-height: min(330px, calc(100% - 104px));
+        }
+
+        .chart-wrap {
+          height: 92px;
+        }
+
+        .coord-readout {
+          max-width: calc(100vw - 20px);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <h1>Koenigs Explorer</h1>
+          <span class="equation">ψ(f(z)) = rψ(z) · f(z) = rz(1−z)</span>
+        </div>
+        <div class="top-actions">
+          <button class="desktop-action" id="reset-view-top" type="button">Reset view</button>
+          <button class="desktop-action" id="focus-a-top" type="button">Focus z = ½</button>
+          <button
+            class="mobile-controls-button"
+            id="mobile-controls-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="controls"
+          >
+            Controls
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="controls" id="controls" aria-label="Visualizer controls">
+          <section class="section" aria-labelledby="parameter-title">
+            <h2 class="section-title" id="parameter-title">Map parameter</h2>
+
+            <div class="control">
+              <div class="control-head">
+                <label for="real-range">Real part of r</label>
+                <output id="real-output" for="real-range">0.800000</output>
+              </div>
+              <div class="paired-input">
+                <input
+                  id="real-range"
+                  type="range"
+                  min="-1"
+                  max="4"
+                  step="0.001"
+                  value="0.8"
+                />
+                <input
+                  id="real-number"
+                  type="number"
+                  min="-4"
+                  max="4"
+                  step="0.000001"
+                  value="0.8"
+                  aria-label="Precise real part of r"
+                />
+              </div>
+              <span class="help" id="p-link">Galton–Watson slice: p = r/2 = 0.400000</span>
+            </div>
+
+            <div class="control">
+              <div class="control-head">
+                <label for="imag-range">Imaginary part of r</label>
+                <output id="imag-output" for="imag-range">0.000000</output>
+              </div>
+              <div class="paired-input">
+                <input
+                  id="imag-range"
+                  type="range"
+                  min="-2"
+                  max="2"
+                  step="0.001"
+                  value="0"
+                />
+                <input
+                  id="imag-number"
+                  type="number"
+                  min="-4"
+                  max="4"
+                  step="0.000001"
+                  value="0"
+                  aria-label="Precise imaginary part of r"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section class="section" aria-labelledby="render-title">
+            <h2 class="section-title" id="render-title">Rendering</h2>
+
+            <div class="control">
+              <div class="control-head">
+                <span class="label">Plot geometry</span>
+              </div>
+              <div class="mode-switch" role="group" aria-label="Plot geometry">
+                <button id="mode-2d" type="button" aria-pressed="true">2D phase plane</button>
+                <button id="mode-3d" type="button" aria-pressed="false">3D with A(p)</button>
+              </div>
+              <span class="help" id="mode-help">
+                The complex z-plane is shown face-on for deep exploration.
+              </span>
+              <button class="camera-control" id="reset-camera" type="button" hidden>
+                Reset 3D angle
+              </button>
+              <div class="surface-controls" id="surface-controls" hidden>
+                <label class="check-row" for="height-check">
+                  <input id="height-check" type="checkbox" />
+                  <span class="check-copy">
+                    <span>Raise surface by |2ψ<sub>2p</sub>(z)|</span>
+                    <small>Magnitude becomes height; complex phase remains colour.</small>
+                  </span>
+                </label>
+                <div class="control" id="height-scale-control" hidden>
+                  <div class="control-head">
+                    <label for="height-range">Vertical scale</label>
+                    <output id="height-output" for="height-range">1.00×</output>
+                  </div>
+                  <input
+                    id="height-range"
+                    type="range"
+                    min="0.2"
+                    max="2"
+                    step="0.05"
+                    value="1"
+                  />
+                  <span class="help">
+                    At 1×, the height at z = ½ is exactly A(p) on the rail. Values above 0.75
+                    are clipped for legibility.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="control">
+              <div class="control-head">
+                <label for="iterations-range">Iterations</label>
+                <output id="iterations-output" for="iterations-range">384</output>
+              </div>
+              <input
+                id="iterations-range"
+                type="range"
+                min="48"
+                max="2048"
+                step="16"
+                value="384"
+              />
+            </div>
+
+            <div class="control">
+              <div class="control-head">
+                <label for="grid-range">Koenigs-grid density</label>
+                <output id="grid-output" for="grid-range">6.0</output>
+              </div>
+              <input id="grid-range" type="range" min="1" max="24" step="0.25" value="6" />
+            </div>
+
+            <div class="control">
+              <div class="control-head">
+                <label for="quality-select">Display quality</label>
+              </div>
+              <select id="quality-select">
+                <option value="auto" selected>Auto — smooth while moving</option>
+                <option value="high">High — sharper</option>
+                <option value="ultra">Ultra — maximum detail</option>
+              </select>
+            </div>
+
+            <label class="check-row" for="grid-check">
+              <input id="grid-check" type="checkbox" checked />
+              <span class="check-copy">
+                <span>Show linearized grid</span>
+                <small>Dark contours are straight lines after applying ψ.</small>
+              </span>
+            </label>
+          </section>
+
+          <section class="section" aria-labelledby="overlay-title">
+            <h2 class="section-title" id="overlay-title">Thesis connection</h2>
+
+            <label class="check-row" for="overlay-check">
+              <input id="overlay-check" type="checkbox" checked />
+              <span class="check-copy">
+                <span>Show A(p) overlay</span>
+                <small>Links the phase portrait to the Galton–Watson constant.</small>
+              </span>
+            </label>
+
+            <label class="check-row" for="orbit-check">
+              <input id="orbit-check" type="checkbox" checked />
+              <span class="check-copy">
+                <span>Trace the orbit from z = ½</span>
+                <small>This is the survival-probability orbit wₙ = Sₙ/2.</small>
+              </span>
+            </label>
+          </section>
+
+          <section class="section" aria-labelledby="view-title">
+            <h2 class="section-title" id="view-title">View</h2>
+            <div class="button-row">
+              <button id="reset-view" type="button">Reset view</button>
+              <button id="focus-a" type="button">Focus z = ½</button>
+            </div>
+            <p class="help" id="interaction-help">
+              Scroll or pinch to zoom at the pointer. Drag to pan. Double-click to zoom in.
+              Keyboard: +, −, arrows, and Home.
+            </p>
+          </section>
+
+          <p class="math-note">
+            <strong>Valid Koenigs limit.</strong> The forward product
+            <code>z ∏(1 − fⁿ(z))</code> converges on the attracting basin when
+            <code>0 &lt; |r| &lt; 1</code>. Other parameters remain useful for exploring escape
+            geometry, but do not carry the same Galton–Watson interpretation.
+          </p>
+        </aside>
+
+        <div class="controls-scrim" id="controls-scrim" aria-hidden="true"></div>
+
+        <section class="stage" id="stage" aria-label="Complex-plane Koenigs phase portrait">
+          <canvas
+            id="gl-canvas"
+            tabindex="0"
+            aria-label="Interactive complex-plane plot. Drag to pan and use the mouse wheel or pinch gesture to zoom."
+          ></canvas>
+          <canvas id="annotation-canvas" aria-hidden="true"></canvas>
+
+          <div class="hud hud-top-left" aria-hidden="true">
+            <span class="badge" id="precision-badge">Fast float</span>
+            <span class="badge" id="zoom-badge">×1.00</span>
+            <span class="badge" id="render-badge">full detail</span>
+          </div>
+
+          <div class="hud hud-bottom-left" aria-hidden="true">
+            <span class="coord-readout" id="coord-readout">Re z 0.000000 · Im z 0.000000</span>
+          </div>
+
+          <aside class="thesis-card" id="thesis-card" aria-live="polite">
+            <p class="thesis-kicker">Galton–Watson intersection</p>
+            <h2>The phase portrait is sampled at z = ½</h2>
+            <div class="formula">A(p) = 2ψ<sub>2p</sub>(½)</div>
+            <p class="height-note" id="height-note" hidden>
+              Surface height is |2ψ<sub>2p</sub>(z)|. At z = ½ this is exactly A(p), so the
+              raised surface and the vertical curve share a common scale.
+            </p>
+
+            <dl class="metrics">
+              <div class="metric">
+                <dt>p = r/2</dt>
+                <dd id="metric-p">0.4</dd>
+              </div>
+              <div class="metric">
+                <dt>A(p)</dt>
+                <dd id="metric-a">0.237647</dd>
+              </div>
+              <div class="metric">
+                <dt>1 / A(p)</dt>
+                <dd id="metric-inverse">4.20793</dd>
+              </div>
+            </dl>
+
+            <div class="chart-wrap">
+              <canvas
+                id="a-chart"
+                role="img"
+                aria-label="A of p from zero to one half, with the current p highlighted and the near-critical asymptote shown."
+              ></canvas>
+            </div>
+            <div class="chart-legend" aria-hidden="true">
+              <span class="legend-item"><i class="legend-line"></i>numerical A(p)</span>
+              <span class="legend-item"><i class="legend-line asymptotic"></i>2 − 4p</span>
+              <span class="legend-item"><i class="legend-dot"></i>current p</span>
+            </div>
+
+            <p class="significance">
+              Late survival obeys <strong>Sₙ ≈ A(p)(2p)ⁿ</strong>, while the mean population
+              among surviving realizations tends to <strong>1/A(p)</strong>. The highlighted
+              seed and orbit show exactly where this scalar is read from the complex plot.
+            </p>
+            <p class="invalid-note" id="invalid-note">
+              Set Im(r) = 0 and 0 &lt; Re(r) &lt; 1 to recover the subcritical branching-process
+              interpretation.
+            </p>
+          </aside>
+
+          <div class="error-panel" id="error-panel" role="alert" hidden></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const $ = (selector) => document.querySelector(selector);
+        const stage = $("#stage");
+        const canvas = $("#gl-canvas");
+        const annotationCanvas = $("#annotation-canvas");
+        const annotationContext = annotationCanvas.getContext("2d");
+        const chartCanvas = $("#a-chart");
+        const chartContext = chartCanvas.getContext("2d");
+        const errorPanel = $("#error-panel");
+
+        const elements = {
+          realRange: $("#real-range"),
+          realNumber: $("#real-number"),
+          realOutput: $("#real-output"),
+          imagRange: $("#imag-range"),
+          imagNumber: $("#imag-number"),
+          imagOutput: $("#imag-output"),
+          pLink: $("#p-link"),
+          iterationsRange: $("#iterations-range"),
+          iterationsOutput: $("#iterations-output"),
+          gridRange: $("#grid-range"),
+          gridOutput: $("#grid-output"),
+          gridCheck: $("#grid-check"),
+          qualitySelect: $("#quality-select"),
+          mode2d: $("#mode-2d"),
+          mode3d: $("#mode-3d"),
+          modeHelp: $("#mode-help"),
+          resetCamera: $("#reset-camera"),
+          interactionHelp: $("#interaction-help"),
+          surfaceControls: $("#surface-controls"),
+          heightCheck: $("#height-check"),
+          heightScaleControl: $("#height-scale-control"),
+          heightRange: $("#height-range"),
+          heightOutput: $("#height-output"),
+          overlayCheck: $("#overlay-check"),
+          orbitCheck: $("#orbit-check"),
+          thesisCard: $("#thesis-card"),
+          metricP: $("#metric-p"),
+          metricA: $("#metric-a"),
+          metricInverse: $("#metric-inverse"),
+          heightNote: $("#height-note"),
+          precisionBadge: $("#precision-badge"),
+          zoomBadge: $("#zoom-badge"),
+          renderBadge: $("#render-badge"),
+          coordReadout: $("#coord-readout"),
+          controls: $("#controls"),
+          controlsScrim: $("#controls-scrim"),
+          mobileControlsButton: $("#mobile-controls-button"),
+        };
+
+        const HOME_VIEW = Object.freeze({ centerX: 0.25, centerY: 0, span: 3.2 });
+        const MIN_SPAN = 1e-13;
+        const MAX_SPAN = 64;
+        const DEEP_THRESHOLD = 2e-4;
+        const MAX_SHADER_ITERATIONS = 4096;
+        const SURFACE_MAX_ITERATIONS = 640;
+
+        const state = {
+          rReal: 0.8,
+          rImag: 0,
+          iterations: 384,
+          gridDensity: 6,
+          showGrid: true,
+          showOverlay: true,
+          showOrbit: true,
+          quality: "auto",
+          mode: "2d",
+          camera: { yaw: 0, pitch: 0.57 },
+          surfaceHeight: false,
+          heightScale: 1,
+          current: { ...HOME_VIEW },
+          target: { ...HOME_VIEW },
+          preview: false,
+          pointerInside: false,
+          hoverX: 0,
+          hoverY: 0,
+          aResult: null,
+        };
+
+        let gl;
+        let fastProgram;
+        let deepProgram;
+        let surfaceProgram;
+        let vertexArray;
+        let surfaceVertexArray;
+        let surfaceIndexCount = 0;
+        let frameHandle = 0;
+        let previewTimer = 0;
+        let lastAnimationTime = performance.now();
+        let chartSamples = [];
+        let chartReady = false;
+        let chartBuildPending = false;
+        let lastCameraMatrices = null;
+        const activePointers = new Map();
+        let gesture = null;
+
+        const vertexShaderSource = `#version 300 es
+          in vec2 aPosition;
+          void main() {
+            gl_Position = vec4(aPosition, 0.0, 1.0);
+          }
+        `;
+
+        const colorFunctions = `
+          vec3 hsvToRgb(vec3 c) {
+            vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+            vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+            return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+          }
+
+          vec3 colorInside(vec2 psi) {
+            float angle = atan(psi.y, psi.x);
+            float hue = fract(angle / 6.28318530718 + 1.0);
+            float magnitude = length(psi);
+
+            float phaseX = 0.5 * psi.x * uGridDensity;
+            float phaseY = 0.5 * psi.y * uGridDensity;
+            float widthX = max(fwidth(phaseX) * 1.35, 0.00045);
+            float widthY = max(fwidth(phaseY) * 1.35, 0.00045);
+            float lineX = 1.0 - smoothstep(0.0, widthX, abs(sin(phaseX)));
+            float lineY = 1.0 - smoothstep(0.0, widthY, abs(sin(phaseY)));
+            float gridLine = max(lineX, lineY) * uShowGrid;
+
+            float ringPhase = log2(1.0 + magnitude) * 7.0;
+            float ringWidth = max(fwidth(ringPhase) * 1.25, 0.004);
+            float ring = 1.0 - smoothstep(0.0, ringWidth, abs(sin(ringPhase)));
+
+            float value = clamp(0.94 - 0.58 * gridLine - 0.08 * ring, 0.18, 0.98);
+            float saturation = 0.76 + 0.12 * smoothstep(0.0, 1.0, magnitude);
+            return hsvToRgb(vec3(hue, saturation, value));
+          }
+
+          vec3 colorOutside(int escapedAt) {
+            float t = float(escapedAt) / max(float(uIterations), 1.0);
+            t = pow(clamp(t, 0.0, 1.0), 0.55);
+            vec3 farColor = vec3(0.003, 0.005, 0.012);
+            vec3 edgeColor = vec3(0.035, 0.07, 0.13);
+            return mix(farColor, edgeColor, t);
+          }
+        `;
+
+        const coordinateFunctions = `
+          vec3 sceneBackground() {
+            float glow = 1.0 - length(gl_FragCoord.xy / uResolution - vec2(0.5));
+            return mix(vec3(0.002, 0.003, 0.008), vec3(0.012, 0.022, 0.041), 0.16 * glow);
+          }
+
+          bool getPlotUv(out vec2 uv, out float edgeAlpha) {
+            if (uMode3D == 0) {
+              uv = (gl_FragCoord.xy - 0.5 * uResolution) / min(uResolution.x, uResolution.y);
+              edgeAlpha = 1.0;
+              return true;
+            }
+
+            vec2 ndc = gl_FragCoord.xy / uResolution * 2.0 - 1.0;
+            vec4 nearHomogeneous = uInverseViewProjection * vec4(ndc, -1.0, 1.0);
+            vec4 farHomogeneous = uInverseViewProjection * vec4(ndc, 1.0, 1.0);
+            vec3 nearPoint = nearHomogeneous.xyz / nearHomogeneous.w;
+            vec3 farPoint = farHomogeneous.xyz / farHomogeneous.w;
+            vec3 direction = farPoint - nearPoint;
+            if (abs(direction.z) < 0.000001) return false;
+            float distanceAlongRay = -nearPoint.z / direction.z;
+            if (distanceAlongRay <= 0.0) return false;
+
+            vec3 hit = nearPoint + distanceAlongRay * direction;
+            vec2 edgeDistance = uPlaneHalfSize - abs(hit.xy);
+            float nearestEdge = min(edgeDistance.x, edgeDistance.y);
+            if (nearestEdge < 0.0) return false;
+
+            float edgeWidth = max(fwidth(hit.x) + fwidth(hit.y), 0.0015);
+            edgeAlpha = smoothstep(0.0, edgeWidth * 1.4, nearestEdge);
+            uv = hit.xy / (2.0 * uPlaneHalfSize.y);
+            return true;
+          }
+        `;
+
+        const fastFragmentShaderSource = `#version 300 es
+          precision highp float;
+          precision highp int;
+
+          uniform vec2 uResolution;
+          uniform vec2 uCenter;
+          uniform float uSpan;
+          uniform vec2 uR;
+          uniform int uIterations;
+          uniform float uGridDensity;
+          uniform float uShowGrid;
+          uniform int uMode3D;
+          uniform mat4 uInverseViewProjection;
+          uniform vec2 uPlaneHalfSize;
+          out vec4 outColor;
+
+          vec2 complexMultiply(vec2 a, vec2 b) {
+            return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+          }
+
+          ${colorFunctions}
+          ${coordinateFunctions}
+
+          void main() {
+            vec2 uv;
+            float planeAlpha;
+            if (!getPlotUv(uv, planeAlpha)) {
+              outColor = vec4(sceneBackground(), 1.0);
+              return;
+            }
+            vec2 z = uCenter + uv * uSpan;
+            vec2 orbit = z;
+            vec2 psi = z;
+            bool escaped = false;
+            int escapedAt = uIterations;
+
+            for (int i = 0; i < ${MAX_SHADER_ITERATIONS}; i++) {
+              if (i >= uIterations) break;
+              if (dot(orbit, orbit) > 4096.0) {
+                escaped = true;
+                escapedAt = i;
+                break;
+              }
+
+              vec2 oneMinus = vec2(1.0, 0.0) - orbit;
+              psi = complexMultiply(psi, oneMinus);
+              orbit = complexMultiply(uR, complexMultiply(orbit, oneMinus));
+            }
+
+            vec3 color = escaped ? colorOutside(escapedAt) : colorInside(psi);
+            color = mix(sceneBackground(), color, planeAlpha);
+            outColor = vec4(color, 1.0);
+          }
+        `;
+
+        const deepFragmentShaderSource = `#version 300 es
+          precision highp float;
+          precision highp int;
+
+          uniform vec2 uResolution;
+          uniform vec2 uCenterHi;
+          uniform vec2 uCenterLo;
+          uniform vec2 uSpanPair;
+          uniform vec2 uRHi;
+          uniform vec2 uRLo;
+          uniform int uIterations;
+          uniform float uGridDensity;
+          uniform float uShowGrid;
+          uniform int uMode3D;
+          uniform mat4 uInverseViewProjection;
+          uniform vec2 uPlaneHalfSize;
+          out vec4 outColor;
+
+          struct DD {
+            float hi;
+            float lo;
+          };
+
+          struct ComplexDD {
+            DD re;
+            DD im;
+          };
+
+          DD quickTwoSum(float a, float b) {
+            float s = a + b;
+            return DD(s, b - (s - a));
+          }
+
+          DD ddAdd(DD a, DD b) {
+            float s = a.hi + b.hi;
+            float v = s - a.hi;
+            float e = (a.hi - (s - v)) + (b.hi - v) + a.lo + b.lo;
+            return quickTwoSum(s, e);
+          }
+
+          DD ddNegate(DD a) {
+            return DD(-a.hi, -a.lo);
+          }
+
+          DD ddSubtract(DD a, DD b) {
+            return ddAdd(a, ddNegate(b));
+          }
+
+          vec2 splitFloat(float a) {
+            float c = 4097.0 * a;
+            float hi = c - (c - a);
+            return vec2(hi, a - hi);
+          }
+
+          DD ddMultiply(DD a, DD b) {
+            float product = a.hi * b.hi;
+            vec2 aParts = splitFloat(a.hi);
+            vec2 bParts = splitFloat(b.hi);
+            float error = ((aParts.x * bParts.x - product)
+              + aParts.x * bParts.y
+              + aParts.y * bParts.x)
+              + aParts.y * bParts.y;
+            error += a.hi * b.lo + a.lo * b.hi + a.lo * b.lo;
+            return quickTwoSum(product, error);
+          }
+
+          ComplexDD complexSubtract(ComplexDD a, ComplexDD b) {
+            return ComplexDD(ddSubtract(a.re, b.re), ddSubtract(a.im, b.im));
+          }
+
+          ComplexDD complexMultiplyDD(ComplexDD a, ComplexDD b) {
+            DD realPart = ddSubtract(ddMultiply(a.re, b.re), ddMultiply(a.im, b.im));
+            DD imagPart = ddAdd(ddMultiply(a.re, b.im), ddMultiply(a.im, b.re));
+            return ComplexDD(realPart, imagPart);
+          }
+
+          vec2 complexToFloat(ComplexDD value) {
+            return vec2(value.re.hi + value.re.lo, value.im.hi + value.im.lo);
+          }
+
+          ${colorFunctions}
+          ${coordinateFunctions}
+
+          void main() {
+            vec2 uv;
+            float planeAlpha;
+            if (!getPlotUv(uv, planeAlpha)) {
+              outColor = vec4(sceneBackground(), 1.0);
+              return;
+            }
+            DD span = DD(uSpanPair.x, uSpanPair.y);
+            DD realOffset = ddMultiply(DD(uv.x, 0.0), span);
+            DD imagOffset = ddMultiply(DD(uv.y, 0.0), span);
+
+            ComplexDD orbit = ComplexDD(
+              ddAdd(DD(uCenterHi.x, uCenterLo.x), realOffset),
+              ddAdd(DD(uCenterHi.y, uCenterLo.y), imagOffset)
+            );
+            ComplexDD psi = orbit;
+            ComplexDD one = ComplexDD(DD(1.0, 0.0), DD(0.0, 0.0));
+            ComplexDD parameter = ComplexDD(
+              DD(uRHi.x, uRLo.x),
+              DD(uRHi.y, uRLo.y)
+            );
+            bool escaped = false;
+            int escapedAt = uIterations;
+
+            for (int i = 0; i < ${MAX_SHADER_ITERATIONS}; i++) {
+              if (i >= uIterations) break;
+              vec2 orbitFloat = complexToFloat(orbit);
+              if (dot(orbitFloat, orbitFloat) > 4096.0) {
+                escaped = true;
+                escapedAt = i;
+                break;
+              }
+
+              ComplexDD oneMinus = complexSubtract(one, orbit);
+              psi = complexMultiplyDD(psi, oneMinus);
+              orbit = complexMultiplyDD(parameter, complexMultiplyDD(orbit, oneMinus));
+            }
+
+            vec3 color = escaped ? colorOutside(escapedAt) : colorInside(complexToFloat(psi));
+            color = mix(sceneBackground(), color, planeAlpha);
+            outColor = vec4(color, 1.0);
+          }
+        `;
+
+        const surfaceVertexShaderSource = `#version 300 es
+          precision highp float;
+          precision highp int;
+
+          in vec2 aSurfacePosition;
+          uniform mat4 uViewProjection;
+          uniform vec2 uPlaneHalfSize;
+          uniform vec2 uCenter;
+          uniform float uSpan;
+          uniform vec2 uR;
+          uniform int uIterations;
+          uniform float uGridDensity;
+          uniform float uShowGrid;
+          uniform float uHeightScale;
+          uniform float uHeightCeiling;
+          out vec3 vColor;
+          out vec3 vWorldPosition;
+
+          vec2 complexMultiply(vec2 a, vec2 b) {
+            return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+          }
+
+          vec3 hsvToRgb(vec3 c) {
+            vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+            vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+            return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+          }
+
+          void main() {
+            vec2 planePosition = aSurfacePosition * uPlaneHalfSize;
+            vec2 plotUv = planePosition / (2.0 * uPlaneHalfSize.y);
+            vec2 z = uCenter + plotUv * uSpan;
+            vec2 orbit = z;
+            vec2 psi = z;
+            bool escaped = false;
+
+            for (int i = 0; i < ${SURFACE_MAX_ITERATIONS}; i++) {
+              if (i >= uIterations) break;
+              if (dot(orbit, orbit) > 4096.0) {
+                escaped = true;
+                break;
+              }
+              vec2 oneMinus = vec2(1.0, 0.0) - orbit;
+              psi = complexMultiply(psi, oneMinus);
+              orbit = complexMultiply(uR, complexMultiply(orbit, oneMinus));
+            }
+
+            float phase = atan(psi.y, psi.x) / 6.28318530718 + 1.0;
+            float gridX = abs(sin(0.5 * psi.x * uGridDensity));
+            float gridY = abs(sin(0.5 * psi.y * uGridDensity));
+            float gridLine = (1.0 - smoothstep(0.0, 0.13, min(gridX, gridY))) * uShowGrid;
+            float brightness = 0.94 - 0.5 * gridLine;
+            vColor = escaped
+              ? vec3(0.018, 0.03, 0.052)
+              : hsvToRgb(vec3(fract(phase), 0.8, brightness));
+
+            float koenigsMagnitude = escaped ? 0.0 : 2.0 * length(psi);
+            float height = min(koenigsMagnitude, uHeightCeiling) * (0.92 / 0.5) * uHeightScale;
+            vWorldPosition = vec3(planePosition, height);
+            gl_Position = uViewProjection * vec4(vWorldPosition, 1.0);
+          }
+        `;
+
+        const surfaceFragmentShaderSource = `#version 300 es
+          precision highp float;
+
+          in vec3 vColor;
+          in vec3 vWorldPosition;
+          out vec4 outColor;
+
+          void main() {
+            vec3 normal = normalize(cross(dFdx(vWorldPosition), dFdy(vWorldPosition)));
+            if (normal.z < 0.0) normal = -normal;
+            vec3 lightDirection = normalize(vec3(-0.35, -0.5, 1.0));
+            float diffuse = max(dot(normal, lightDirection), 0.0);
+            float lighting = 0.5 + 0.58 * diffuse;
+            float crest = pow(max(normal.z, 0.0), 3.0) * 0.08;
+            outColor = vec4(vColor * lighting + crest, 1.0);
+          }
+        `;
+
+        function showError(message) {
+          errorPanel.hidden = false;
+          errorPanel.textContent = message;
+        }
+
+        function compileShader(type, source) {
+          const shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            const message = gl.getShaderInfoLog(shader) || "Unknown shader compilation error";
+            gl.deleteShader(shader);
+            throw new Error(message);
+          }
+          return shader;
+        }
+
+        function createProgram(fragmentSource, uniformNames, customVertexSource = vertexShaderSource) {
+          const vertexShader = compileShader(gl.VERTEX_SHADER, customVertexSource);
+          const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+          const program = gl.createProgram();
+          gl.attachShader(program, vertexShader);
+          gl.attachShader(program, fragmentShader);
+          gl.linkProgram(program);
+          gl.deleteShader(vertexShader);
+          gl.deleteShader(fragmentShader);
+
+          if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            const message = gl.getProgramInfoLog(program) || "Unknown program-linking error";
+            gl.deleteProgram(program);
+            throw new Error(message);
+          }
+
+          const uniforms = {};
+          for (const name of uniformNames) {
+            uniforms[name] = gl.getUniformLocation(program, name);
+          }
+          return { program, uniforms };
+        }
+
+        function createSurfaceMesh(columns = 150, rows = 110) {
+          const positions = new Float32Array((columns + 1) * (rows + 1) * 2);
+          let positionOffset = 0;
+          for (let row = 0; row <= rows; row += 1) {
+            const y = (row / rows) * 2 - 1;
+            for (let column = 0; column <= columns; column += 1) {
+              const x = (column / columns) * 2 - 1;
+              positions[positionOffset++] = x;
+              positions[positionOffset++] = y;
+            }
+          }
+
+          const indices = new Uint16Array(columns * rows * 6);
+          let indexOffset = 0;
+          for (let row = 0; row < rows; row += 1) {
+            for (let column = 0; column < columns; column += 1) {
+              const lowerLeft = row * (columns + 1) + column;
+              const lowerRight = lowerLeft + 1;
+              const upperLeft = lowerLeft + columns + 1;
+              const upperRight = upperLeft + 1;
+              indices[indexOffset++] = lowerLeft;
+              indices[indexOffset++] = lowerRight;
+              indices[indexOffset++] = upperLeft;
+              indices[indexOffset++] = lowerRight;
+              indices[indexOffset++] = upperRight;
+              indices[indexOffset++] = upperLeft;
+            }
+          }
+
+          surfaceVertexArray = gl.createVertexArray();
+          gl.bindVertexArray(surfaceVertexArray);
+          const positionBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+          const positionLocation = gl.getAttribLocation(surfaceProgram.program, "aSurfacePosition");
+          gl.enableVertexAttribArray(positionLocation);
+          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+          const indexBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+          gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+          gl.bindVertexArray(null);
+          surfaceIndexCount = indices.length;
+        }
+
+        function initializeWebGL() {
+          gl = canvas.getContext("webgl2", {
+            alpha: false,
+            antialias: false,
+            depth: true,
+            stencil: false,
+            preserveDrawingBuffer: false,
+            powerPreference: "high-performance",
+          });
+
+          if (!gl) {
+            throw new Error(
+              "This visualizer needs WebGL 2. Please enable hardware acceleration or open it in a current browser."
+            );
+          }
+
+          const commonUniforms = [
+            "uResolution",
+            "uIterations",
+            "uGridDensity",
+            "uShowGrid",
+            "uMode3D",
+            "uInverseViewProjection",
+            "uPlaneHalfSize",
+          ];
+          fastProgram = createProgram(fastFragmentShaderSource, [
+            ...commonUniforms,
+            "uR",
+            "uCenter",
+            "uSpan",
+          ]);
+          deepProgram = createProgram(deepFragmentShaderSource, [
+            ...commonUniforms,
+            "uRHi",
+            "uRLo",
+            "uCenterHi",
+            "uCenterLo",
+            "uSpanPair",
+          ]);
+          surfaceProgram = createProgram(
+            surfaceFragmentShaderSource,
+            [
+              "uViewProjection",
+              "uPlaneHalfSize",
+              "uCenter",
+              "uSpan",
+              "uR",
+              "uIterations",
+              "uGridDensity",
+              "uShowGrid",
+              "uHeightScale",
+              "uHeightCeiling",
+            ],
+            surfaceVertexShaderSource
+          );
+
+          vertexArray = gl.createVertexArray();
+          gl.bindVertexArray(vertexArray);
+          const buffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
+            gl.STATIC_DRAW
+          );
+
+          for (const programInfo of [fastProgram, deepProgram]) {
+            const location = gl.getAttribLocation(programInfo.program, "aPosition");
+            gl.useProgram(programInfo.program);
+            gl.enableVertexAttribArray(location);
+            gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
+          }
+
+          gl.bindVertexArray(null);
+          createSurfaceMesh();
+          gl.clearColor(0.002, 0.003, 0.008, 1);
+        }
+
+        function splitFloat64(value) {
+          const high = Math.fround(value);
+          const low = Math.fround(value - high);
+          return [high, low];
+        }
+
+        function multiplyMat4(left, right) {
+          const result = new Float32Array(16);
+          for (let column = 0; column < 4; column += 1) {
+            for (let row = 0; row < 4; row += 1) {
+              let sum = 0;
+              for (let index = 0; index < 4; index += 1) {
+                sum += left[index * 4 + row] * right[column * 4 + index];
+              }
+              result[column * 4 + row] = sum;
+            }
+          }
+          return result;
+        }
+
+        function invertMat4(matrix) {
+          const rows = Array.from({ length: 4 }, (_, row) => {
+            const values = [];
+            for (let column = 0; column < 4; column += 1) {
+              values.push(matrix[column * 4 + row]);
+            }
+            for (let column = 0; column < 4; column += 1) {
+              values.push(row === column ? 1 : 0);
+            }
+            return values;
+          });
+
+          for (let pivotColumn = 0; pivotColumn < 4; pivotColumn += 1) {
+            let pivotRow = pivotColumn;
+            for (let row = pivotColumn + 1; row < 4; row += 1) {
+              if (Math.abs(rows[row][pivotColumn]) > Math.abs(rows[pivotRow][pivotColumn])) {
+                pivotRow = row;
+              }
+            }
+            if (Math.abs(rows[pivotRow][pivotColumn]) < 1e-12) {
+              throw new Error("The 3D camera matrix is singular.");
+            }
+            [rows[pivotColumn], rows[pivotRow]] = [rows[pivotRow], rows[pivotColumn]];
+            const divisor = rows[pivotColumn][pivotColumn];
+            for (let column = 0; column < 8; column += 1) {
+              rows[pivotColumn][column] /= divisor;
+            }
+            for (let row = 0; row < 4; row += 1) {
+              if (row === pivotColumn) continue;
+              const factor = rows[row][pivotColumn];
+              for (let column = 0; column < 8; column += 1) {
+                rows[row][column] -= factor * rows[pivotColumn][column];
+              }
+            }
+          }
+
+          const inverse = new Float32Array(16);
+          for (let row = 0; row < 4; row += 1) {
+            for (let column = 0; column < 4; column += 1) {
+              inverse[column * 4 + row] = rows[row][column + 4];
+            }
+          }
+          return inverse;
+        }
+
+        function normalize3(vector) {
+          const length = Math.hypot(vector[0], vector[1], vector[2]) || 1;
+          return vector.map((value) => value / length);
+        }
+
+        function cross3(left, right) {
+          return [
+            left[1] * right[2] - left[2] * right[1],
+            left[2] * right[0] - left[0] * right[2],
+            left[0] * right[1] - left[1] * right[0],
+          ];
+        }
+
+        function dot3(left, right) {
+          return left[0] * right[0] + left[1] * right[1] + left[2] * right[2];
+        }
+
+        function lookAtMat4(eye, target, up) {
+          const backward = normalize3([
+            eye[0] - target[0],
+            eye[1] - target[1],
+            eye[2] - target[2],
+          ]);
+          const right = normalize3(cross3(up, backward));
+          const cameraUp = cross3(backward, right);
+          return new Float32Array([
+            right[0], cameraUp[0], backward[0], 0,
+            right[1], cameraUp[1], backward[1], 0,
+            right[2], cameraUp[2], backward[2], 0,
+            -dot3(right, eye), -dot3(cameraUp, eye), -dot3(backward, eye), 1,
+          ]);
+        }
+
+        function perspectiveMat4(fieldOfView, aspect, near, far) {
+          const focal = 1 / Math.tan(fieldOfView / 2);
+          const rangeInverse = 1 / (near - far);
+          return new Float32Array([
+            focal / aspect, 0, 0, 0,
+            0, focal, 0, 0,
+            0, 0, (near + far) * rangeInverse, -1,
+            0, 0, 2 * near * far * rangeInverse, 0,
+          ]);
+        }
+
+        function planeHalfSize() {
+          const rectangle = stage.getBoundingClientRect();
+          const halfHeight = 0.72;
+          return {
+            x: halfHeight * Math.max(0.35, rectangle.width / Math.max(1, rectangle.height)),
+            y: halfHeight,
+          };
+        }
+
+        function cameraMatrices() {
+          const rectangle = stage.getBoundingClientRect();
+          const aspect = Math.max(0.25, rectangle.width / Math.max(1, rectangle.height));
+          const radius = 3.05;
+          const cosine = Math.cos(state.camera.pitch);
+          const eye = [
+            radius * cosine * Math.sin(state.camera.yaw),
+            -radius * cosine * Math.cos(state.camera.yaw),
+            0.12 + radius * Math.sin(state.camera.pitch),
+          ];
+          const target = [0, 0, 0.13];
+          const view = lookAtMat4(eye, target, [0, 0, 1]);
+          const projection = perspectiveMat4((43 * Math.PI) / 180, aspect, 0.08, 20);
+          const viewProjection = multiplyMat4(projection, view);
+          return {
+            eye,
+            viewProjection,
+            inverseViewProjection: invertMat4(viewProjection),
+          };
+        }
+
+        function transformVec4(matrix, vector) {
+          return [
+            matrix[0] * vector[0] + matrix[4] * vector[1] + matrix[8] * vector[2] + matrix[12] * vector[3],
+            matrix[1] * vector[0] + matrix[5] * vector[1] + matrix[9] * vector[2] + matrix[13] * vector[3],
+            matrix[2] * vector[0] + matrix[6] * vector[1] + matrix[10] * vector[2] + matrix[14] * vector[3],
+            matrix[3] * vector[0] + matrix[7] * vector[1] + matrix[11] * vector[2] + matrix[15] * vector[3],
+          ];
+        }
+
+        function qualitySettings() {
+          const deviceRatio = Math.max(1, window.devicePixelRatio || 1);
+          if (state.quality === "ultra") {
+            return { ratio: Math.min(deviceRatio, 3), previewScale: 0.72, maxPixels: 7000000 };
+          }
+          if (state.quality === "high") {
+            return { ratio: Math.min(deviceRatio, 2), previewScale: 0.66, maxPixels: 4200000 };
+          }
+          return { ratio: Math.min(deviceRatio, 1.65), previewScale: 0.56, maxPixels: 2600000 };
+        }
+
+        function resizeCanvases() {
+          const rectangle = stage.getBoundingClientRect();
+          if (rectangle.width < 1 || rectangle.height < 1) return;
+
+          const quality = qualitySettings();
+          let ratio = quality.ratio * (state.preview ? quality.previewScale : 1);
+          const projectedPixels = rectangle.width * rectangle.height * ratio * ratio;
+          if (projectedPixels > quality.maxPixels) {
+            ratio *= Math.sqrt(quality.maxPixels / projectedPixels);
+          }
+
+          const width = Math.max(1, Math.round(rectangle.width * ratio));
+          const height = Math.max(1, Math.round(rectangle.height * ratio));
+          if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+          }
+
+          const annotationRatio = Math.min(window.devicePixelRatio || 1, 2);
+          const annotationWidth = Math.max(1, Math.round(rectangle.width * annotationRatio));
+          const annotationHeight = Math.max(1, Math.round(rectangle.height * annotationRatio));
+          if (
+            annotationCanvas.width !== annotationWidth ||
+            annotationCanvas.height !== annotationHeight
+          ) {
+            annotationCanvas.width = annotationWidth;
+            annotationCanvas.height = annotationHeight;
+          }
+        }
+
+        function renderHeightSurface(effectiveIterations, halfSize) {
+          const uniforms = surfaceProgram.uniforms;
+          const surfaceIterations = Math.min(
+            SURFACE_MAX_ITERATIONS,
+            state.preview ? Math.min(effectiveIterations, 176) : effectiveIterations
+          );
+          gl.enable(gl.DEPTH_TEST);
+          gl.depthFunc(gl.LEQUAL);
+          gl.clearDepth(1);
+          gl.clear(gl.DEPTH_BUFFER_BIT);
+          gl.useProgram(surfaceProgram.program);
+          gl.bindVertexArray(surfaceVertexArray);
+          gl.uniformMatrix4fv(
+            uniforms.uViewProjection,
+            false,
+            lastCameraMatrices.viewProjection
+          );
+          gl.uniform2f(uniforms.uPlaneHalfSize, halfSize.x, halfSize.y);
+          gl.uniform2f(uniforms.uCenter, state.current.centerX, state.current.centerY);
+          gl.uniform1f(uniforms.uSpan, state.current.span);
+          gl.uniform2f(uniforms.uR, state.rReal, state.rImag);
+          gl.uniform1i(uniforms.uIterations, surfaceIterations);
+          gl.uniform1f(uniforms.uGridDensity, state.gridDensity);
+          gl.uniform1f(uniforms.uShowGrid, state.showGrid ? 1 : 0);
+          gl.uniform1f(uniforms.uHeightScale, state.heightScale);
+          gl.uniform1f(uniforms.uHeightCeiling, 0.75);
+          gl.drawElements(gl.TRIANGLES, surfaceIndexCount, gl.UNSIGNED_SHORT, 0);
+          gl.bindVertexArray(null);
+          gl.disable(gl.DEPTH_TEST);
+          return surfaceIterations;
+        }
+
+        function renderWebGL() {
+          if (!gl) return;
+          resizeCanvases();
+          const useDeep = state.current.span < DEEP_THRESHOLD;
+          const programInfo = useDeep ? deepProgram : fastProgram;
+          const uniforms = programInfo.uniforms;
+          const effectiveIterations = state.preview
+            ? Math.min(state.iterations, useDeep ? 224 : 320)
+            : state.iterations;
+
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          gl.disable(gl.DEPTH_TEST);
+          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+          gl.useProgram(programInfo.program);
+          gl.bindVertexArray(vertexArray);
+          gl.uniform2f(uniforms.uResolution, canvas.width, canvas.height);
+          gl.uniform1i(uniforms.uIterations, effectiveIterations);
+          gl.uniform1f(uniforms.uGridDensity, state.gridDensity);
+          gl.uniform1f(uniforms.uShowGrid, state.showGrid ? 1 : 0);
+          const halfSize = planeHalfSize();
+          lastCameraMatrices = cameraMatrices();
+          gl.uniform1i(uniforms.uMode3D, state.mode === "3d" ? 1 : 0);
+          gl.uniformMatrix4fv(
+            uniforms.uInverseViewProjection,
+            false,
+            lastCameraMatrices.inverseViewProjection
+          );
+          gl.uniform2f(uniforms.uPlaneHalfSize, halfSize.x, halfSize.y);
+
+          if (useDeep) {
+            const centerX = splitFloat64(state.current.centerX);
+            const centerY = splitFloat64(state.current.centerY);
+            const span = splitFloat64(state.current.span);
+            const parameterReal = splitFloat64(state.rReal);
+            const parameterImaginary = splitFloat64(state.rImag);
+            gl.uniform2f(uniforms.uRHi, parameterReal[0], parameterImaginary[0]);
+            gl.uniform2f(uniforms.uRLo, parameterReal[1], parameterImaginary[1]);
+            gl.uniform2f(uniforms.uCenterHi, centerX[0], centerY[0]);
+            gl.uniform2f(uniforms.uCenterLo, centerX[1], centerY[1]);
+            gl.uniform2f(uniforms.uSpanPair, span[0], span[1]);
+          } else {
+            gl.uniform2f(uniforms.uR, state.rReal, state.rImag);
+            gl.uniform2f(uniforms.uCenter, state.current.centerX, state.current.centerY);
+            gl.uniform1f(uniforms.uSpan, state.current.span);
+          }
+
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          gl.bindVertexArray(null);
+
+          let surfaceIterations = 0;
+          if (state.mode === "3d" && state.surfaceHeight) {
+            surfaceIterations = renderHeightSurface(effectiveIterations, halfSize);
+          }
+
+          elements.precisionBadge.textContent = `${state.mode === "3d" ? "3D · " : ""}${
+            useDeep ? "Deep DD" : "Fast float"
+          }`;
+          elements.precisionBadge.classList.toggle("deep", useDeep);
+          elements.renderBadge.textContent = state.preview
+            ? `preview · ${state.surfaceHeight ? surfaceIterations : effectiveIterations} it`
+            : `${state.surfaceHeight ? surfaceIterations : state.iterations} it · ${
+                state.surfaceHeight ? "surface" : "full"
+              }`;
+          elements.renderBadge.classList.toggle("preview", state.preview);
+        }
+
+        function projectWorldPoint(x, y, z) {
+          const rectangle = stage.getBoundingClientRect();
+          const matrices = lastCameraMatrices || cameraMatrices();
+          const clip = transformVec4(matrices.viewProjection, [x, y, z, 1]);
+          if (Math.abs(clip[3]) < 1e-9) return { x: -10000, y: -10000, visible: false };
+          const ndcX = clip[0] / clip[3];
+          const ndcY = clip[1] / clip[3];
+          return {
+            x: (ndcX * 0.5 + 0.5) * rectangle.width,
+            y: (1 - (ndcY * 0.5 + 0.5)) * rectangle.height,
+            visible: clip[3] > 0 && Math.abs(ndcX) < 1.3 && Math.abs(ndcY) < 1.3,
+          };
+        }
+
+        function complexToPlane(real, imaginary, view = state.current) {
+          const halfSize = planeHalfSize();
+          const factor = (2 * halfSize.y) / view.span;
+          return {
+            x: (real - view.centerX) * factor,
+            y: (imaginary - view.centerY) * factor,
+          };
+        }
+
+        function worldToScreen(real, imaginary, height = 0) {
+          const rectangle = stage.getBoundingClientRect();
+          if (state.mode === "3d") {
+            const plane = complexToPlane(real, imaginary);
+            return projectWorldPoint(plane.x, plane.y, height);
+          }
+          const minimum = Math.min(rectangle.width, rectangle.height);
+          return {
+            x: rectangle.width / 2 + ((real - state.current.centerX) / state.current.span) * minimum,
+            y:
+              rectangle.height / 2 -
+              ((imaginary - state.current.centerY) / state.current.span) * minimum,
+          };
+        }
+
+        function screenToWorld(clientX, clientY, view = state.current) {
+          const rectangle = stage.getBoundingClientRect();
+          if (state.mode === "3d") {
+            const matrices = lastCameraMatrices || cameraMatrices();
+            const ndcX = ((clientX - rectangle.left) / rectangle.width) * 2 - 1;
+            const ndcY = 1 - ((clientY - rectangle.top) / rectangle.height) * 2;
+            const nearClip = transformVec4(matrices.inverseViewProjection, [ndcX, ndcY, -1, 1]);
+            const farClip = transformVec4(matrices.inverseViewProjection, [ndcX, ndcY, 1, 1]);
+            const near = nearClip.slice(0, 3).map((value) => value / nearClip[3]);
+            const far = farClip.slice(0, 3).map((value) => value / farClip[3]);
+            const direction = far.map((value, index) => value - near[index]);
+            if (Math.abs(direction[2]) < 1e-12) return null;
+            const distance = -near[2] / direction[2];
+            if (distance <= 0) return null;
+            const hitX = near[0] + direction[0] * distance;
+            const hitY = near[1] + direction[1] * distance;
+            const halfSize = planeHalfSize();
+            if (Math.abs(hitX) > halfSize.x || Math.abs(hitY) > halfSize.y) return null;
+            const complexScale = view.span / (2 * halfSize.y);
+            return {
+              real: view.centerX + hitX * complexScale,
+              imaginary: view.centerY + hitY * complexScale,
+            };
+          }
+          const minimum = Math.min(rectangle.width, rectangle.height);
+          const x = clientX - rectangle.left;
+          const y = clientY - rectangle.top;
+          return {
+            real: view.centerX + ((x - rectangle.width / 2) / minimum) * view.span,
+            imaginary: view.centerY - ((y - rectangle.height / 2) / minimum) * view.span,
+          };
+        }
+
+        function drawRoundedLabel(context, x, y, text, color) {
+          context.save();
+          context.font = "11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+          const width = context.measureText(text).width + 16;
+          const height = 25;
+          const rectangle = stage.getBoundingClientRect();
+          const left = Math.max(8, Math.min(x, rectangle.width - width - 8));
+          const top = Math.max(8, Math.min(y, rectangle.height - height - 8));
+          context.fillStyle = "rgba(5, 9, 15, 0.82)";
+          context.strokeStyle = color;
+          context.lineWidth = 1;
+          context.beginPath();
+          if (typeof context.roundRect === "function") {
+            context.roundRect(left, top, width, height, 7);
+          } else {
+            const radius = 7;
+            context.moveTo(left + radius, top);
+            context.lineTo(left + width - radius, top);
+            context.quadraticCurveTo(left + width, top, left + width, top + radius);
+            context.lineTo(left + width, top + height - radius);
+            context.quadraticCurveTo(
+              left + width,
+              top + height,
+              left + width - radius,
+              top + height
+            );
+            context.lineTo(left + radius, top + height);
+            context.quadraticCurveTo(left, top + height, left, top + height - radius);
+            context.lineTo(left, top + radius);
+            context.quadraticCurveTo(left, top, left + radius, top);
+          }
+          context.fill();
+          context.stroke();
+          context.fillStyle = "#f1f6fc";
+          context.textBaseline = "middle";
+          context.fillText(text, left + 8, top + height / 2 + 0.5);
+          context.restore();
+        }
+
+        function drawProjectedLabel(context, text, worldPoint, offsetX = 0, offsetY = 0) {
+          const screen = projectWorldPoint(worldPoint.x, worldPoint.y, worldPoint.z);
+          if (!screen.visible) return;
+          context.save();
+          context.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+          context.textAlign = "center";
+          context.textBaseline = "middle";
+          context.lineWidth = 3;
+          context.strokeStyle = "rgba(4, 7, 12, 0.9)";
+          context.fillStyle = "#c9d7e8";
+          context.strokeText(text, screen.x + offsetX, screen.y + offsetY);
+          context.fillText(text, screen.x + offsetX, screen.y + offsetY);
+          context.restore();
+        }
+
+        function traceProjectedPath(context, points) {
+          context.beginPath();
+          points.forEach((point, index) => {
+            const screen = projectWorldPoint(point.x, point.y, point.z);
+            if (index === 0) context.moveTo(screen.x, screen.y);
+            else context.lineTo(screen.x, screen.y);
+          });
+        }
+
+        function draw3DFramework(context) {
+          const halfSize = planeHalfSize();
+          const baseCorners = [
+            { x: -halfSize.x, y: -halfSize.y, z: 0 },
+            { x: halfSize.x, y: -halfSize.y, z: 0 },
+            { x: halfSize.x, y: halfSize.y, z: 0 },
+            { x: -halfSize.x, y: halfSize.y, z: 0 },
+          ];
+
+          context.save();
+          context.strokeStyle = "rgba(191, 211, 237, 0.34)";
+          context.lineWidth = 1.1;
+          traceProjectedPath(context, [...baseCorners, baseCorners[0]]);
+          context.stroke();
+          context.restore();
+
+          drawProjectedLabel(context, "Re z", { x: halfSize.x, y: -halfSize.y, z: 0 }, 18, 10);
+          drawProjectedLabel(context, "Im z", { x: -halfSize.x, y: halfSize.y, z: 0 }, -14, -8);
+
+          if (!state.showOverlay) return;
+
+          const backY = halfSize.y + 0.12;
+          const verticalHeight = 0.92;
+          const backboard = [
+            { x: -halfSize.x, y: backY, z: 0 },
+            { x: halfSize.x, y: backY, z: 0 },
+            { x: halfSize.x, y: backY, z: verticalHeight },
+            { x: -halfSize.x, y: backY, z: verticalHeight },
+          ];
+
+          context.save();
+          const projectedBackboard = backboard.map((point) => projectWorldPoint(point.x, point.y, point.z));
+          context.beginPath();
+          projectedBackboard.forEach((point, index) => {
+            if (index === 0) context.moveTo(point.x, point.y);
+            else context.lineTo(point.x, point.y);
+          });
+          context.closePath();
+          context.fillStyle = "rgba(7, 13, 22, 0.42)";
+          context.fill();
+          context.strokeStyle = "rgba(191, 211, 237, 0.24)";
+          context.lineWidth = 1;
+          context.stroke();
+
+          for (const p of [0, 0.25, 0.5]) {
+            const x = -halfSize.x + (p / 0.5) * 2 * halfSize.x;
+            traceProjectedPath(context, [
+              { x, y: backY, z: 0 },
+              { x, y: backY, z: verticalHeight },
+            ]);
+            context.strokeStyle = "rgba(191, 211, 237, 0.13)";
+            context.stroke();
+          }
+
+          for (const a of [0, 0.25, 0.5]) {
+            const z = (a / 0.5) * verticalHeight;
+            traceProjectedPath(context, [
+              { x: -halfSize.x, y: backY, z },
+              { x: halfSize.x, y: backY, z },
+            ]);
+            context.strokeStyle = "rgba(191, 211, 237, 0.13)";
+            context.stroke();
+          }
+
+          const curvePoints = chartSamples.map((sample) => ({
+            x: -halfSize.x + (sample.p / 0.5) * 2 * halfSize.x,
+            y: backY,
+            z: (sample.a / 0.5) * verticalHeight,
+          }));
+          curvePoints.push({ x: halfSize.x, y: backY, z: 0 });
+          if (curvePoints.length > 1) {
+            traceProjectedPath(context, curvePoints);
+            context.strokeStyle = "#69e1dc";
+            context.lineWidth = 2.3;
+            context.shadowColor = "rgba(105, 225, 220, 0.5)";
+            context.shadowBlur = 8;
+            context.stroke();
+            context.shadowBlur = 0;
+          }
+
+          if (isBranchingParameter() && state.aResult) {
+            const p = state.rReal / 2;
+            const currentPoint = {
+              x: -halfSize.x + (p / 0.5) * 2 * halfSize.x,
+              y: backY,
+              z: (state.aResult.a / 0.5) * verticalHeight,
+            };
+            const currentScreen = projectWorldPoint(currentPoint.x, currentPoint.y, currentPoint.z);
+            const seedPlane = complexToPlane(0.5, 0);
+            const seedHeight = surfaceWorldHeightAt(0.5, 0);
+            const seedScreen = projectWorldPoint(seedPlane.x, seedPlane.y, seedHeight);
+            context.setLineDash([5, 5]);
+            context.strokeStyle = "rgba(244, 200, 106, 0.66)";
+            context.lineWidth = 1.25;
+            context.beginPath();
+            context.moveTo(seedScreen.x, seedScreen.y);
+            context.lineTo(currentScreen.x, currentScreen.y);
+            context.stroke();
+            context.setLineDash([]);
+            context.fillStyle = "#f4c86a";
+            context.beginPath();
+            context.arc(currentScreen.x, currentScreen.y, 4.2, 0, Math.PI * 2);
+            context.fill();
+            context.strokeStyle = "#fff3cf";
+            context.lineWidth = 1.2;
+            context.stroke();
+          }
+          context.restore();
+
+          drawProjectedLabel(context, "p = 0", { x: -halfSize.x, y: backY, z: 0 }, 0, 13);
+          drawProjectedLabel(context, "p → 0.5", { x: halfSize.x, y: backY, z: 0 }, 8, 13);
+          drawProjectedLabel(
+            context,
+            "A(p) = 0.5",
+            { x: -halfSize.x, y: backY, z: verticalHeight },
+            -22,
+            -8
+          );
+          drawProjectedLabel(context, "A(p)", { x: -halfSize.x, y: backY, z: verticalHeight / 2 }, -24, 0);
+        }
+
+        function drawAnnotations() {
+          const rectangle = stage.getBoundingClientRect();
+          if (rectangle.width < 1 || rectangle.height < 1) return;
+          const ratio = annotationCanvas.width / rectangle.width;
+          const context = annotationContext;
+          context.setTransform(ratio, 0, 0, ratio, 0, 0);
+          context.clearRect(0, 0, rectangle.width, rectangle.height);
+
+          if (state.mode === "3d") {
+            draw3DFramework(context);
+          } else {
+            const origin = worldToScreen(0, 0);
+            context.save();
+            context.strokeStyle = "rgba(207, 224, 247, 0.10)";
+            context.lineWidth = 1;
+            if (origin.y >= 0 && origin.y <= rectangle.height) {
+              context.beginPath();
+              context.moveTo(0, Math.round(origin.y) + 0.5);
+              context.lineTo(rectangle.width, Math.round(origin.y) + 0.5);
+              context.stroke();
+            }
+            if (origin.x >= 0 && origin.x <= rectangle.width) {
+              context.beginPath();
+              context.moveTo(Math.round(origin.x) + 0.5, 0);
+              context.lineTo(Math.round(origin.x) + 0.5, rectangle.height);
+              context.stroke();
+            }
+            context.restore();
+          }
+
+          if (!state.showOverlay) return;
+
+          const seed = worldToScreen(0.5, 0, surfaceWorldHeightAt(0.5, 0));
+          const valid = isBranchingParameter();
+
+          if (valid && state.showOrbit) {
+            const orbit = logisticOrbitFromHalf(state.rReal, 34);
+            context.save();
+            context.strokeStyle = "rgba(244, 200, 106, 0.78)";
+            context.fillStyle = "rgba(244, 200, 106, 0.92)";
+            context.lineWidth = 1.35;
+            context.beginPath();
+            orbit.forEach((point, index) => {
+              const screen = worldToScreen(
+                point.real,
+                point.imaginary,
+                surfaceWorldHeightAt(point.real, point.imaginary)
+              );
+              if (index === 0) context.moveTo(screen.x, screen.y);
+              else context.lineTo(screen.x, screen.y);
+            });
+            context.stroke();
+
+            orbit.slice(0, 14).forEach((point, index) => {
+              const screen = worldToScreen(
+                point.real,
+                point.imaginary,
+                surfaceWorldHeightAt(point.real, point.imaginary)
+              );
+              const radius = Math.max(1.4, 3.1 - index * 0.13);
+              context.beginPath();
+              context.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
+              context.fill();
+            });
+            context.restore();
+          }
+
+          context.save();
+          context.strokeStyle = valid ? "#f4c86a" : "#ff7a93";
+          context.fillStyle = "rgba(7, 10, 16, 0.82)";
+          context.lineWidth = 2;
+          context.beginPath();
+          context.arc(seed.x, seed.y, 7.5, 0, Math.PI * 2);
+          context.fill();
+          context.stroke();
+          context.beginPath();
+          context.moveTo(seed.x - 4, seed.y);
+          context.lineTo(seed.x + 4, seed.y);
+          context.moveTo(seed.x, seed.y - 4);
+          context.lineTo(seed.x, seed.y + 4);
+          context.stroke();
+          context.restore();
+
+          if (seed.x > -90 && seed.x < rectangle.width + 90 && seed.y > -50 && seed.y < rectangle.height + 50) {
+            const label = valid
+              ? `z = ½  ·  A(p) = ${formatCompact(state.aResult?.a)}`
+              : "z = ½  ·  branching slice unavailable";
+            drawRoundedLabel(context, seed.x + 13, seed.y - 34, label, valid ? "#f4c86a" : "#ff7a93");
+          }
+        }
+
+        function viewsAreMoving() {
+          const centerDifference =
+            Math.abs(state.current.centerX - state.target.centerX) +
+            Math.abs(state.current.centerY - state.target.centerY);
+          const spanDifference = Math.abs(Math.log(state.current.span / state.target.span));
+          return centerDifference > state.current.span * 1e-10 || spanDifference > 1e-9;
+        }
+
+        function advanceView(timestamp) {
+          const elapsed = Math.min(50, timestamp - lastAnimationTime || 16.7);
+          lastAnimationTime = timestamp;
+          if (!viewsAreMoving()) {
+            state.current = { ...state.target };
+            return false;
+          }
+
+          const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const amount = reducedMotion ? 1 : 1 - Math.exp(-elapsed * 0.021);
+          state.current.centerX += (state.target.centerX - state.current.centerX) * amount;
+          state.current.centerY += (state.target.centerY - state.current.centerY) * amount;
+          const logSpan = Math.log(state.current.span);
+          const targetLogSpan = Math.log(state.target.span);
+          state.current.span = Math.exp(logSpan + (targetLogSpan - logSpan) * amount);
+          return true;
+        }
+
+        function frame(timestamp) {
+          frameHandle = 0;
+          const moving = advanceView(timestamp);
+          renderWebGL();
+          drawAnnotations();
+          updateViewBadges();
+          if (moving) requestFrame();
+        }
+
+        function requestFrame() {
+          if (!frameHandle) frameHandle = requestAnimationFrame(frame);
+        }
+
+        function setPreview(active = true) {
+          window.clearTimeout(previewTimer);
+          if (active && !state.preview) {
+            state.preview = true;
+            resizeCanvases();
+          }
+          previewTimer = window.setTimeout(() => {
+            if (state.preview) {
+              state.preview = false;
+              resizeCanvases();
+              requestFrame();
+            }
+          }, 220);
+        }
+
+        function updateViewBadges() {
+          const magnification = HOME_VIEW.span / state.current.span;
+          elements.zoomBadge.textContent = `×${formatMagnification(magnification)}`;
+          if (!state.pointerInside) {
+            elements.coordReadout.textContent = `center ${formatCoordinate(
+              state.current.centerX
+            )} ${state.current.centerY < 0 ? "−" : "+"} ${formatCoordinate(
+              Math.abs(state.current.centerY)
+            )}i`;
+          }
+        }
+
+        function zoomAt(clientX, clientY, factor) {
+          const before = screenToWorld(clientX, clientY, state.target);
+          if (!before) return;
+          const newSpan = Math.max(MIN_SPAN, Math.min(MAX_SPAN, state.target.span * factor));
+          const rectangle = stage.getBoundingClientRect();
+          if (state.mode === "3d") {
+            const halfSize = planeHalfSize();
+            const planeX =
+              ((before.real - state.target.centerX) * 2 * halfSize.y) / state.target.span;
+            const planeY =
+              ((before.imaginary - state.target.centerY) * 2 * halfSize.y) / state.target.span;
+            state.target.span = newSpan;
+            state.target.centerX = before.real - (planeX * newSpan) / (2 * halfSize.y);
+            state.target.centerY = before.imaginary - (planeY * newSpan) / (2 * halfSize.y);
+          } else {
+            const minimum = Math.min(rectangle.width, rectangle.height);
+            const localX = clientX - rectangle.left;
+            const localY = clientY - rectangle.top;
+            const normalizedX = (localX - rectangle.width / 2) / minimum;
+            const normalizedY = -(localY - rectangle.height / 2) / minimum;
+            state.target.span = newSpan;
+            state.target.centerX = before.real - normalizedX * newSpan;
+            state.target.centerY = before.imaginary - normalizedY * newSpan;
+          }
+          setPreview(true);
+          requestFrame();
+        }
+
+        function resetView() {
+          state.current = { ...HOME_VIEW };
+          state.target = { ...HOME_VIEW };
+          state.preview = false;
+          resizeCanvases();
+          requestFrame();
+        }
+
+        function focusA() {
+          state.target = { centerX: 0.34, centerY: 0, span: 0.9 };
+          setPreview(true);
+          requestFrame();
+        }
+
+        function formatCoordinate(value) {
+          const magnitude = Math.abs(value);
+          if ((magnitude > 0 && magnitude < 1e-5) || magnitude >= 1e6) {
+            return value.toExponential(6);
+          }
+          const decimals = Math.max(6, Math.min(13, Math.ceil(-Math.log10(state.current.span)) + 4));
+          return value.toFixed(decimals);
+        }
+
+        function formatMagnification(value) {
+          if (value < 1000) return value.toFixed(value < 10 ? 2 : value < 100 ? 1 : 0);
+          return value.toExponential(2).replace("e+", "e");
+        }
+
+        function formatCompact(value) {
+          if (!Number.isFinite(value)) return "—";
+          const magnitude = Math.abs(value);
+          if ((magnitude > 0 && magnitude < 0.0001) || magnitude >= 100000) {
+            return value.toExponential(5);
+          }
+          return value.toPrecision(7).replace(/\.?0+$/, "");
+        }
+
+        function isBranchingParameter() {
+          return Math.abs(state.rImag) < 1e-12 && state.rReal > 0 && state.rReal < 1;
+        }
+
+        function computeA(p, tolerance = 1e-15, maximumIterations = 260000) {
+          if (p <= 0) return { a: 0.5, inverse: 2, iterations: 1 };
+          if (p >= 0.5) return { a: 0, inverse: Infinity, iterations: 0 };
+          const r = 2 * p;
+          let orbit = 0.5;
+          let psi = 0.5;
+          let used = 0;
+          for (let index = 0; index < maximumIterations; index += 1) {
+            psi *= 1 - orbit;
+            orbit = r * orbit * (1 - orbit);
+            used = index + 1;
+            if (Math.abs(orbit) < tolerance) break;
+          }
+          const a = 2 * psi;
+          return { a, inverse: a > 0 ? 1 / a : Infinity, iterations: used };
+        }
+
+        function computeKoenigsMagnitude(real, imaginary) {
+          let orbitReal = real;
+          let orbitImaginary = imaginary;
+          let psiReal = real;
+          let psiImaginary = imaginary;
+          const limit = Math.min(state.iterations, SURFACE_MAX_ITERATIONS);
+
+          for (let index = 0; index < limit; index += 1) {
+            if (orbitReal * orbitReal + orbitImaginary * orbitImaginary > 4096) return 0;
+            const oneMinusReal = 1 - orbitReal;
+            const oneMinusImaginary = -orbitImaginary;
+            const nextPsiReal = psiReal * oneMinusReal - psiImaginary * oneMinusImaginary;
+            const nextPsiImaginary =
+              psiReal * oneMinusImaginary + psiImaginary * oneMinusReal;
+            psiReal = nextPsiReal;
+            psiImaginary = nextPsiImaginary;
+
+            const productReal =
+              orbitReal * oneMinusReal - orbitImaginary * oneMinusImaginary;
+            const productImaginary =
+              orbitReal * oneMinusImaginary + orbitImaginary * oneMinusReal;
+            orbitReal = state.rReal * productReal - state.rImag * productImaginary;
+            orbitImaginary = state.rReal * productImaginary + state.rImag * productReal;
+          }
+          return 2 * Math.hypot(psiReal, psiImaginary);
+        }
+
+        function surfaceWorldHeightAt(real, imaginary) {
+          if (state.mode !== "3d" || !state.surfaceHeight) return 0;
+          const magnitude = Math.min(computeKoenigsMagnitude(real, imaginary), 0.75);
+          return magnitude * (0.92 / 0.5) * state.heightScale;
+        }
+
+        function logisticOrbitFromHalf(realR, count) {
+          const points = [];
+          let real = 0.5;
+          let imaginary = 0;
+          for (let index = 0; index < count; index += 1) {
+            points.push({ real, imaginary });
+            const oneMinusReal = 1 - real;
+            const oneMinusImaginary = -imaginary;
+            const productReal = real * oneMinusReal - imaginary * oneMinusImaginary;
+            const productImaginary = real * oneMinusImaginary + imaginary * oneMinusReal;
+            real = realR * productReal;
+            imaginary = realR * productImaginary;
+            if (Math.hypot(real, imaginary) < 1e-13) break;
+          }
+          return points;
+        }
+
+        function updateAOverlay() {
+          elements.thesisCard.hidden = !state.showOverlay;
+          elements.orbitCheck.disabled = !state.showOverlay;
+          const valid = isBranchingParameter();
+          elements.thesisCard.classList.toggle("is-invalid", !valid);
+
+          if (valid) {
+            const p = state.rReal / 2;
+            state.aResult = computeA(p);
+            elements.metricP.textContent = formatCompact(p);
+            elements.metricA.textContent = formatCompact(state.aResult.a);
+            elements.metricInverse.textContent = formatCompact(state.aResult.inverse);
+          } else {
+            state.aResult = null;
+            elements.metricP.textContent = "—";
+            elements.metricA.textContent = "—";
+            elements.metricInverse.textContent = "—";
+          }
+
+          drawAChart();
+          requestFrame();
+        }
+
+        function buildChartSamples() {
+          if (chartReady || chartBuildPending) return;
+          chartBuildPending = true;
+          const total = 128;
+          let index = 0;
+
+          const buildChunk = () => {
+            const stop = Math.min(total + 1, index + 12);
+            for (; index < stop; index += 1) {
+              const p = index === total ? 0.4995 : (0.4995 * index) / total;
+              chartSamples.push({ p, a: computeA(p, 2e-14, 160000).a });
+            }
+            if (index <= total) {
+              window.setTimeout(buildChunk, 0);
+            } else {
+              chartReady = true;
+              chartBuildPending = false;
+              drawAChart();
+              requestFrame();
+            }
+          };
+
+          buildChunk();
+        }
+
+        function themeColor(variable, fallback) {
+          const color = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+          return color || fallback;
+        }
+
+        function drawAChart() {
+          if (!state.showOverlay || elements.thesisCard.hidden) return;
+          const rectangle = chartCanvas.getBoundingClientRect();
+          if (rectangle.width < 1 || rectangle.height < 1) return;
+          const ratio = Math.min(window.devicePixelRatio || 1, 2);
+          const width = Math.round(rectangle.width * ratio);
+          const height = Math.round(rectangle.height * ratio);
+          if (chartCanvas.width !== width || chartCanvas.height !== height) {
+            chartCanvas.width = width;
+            chartCanvas.height = height;
+          }
+
+          const context = chartContext;
+          context.setTransform(ratio, 0, 0, ratio, 0, 0);
+          context.clearRect(0, 0, rectangle.width, rectangle.height);
+          const padding = { left: 28, right: 8, top: 8, bottom: 20 };
+          const plotWidth = rectangle.width - padding.left - padding.right;
+          const plotHeight = rectangle.height - padding.top - padding.bottom;
+          const xFor = (p) => padding.left + (p / 0.5) * plotWidth;
+          const yFor = (a) => padding.top + (1 - a / 0.5) * plotHeight;
+
+          const lineColor = themeColor("--line-strong", "rgba(184,202,224,.25)");
+          const mutedColor = themeColor("--muted", "#9ba9bb");
+          const cyanColor = themeColor("--cyan", "#69e1dc");
+          const amberColor = themeColor("--amber", "#f4c86a");
+          const textColor = themeColor("--text", "#f4f7fb");
+
+          context.save();
+          context.strokeStyle = lineColor;
+          context.fillStyle = mutedColor;
+          context.lineWidth = 1;
+          context.font = "9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+          context.textBaseline = "middle";
+
+          for (const value of [0, 0.25, 0.5]) {
+            const x = xFor(value);
+            const y = yFor(value);
+            context.beginPath();
+            context.moveTo(x, padding.top);
+            context.lineTo(x, padding.top + plotHeight);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(padding.left, y);
+            context.lineTo(padding.left + plotWidth, y);
+            context.stroke();
+          }
+
+          context.textAlign = "center";
+          context.fillText("0", xFor(0), rectangle.height - 7);
+          context.fillText("0.25", xFor(0.25), rectangle.height - 7);
+          context.fillText("p → 0.5", xFor(0.5), rectangle.height - 7);
+          context.textAlign = "right";
+          context.fillText("0.5", padding.left - 5, yFor(0.5));
+          context.fillText("A(p)", padding.left - 5, yFor(0.25));
+
+          if (chartReady && chartSamples.length) {
+            context.strokeStyle = cyanColor;
+            context.lineWidth = 1.8;
+            context.beginPath();
+            chartSamples.forEach((point, sampleIndex) => {
+              const x = xFor(point.p);
+              const y = yFor(point.a);
+              if (sampleIndex === 0) context.moveTo(x, y);
+              else context.lineTo(x, y);
+            });
+            context.stroke();
+          } else {
+            context.fillStyle = mutedColor;
+            context.textAlign = "center";
+            context.fillText("computing A(p)…", padding.left + plotWidth / 2, padding.top + plotHeight / 2);
+          }
+
+          context.strokeStyle = amberColor;
+          context.lineWidth = 1.2;
+          context.setLineDash([4, 4]);
+          context.beginPath();
+          context.moveTo(xFor(0.42), yFor(2 - 4 * 0.42));
+          context.lineTo(xFor(0.5), yFor(0));
+          context.stroke();
+          context.setLineDash([]);
+
+          if (isBranchingParameter() && state.aResult) {
+            const p = state.rReal / 2;
+            const x = xFor(p);
+            const y = yFor(state.aResult.a);
+            context.strokeStyle = "rgba(117,167,255,.55)";
+            context.lineWidth = 1;
+            context.beginPath();
+            context.moveTo(x, y);
+            context.lineTo(x, yFor(0));
+            context.stroke();
+            context.fillStyle = textColor;
+            context.beginPath();
+            context.arc(x, y, 3.2, 0, Math.PI * 2);
+            context.fill();
+            context.strokeStyle = themeColor("--blue", "#75a7ff");
+            context.lineWidth = 2;
+            context.stroke();
+          }
+          context.restore();
+        }
+
+        function syncParameterFromInputs() {
+          const real = Number(elements.realNumber.value);
+          const imaginary = Number(elements.imagNumber.value);
+          if (Number.isFinite(real)) state.rReal = Math.max(-4, Math.min(4, real));
+          if (Number.isFinite(imaginary)) state.rImag = Math.max(-4, Math.min(4, imaginary));
+          elements.realOutput.textContent = state.rReal.toFixed(6);
+          elements.imagOutput.textContent = state.rImag.toFixed(6);
+          elements.pLink.textContent = isBranchingParameter()
+            ? `Galton–Watson slice: p = r/2 = ${(state.rReal / 2).toFixed(6)}`
+            : "Galton–Watson slice requires real 0 < r < 1";
+          updateAOverlay();
+        }
+
+        function resetCamera() {
+          state.camera.yaw = 0;
+          state.camera.pitch = 0.57;
+          lastCameraMatrices = cameraMatrices();
+          requestFrame();
+        }
+
+        function setPlotMode(mode) {
+          state.mode = mode;
+          const is3D = mode === "3d";
+          elements.mode2d.setAttribute("aria-pressed", String(!is3D));
+          elements.mode3d.setAttribute("aria-pressed", String(is3D));
+          elements.resetCamera.hidden = !is3D;
+          elements.surfaceControls.hidden = !is3D;
+          elements.heightScaleControl.hidden = !is3D || !state.surfaceHeight;
+          elements.heightNote.hidden = !is3D || !state.surfaceHeight;
+          elements.modeHelp.textContent = is3D
+            ? state.surfaceHeight
+              ? "Surface height is |2ψ₂ₚ(z)|; the vertical rail uses the same A(p) scale."
+              : "Re z and Im z form the base; the vertical rail plots A(p) against p."
+            : "The complex z-plane is shown face-on for deep exploration.";
+          elements.interactionHelp.textContent = is3D
+            ? "Drag to orbit the camera; Shift-drag or right-drag to pan. Scroll or pinch to zoom."
+            : "Scroll or pinch to zoom at the pointer. Drag to pan. Double-click to zoom in. Keyboard: +, −, arrows, and Home.";
+          canvas.setAttribute(
+            "aria-label",
+            is3D
+              ? "Interactive three-dimensional Koenigs phase plane with a vertical A of p curve. Drag to orbit, Shift-drag to pan, and scroll to zoom."
+              : "Interactive complex-plane plot. Drag to pan and use the mouse wheel or pinch gesture to zoom."
+          );
+          if (is3D && !state.showOverlay) {
+            state.showOverlay = true;
+            elements.overlayCheck.checked = true;
+          }
+          lastCameraMatrices = cameraMatrices();
+          updateAOverlay();
+          setPreview(true);
+          requestFrame();
+        }
+
+        function attachInputEvents() {
+          elements.mode2d.addEventListener("click", () => setPlotMode("2d"));
+          elements.mode3d.addEventListener("click", () => setPlotMode("3d"));
+          elements.resetCamera.addEventListener("click", resetCamera);
+          elements.heightCheck.addEventListener("change", () => {
+            state.surfaceHeight = elements.heightCheck.checked;
+            elements.heightScaleControl.hidden = !state.surfaceHeight;
+            elements.heightNote.hidden = !state.surfaceHeight;
+            elements.modeHelp.textContent = state.surfaceHeight
+              ? "Surface height is |2ψ₂ₚ(z)|; the vertical rail uses the same A(p) scale."
+              : "Re z and Im z form the base; the vertical rail plots A(p) against p.";
+            setPreview(true);
+            requestFrame();
+          });
+          elements.heightRange.addEventListener("input", () => {
+            state.heightScale = Number(elements.heightRange.value);
+            elements.heightOutput.textContent = `${state.heightScale.toFixed(2)}×`;
+            setPreview(true);
+            requestFrame();
+          });
+          elements.realRange.addEventListener("input", () => {
+            elements.realNumber.value = elements.realRange.value;
+            syncParameterFromInputs();
+            setPreview(true);
+          });
+          elements.realNumber.addEventListener("input", () => {
+            const value = Number(elements.realNumber.value);
+            if (Number.isFinite(value)) {
+              elements.realRange.value = String(Math.max(-1, Math.min(4, value)));
+              syncParameterFromInputs();
+              setPreview(true);
+            }
+          });
+          elements.imagRange.addEventListener("input", () => {
+            elements.imagNumber.value = elements.imagRange.value;
+            syncParameterFromInputs();
+            setPreview(true);
+          });
+          elements.imagNumber.addEventListener("input", () => {
+            const value = Number(elements.imagNumber.value);
+            if (Number.isFinite(value)) {
+              elements.imagRange.value = String(Math.max(-2, Math.min(2, value)));
+              syncParameterFromInputs();
+              setPreview(true);
+            }
+          });
+
+          elements.iterationsRange.addEventListener("input", () => {
+            state.iterations = Number(elements.iterationsRange.value);
+            elements.iterationsOutput.textContent = String(state.iterations);
+            setPreview(true);
+            requestFrame();
+          });
+          elements.gridRange.addEventListener("input", () => {
+            state.gridDensity = Number(elements.gridRange.value);
+            elements.gridOutput.textContent = state.gridDensity.toFixed(1);
+            requestFrame();
+          });
+          elements.gridCheck.addEventListener("change", () => {
+            state.showGrid = elements.gridCheck.checked;
+            requestFrame();
+          });
+          elements.qualitySelect.addEventListener("change", () => {
+            state.quality = elements.qualitySelect.value;
+            resizeCanvases();
+            requestFrame();
+          });
+          elements.overlayCheck.addEventListener("change", () => {
+            state.showOverlay = elements.overlayCheck.checked;
+            updateAOverlay();
+          });
+          elements.orbitCheck.addEventListener("change", () => {
+            state.showOrbit = elements.orbitCheck.checked;
+            requestFrame();
+          });
+
+          for (const selector of ["#reset-view", "#reset-view-top"]) {
+            $(selector).addEventListener("click", resetView);
+          }
+          for (const selector of ["#focus-a", "#focus-a-top"]) {
+            $(selector).addEventListener("click", focusA);
+          }
+        }
+
+        function pointerMidpoint(first, second) {
+          return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
+        }
+
+        function pointerDistance(first, second) {
+          return Math.hypot(first.x - second.x, first.y - second.y);
+        }
+
+        function beginPointerGesture(preferPan = false) {
+          const pointers = Array.from(activePointers.values());
+          if (pointers.length >= 2) {
+            const midpoint = pointerMidpoint(pointers[0], pointers[1]);
+            gesture = {
+              type: "pinch",
+              distance: Math.max(10, pointerDistance(pointers[0], pointers[1])),
+              midpoint,
+              view: { ...state.target },
+              anchor:
+                screenToWorld(midpoint.x, midpoint.y, state.target) ||
+                { real: state.target.centerX, imaginary: state.target.centerY },
+            };
+          } else if (pointers.length === 1) {
+            gesture = {
+              type: state.mode === "3d" && !preferPan ? "orbit" : "pan",
+              startX: pointers[0].x,
+              startY: pointers[0].y,
+              view: { ...state.target },
+              yaw: state.camera.yaw,
+              pitch: state.camera.pitch,
+            };
+          } else {
+            gesture = null;
+          }
+        }
+
+        function attachCanvasEvents() {
+          canvas.addEventListener(
+            "wheel",
+            (event) => {
+              event.preventDefault();
+              const delta = Math.max(-180, Math.min(180, event.deltaY));
+              const speed = event.ctrlKey ? 0.004 : 0.0022;
+              zoomAt(event.clientX, event.clientY, Math.exp(delta * speed));
+            },
+            { passive: false }
+          );
+
+          canvas.addEventListener("dblclick", (event) => {
+            event.preventDefault();
+            zoomAt(event.clientX, event.clientY, 0.28);
+          });
+
+          canvas.addEventListener("pointerdown", (event) => {
+            canvas.focus({ preventScroll: true });
+            canvas.setPointerCapture(event.pointerId);
+            activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+            canvas.classList.add("is-dragging");
+            beginPointerGesture(event.shiftKey || event.button === 2);
+            setPreview(true);
+          });
+
+          canvas.addEventListener("contextmenu", (event) => event.preventDefault());
+
+          canvas.addEventListener("pointermove", (event) => {
+            state.pointerInside = true;
+            const hover = screenToWorld(event.clientX, event.clientY);
+            if (hover) {
+              state.hoverX = hover.real;
+              state.hoverY = hover.imaginary;
+              elements.coordReadout.textContent = `Re z ${formatCoordinate(
+                hover.real
+              )} · Im z ${formatCoordinate(hover.imaginary)}`;
+            } else {
+              elements.coordReadout.textContent = "Pointer is outside the complex plane";
+            }
+
+            if (!activePointers.has(event.pointerId)) return;
+            activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+            const pointers = Array.from(activePointers.values());
+            const rectangle = stage.getBoundingClientRect();
+            const minimum = Math.min(rectangle.width, rectangle.height);
+
+            if (pointers.length >= 2) {
+              if (!gesture || gesture.type !== "pinch") beginPointerGesture();
+              const midpoint = pointerMidpoint(pointers[0], pointers[1]);
+              const distance = Math.max(10, pointerDistance(pointers[0], pointers[1]));
+              const newSpan = Math.max(
+                MIN_SPAN,
+                Math.min(MAX_SPAN, gesture.view.span * (gesture.distance / distance))
+              );
+              state.target.span = newSpan;
+              if (state.mode === "3d") {
+                const halfSize = planeHalfSize();
+                const planeX =
+                  ((gesture.anchor.real - gesture.view.centerX) * 2 * halfSize.y) /
+                  gesture.view.span;
+                const planeY =
+                  ((gesture.anchor.imaginary - gesture.view.centerY) * 2 * halfSize.y) /
+                  gesture.view.span;
+                state.target.centerX =
+                  gesture.anchor.real - (planeX * newSpan) / (2 * halfSize.y);
+                state.target.centerY =
+                  gesture.anchor.imaginary - (planeY * newSpan) / (2 * halfSize.y);
+              } else {
+                const localX = midpoint.x - rectangle.left;
+                const localY = midpoint.y - rectangle.top;
+                const normalizedX = (localX - rectangle.width / 2) / minimum;
+                const normalizedY = -(localY - rectangle.height / 2) / minimum;
+                state.target.centerX = gesture.anchor.real - normalizedX * newSpan;
+                state.target.centerY = gesture.anchor.imaginary - normalizedY * newSpan;
+              }
+              state.current = { ...state.target };
+            } else if (pointers.length === 1) {
+              const deltaX = pointers[0].x - gesture.startX;
+              const deltaY = pointers[0].y - gesture.startY;
+              if (gesture?.type === "orbit") {
+                state.camera.yaw = gesture.yaw - deltaX * 0.006;
+                state.camera.pitch = Math.max(
+                  0.2,
+                  Math.min(1.18, gesture.pitch + deltaY * 0.005)
+                );
+                lastCameraMatrices = cameraMatrices();
+              } else {
+                if (!gesture || gesture.type !== "pan") beginPointerGesture(true);
+                state.target.centerX =
+                  gesture.view.centerX - (deltaX / minimum) * gesture.view.span;
+                state.target.centerY =
+                  gesture.view.centerY + (deltaY / minimum) * gesture.view.span;
+                state.current = { ...state.target };
+              }
+            }
+            setPreview(true);
+            requestFrame();
+          });
+
+          const endPointer = (event) => {
+            activePointers.delete(event.pointerId);
+            if (activePointers.size === 0) canvas.classList.remove("is-dragging");
+            beginPointerGesture();
+            setPreview(true);
+          };
+          canvas.addEventListener("pointerup", endPointer);
+          canvas.addEventListener("pointercancel", endPointer);
+          canvas.addEventListener("pointerleave", () => {
+            state.pointerInside = false;
+            updateViewBadges();
+          });
+
+          canvas.addEventListener("keydown", (event) => {
+            const rectangle = stage.getBoundingClientRect();
+            const centerX = rectangle.left + rectangle.width / 2;
+            const centerY = rectangle.top + rectangle.height / 2;
+            if (event.key === "+" || event.key === "=") {
+              event.preventDefault();
+              zoomAt(centerX, centerY, 0.62);
+            } else if (event.key === "-" || event.key === "_") {
+              event.preventDefault();
+              zoomAt(centerX, centerY, 1.62);
+            } else if (event.key === "Home") {
+              event.preventDefault();
+              resetView();
+            } else if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+              event.preventDefault();
+              const amount = state.target.span * 0.08;
+              if (event.key === "ArrowLeft") state.target.centerX -= amount;
+              if (event.key === "ArrowRight") state.target.centerX += amount;
+              if (event.key === "ArrowUp") state.target.centerY += amount;
+              if (event.key === "ArrowDown") state.target.centerY -= amount;
+              setPreview(true);
+              requestFrame();
+            }
+          });
+
+          canvas.addEventListener("webglcontextlost", (event) => {
+            event.preventDefault();
+            showError("The graphics context was interrupted. Reload the page to resume the visualizer.");
+          });
+        }
+
+        function attachMobileControls() {
+          const setOpen = (open) => {
+            elements.controls.classList.toggle("is-open", open);
+            elements.controlsScrim.classList.toggle("is-open", open);
+            elements.mobileControlsButton.setAttribute("aria-expanded", String(open));
+          };
+          elements.mobileControlsButton.addEventListener("click", () => {
+            setOpen(!elements.controls.classList.contains("is-open"));
+          });
+          elements.controlsScrim.addEventListener("click", () => setOpen(false));
+          window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") setOpen(false);
+          });
+        }
+
+        function validate3DProjection() {
+          const rectangle = stage.getBoundingClientRect();
+          if (rectangle.width < 2 || rectangle.height < 2) return;
+          const previousMode = state.mode;
+          const previousSurfaceHeight = state.surfaceHeight;
+          try {
+            state.mode = "3d";
+            state.surfaceHeight = true;
+            lastCameraMatrices = cameraMatrices();
+            const centerX = rectangle.left + rectangle.width / 2;
+            const centerY = rectangle.top + rectangle.height / 2;
+            const hit = screenToWorld(centerX, centerY);
+            if (!hit || !Number.isFinite(hit.real) || !Number.isFinite(hit.imaginary)) {
+              throw new Error("The 3D picking ray did not meet the complex plane.");
+            }
+            const projected = worldToScreen(hit.real, hit.imaginary);
+            if (
+              !Number.isFinite(projected.x) ||
+              !Number.isFinite(projected.y) ||
+              Math.hypot(projected.x - rectangle.width / 2, projected.y - rectangle.height / 2) > 1
+            ) {
+              throw new Error("The 3D projection round-trip was inconsistent.");
+            }
+            const seedMagnitude =
+              surfaceWorldHeightAt(0.5, 0) / ((0.92 / 0.5) * state.heightScale);
+            if (
+              state.aResult &&
+              Math.abs(seedMagnitude - state.aResult.a) > Math.max(1e-9, state.aResult.a * 1e-7)
+            ) {
+              throw new Error("The surface height at z = 1/2 did not agree with A(p).");
+            }
+            renderWebGL();
+            if (gl.getError() !== gl.NO_ERROR) {
+              throw new Error("The raised-surface renderer reported a graphics error.");
+            }
+            drawAnnotations();
+          } finally {
+            state.mode = previousMode;
+            state.surfaceHeight = previousSurfaceHeight;
+            lastCameraMatrices = cameraMatrices();
+          }
+        }
+
+        function initialize() {
+          try {
+            initializeWebGL();
+            attachInputEvents();
+            attachCanvasEvents();
+            attachMobileControls();
+            const observer = new ResizeObserver(() => {
+              resizeCanvases();
+              drawAChart();
+              requestFrame();
+            });
+            observer.observe(stage);
+            observer.observe(elements.thesisCard);
+            buildChartSamples();
+            updateAOverlay();
+            resizeCanvases();
+            validate3DProjection();
+            requestFrame();
+          } catch (error) {
+            console.error(error);
+            showError(`Unable to start the visualizer: ${error.message}`);
+          }
+        }
+
+        initialize();
+      })();
+    </script>
+  </body>
+</html>
