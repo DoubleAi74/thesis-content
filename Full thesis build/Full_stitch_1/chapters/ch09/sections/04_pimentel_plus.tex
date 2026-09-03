@@ -1,0 +1,111 @@
+% Coupling speciation to competition --- plan \S3.3, "\S4".
+% Sources: 09/05:206-323, minus the block quotation at :213-290 (parked as
+% _parked/nietzsche_bge_262.tex) and minus the confession at :321-323 (cut;
+% replaced by the "What this chapter is" paragraph of \S1).
+% Renames beyond plan \S7.2, both forced by \S7.1's rule against contradicting
+% a thesis-wide symbol: the fitness increment \delta -> \varepsilon (\delta is
+% the catastrophe rate, and this quantity is the evolution rate of the
+% preceding section under a second letter), and the speciation exponent
+% \lambda -> \zeta (\lambda is the birth rate).  See PHASE_A_REPORT.md 9.1.
+% The source at 09/05:276,278 prints both step probabilities with the same
+% left-hand side, \Pr(\Delta A_t = 1); the second is written here as -1.
+
+\subsection{Coupling speciation to competition}
+\label{var:sec:pimentelplus}
+
+\Cref{var:sec:pimentel} makes a losing population strong, the squeeze being
+what drives its resistance up. This subsection asks the complement, whether a
+winning population can be made weak by a mechanism of the same kind; the
+hypothesis it states is that excess variation weakens an established type, so
+that a population which is winning diversifies and thereby loses. The claim
+is Nietzsche's, put into a model: a type is made hard by long struggle
+against constant unfavourable conditions, favourable conditions relax the
+constraint which made it hard, and the resulting exuberance of variation
+is itself the mechanism of decline \cite{nietzsche2013beyond}. What is worth retaining is the shape of the claim: that the decline is
+\emph{endogenous}, a consequence of the success preceding it rather than a
+response to any external shock.
+
+The model is the kernel of \cref{var:sec:pimentelmodel}, recast so that the
+quantity under selection is fitness rather than resistance, with a species
+count carried alongside and allowed to act back on that fitness. Written as
+step probabilities for $A_t$,
+\begin{equation}
+\pr{\Delta A_t=1}=\frac{A_t}{N}\,\frac{f_a}{\bar f},
+\qquad
+\pr{\Delta A_t=-1}=\lrb{1-\frac{A_t}{N}}\frac{f_b}{\bar f},
+\label{var:eq:fitkernel}
+\end{equation}
+with $\bar f$ the mean fitness across the domain and, under the Moran
+assumption, $A_t=N-B_t$. Each probability is again the chance of meeting a
+member of the opposing group multiplied by the chance of prevailing against
+them, as in \cref{var:eq:kernel}; what has changed is that prevailing is now
+governed by a fitness ratio rather than by a blocking probability. Fitness is
+driven up by minority status exactly as resistance was:
+\begin{equation}
+f_a(t+\Delta t)=f_a(t)+\varepsilon\lrb{\frac{B_t}{A_t}}^{\!\alpha},
+\qquad
+f_b(t+\Delta t)=f_b(t)+\varepsilon\lrb{\frac{A_t}{B_t}}^{\!\alpha}.
+\label{var:eq:fitupdate}
+\end{equation}
+
+Fitness here is the same evolving quantity as the resistance $R_a,R_b$ of
+the previous section, under a second name: the update rule and its exponent
+are identical, and the increment coefficient is $\varepsilon$ in both. The
+two kernels are not literally identical, since \cref{var:eq:kernel} has a
+stalemate outcome and \cref{var:eq:fitkernel} has none; both are carried
+because the fitness form is the one that admits the coupling below, in which
+a scalar can be added to and subtracted from.
+
+Now give each population its own species count, $S^{(a)}_t$ and $S^{(b)}_t$,
+evolving as birth--death processes with constant per-species extinction
+$\mu_a$ and a speciation rate that rises with both dominance and fitness:
+\begin{equation}
+\pr{\Delta S^{(a)}_t=1}=\beta_a S^{(a)}_t\,\Delta t,
+\qquad
+\pr{\Delta S^{(a)}_t=-1}=\mu_a S^{(a)}_t\,\Delta t,
+\qquad
+\beta_a=\lrb{\frac{A_t}{N}}^{\!\zeta}f_a,
+\label{var:eq:subspec}
+\end{equation}
+and correspondingly for $b$ with $A_t$ replaced by $B_t$, the exponent
+$\zeta$ controlling how firmly dominance must be established before variation
+is released. This is the premise of \cref{var:sec:speciation} transplanted
+into a competitive setting: variation is in constant supply, and what
+releases it is the easing of whatever was suppressing it, measured here by
+the share of the domain a population controls.
+
+The coupling that closes the loop is a penalty on fitness proportional to the
+species count:
+\begin{equation}
+f_a(t+\Delta t)=f_a(t)+\varepsilon\lrb{\frac{B_t}{A_t}}^{\!\alpha}
+-\gamma S^{(a)}_t,
+\qquad
+f_b(t+\Delta t)=f_b(t)+\varepsilon\lrb{\frac{A_t}{B_t}}^{\!\alpha}
+-\gamma S^{(b)}_t,
+\label{var:eq:fitpenalty}
+\end{equation}
+with $\gamma$ the amount by which the inefficiency of carrying excess
+variation weighs on competitive performance.
+
+That is the whole specification, and it has never been simulated. Both routes
+to reversal are present in it at once: the squeeze that strengthens the
+loser, through \cref{var:eq:fitupdate}, and the variation that weakens the
+winner, through the penalty of \cref{var:eq:fitpenalty}. Both favour whichever
+population is behind, so the model does not say in advance which of them does
+the work, and that is what makes it worth running.
+
+\paragraph{Open questions.}\label{var:rem:open-plus}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em,topsep=0.2em]
+\item \textbf{Whether collapse by variation happens at all.} Does the
+$-\gamma S^{(a)}_t$ term in \cref{var:eq:fitpenalty} ever produce a reversal
+that the squeeze-driven mechanism of \cref{var:sec:pimentel} would not have
+produced unaided, or does it only slow that one down? Separating the two
+means holding everything else fixed and comparing runs at $\gamma=0$ against
+runs at $\gamma>0$, which asks for simulation and for nothing else.
+\item \textbf{The relevant regime.} Collapse by variation should require
+$\gamma S^{(a)}_t$ to grow comparable with the accumulated fitness advantage
+over the timescale on which $S^{(a)}_t$ itself grows, which ties $\gamma$,
+$\zeta$ and $\mu_a$ together. Whether that regime is a thin sliver of
+parameter space or a broad band of it follows directly from the first
+question.
+\end{enumerate}

@@ -1,0 +1,101 @@
+% Stitched working draft of the thesis.
+% Compile from this directory:  latexmk -pdf main.tex
+%
+% Chapter sources are copies under chapters/chXX/. Original chapter
+% folders are not modified. Appendices stay at the end of each chapter.
+% References are pooled at the end of this file.
+
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{preamble}
+
+% #1 = chapter directory name (ch01, ...); #2 = file to subimport
+\newcommand{\stitchchapter}[2]{%
+  \clearpage
+  \graphicspath{{chapters/#1/}{chapters/#1/figures/}{chapters/#1/pictures/}}%
+  \begingroup
+  \input{macros/#1}%
+  \subimport{chapters/#1/}{#2}%
+  \endgroup
+  \FloatBarrier
+}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{3.2cm}
+{\LARGE\bfseries Stochastic models of early \textit{Yersinia pestis} infection\par}
+\vspace{10pt}
+{\large Branching processes, bursting pathogenesis, and evolved strategy\par}
+\vspace{2.4cm}
+{\large Adam Aldridge\par}
+\vspace{6pt}
+{University of Leeds\par}
+\vspace{2.2cm}
+{\large Working draft\par}
+\vspace{4pt}
+{September 2026\par}
+\vfill
+{\small Assembled from the ten chapter folders in \texttt{Full thesis build}.\par
+Chapter appendices remain at the end of each chapter.\par
+References are collected at the end of the document.\par}
+\vspace*{1.2cm}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+\begingroup
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\clearpage
+
+% Chapter 1 -- Introduction (article source, wrapped)
+\stitchchapter{ch01}{chapter.tex}
+
+% Chapter 2 -- Mathematical introduction (thesis-ready)
+\stitchchapter{ch02}{chapter.tex}
+
+% Chapter 3 -- Galton--Watson / A(p) (from chapterB.tex)
+\stitchchapter{ch03}{chapter.tex}
+
+% Chapter 4 -- Birth--death--catastrophe process
+\stitchchapter{ch04}{chapter.tex}
+
+% Chapter 5 -- Distribution theory, quasi-stationarity, burst statistics
+\stitchchapter{ch05}{chapter.tex}
+
+% Chapter 6 -- Within-host / bursting (tinted theorem style local to this chapter)
+\clearpage
+\graphicspath{{chapters/ch06/}{chapters/ch06/figures/}}
+\input{macros/ch06-style}
+\begingroup
+\input{macros/ch06}
+\subimport{chapters/ch06/}{chapter.tex}
+\endgroup
+\input{macros/ch06-style-end}
+\FloatBarrier
+
+% Chapter 7 -- Two-type catastrophe rates (article source, wrapped)
+\stitchchapter{ch07}{chapter.tex}
+
+% Chapter 8 -- Bursting and budding pathogenesis
+\stitchchapter{ch08}{chapter.tex}
+
+% Chapter 9 -- Models with non-constant rates
+\stitchchapter{ch09}{chapter.tex}
+
+% Chapter 10 -- Conclusion
+\stitchchapter{ch10}{chapter.tex}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\begingroup
+\small
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

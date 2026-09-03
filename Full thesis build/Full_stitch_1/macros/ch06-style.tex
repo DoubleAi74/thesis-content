@@ -1,0 +1,12 @@
+% Apply CH6's tinted theorem panel and quieter proofs, then restore after.
+\let\stitchsavedtheorem\theorem
+\let\stitchsavedendtheorem\endtheorem
+\surroundwithmdframed[style=ch6thm]{theorem}
+
+\let\stitchsavedproof\proof
+\let\stitchsavedendproof\endproof
+\renewenvironment{proof}[1][\proofname]{%
+  \par\vspace{0.25\baselineskip}\noindent
+  \small\color{soft}%
+  \textit{#1.}\ \ignorespaces}{%
+  \unskip\nobreak\hfill$\square$\par\vspace{0.35\baselineskip}}

@@ -1,0 +1,153 @@
+\section{Introduction}
+\label{dist:sec:intro}
+
+The standard models of within-host infection treat the infected cell as a
+black box. In the Basic Model of Viral Replication, a cell that has been
+infected releases new particles at a constant rate $p$ until it is removed
+at a constant rate $d_{\Icell}$; nothing about the cell's interior enters
+the dynamics, and the two constants are phenomenological --- parameters to
+be fitted, not quantities to be derived
+\cite{perelson1996hiv,nowak1996population,mclean1993balance}. For a budding
+virus this is at least a defensible caricature. For a lytic pathogen it is
+plainly wrong in mechanism, whatever it may achieve by fitting: such a
+pathogen grows inside the cell, and releases nothing until the cell ruptures,
+at which point it releases everything at once. \yp{} in the macrophage,
+\ft{} in the macrophage, the lytic phage in its bacterium --- all follow the
+intracellular replication-and-lysis picture, and all are poorly served by a
+constant drip.
+
+Any replacement of that black box must begin with a complete description of
+a single infected cell, and that description is the subject of this chapter.
+The intracellular model was set up in \ChCore: the
+birth--death--catastrophe process, in which each pathogen particle inside one
+cell divides at rate $\lambda$, dies at rate $\mu$, and triggers the rupture
+of the whole cell at rate $\delta$. That chapter derived the principal
+single-cell quantities --- the no-rupture probability $I(t)$, the non-fixation
+probability $\Ifix(t)$, the mean and second moment $J(t)$, $K(t)$, and the
+cumulative mean release $V(t)$ --- each in closed form. What it did not derive
+is the full distribution of the process, or the statistics of the rupture
+event itself.
+
+One question organises what follows. \emph{What is the complete law of a
+single bursting cell?} The answer is a single geometric family whose ratio
+slides towards a fixed endpoint, and the burst inherits that endpoint. That
+inheritance is the chapter's central identity, and it is not obvious: one law
+comes from conditioning a surviving trajectory on never being absorbed, the
+other from averaging over the instant each trajectory ruptures, and the two
+constructions share no step. \Cref{dist:sec:burst-size} resolves it. Two
+probes then ask how far the answer reaches: several founders sharing one cell,
+and one cell's burst founding the next. Both are stress tests rather than
+extensions, and both mark a boundary.
+
+\begin{samepage}
+The derivation proceeds as follows.
+\begin{itemize}[leftmargin=1.6em,itemsep=0.25em,topsep=0.35em]
+\item The load is geometric at every time, with a ratio $P(t)$ that slides
+from $0$ to $1/a$.
+\item The quasi-stationary law is that endpoint.
+\item The burst, averaged across rupture times, is the same law.
+\item Two probes --- several founders sharing one cell, then one cell's burst
+founding the next --- test how far the structure reaches.
+\end{itemize}
+\end{samepage}
+
+The chapter is organised around that derivation. \Cref{dist:sec:recap} recaps
+\ChCore. \Cref{dist:sec:pgf,dist:sec:geometric} produce the generating function
+and the geometric family. \Cref{dist:sec:qsd,dist:sec:burst-size} take the
+endpoint and the identity. \Cref{dist:sec:burst-time,dist:sec:cond-means} give
+the times and the three means. \Cref{dist:sec:moi,dist:sec:chained} run the
+two probes. \Cref{dist:sec:budding} returns to the constant drip, at the level
+where the objection was made: one cell.
+
+Two conventions for the rupture transition are current. The ruptured process
+may be sent to state $0$, which we call \emph{killing}, or to a separate
+absorbing state $H$, which we call \emph{catastrophe}. This chapter works in
+the catastrophe convention throughout, and nothing is lost by doing so: the
+two generating functions differ by a function of time alone, exactly and for
+every $z$, as \cref{dist:prop:conventions} records.
+
+\subsection{Standing assumptions}
+\label{dist:sec:assumptions}
+
+Five assumptions are load-bearing, and all five are contestable.
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item \textbf{Linear birth.} Each particle divides at rate $\lambda$ whatever
+the current load: there is no intracellular carrying capacity. Without it the
+Riccati equation \cref{dist:eq:riccati} is not autonomous and no closed form
+survives.
+\item \textbf{Catastrophe hazard exactly proportional to load.} Rupture is
+triggered at rate $\delta n$ from load $n$ --- not $\delta n^2$, not a
+threshold at a critical load, not a maturation-timed lysis. This is the
+strongest assumption in the chapter and it is what makes everything solvable:
+the burst-size law of \cref{dist:thm:burst} is an integral against the hazard
+$\delta k$, and its telescoping depends on that hazard being linear.
+\item \textbf{Instantaneous, complete release.} The whole load leaves the cell
+at one instant, which is what makes the burst size a single \rv{} $\Kb$ rather
+than a release process.
+\item \textbf{Constant rates.} No eclipse phase and no age-dependence within
+the cell, so that the process is time-homogeneous and the generating function
+depends on $t$ only through $w=\ee^{\theta t}$.
+\item \textbf{Independent lineages.} Descendants of distinct particles evolve
+independently until the shared catastrophe clock rings. This is used
+decisively at $G_k=G^k$ in \cref{dist:eq:gk} and throughout
+\cref{dist:sec:moi}.
+\end{enumerate}
+
+The first is revisited as an open problem in \cref{dist:sec:open-problems};
+the second is what \cref{dist:rem:criterion} isolates as the criterion behind
+the chapter's central identity.
+
+\subsection{Contributions}
+\label{dist:sec:contributions}
+
+Not all of this chapter is background. \ChMcap{} defines quasi-stationarity and
+the Yaglom limit, takes existence from the literature, and computes the
+limiting conditional \emph{mean}, noting explicitly that convergence of
+moments does not establish convergence of the full conditional law. It leaves
+open whether a quasi-stationary distribution survives when the process is
+conditioned on
+\emph{neither} extinction nor rupture. Five results are new to this chapter.
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item The full conditional law exists in closed form for all $\mu\ge0$ and is
+geometric with ratio $1/a$ (\cref{dist:thm:geometric,dist:thm:qsd}).
+\item Its mean was already known to equal the mean burst size. The two
+\emph{laws} are identical, and the identity has a structural proof:
+size-biasing telescopes the occupation integral onto the endpoint of the
+process's own geometric ratio (\cref{dist:thm:identity}).
+\item \ChCorecap{} gives the marginal law of the burst time. Conditioned on
+the burst size, that law is a harmonic-number law with a Gumbel limit
+(\cref{dist:prop:taugivenk}).
+\item The single-founder release kernel was already in hand. For $k$ founders
+sharing one cell the kernel $g_k$ is superlinear in $k$, while the lifetime
+yield is sub-extensive, \cref{dist:eq:gkflux,dist:eq:vk}.
+\item Chained immediate transfer has an exact negative-binomial structure,
+\cref{dist:eq:rklaw}.
+\end{enumerate}
+
+Everything else is standard, or is quoted from \ChCore, and
+\cref{dist:app:formulae} marks which is which. One argument in the chapter is
+heuristic rather than complete --- the interchange of summation and
+integration in the hypergeometric machinery of \cref{dist:app:extract} ---
+and it is marked where it occurs.
+
+\subsection{What this chapter exports}
+\label{dist:sec:exports}
+
+The chapter is a supplier as well as an argument. \ChPopcap{} needs five things
+from here: $\Ifix(a)$ and $g(a)=\delta K(a)$ as the survival and release
+kernels of a renewal model; $g_k$ as the kernel for a cell founded at
+multiplicity $k$; the mean productive lifetime $\E{T_{\rm prod}}$ together
+with the matched
+constant-rate death rate $d_{\Icell}=0.351$ it implies; and $\E{\Wt^2}$, for
+the between-well variance that a limiting-dilution assay measures. Each is
+derived below and flagged where it is derived.
+
+One parameter set recurs. Unless stated otherwise, illustrations use
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$, for which $a=1.0616$, so $b=0.1884$ and
+$\E{\Kb\mid\text{burst}}=17.23$: most cells burst, and the bursts are large.
+Those rates sit on the \ft{} side of the model's range, where $a=1.001$,
+rather than the \textit{B.~anthracis} side, where $a=2.66$, with the numbers
+compressed for legibility. The figures may therefore be read as a rescaled
+lytic cell rather than an arbitrary choice.

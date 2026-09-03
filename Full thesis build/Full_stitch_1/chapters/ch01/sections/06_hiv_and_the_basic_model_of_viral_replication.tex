@@ -1,0 +1,56 @@
+\section{HIV and the basic model of viral replication}
+In the 1980s there was a major global HIV epidemic. This was terrible, killing around 40 million people over the decade, but it had the positive side effect of inducing a flurry of research into HIV pathogenesis and viral dynamics more generally. By the early 1990s progress was being made with the development of effective mathematical models describing within host viral replication.\par
+Principal among these was what became known as the Basic Model of Viral Replication (BMVR) \cite{mclean1993balance}, which emerged from the fray of model diversity following the period of substantial experimentation. Its basic assumption was quite simple: there are three agent types
+
+\begin{itemize}
+\item \textbf{Susceptible cells: $S$} 
+
+Host cells produced with a constant influx of rate $\lambda$, removed as they become infected by individual virions with a rate $\beta$.
+
+\item \textbf{Free virions: $V$}
+
+Produced at a constant rate, $p$, by each infected cell, and also cleared with rate $c$.
+
+\item \textbf{Infected cells: $I$}
+
+A single free virion coming into contact with a susceptible cell is sufficient to convert it into an infected cell. Naturally, this uses up the virion and removes one succeptible cell from $S$. Infected cells then produce new free virions at a constant rate, not accounting for the likely reality that a higher intracellular load might cause a cell to be more productive. Though some models do include a lag period between the time a cell is infected and when it begins to produce virions.\par
+They are also removed by cell death with rate $\delta$.
+\end{itemize}
+
+\noindent
+The equations are as follows
+
+\begin{align*}
+\ddt{S} & = \lambda - \beta SI\\
+\ddt{I} & = \beta SI - \delta I\\
+\ddt{V}& = p I - c V.
+\end{align*}
+
+\noindent
+In some cases, the model is simplified by taking the number of susceptible cells as a constant, $T$. This represents the situation in which there is a large availability of cells to infect such that their depletion is not a significant driver of the overall dynamics. With this simplifying assumption, the equations become,
+
+\begin{align*}
+\ddt{I} & = \beta TI - \delta I\\
+\ddt{V}& = p I - c V.
+\end{align*}
+
+\noindent
+To be clear, this rests on the assumption that virions are produced by cells one by one at a constant release rate.
+
+
+\subsubsection*{New research into HIV viral release}
+
+In 2018, an experiment was done at Los Alamos \cite{hataye2019principles} with the intention of quantifying the release dynamics of HIV virions from infected cells. A tray of 32 small ``wells'' were each filled with some liquid each containing exactly one cell infected by HIV. Then over a period of days, viral counts were measured from the liquid of every well at intervals of one hour.\par
+
+If the assumption of the BMVR were correct, we would expect to see something approximating a Poisson process in each well, with roughly the same count recorded in all of the wells at each interval. What was actually observed was very different: huge variation between wells, and the production rates were not at all constant. Instead, a high degree of intermittency was recorded. Cells remaining completely inactive for successive intervals, then occasionally releasing a substantial number of virions, seemingly all at once. \par
+
+Clearly, this challenges the standard assumption of constant-rate budding. It also raises a speculative question: Could this commonly held belief about viral release have been to some extent patronised by widespread use of the modelling assumption? We'll probably never know, but it's curious to consider.\par
+
+\subsubsection*{So what?}
+In any case, the observation is interesting and it begs the question: why? There will be some reason HIV has evolved to use this quasi-bursting procedure. Perhaps it is simply more convenient for release to take place in floods. Passage through the cell wall requires an opening, and it surely makes sense to only induce this periodically; avoiding both unwanted leakage of cellular components and ingress of extracellular debris.\par 
+
+But perhaps there is also some general advantage to be gained by virions being released in large cohorts like this. It could be that locally deletable immune factors are flooded and overcome by the sudden outflux of enemy agents. A paper by N. Komavora \cite{komarova2007viral} presented this idea of a so called ``flooding'' advantage. She used the analogy of a criminal gang trying to escape their trap house which is surrounded by police: ``If we all run out at once, maybe some of us will get away in the confusion''.\par 
+
+Analysis of pathogen release strategies and their potential makes up the topic of chapter 6, with attention paid to the spectrum between budding release, and complete cell bursting.\par
+
+Back on the topic of the BMVR and its potentially flawed assumption, in chapter 4 we propose a possible modification to the viral release term, $pI$, in an attempt to account for intracellular dynamics consistent with the birth death catastrophe process.

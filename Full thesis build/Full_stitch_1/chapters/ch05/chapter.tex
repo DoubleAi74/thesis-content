@@ -1,0 +1,31 @@
+% ===========================================================================
+%  chapter.tex --- thesis-ready fragment.
+%  Requires the macros of preamble.tex.
+% ===========================================================================
+
+\chapter{The birth--death--catastrophe process: distribution theory,
+quasi-stationarity, and burst statistics}
+\label{dist:ch:distribution-theory}
+
+\input{sections/01_introduction}
+\input{sections/02_recap}
+\input{sections/03_generating_function}
+\input{sections/04_geometric}
+\input{sections/05_quasi_stationary}
+\input{sections/06_burst_size}
+\input{sections/07_burst_time}
+\input{sections/08_conditional_means}
+\input{sections/09_several_founders}
+\input{sections/10_chained_transfer}
+\input{sections/11_bursting_budding}
+\input{sections/12_discussion}
+
+\FloatBarrier
+\begingroup
+\renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
+\renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
+\renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
+\input{sections/A_formula_table}
+\input{sections/B_verification_record}
+\input{sections/C_technical_derivations}
+\endgroup

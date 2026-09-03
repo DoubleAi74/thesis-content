@@ -1,0 +1,424 @@
+% Extracellular depletion: fixed removal --- plan \S3.3, "\S4".
+% Sources: 03_fixed_removal.tex:9 (moved here as the opening), :23-80,
+% :86-95, :99-125, :132-151, :157-158, :161-199, :201-214, :217-228,
+% :232-257.
+% Renames applied: theta -> \vartheta, R_0 -> \mathcal{R}(\vartheta),
+% \mathcal{K} -> \mathcal{M}, \mathcal{G} -> F(\vartheta), I_- -> b,
+% V_{inf} -> V_\infty, E(Y_t) -> E(W_t).
+% Corrections applied (plan \S5.1): (a) the smaller root at 03:205;
+% (b) the summation limit at 03:214, replaced by the exact complement;
+% (d) the two missing summands at 03:223-224; (e) Pr(r>=0) at 03:171.
+% Both \cancel constructions deleted.
+%
+% PRESERVED NEAR-VERBATIM, do not restyle (plan \S3.6, report item 2):
+%   the leading-edge passage at 03:88.
+
+\section{Extracellular depletion: fixed removal}
+\label{path:sec:removal}
+
+The second nonlinearity is extracellular, and it enters as an extension to
+the chained-rupture model of \cref{path:sec:chainedruptures}. The extension
+is one assumption, arising from the same argument of immune depletion: that
+following a burst release event, some defined fixed count of the agents is
+removed. From that assumption alone, the question of whether bursting
+strategies might be of fundamental advantage can be put to a calculation.
+
+\subsection{The playing field}
+\label{path:sec:playingfield}
+
+Consider again the concept of spatial drift, which for all its imperfection
+improves on the simpler dynamic of chained immediate transfer. Picture the
+playing field: a three-dimensional extracellular matrix populated by three
+types of agent --- replicative units, that is pathogen; host cells, here
+macrophages; and another type of immune-active cell, which we shall call
+simply \emph{killer cells}. This third type is able to eliminate units of
+pathogen on contact, being used up in the process: one-to-one encounters in
+which a killer cell removes a replicative agent and itself from play.
+
+To begin with, the extracellular matrix is populated evenly with target
+cells and killer cells, each group occupying the space at a uniform spatial
+density. Killer cells are smaller and more numerous than target cells, a
+greater number per unit volume. Dynamics within target cells are as
+understood in the birth--death--catastrophe process: the units of pathogen
+replicate and die within the cell until eventually rupture is caused and the
+load is released.
+
+In this model, movement is taken to be Brownian. An extracellular colony
+will drift from its burst location, spreading out and coming into contact
+with surrounding cells. Some will encounter target cells, others killer
+cells. The intention here is not to construct a full mathematical
+description of this game, which would be cumbersome and intractable; it can
+be simulated computationally, and that simulation is what supports the
+assumption the model is used to justify. Suppose that no new killer cells
+are introduced into the environment, so that pathogen movement and
+absorption occur on a shorter timescale than killer generation. Then, with
+greater burst sizes, each individual bacterium will have a smaller
+probability of being removed. Those at the leading edge, as it were,
+clearing the way for their comrades in the rear. \Cref{path:fig:loads} puts
+a large and a small release of that simulation side by side.
+
+\begin{figure}[htbp]
+    \centering
+    \setlength{\tabcolsep}{1.5pt}
+    \begin{tabular}{@{}cccc@{}}
+      & \multicolumn{3}{c}{\footnotesize time $\longrightarrow$} \\[1pt]
+      \rotatebox{90}{\footnotesize\itshape large load}
+      & \includegraphics[width=0.295\textwidth]{big1.png}
+      & \includegraphics[width=0.295\textwidth]{big2.png}
+      & \includegraphics[width=0.295\textwidth]{big3.png} \\
+      & {\footnotesize (a)} & {\footnotesize (b)} & {\footnotesize (c)} \\[3pt]
+      \rotatebox{90}{\footnotesize\itshape small load}
+      & \includegraphics[width=0.295\textwidth]{small1.png}
+      & \includegraphics[width=0.295\textwidth]{small2.png}
+      & \includegraphics[width=0.295\textwidth]{small3.png} \\
+      & {\footnotesize (d)} & {\footnotesize (e)} & {\footnotesize (f)} \\
+    \end{tabular}
+    \caption{Two runs of the same simulation differing in released number
+    alone; every rate is the same. Depletable extracellular immune factors
+    are consumed by the agents they remove, so a large load creates a safety
+    in numbers --- a ``flooding effect'' --- and the killers that act early
+    are not available later. The comparison to draw is between~(c) and~(f).
+    In~(c) the large load has cleared a patch of the killer field and
+    survivors remain inside it, poised on the surrounding host cells; in~(f)
+    the small load is exhausted before the field is, and nothing persists to
+    the next round of absorption and replication.}
+    \label{path:fig:loads}
+\end{figure}
+
+If free agents do tend to find a new host before long --- an assumption
+taken to its limit in the case of chained immediate transfer --- then this
+observation offers the basis of an approximate mathematical rule. Burst size
+and the number of pathogen killed in the process of transfer stand in some
+relation to one another, and across larger and larger bursts the casualty
+count should rise ever more slowly.
+Qualitatively this might be a logarithmic progression,
+\begin{equation}
+\vartheta(r)\;\sim\;\log(r+1),
+\label{path:eq:logremoval}
+\end{equation}
+where $r$ is a given burst size and $\vartheta$ the number of replicative
+agents removed by killer cells; the $+1$ simply makes the curve pass
+through the origin.
+
+\Cref{path:fig:logremoval} draws that curve, and its flatness is what the
+rest of the section idealises. It is reasonable to impose a \emph{fixed
+removal} following release, in which the number removed by killer cells is a
+specified constant regardless of burst size, except that if the burst size
+is smaller than that constant, all of the units are killed. Taking
+$\vartheta$ now to be that constant,
+\begin{equation}
+\text{removal} =
+\begin{cases}
+r, & r\le\vartheta,\\
+\vartheta, & r>\vartheta,
+\end{cases}
+\qquad\text{that is, } \min(r,\vartheta).
+\label{path:eq:fixedremoval}
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=\textwidth, height=0.66\textwidth,
+  axis lines=left,
+  xlabel={burst size $r$},
+  ylabel={casualties $\vartheta(r)$},
+  xmin=0, xmax=50, ymin=0, ymax=4.3,
+  xtick={0,10,20,30,40,50},
+  ytick={0,1,2,3,4},
+  tick label style={font=\footnotesize},
+  label style={font=\footnotesize},
+]
+\addplot[na1, very thick, domain=0:50, samples=200]{ln(x+1)};
+\end{axis}
+\end{tikzpicture}
+\caption{the saturating law \cref{path:eq:logremoval}}
+\label{path:fig:logremoval}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=\textwidth, height=0.66\textwidth,
+  axis lines=left,
+  xlabel={burst size $r$},
+  ylabel={removed},
+  xmin=0, xmax=20, ymin=0, ymax=5,
+  xtick={0,5,10,15,20},
+  ytick={3.5}, yticklabels={$\vartheta$},
+  tick label style={font=\footnotesize},
+  label style={font=\footnotesize},
+]
+\addplot[Rup2, dashed, thick, domain=0:20, samples=2]{3.5};
+\addplot[na1, very thick, domain=0:20, samples=400]{min(x,3.5)};
+\end{axis}
+\end{tikzpicture}
+\caption{the step idealisation \cref{path:eq:fixedremoval}}
+\label{path:fig:capped}
+\end{subfigure}
+\caption{The casualty count against burst size: the law the biology
+suggests, and the caricature the calculation uses. In~(a) the vertical axis
+is the number of agents killed, not a rate --- what falls as the burst grows
+is the killed \emph{fraction}, since the curve flattens while the burst size
+does not. Doubling a load of ten adds well under one casualty, which is the
+whole of the flooding intuition in one line. In~(b) that flatness is pushed
+to its limit: below the budget every agent dies, and above it the plateau at
+$\vartheta$ means a burst pays the same toll however large it is, so all the
+marginal yield survives. The reason for adopting the caricature is that it
+makes the replication ratio computable in closed form.}
+\label{path:fig:removal}
+\end{figure}
+
+\Cref{path:fig:capped} shows the idealisation against which the rest of the
+section works. Its efficacy rests on the expectation that the same
+qualitative dynamics are shared with logarithmic removal, or with whatever
+the actual relation turns out to be, provided it is of this sort. Two
+further assumptions are needed before the calculation can proceed, and both
+are restrictions rather than conveniences.
+
+\begin{remark}[Killer prevalence resets]
+\label{path:rem:reset}
+At the time of each rupture event the killer cell prevalence is assumed to
+have returned to its steady state and to be once again of uniform spatial
+distribution. This is what makes $\vartheta$ the same at every delivery. It
+requires the interval between ruptures to be long relative to the recovery
+of the effector population, whose turnover in an established infection is
+itself a modelled quantity \cite{ribeiro2002vdt}; where it is not, the
+budget paid at successive deliveries would be correlated, and the
+independence used below would fail.
+\end{remark}
+
+\begin{remark}[One target cell, or many]
+\label{path:rem:onetarget}
+The fixed-removal dynamic may be framed in the context of chained transfers,
+where all agents released have the same target cell to go to; or in a case
+where each successful pathogenic unit goes on to found an infection in a new
+target cell. Under the first framing the replication ratio would be the
+expected number of surviving released units \emph{per incident agent}. The
+second framing is taken here, so that the ratio counts newly infected target
+cells, which is what makes it comparable with the reproduction numbers of
+\ChPop{}.
+\end{remark}
+
+\subsection{The replication ratio}
+\label{path:sec:ratio}
+
+Take, then, the second option: each released agent goes on to found a new
+infection in a new target cell. The quantity of interest is the effective
+\emph{replication ratio} between target cell infections --- the expected
+number of newly infected target cells created by a host founded from one
+initial bacterium --- and because each surviving released agent infects a new
+host, that ratio is simply the expected number of survivors.
+
+Define $r$ as the outcome of a birth--death--catastrophe process with a
+single incident unit. We must choose whether to include outcomes that are
+zero through internal death, and it makes practical sense here not to ignore
+the cases $r=0$; with that choice
+\begin{equation}
+\ex{r}=\lim_{t\to\infty}\ex{W_t}=V_\infty,
+\label{path:eq:Er}
+\end{equation}
+the lifetime yield of \cref{bdc:eq:Vinf}. The letter $r$ is that of
+\ChDist{} as well: its $r_k$ is the load at the $k$th rupture of a chain
+(\cref{dist:eq:rklaw}), and the $r$ here is that chain's first term.
+
+The number surviving fixed removal is $\max(0,r-\vartheta)$, so the expected
+replication ratio is
+\begin{equation}
+\mathcal{R}(\vartheta) = \ex{\max(0,\,r-\vartheta)}.
+\label{path:eq:Rdef}
+\end{equation}
+This is not the $R_0$ of \ChPop{}, and \cref{path:sec:settled} states the
+relation between them; the change of letter is deliberate.
+
+Conditioning on whether the burst size exceeds the budget gives
+\begin{equation}
+\ex{\max(0,r-\vartheta)}
+= \bigl[\ex{r\mid r\ge\vartheta}-\vartheta\bigr]\pr{r\ge\vartheta},
+\label{path:eq:Rcond}
+\end{equation}
+the term for $r<\vartheta$ vanishing because the surviving count is then
+zero. Extracting $\ex{r\mid r\ge\vartheta}$ from the decomposition
+\[
+\ex{r}=V_\infty
+= \ex{r\mid r\ge\vartheta}\pr{r\ge\vartheta}
++ \ex{r\mid r<\vartheta}\pr{r<\vartheta}
+\]
+and cancelling $\pr{r<\vartheta}$ against the denominator inside
+$\ex{r\mid r<\vartheta}$ turns \cref{path:eq:Rcond} into a difference of two
+partial sums. This is analytically computable because the burst-size law is
+known: unconditionally, including the mass $b$ of realisations that never
+burst,
+\begin{equation}
+\pr{r=i}=\frac{\delta}{\lambda}\,a^{-i}\quad (i\ge1),
+\qquad
+\pr{r=0}=b,
+\label{path:eq:burstlaw}
+\end{equation}
+which is \cref{dist:eq:burstlaw}. Hence
+\begin{equation}
+\ex{\max(0,r-\vartheta)}
+= V_\infty-\mathcal{M}-\vartheta\bigl(1-F(\vartheta)\bigr),
+\label{path:eq:Rpartial}
+\end{equation}
+where
+\begin{equation}
+F(\vartheta)=\pr{r<\vartheta}=b+\sum_{i=1}^{\vartheta-1}\frac{\delta}{\lambda}a^{-i},
+\qquad
+\mathcal{M}=\sum_{i=1}^{\vartheta-1} i\,\frac{\delta}{\lambda}a^{-i}.
+\label{path:eq:FM}
+\end{equation}
+Because the formula $\pr{r=i}=(\delta/\lambda)a^{-i}$ does not apply at
+$i=0$, the sum for $F$ begins at $1$ and carries the separate term $b$ in
+front of it: that is the probability that the process ends in internal
+death, an output of zero.
+
+\subsubsection{The law is normalised, and the tail is free}
+\label{path:sec:normalisation}
+
+Before analysing \cref{path:eq:Rpartial} it is worth confirming that
+\cref{path:eq:burstlaw} is a probability distribution, since the two pieces
+come from different places. The probability that $r=0$ is $b$, the smaller
+root of the characteristic quadratic,
+\begin{equation}
+b=\eta-\sqrt{\eta^{2}-\frac{\mu}{\lambda}},
+\qquad
+\eta=\frac{\lambda+\mu+\delta}{2\lambda},
+\label{path:eq:broot}
+\end{equation}
+as fixed by \cref{bdc:lem:roots}, where $b<1<a$, $ab=\mu/\lambda$ and
+$a+b=(\lambda+\mu+\delta)/\lambda$. It remains to show that
+$b+\sum_{i\ge1}\pr{r=i}=1$, that is that
+\[
+\sum_{i=1}^{\infty}\frac{\delta}{\lambda}\lrb{\frac1a}^{i}=1-b .
+\]
+Using $\sum_{k\ge1}y^{k}=y/(1-y)$ for $|y|<1$, the left-hand side is
+$\frac{\delta}{\lambda}\cdot\frac{1/a}{1-1/a}$, so the claim is equivalent to
+\[
+\frac{\delta}{\lambda}=(1-b)(a-1)=(a+b)-ab-1,
+\]
+and substituting the two Vieta identities gives
+\[
+(a+b)-ab-1=\frac{\lambda+\mu+\delta}{\lambda}-\frac{\mu}{\lambda}-1
+=\frac{\delta}{\lambda},
+\]
+as required. The same identity delivers the upper tail with no further work:
+\begin{equation}
+1-F(\vartheta)=\pr{r\ge\vartheta}=(1-b)\,a^{-(\vartheta-1)},
+\label{path:eq:tail}
+\end{equation}
+which is exact for every integer $\vartheta\ge1$. The tail of the burst law
+is geometric, and \cref{path:eq:tail} is the fact from which the next
+subsection's closed form follows.
+
+\subsection{Analysis of proliferability}
+\label{path:sec:proliferability}
+
+The question is whether $\mathcal{R}(\vartheta)$ is greater or less than
+one, and if greater, by how much; and how that changes with $\delta$. Do
+larger burst sizes make an infection more viable? The geometric tail of
+\cref{path:eq:tail} already answers: a budget spent against a geometric
+law removes a fixed proportion of it rather than a fixed amount.
+
+\begin{proposition}[Fixed-removal replication ratio]
+\label{path:prop:ratio}
+For an integer removal budget $\vartheta\ge0$,
+\begin{equation}
+\mathcal{R}(\vartheta)=\ex{\max(0,\,r-\vartheta)}=V_\infty\,a^{-\vartheta}.
+\label{path:eq:R0}
+\end{equation}
+Each unit of removal costs the burst a factor $1/a$, independently of
+$\vartheta$, of $\mu$, and of everything about the burst-size law except
+$a$.
+\end{proposition}
+
+\begin{proof}
+The burst law \cref{path:eq:burstlaw} is geometric on $\{1,2,\dots\}$ with
+ratio $1/a$, hence memoryless above any integer threshold:
+\[
+\sum_{i>\vartheta}(i-\vartheta)\frac{\delta}{\lambda}a^{-i}
+=\frac{\delta}{\lambda}a^{-\vartheta}\sum_{k\ge1}k\,a^{-k}
+=a^{-\vartheta}\,\ex{r}
+=V_\infty a^{-\vartheta}. \qedhere
+\]
+\end{proof}
+
+Two consequences follow in one line each, and one restriction.
+
+\begin{corollary}[Threshold]
+\label{path:cor:threshold}
+$\mathcal{R}(\vartheta)>1$ if and only if
+$\vartheta<\vartheta^{\ast}:=\log V_\infty/\log a$. At
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$ this gives $\vartheta^{\ast}=44.13$; at
+$(1,0.5,1/3)$ it gives $\vartheta^{\ast}=1.71$.
+\end{corollary}
+
+\begin{corollary}[Why removal creates a threshold at all]
+\label{path:cor:whythreshold}
+$V_\infty>1$ for every admissible $(\lambda,\mu,\delta)$, so
+$\mathcal{R}(0)>1$ always. The subcritical regime exists only because of the
+removal.
+\end{corollary}
+
+\begin{remark}[Partial-sum expansion]
+\label{path:rem:partial}
+The same quantity expanded without memorylessness is
+\begin{equation}
+\ex{\max(0,r-\vartheta)}
+= V_\infty-\vartheta(1-b)
++ \frac{\delta}{\lambda}
+  \lrb{\frac{\frac1a\lrb{\vartheta-1-\vartheta\frac1a+\lrb{\frac1a}^{\vartheta}}}
+            {\lrb{1-\frac1a}^{2}}} ,
+\label{path:eq:Rintermediate}
+\end{equation}
+which follows from closing the sums in \cref{path:eq:FM} by the identities
+$\sum_{i=1}^{n-1}s^{i}=s(1-s^{n-1})/(1-s)$ and
+$\sum_{i=1}^{n-1}i\,s^{i}=s(1-ns^{n-1}+(n-1)s^{n})/(1-s)^{2}$. It is exact
+at integer $\vartheta$ and is recorded because
+\cref{path:app:verification} checks it independently of
+\cref{path:eq:R0}.
+\end{remark}
+
+\begin{remark}[Scope: $\vartheta$ is an integer]
+\label{path:rem:integer}
+The derivation sums to $\vartheta-1$ and so requires
+$\vartheta\in\mathbb{Z}_{\ge0}$. That is the honest reading in any case,
+since $\vartheta$ counts killed particles, and it is adopted as part of the
+model definition. For a real budget the corresponding quantity is
+$\ex{\max(0,r-\vartheta)}
+=a^{-\lceil\vartheta\rceil}\bigl(V_\infty+(\lceil\vartheta\rceil-\vartheta)L\bigr)$
+with $L=a(1-b)$, which reduces to \cref{path:eq:R0} exactly when $\vartheta$
+is an integer; \cref{path:app:verification} records its accuracy.
+\end{remark}
+
+The behaviour of \cref{path:eq:R0} in $\delta$ is drawn in
+\cref{path:fig:ratio}.
+The reading that matters for what follows is the geometry of the crossing:
+because $\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$ is a product of a
+term that grows as $\delta$ falls and a penalty that is exponential in the
+budget, an increase in the toll can always be answered by a large enough
+burst, and the exchange rate between the two is exactly one factor of $a$
+per unit of $\vartheta$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{ratio_removal.pdf}
+\caption{The replication ratio \cref{path:eq:R0} against $\delta$ at
+$\lambda=0.8$, $\mu=0$, for budgets $\vartheta=0$, $1$ and $2$, with
+$V_\infty$ dashed for reference throughout. In panel~(a) the two curves
+coincide, since at zero removal the surviving release is the whole release;
+that panel has no crossing, which is \cref{path:cor:whythreshold} drawn.
+Elsewhere the marked point is the crossing $\mathcal{R}=1$ of
+\cref{path:cor:threshold}, at $\delta=0.800$ and $\delta=0.494$: to the left
+of it the infection proliferates, to the right the removal extinguishes it.
+Each further unit of budget moves the crossing left, so a pathogen facing a
+heavier toll needs a lower catastrophe rate --- a larger burst --- to stay
+supercritical.}
+\label{path:fig:ratio}
+\end{figure}
+
+\FloatBarrier
