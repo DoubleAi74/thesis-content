@@ -1,6 +1,7 @@
 
 % Per-chapter appendices: numbered <chapter>.A, .B, ...
 \begingroup
+\omitfromtoc
 \renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
 \renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
 \renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
@@ -109,3 +110,4 @@ If instead the catastrophe rates vanish while our survival data are kept, \cref{
 
 \input{sections/app_killed_pgf}
 \endgroup
+\restoretoc

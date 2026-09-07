@@ -22,6 +22,7 @@
 \vspace{1em}
 
 \begingroup
+\omitfromtoc
 \renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
 \renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
 \renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
@@ -29,3 +30,4 @@
 \input{sections/B_public_good}
 \input{sections/C_characteristics}
 \endgroup
+\restoretoc

@@ -14,9 +14,11 @@
 \input{sections/06_discussion}
 
 \begingroup
+\omitfromtoc
 \renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
 \renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
 \renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
 \input{sections/A_verification}
 \input{sections/B_computational}
 \endgroup
+\restoretoc

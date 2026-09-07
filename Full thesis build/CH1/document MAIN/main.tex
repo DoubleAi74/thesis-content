@@ -47,6 +47,14 @@
 \newcommand{\ddt}[1]{\frac{\mathrm{d}#1}{\mathrm{d}t}}
 \newcommand{\pdx}[2]{\displaystyle\frac{\partial #1}{\partial #2}}
 
+% Thesis-wide organism shorthands and soft cross-chapter references.
+% \mextref/\Mextref resolve to \cref/\Cref inside the stitched thesis and
+% fall back to plain text when this chapter is compiled on its own.
+\newcommand{\ft}{\textit{F.~tularensis}}
+\newcommand{\yp}{\textit{Y.~pestis}}
+\providecommand{\mextref}[2]{\ifcsname r@#1\endcsname\cref{#1}\else#2\fi}
+\providecommand{\Mextref}[2]{\ifcsname r@#1\endcsname\Cref{#1}\else#2\fi}
+
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}

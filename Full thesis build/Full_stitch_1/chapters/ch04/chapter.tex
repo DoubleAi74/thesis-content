@@ -16,8 +16,10 @@
 \input{sections/08_what_comes_next}
 
 \begingroup
+\omitfromtoc
 \renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
 \renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
 \renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
 \input{sections/app_a_limits}
 \endgroup
+\restoretoc

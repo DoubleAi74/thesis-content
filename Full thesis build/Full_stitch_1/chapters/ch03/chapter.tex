@@ -1051,6 +1051,7 @@ across the subcritical interval.
 
 % Per-chapter appendices: numbered <chapter>.A, .B, ...
 \begingroup
+\omitfromtoc
 \renewcommand{\theHsection}{\thechapter.appendix.\Alph{section}}
 \renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
 \renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
@@ -1443,3 +1444,4 @@ $\mathrm{Var}\sim\mu^2$, so the limiting coefficient of variation tends to~$1$:
 near criticality the quasi-stationary population is large on the scale
 $\varepsilon^{-1}$, and of relative width comparable to its mean.
 \endgroup
+\restoretoc

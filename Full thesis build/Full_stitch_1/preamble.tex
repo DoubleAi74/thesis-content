@@ -46,6 +46,26 @@
 
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{2}
+% Drop appendix headings from the contents list; they remain in the chapter body.
+% (hyperref still writes \contentsline when tocdepth is lowered, so we
+%  silence addcontentsline for the toc file instead.)
+\makeatletter
+\newcommand{\omitfromtoc}{%
+  \global\let\savedaddcontentsline\addcontentsline
+  \gdef\addcontentsline##1##2##3{%
+    \def\stitch@tocarg{##1}%
+    \def\stitch@tocname{toc}%
+    \ifx\stitch@tocarg\stitch@tocname
+    \else
+      \savedaddcontentsline{##1}{##2}{##3}%
+    \fi
+  }%
+}
+\newcommand{\restoretoc}{%
+  \global\let\addcontentsline\savedaddcontentsline
+  \setcounter{tocdepth}{2}%
+}
+\makeatother
 \allowdisplaybreaks
 \setlength{\parindent}{1.2em}
 \setlength{\parskip}{0.15em}
@@ -191,6 +211,9 @@
 \newcommand{\fwd}[2]{#2}
 \providecommand{\mextref}[2]{%
   \ifcsname r@#1\endcsname\cref{#1}\else#2\fi}
+% Sentence-initial form of \mextref.
+\providecommand{\Mextref}[2]{%
+  \ifcsname r@#1\endcsname\Cref{#1}\else#2\fi}
 
 \newcommand{\openqs}[1]{%
 \paragraph{Open questions.}%

@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yersinia pestis Cellular Pathogenesis Model</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <style>
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #222;
+    overscroll-behavior-y: contain;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+}
+
+
+
+.sidebar {
+    width: 110px;
+    background-color: #1a1a1a;
+    color: white;
+    min-height: 100vh;
+    padding: 16px 12px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+.menu h2 {
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu ul li {
+    margin: 0.5em 0;
+}
+
+.menu ul li a {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.menu ul li a:hover,
+.menu ul li a.active {
+    color: #fff;
+    font-weight: bold;
+}
+
+.mainContent {
+    flex-grow: 1;
+    padding: 16px 40px 40px;
+    max-width: 1380px;
+    width: min(1380px, calc(100vw - 185px));
+    margin: 0 auto;
+}
+
+header h1 {
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 0.2em;
+}
+
+.subheading {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 1.5em;
+}
+
+.summary, .details {
+    margin-top: 2em;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.topFold {
+    margin-top: 0.7em;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.topFold .summary {
+    margin-top: 0;
+    flex: 1 1 320px;
+    padding-right: 34px;
+}
+
+.modelCanvas {
+    flex: 0 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+    touch-action: pan-y;
+}
+
+.canvasContainer {
+    margin-top: 1em;
+    border: 1px solid #ccc;
+    background: #eee;
+    height: 500px; /* or whatever your canvas requires */
+}
+
+footer {
+    margin-top: 3em;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+#YPModel {
+  position: absolute;     /* controls use this as their positioning parent */
+  top: 0;
+  left: 0;
+  width: 840px;
+  height: 550px;
+  transform-origin: top left;
+  display: block;
+}
+
+/* 2) Remove canvas’ inline baseline gap so the container hugs it cleanly */
+#YPModel canvas {
+  display: block;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* 3) (Optional) keep long UI from flowing under other text if you have other content */
+.modelCanvas .content {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.modelScaleFrame {
+  position: relative;
+  width: 840px;
+  height: 550px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+@media (max-width: 1320px) {
+  .mainContent {
+    width: auto;
+  }
+
+  .topFold {
+    flex-direction: column;
+  }
+
+  .topFold .summary {
+    width: 100%;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  body {
+    display: block;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .mainContent {
+    max-width: none;
+    padding: 16px 14px 24px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .modelCanvas {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+
+  .topFold .summary {
+    box-sizing: border-box;
+  }
+}
+</style>
+
+    <!-- Scripts for the simulation -->
+    
+    <script>// Flexible list of macrophage objects
+let macrophages; // arrays
+let neutrophils; 
+let extracellBacteriaA;
+let extracellBacteriaB;
+let bacterialImages;
+let macrophageImages;
+let initialN = 20; // initial number of macrophages
+let filled = 3; // number of macrophages that start with a Y. pestis bacterium
+
+
+// initial base rates
+let baI = 1; // birth of type a Y. pestis
+let muaI = 0.3; // death of type a
+let bbI = 0.8; // birth of type b Y. pestis
+let mubI = 0.7; // death of type b
+let gamI = 0.1; // transition from a to b
+let delI = 0.005; // macrophage rupture event
+let alphaIM = 2; // absorption rate initial mphs
+let alphaIN = 10; // absorption rate initial neuts
+// base rates
+let ba = baI; // birth of type a Y. pestis
+let mua = muaI; // death of type a
+let bb = bbI; // birth of type b Y. pestis
+let mub = mubI; // death of type b
+let gam = gamI; // transition from a to b
+let del = delI; // macrophage rupture event
+let alphaM = alphaIM; // absorption rate mphs
+let alphaN = alphaIN; // absorption rate neuts
+
+let activeWidth = 400; // width of box containing experiment dynamics
+let activeHeight = 400; // height of box containing experiment dynamics
+let margin = 10; // width of region surrounding active box
+
+let running = true;
+let fancyRendering = true;
+let dynamicRender = true;
+let entityCount;
+let entityCap = 3; 
+let totalEntities = 0;
+
+// keeps track of historical bacteria counts to make bar charts
+let historyBact = [];
+let histSumsBact = [];
+
+let historyLeuko = [];
+let histSumsLeuko = [];
+
+let bars = 25;
+
+// entity counts to inform process that limits rendering
+let extraACount;
+let extraBCount; 
+let intraACount;
+let intraBCount; 
+let MphCount;
+const MODEL_BASE_WIDTH = 840;
+const MODEL_BASE_HEIGHT = 550;
+
+
+function fitModelToViewport() {
+  const model = document.getElementById('YPModel');
+  const frame = document.querySelector('.modelScaleFrame');
+  const content = document.querySelector('.modelCanvas .content');
+  if (!model || !frame || !content) return;
+
+  const availableWidth = content.clientWidth;
+  if (!availableWidth) return;
+
+  const scale = Math.min(1, availableWidth / MODEL_BASE_WIDTH);
+  frame.style.width = (MODEL_BASE_WIDTH * scale) + 'px';
+  frame.style.height = (MODEL_BASE_HEIGHT * scale) + 'px';
+  model.style.transform = 'scale(' + scale + ')';
+}
+
+
+
+function lockControlsToContainer() {
+  const box = document.getElementById('YPModel');
+  if (!box) return;
+  // Make sure non-canvas p5 elements are absolute and use #YPModel as the offset parent
+  Array.from(box.children).forEach(el => {
+    if (el.tagName && el.tagName.toLowerCase() !== 'canvas') {
+      el.style.position = 'absolute';
+    }
+  });
+}
+
+
+function setup() {
+    
+    canvas = createCanvas(MODEL_BASE_WIDTH, MODEL_BASE_HEIGHT);
+    canvas.parent("YPModel");
+    canvas.style('touch-action', 'pan-y pinch-zoom');
+
+    // NEW: make the container a fixed anchor for everything
+  const Y = document.getElementById('YPModel');
+  if (Y) {
+    Y.style.position = 'absolute';
+    Y.style.display  = 'block';
+    Y.style.width    = MODEL_BASE_WIDTH + 'px';
+    Y.style.height   = MODEL_BASE_HEIGHT + 'px';
+  }
+    
+    initiateModel();
+    initiateControls();  
+
+    // NEW: ensure every control is absolute inside #YPModel
+  lockControlsToContainer();
+  fitModelToViewport();
+  window.addEventListener('resize', fitModelToViewport);
+}
+
+
+
+
+
+function draw() {
+    // gets rates from user controls
+    pullRates();
+    // draws rectangular back panals
+    displayBackPanels(); 
+
+    if (running) {
+        runModel();
+    }
+
+    // sets up the counting of entities for puropses including the functioning of a render cap
+    initialiseEntityCounts();
+    // renders moving components of model: macrophages, extracellular bacteria etc
+    displayModel();
+    // draws boarder around simultion
+    displayModelTrim();
+    // records the state of the model every 20 frames for the drawing of bar charts 
+    makeRecordForBarCharts();
+    // reduces the number of entities that are displayed when the framerate dips below 25
+    dynamicRendering();
+    // displayes model history in bar charts
+    drawGraphs();
+    drawSliderLabels();   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+    <script>
+
+
+class Macrophage {
+   
+    constructor(loc,  vel,  r,  a,  b) {
+        this.effectiveRates = []; // rates of events modified to account for number of bacteria present 
+        this.death = false;
+        let wait; // how many frames should be waited until next event in Gillespie algorithm  
+        let rateSum; // sum of effective rates
+
+        this.type = 'macrophage';
+        this.location = loc;
+        this.velocity = vel;
+        this.acceleration = createVector(0, 0);
+        this.radius = r; 
+        this.YPa = a; // initial number of type a bacteria
+        this.YPb = b; // initial type of type b bacteria
+        this.multiA = 1;
+        this.multiB = 1;
+        this.updateRates(); // changes rates accoring to bacteria present
+        this.getWaitTime(); // gets initial wait time for Gillespie algorithm
+        this.maxVel = 0.15;
+        //for perlin noise loops that form irregular macrophage shape
+        this.zoff = random(1000); 
+        this.phase = random(1000);
+        this.xoff2 = random(10000);
+        this.noiseMax = 3; // vary for more or less crumpled shapes
+        this.render = true;
+    };
+     
+
+    update() {
+        if (fancyRendering) {
+          this.movementNoise();
+        }
+
+        this.velocity.add(this.acceleration); // used to repel other macrophages
+        if (this.velocity.mag() > this.maxVel) {
+            this.velocity.setMag(this.maxVel);
+        }
+        
+        this.location.add(this.velocity); // moves macrophage across screen
+        
+        // manages Gillespie algorithm
+        this.gillespie();
+
+        // for perlin noise loops that form iregular macrophage shape
+        this.phase += 0.0015;
+        this.zoff += 0.005;
+        this.xoff2 += 0.01;
+
+        if (this.radius < 30) {
+          this.radius = 0.1 * this.YPa + 25;
+        }
+        if (this.noiseMax > 1) {
+            this.noiseMax = -0.0133 * this.YPa + 3;
+        }
+        
+    }
+    
+
+    gillespie() {    
+      if (this.wait == 0) {
+          // if the macrophage can host an event, proceed with Gillespie algorithm
+          if (this.rateSum != 0) { 
+              
+              // choose and execute a single event (choice of which event to execute is based on respective associated effective rates)   
+              this.chooseAndExecute();
+          }
+          // decide how many frames to wait until next event is executed
+          this.getWaitTime();
+      } else {
+          // counts down wait each inactive frame
+          this.wait -= 1;
+      } 
+    }
+    
+
+    getWaitTime() {
+      let slowDownFactor = 200; // multiplies with outputed wait time to make animation appear reasonable (would be too fast otherwise)
+      // standard Gillespie algorithm wait time calculation
+      let U = random(1);
+      let dt;
+      if (this.rateSum != 0) {
+        dt = -log(U)/this.rateSum;
+      } else {
+        // to kickstart the process again if all the rates have been set to 0
+        dt = 0.1;
+        this.updateRates();
+      }
+      
+      // updates wait time variable appropriately
+      this.wait = floor(slowDownFactor * dt);
+    }
+    
+
+    chooseAndExecute() {     
+      // chooses which event to execute based on effective rates
+      let event = weightedChoice(this.effectiveRates);
+      // carries out execution of chosen event
+      this.execute(event);
+
+      // changes multipliers to augment the Gillespie algorithm 
+      //this.setMultipliers() 
+
+      // updates rates with respect to new situation (for different number of bacteria etc)
+      this.updateRates();
+    }
+
+
+    // not in use
+    setMultipliers() {
+      // augments the Gillespie algorithms functioning to boost operating speed
+      // works by simultaneously reducing event rates and increasing event effects by a common factor 
+      // factor scaled by number of present bacteria
+      this.multiA = floor(this.YPa/40 + 1);
+      this.multiB = floor(this.YPb/40 + 1);
+  
+    }
+    
+
+    execute(event) {
+      // executes appropriate event function
+      if (event == 0) {
+        // divide A
+        this.YPa += 1*this.multiA;   
+      } else if (event == 1) {
+        // kill A
+        this.YPa -= 1*this.multiA;
+      } else if (event == 2) {
+        // divide B
+        this.YPb += 1*this.multiB;
+      } else if (event == 3) {
+        // kill B
+        this.YPb -= 1*this.multiB;
+      } else if (event == 4) {
+        // transition
+        this.YPa -= 1*this.multiA;
+        this.YPb += 1*this.multiA;
+      } else if (event == 5) {
+        // apoptosis
+        this.death = true;
+      }
+      // bacterial absorption is managed separately
+    }
+    
+    
+    updateRates() {
+      // recalculates rates based on YPa & YPb
+      this.effectiveRates[0] = this.YPa*ba/this.multiA; // birth type a (all adjusted for quantity of resident bacteria)
+      this.effectiveRates[1] = this.YPa*mua/this.multiA; // death type a
+      this.effectiveRates[2] = this.YPb*bb/this.multiB; // birth type b
+      this.effectiveRates[3] = this.YPb*mub/this.multiB; // death type b
+      this.effectiveRates[4] = this.YPa*gam/this.multiA; // transition a to b
+      this.effectiveRates[5] = (this.YPa+this.YPb)*del; // rupture
+      this.rateSum = sum(this.effectiveRates);  
+    }
+    
+    
+    display() { 
+      // main circle
+      fill(80,200,80);
+      strokeWeight(2);
+      stroke(0,50,0);
+      if (fancyRendering) {
+        let radMargin = 0.4;
+        let rmax = this.radius*(1 + radMargin);
+        let rmin = this.radius*(1 - radMargin);
+        this.drawPerlinLoop(this.location.x, this.location.y, rmin, rmax);
+      } else {
+        circle(this.location.x, this.location.y, this.radius*2); 
+      }
+      /* // min/max wobble guide
+      strokeWeight(0.5);
+      stroke(200,0,0);
+      noFill();
+      circle(this.location.x, this.location.y, rmax*2); 
+      circle(this.location.x, this.location.y, rmin*2); 
+      */
+      // smaller circles
+      noStroke();
+      let alph = 0.3;
+      let op = 255;
+      if (fancyRendering) {
+        op = 200;
+      }
+      fill(50,50,180,op);
+      ellipse(this.location.x, this.location.y - this.radius/3, this.radius/2 * ( 1 + alph * (str(this.YPa).length - 1)), this.radius/2);
+      fill(180,50,50,op);
+      ellipse(this.location.x, this.location.y + this.radius/3, this.radius/2 * ( 1 + alph * (str(this.YPb).length - 1)), this.radius/2);   
+      // text
+      textSize(10);
+      textAlign(CENTER, CENTER);
+      if (fancyRendering) {
+        fill(255,200);
+      } else {
+        fill(255,200);
+      }
+      text(str(this.YPa), this.location.x, this.location.y   - this.radius/3);
+      text(str(this.YPb), this.location.x, this.location.y   + this.radius/3);  
+    }
+    
+    
+    checkApoptosis() { 
+      if (this.death) {     
+        return true;
+      }
+      return false;
+    }
+    
+    
+    checkEdges() {
+      let repulseConst = 0.005;
+      if (this.location.x > margin + activeWidth-this.radius) {
+        this.velocity.x -= repulseConst;
+      } else if (this.location.x < margin + this.radius) {
+        this.velocity.x += repulseConst;
+      } else if (this.location.y > margin + activeHeight-this.radius) {
+        this.velocity.y -= repulseConst;
+      } else if (this.location.y < margin + this.radius) {
+        this.velocity.y += repulseConst;
+      }
+    }
+
+
+    checkCollision(other) {
+      if (this.render && other.render) {
+          let repulsConst = 0.0001; // controls level of overlapping in a collision 
+        // Get distances between the balls components
+        let distanceVect = p5.Vector.sub(other.location, this.location);
+        // Calculate magnitude of the vector separating the balls
+        let distanceVectMag = distanceVect.mag();
+        // Minimum distance before they are touching
+        let minDistance = this.radius + other.radius;
+        if (distanceVectMag < minDistance) {
+            // quantity of overlap between macrophages
+            let overlap = minDistance - distanceVectMag;     
+            let repulseVec = distanceVect;
+            // magnitide of repulsion scales linearly with the measure of overlap 
+            repulseVec.setMag(pow(overlap, 2) * repulsConst); 
+            
+            // modifies "other" macrophage acceleration to cause repulsion effect
+            other.acceleration.add(repulseVec);
+            repulseVec.mult(-1);
+            // modifies "this" macrophage acceleration to cause repulsion effect
+            this.acceleration.add(repulseVec);
+        } 
+      }   
+    }
+
+    
+    checkOverlap(locOther, rOther) {
+      let d = dist(locOther.x, locOther.y, this.location.x, this.location.y);
+      if (d < rOther + this.radius ) { 
+        return true;
+      } else {
+        return false; 
+      }
+    }
+    
+    
+    drawPerlinLoop(locX, locY, minRad, maxRad) {
+        push();
+        translate(locX, locY);
+        beginShape();
+        for (let a = 0; a < TWO_PI; a += radians(10)) {
+          let xoff = map(cos(a + this.phase), -1, 1, 0, this.noiseMax);
+          let yoff = map(sin(a + this.phase), -1, 1, 0, this.noiseMax);
+          let r = map(noise(xoff, yoff, this.zoff), 0, 1, minRad, maxRad);
+          let x = r * cos(a);
+          let y = r * sin(a);
+          vertex(x, y);
+        }
+        endShape(CLOSE);
+        pop();
+    } 
+
+
+    movementNoise() {
+        let theta = map(noise(this.xoff2), 0, 1, -200*PI, 200*PI);
+        let ra = 0.0001;
+        let x = ra * cos(theta);
+        let y = ra * sin(theta);
+        let v = createVector(x,y);
+        this.acceleration.add(v);
+      
+    }   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class MacrophageImage {
+   
+  constructor(loc,  vel,  r, z, p, x2) {
+      this.location = loc;
+      this.velocity = vel;
+      this.acceleration = createVector(0, 0);
+      this.radius = r; 
+      this.maxVel = 0.15;
+      //for perlin noise loops that form irregular macrophage shape
+      this.zoff = z; 
+      this.phase = p;
+      this.xoff2 = x2;
+      this.noiseMax = 3; // vary for more or less crumpled shapes
+      this.opacity = 200;   
+  };
+   
+  update() {
+      this.movementNoise();
+      
+      this.location.add(this.velocity); // moves macrophage across screen
+
+      // for perlin noise loops that form iregular macrophage shape
+      this.phase += 0.0015;
+      this.zoff += 0.005;
+      this.xoff2 += 0.01;
+
+
+      let step = 4;
+      if (this.radius > 20) {
+        this.radius -= 10/800 * pow(step , this.opacity/80);
+      }
+      if (this.noiseMax < 3.5) {
+        this.noiseMax += step * 3/100; 
+      }
+      this.opacity -= step;    
+  }
+
+  
+  display() { 
+    // main circle
+    fill(100,200,100,this.opacity);
+    noStroke();
+    //circle(this.location.x, this.location.y, this.radius*2); 
+    let radMargin = 0.6;
+    let rmax = this.radius*(1 + radMargin);
+    let rmin = this.radius*(1 - radMargin);
+    this.drawPerlinLoop(this.location.x, this.location.y, rmin, rmax);
+    }
+  
+
+  checkEdges() {
+    let repulseConst = 0.005;
+    if (this.location.x > margin + activeWidth-this.radius) {
+      this.velocity.x -= repulseConst;
+    } else if (this.location.x < margin + this.radius) {
+      this.velocity.x += repulseConst;
+    } else if (this.location.y > margin + activeHeight-this.radius) {
+      this.velocity.y -= repulseConst;
+    } else if (this.location.y < margin + this.radius) {
+      this.velocity.y += repulseConst;
+    }
+  }
+
+
+  drawPerlinLoop(locX, locY, minRad, maxRad) {
+      push();
+      translate(locX, locY);
+      beginShape();
+      for (let a = 0; a < TWO_PI; a += radians(10)) {
+        let xoff = map(cos(a + this.phase), -1, 1, 0, this.noiseMax);
+        let yoff = map(sin(a + this.phase), -1, 1, 0, this.noiseMax);
+        let r = map(noise(xoff, yoff, this.zoff), 0, 1, minRad, maxRad);
+        let x = r * cos(a);
+        let y = r * sin(a);
+        vertex(x, y);
+      }
+      endShape(CLOSE);
+      pop();
+  } 
+
+
+  movementNoise() {
+      let theta = map(noise(this.xoff2), 0, 1, -200*PI, 200*PI);
+      let ra = 0.0001;
+      let x = ra * cos(theta);
+      let y = ra * sin(theta);
+      let v = createVector(x,y);
+      this.acceleration.add(v);
+
+      this.velocity.add(this.acceleration); // used to repel other macrophages
+      if (this.velocity.mag() > this.maxVel) {
+          this.velocity.setMag(this.maxVel);
+      } 
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// very similar to Macrophage class (lots of sub-optimally repeted code)
+class Neutrophil {
+   
+  constructor(loc,  vel,  r) {
+      this.effectiveRates = []; // rates of events modified to account for number of bacteria present 
+      this.death = false;
+      let wait; // how many frames should be waited until next event in Gillespie algorithm  
+      let rateSum; // sum of effective rates
+
+      this.type = 'neutrophil';
+      this.location = loc;
+      this.velocity = vel;
+      this.acceleration = createVector(0, 0);
+      this.radius = r; 
+      this.YPa = 0; // initial number of type a bacteria
+
+      this.updateRates(); // changes rates accoring to bacteria present
+      this.getWaitTime(); // gets initial wait time for Gillespie algorithm
+      this.maxVel = 0.15;
+      //for perlin noise loops that form irregular macrophage shape
+      this.zoff = random(1000); 
+      this.phase = random(1000);
+      this.xoff2 = random(10000);
+      this.noiseMax = 5; // vary for more or less crumpled shapes
+      this.render = true;
+
+      this.neutBirth = 0.5;
+      this.neutDeath = 1;
+      this.neutRupt = 0.001;
+  };
+   
+
+  update() {
+      if (fancyRendering) {
+        this.movementNoise();
+      }
+      this.velocity.add(this.acceleration); // used to repel other macrophages
+      if (this.velocity.mag() > this.maxVel) {
+          this.velocity.setMag(this.maxVel);
+      }
+      
+      this.location.add(this.velocity); // moves macrophage across screen
+      
+      // manages Gillespie algorithm
+      this.gillespie();
+
+      // for perlin noise loops that form iregular macrophage shape
+      this.phase += 0.0015;
+      this.zoff += 0.005;
+      this.xoff2 += 0.01;
+
+      if (this.radius < 30) {
+        this.radius = 0.1 * this.YPa + 25;
+      }
+      if (this.noiseMax > 1) {
+          this.noiseMax = -0.0133 * this.YPa + 3;
+      }   
+  }
+  
+
+  gillespie() {    
+    if (this.wait == 0) {
+        // if the macrophage can host an event, proceed with Gillespie algorithm
+        if (this.rateSum != 0) { 
+            
+            // choose and execute a single event (choice of which event to execute is based on respective associated effective rates)   
+            this.chooseAndExecute();
+        }
+        // decide how many frames to wait until next event is executed
+        this.getWaitTime();
+    } else {
+        // counts down wait each inactive frame
+        this.wait -= 1;
+    } 
+  }
+  
+
+  getWaitTime() {
+    let slowDownFactor = 200; // multiplies with outputed wait time to make animation appear reasonable (would be too fast otherwise)
+    // standard Gillespie algorithm wait time calculation
+    let U = random(1);
+    let dt;
+    if (this.rateSum != 0) {
+      dt = -log(U)/this.rateSum;
+    } else {
+      // to kickstart the process again if all the rates have been set to 0
+      dt = 0.1;
+      this.updateRates();
+    }
+    
+    // updates wait time variable appropriately
+    this.wait = floor(slowDownFactor * dt);
+  }
+  
+
+  chooseAndExecute() { 
+    // chooses which event to execute based on effective rates
+    let event = weightedChoice(this.effectiveRates);
+    // carries out execution of chosen event
+    this.execute(event);
+
+    // updates rates with respect to new situation (for different number of bacteria etc)
+    this.updateRates();
+  }
+
+ 
+  execute(event) {
+    // executes appropriate event function
+    if (event == 0) {
+      // divide A
+      this.YPa += 1;
+    } else if (event == 1) {
+      // kill A
+      this.YPa -= 1;
+    } else if (event == 2) {
+      // divide B
+      this.YPb += 1;
+    } else if (event == 3) {
+      // kill B
+      this.YPb -= 1;
+    } else if (event == 4) {
+      // transition
+      this.YPa -= 1;
+      this.YPb += 1;
+    } else if (event == 5) {
+      // apoptosis
+      this.death = true;
+    }
+    // bacterial absorption is managed separately
+  }
+  
+  
+  updateRates() {
+    // recalculates rates based on YPa 
+    this.effectiveRates[0] = this.YPa*this.neutBirth; // birth type a (all adjusted for quantity of resident bacteria)
+    this.effectiveRates[1] = this.YPa*this.neutDeath; // death type a
+    this.effectiveRates[2] = (this.YPa)*this.neutRupt; // rupture
+    
+    this.rateSum = sum(this.effectiveRates); 
+  }
+  
+  
+  display() { 
+    // main circle
+    fill(80,200,200);
+    strokeWeight(2);
+    stroke(0,50,0);
+    if (fancyRendering) {
+      let radMargin = 0.4;
+      let rmax = this.radius*(1 + radMargin);
+      let rmin = this.radius*(1 - radMargin);
+      this.drawPerlinLoop(this.location.x, this.location.y, rmin, rmax);
+    } else {
+      circle(this.location.x, this.location.y, this.radius*2); 
+    }
+
+    // smaller circles
+    noStroke();
+    let alph = 0.3;
+    let op = 255;
+    if (fancyRendering) {
+      op = 200;
+    }
+    fill(50,50,180,op);
+    ellipse(this.location.x, this.location.y, this.radius/2 * ( 1 + alph * (str(this.YPa).length - 1)), this.radius/2);
+    
+    // text
+    textSize(10);
+    textAlign(CENTER, CENTER);
+    if (fancyRendering) {
+      fill(255,200);
+    } else {
+      fill(255,200);
+    }
+    text(str(this.YPa), this.location.x, this.location.y );
+  }
+
+
+  checkApoptosis() { 
+    if (this.death) {     
+      return true;
+    }
+    return false;
+  }
+  
+  
+  checkEdges() {
+    let repulseConst = 0.005;
+    if (this.location.x > margin + activeWidth-this.radius) {
+      this.velocity.x -= repulseConst;
+    } else if (this.location.x < margin + this.radius) {
+      this.velocity.x += repulseConst;
+    } else if (this.location.y > margin + activeHeight-this.radius) {
+      this.velocity.y -= repulseConst;
+    } else if (this.location.y < margin + this.radius) {
+      this.velocity.y += repulseConst;
+    }
+  }
+
+
+  checkCollision(other) {
+    if (this.render && other.render) {
+        let repulsConst = 0.0001; // controls level of overlapping in a collision 
+      // Get distances between the balls components
+      let distanceVect = p5.Vector.sub(other.location, this.location);
+      // Calculate magnitude of the vector separating the balls
+      let distanceVectMag = distanceVect.mag();
+      // Minimum distance before they are touching
+      let minDistance = this.radius + other.radius;
+      if (distanceVectMag < minDistance) {
+          // quantity of overlap between macrophages
+          let overlap = minDistance - distanceVectMag;     
+          let repulseVec = distanceVect;
+          // magnitide of repulsion scales linearly with the measure of overlap 
+          repulseVec.setMag(pow(overlap, 2) * repulsConst); 
+          
+          // modifies "other" macrophage acceleration to cause repulsion effect
+          other.acceleration.add(repulseVec);
+          repulseVec.mult(-1);
+          // modifies "this" macrophage acceleration to cause repulsion effect
+          this.acceleration.add(repulseVec);
+      } 
+    }   
+  }
+
+  
+  checkOverlap(locOther, rOther) {
+    let d = dist(locOther.x, locOther.y, this.location.x, this.location.y);
+    if (d < rOther + this.radius ) { 
+      return true;
+    } else {
+      return false; 
+    }
+  }
+  
+  
+  drawPerlinLoop(locX, locY, minRad, maxRad) {
+      push();
+      translate(locX, locY);
+      beginShape();
+      for (let a = 0; a < TWO_PI; a += radians(10)) {
+        let xoff = map(cos(a + this.phase), -1, 1, 0, this.noiseMax);
+        let yoff = map(sin(a + this.phase), -1, 1, 0, this.noiseMax);
+        let r = map(noise(xoff, yoff, this.zoff), 0, 1, minRad, maxRad);
+        let x = r * cos(a);
+        let y = r * sin(a);
+        vertex(x, y);
+      }
+      endShape(CLOSE);
+      pop();
+  } 
+
+
+  movementNoise() {
+      let theta = map(noise(this.xoff2), 0, 1, -200*PI, 200*PI);
+      let ra = 0.0001;
+      let x = ra * cos(theta);
+      let y = ra * sin(theta);
+      let v = createVector(x,y);
+      this.acceleration.add(v);
+  } 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+    <script>
+
+class YPestis {
+   
+    constructor(loc, vel, typ) {
+        this.location = loc;
+        this.velocity = vel;
+        this.type = typ;   
+        this.radius = 3;
+        this.waitsM = []; //count downs to absorption by particular macrophages
+        this.waitsN = [];
+        this.overlappingMphs = []; // macrophages that are overlaped with (correspond to wait times)
+        this.overlappingNeuts = [];
+        this.absorbed = false;
+    }
+    
+
+    update() {
+        if (fancyRendering) {
+            this.velocityNoise(); // creates a josstling element to movement 
+        }      
+        this.location.add(this.velocity); // moves macrophage across screen   
+    }
+
+
+    checkAbsorbed() {
+        this.handleAbsorptionMphs(); // manages potential absorptions 
+        this.handleAbsorptionNeuts();  
+    }
+
+
+    bigStep() {
+        let bigMove = createVector(this.velocity.x, this.velocity.y).mult(60);
+        this.location.add(bigMove);
+        this.checkEdges();
+    }
+    
+
+    instantiateLeuko(leuko) {
+      /* (same as in macrophage Gilespie calculations) multiplies with outputed
+       wait time to make animation appear reasonable (would be too fast otherwise) */
+      let slowDownFactor = 200;  
+      // standard Gillespie algorithm wait time calculation
+      let U = random(1);
+      let absorbRate;
+      if (leuko.type == 'macrophage') {
+        
+        absorbRate = alphaM;
+      } else {
+        absorbRate = alphaN;
+      }
+      let wait = -log(U)/absorbRate;
+      
+      if (leuko.type == 'macrophage') {
+        // instantiates wait time variable 
+        this.waitsM.push(floor(slowDownFactor * wait));
+        
+        // links relevant macrophage
+        this.overlappingMphs.push(leuko);
+      } else {
+        this.waitsN.push(floor(slowDownFactor * wait));
+        this.overlappingNeuts.push(leuko);
+      } 
+    }
+
+
+    handleAbsorptionMphs() {
+      // code to manage potential absorptions
+      if (this.waitsM.length > 0) {
+        for (let i = this.waitsM.length - 1; i >= 0; i--) {
+            let m = this.overlappingMphs[i];
+            if (m.checkOverlap(this.location, this.radius)) { // macrophage still overlapping
+                if (this.waitsM[i] == 0) { // countdown timer has finished
+                    // initiate absorption event
+                    m.YPa++;
+                    m.updateRates();
+                    m.getWaitTime();  
+                    if (fancyRendering) {
+                        // handles absorption animation
+                        bacterialImages.push(new YPImage(this.location, this.velocity, this.type, m));
+                    }      
+                    // taggs this bacteria for removal
+                    this.absorbed = true
+                } else { // countdown timer has not finsihed
+                    this.waitsM[i]--;
+                }
+
+            } else { // macrophage no longer overlapping
+                this.overlappingMphs.splice(i,1);
+                this.waitsM.splice(i,1);
+            }
+        }
+      }
+    }
+
+
+    handleAbsorptionNeuts() {
+        // code to manage potential absorptions
+        if (this.waitsN.length > 0) {
+          for (let i = this.waitsN.length - 1; i >= 0; i--) {
+              let n = this.overlappingNeuts[i];
+              if (n.checkOverlap(this.location, this.radius)) { // macrophage still overlapping
+                  if (this.waitsN[i] == 0) { // countdown timer has finished
+                      // initiate absorption event
+                      n.YPa++;
+                      n.updateRates();
+                      n.getWaitTime();  
+                      if (fancyRendering) {
+                          // handles absorption animation
+                          bacterialImages.push(new YPImage(this.location, this.velocity, this.type, n));
+                      }      
+                      // taggs this bacteria for removal
+                      this.absorbed = true
+                  } else { // countdown timer has not finsihed
+                      this.waitsN[i]--;
+                  }
+  
+              } else { // macrophage no longer overlapping
+                  this.overlappingNeuts.splice(i,1);
+                  this.waitsN.splice(i,1);
+              }
+          }
+        }
+    }
+
+
+    display() { 
+        let alph;
+        if (fancyRendering) {
+            if (this.overlappingMphs.length == 0) {
+                alph = 200;
+            } else {
+                alph = 150;
+            }  
+        } else {
+            alph = 255;
+        }
+           
+        // blue circles
+        if (this.type == 'a') {
+            fill(100,100,200, alph);
+            stroke(50,50,150, alph);
+        // red circles
+        } else if (this.type == 'b') {
+            fill(200,100,100, alph);
+            stroke(150,50,50, alph);
+        }
+        strokeWeight(1);
+        circle(this.location.x, this.location.y, this.radius*2);   
+    }
+
+    velocityNoise() {
+        let nudgeDir = random(-2*PI, 2*PI);
+        let nudgeMag = 0.1;
+        this.velocity.add(createVector(nudgeMag * cos(nudgeDir), nudgeMag * sin(nudgeDir)));
+        if (this.velocity.mag() > 0.6) {
+            this.velocity.mult(0.9);
+        }
+    }
+
+
+    checkEdges() {
+        if (this.location.x > margin + activeWidth + this.radius) {
+            this.location.x = margin - this.radius;
+        } else if (this.location.x < margin - this.radius) {
+            this.location.x = margin + activeWidth + this.radius;
+        } else if (this.location.y > margin + activeHeight +this.radius) {
+            this.location.y = margin - this.radius;
+        } else if (this.location.y < margin - this.radius) {
+            this.location.y = margin + activeHeight + this.radius;
+        }
+    }
+}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class YPImage {
+   
+    constructor(loc, vel, typ, macrophage) {
+        this.location = loc;
+        this.velMph = macrophage.velocity;
+        this.type = typ;   
+        this.radius = 3;
+        this.opacity = 250;      
+    }
+    
+    
+    update() {  
+        this.location.add(this.velMph); // moves bacterial image with macrophage 
+        this.opacity -= 15;
+    }
+    
+
+    display() { 
+        let pertMag = random(0.5);
+        let pertAng = random(-2*PI, 2*PI);
+        // blue circles
+        if (this.type == 'a') {
+            fill(100,100,200, this.opacity);
+            stroke(50,50,150, this.opacity);
+        // red circles
+        } else if (this.type == 'b') {
+            fill(200,100,100, this.opacity);
+            stroke(150,50,50, this.opacity);
+        }
+        strokeWeight(1);
+        circle(this.location.x + pertMag*cos(pertAng), this.location.y + pertMag*sin(pertAng), this.radius*2);   
+    }  
+}</script>
+    <script>
+
+function initiateModel() {
+    macrophages = [];
+    neutrophils = [];
+    extracellBacteriaA = [];
+    extracellBacteriaB = [];
+    bacterialImages = [];
+    macrophageImages = []; 
+    historyBact = [];
+    histSumsBact = [];
+    historyLeuko = [];
+    histSumsLeuko = [];
+    
+    initiateMacrophages()
+}
+
+
+function initialiseEntityCounts() {
+    extraACount = extracellBacteriaA.length;
+    extraBCount = extracellBacteriaB.length;
+    intraACount = 0;
+    intraBCount = 0;
+    MphCount = macrophages.length;
+    NutCount = neutrophils.length; 
+
+    entityCount = 0;
+    totalEntities = extraACount + extraBCount + MphCount;
+    entityCap = floor(pow(renderCapSlider.value(), 2));
+}
+
+
+// Model Running
+
+function runModel() {
+
+    runMacrophages();
+    runNeutrophils();
+    runBacteria();
+    runBactImages()
+    runMphImages();
+}
+
+
+// operates the dynamics of macrophages in the simulation
+function runMacrophages() {
+    
+    let toRemove = [];
+    // updates the position and activity of macrophages
+    for (let i = 0; i < macrophages.length; i++) {
+        let m = macrophages[i];
+        m.update();     // changes position according to velocity and manages the Gillespie algorithm
+        m.checkEdges(); // deals with edge bouncing where necessary
+    
+        // records macrophages that have died, until the end of this loop, after which, they are removed
+        if (m.checkApoptosis()) {
+            toRemove.push(i);
+        }
+    }
+
+    // removes macrophages that are 'tagged' to die
+    // and releases resident intracellular bacteria 
+    for (let index of toRemove) {
+        let deadMacrophage = macrophages[index];
+        // Y. pestis bacteria to release into the extracellular enviroment
+        let dml = deadMacrophage.location;
+        let dmv = deadMacrophage.velocity;
+        let dmr = deadMacrophage.radius;
+        let YPa = deadMacrophage.YPa;
+        let YPb = deadMacrophage.YPb;
+        
+        // generates bacterial release
+        for (let i = 0; i < YPa + YPb; i++) {
+            let rad = random(dmr);
+            let theta = random(2 * PI);
+            let vSpan = 0.4;
+            
+            let l = createVector(dml.x + rad*cos(theta), dml.y + rad*sin(theta));
+            let v = createVector(dmv.x + random(-vSpan, vSpan), dmv.y + random(-vSpan, vSpan)); // can add randomness if wanted
+              
+            if (i < YPa) {
+                extracellBacteriaA.push(new YPestis(l, v, 'a'));
+            } else {
+                extracellBacteriaB.push(new YPestis(l, v, 'b'));
+            }
+        }
+        if (fancyRendering) {
+            macrophageImages.push(new MacrophageImage(dml, dmv, dmr, deadMacrophage.zoff, deadMacrophage.phase, deadMacrophage.xoff2));
+        }  
+    }
+    for (let index of toRemove) {
+        macrophages.splice(index, 1);
+    }
+
+
+    // implements colisions between macrophages
+    for (let i = 0; i < macrophages.length; i++) {
+        thisMph = macrophages[i];
+        thisMph.acceleration = createVector(0, 0);
+        
+        for (let j = 0; j < i; j++) {
+            thisMph.checkCollision(macrophages[j]);      
+        }
+    }  
+}
+
+
+
+
+
+function runNeutrophils() {
+    
+    let toRemove = [];
+    // updates the position and activity of macrophages
+    for (let i = 0; i < neutrophils.length; i++) {
+        let n = neutrophils[i];
+        n.update();     // changes position according to velocity and manages the Gillespie algorithm
+        n.checkEdges(); // deals with edge bouncing where necessary
+    
+        // records macrophages that have died, until the end of this loop, after which, they are removed
+        if (n.checkApoptosis()) {
+            toRemove.push(i);
+        }
+    }
+
+    // removes macrophages that are 'tagged' to die
+    // and releases resident intracellular bacteria 
+    for (let index of toRemove) {
+        let deadMacrophage = neutrophils[index];
+        // Y. pestis bacteria to release into the extracellular enviroment
+        let dnl = deadMacrophage.location;
+        let dnv = deadMacrophage.velocity;
+        let dnr = deadMacrophage.radius;
+        let YPa = deadMacrophage.YPa;
+        
+        
+        // generates bacterial release
+        for (let i = 0; i < YPa; i++) {
+            let rad = random(dnr);
+            let theta = random(2 * PI);
+            let vSpan = 0.4;
+            
+            let l = createVector(dnl.x + rad*cos(theta), dnl.y + rad*sin(theta));
+            let v = createVector(dnv.x + random(-vSpan, vSpan), dnv.y + random(-vSpan, vSpan)); // can add randomness if wanted
+              
+          
+            extracellBacteriaA.push(new YPestis(l, v, 'a'));
+            
+        }
+        // if (fancyRendering) {
+        //     macrophageImages.push(new MacrophageImage(dml, dmv, dmr, deadMacrophage.zoff, deadMacrophage.phase, deadMacrophage.xoff2));
+        // }  
+    }
+    for (let index of toRemove) {
+        neutrophils.splice(index, 1);
+    }
+
+
+    // implements colisions between macrophages
+    for (let i = 0; i < neutrophils.length; i++) {
+        thisNeut = neutrophils[i];
+        thisNeut.acceleration = createVector(0, 0);
+        
+        for (let j = 0; j < i; j++) {
+            thisNeut.checkCollision(neutrophils[j]);            
+        }
+        for (let k = 0; k < macrophages.length; k++) {
+            thisNeut.checkCollision(macrophages[k]);
+        }
+    }  
+
+
+}
+
+
+
+
+
+function runBacteria() {
+
+    for (let ypa of extracellBacteriaA) {
+        ypa.checkAbsorbed();
+        ypa.checkEdges(); // deals with edge bouncing where necessary
+    }
+    for (let ypb of extracellBacteriaB) {
+        ypb.checkEdges(); // deals with edge bouncing where necessary
+    }
+
+
+    // handles absorption dynamics
+    for (let ypaIndex = 0; ypaIndex < extracellBacteriaA.length; ypaIndex++) {
+        ypa = extracellBacteriaA[ypaIndex];
+        // removes extracellular bacteria from the array if they have already been absorbed
+        if (ypa.absorbed == true) { 
+            extracellBacteriaA.splice(ypaIndex, 1);
+            continue;
+        }
+        // instantiates macrophage-bacteria overlap relations
+        let isOverlappedMph = false;
+        for (let m of macrophages) {
+            if (m.checkOverlap(ypa.location, ypa.radius)) { 
+                isOverlappedMph = true;
+                if (ypa.overlappingMphs.includes(m)) { // when the overlap relationship is already instantiated
+                    continue;
+                } else {
+                    ypa.instantiateLeuko(m);
+                }
+            }
+        }
+        // removes over lapping macrophages that have ruptured
+        if (!isOverlappedMph) {
+            ypa.overlappingMphs = [];
+            ypa.waitsM = [];
+        }
+        
+        // instantiates neutrophil-bacteria overlap relations
+        let isOverlappedNeut = false;
+        for (let n of neutrophils) {
+            if (n.checkOverlap(ypa.location, ypa.radius)) { 
+                isOverlappedNeut = true;
+                if (ypa.overlappingMphs.includes(n)) { // when the overlap relationship is already instantiated
+                    continue;
+                } else {
+                    ypa.instantiateLeuko(n);
+                }
+            }
+        }
+        // removes over lapping macrophages that have ruptured
+        if (!isOverlappedNeut) {
+            ypa.overlappingNeuts = [];
+            ypa.waitsN = [];
+        }
+
+    }
+}
+
+
+// Run Images
+function runBactImages() { 
+    if (bacterialImages.length > 0) {
+        for (let i = bacterialImages.length - 1; i >= 0; i--) {
+            let bactIm = bacterialImages[i];
+            bactIm.update();
+            
+    
+            if (bactIm.opacity <= 0) {
+                bacterialImages.splice(i, 1);
+            }
+        }
+    }   
+}
+
+function runMphImages() { 
+    if (macrophageImages.length > 0) {
+        for (let i = macrophageImages.length - 1; i >= 0; i--) {
+            let mphIm = macrophageImages[i];
+            mphIm.update();
+            
+            if (mphIm.opacity <= 0) {
+                macrophageImages.splice(i, 1);
+            }
+        }
+    }   
+}
+
+
+
+// Display BActerial Images
+
+
+function displayBactImages() { 
+    if (bacterialImages.length > 0) {
+        for (let bactIm of bacterialImages) {
+            bactIm.display();
+        }
+    }  
+}
+
+function displayMphImages() { 
+    if (macrophageImages.length > 0) {
+        for (let mphIm of macrophageImages) {
+            mphIm.display();
+        }
+    }  
+}
+
+
+
+// Display
+
+function displayModel() {
+    // displays macrophages
+    for (let m of macrophages) {
+        if (entityCount < entityCap) {
+            m.display();    // prints macrophage objects to canvas as circles
+            m.render = true;
+            entityCount ++;
+        } else {
+            // prevents collisions with unrendered macrophages
+            m.render = false;
+        }
+        intraACount += m.YPa;
+        intraBCount += m.YPb;
+    }
+
+    // displays neutrophils
+    for (let n of neutrophils) {
+        if (entityCount < entityCap) {
+            n.display();    // prints macrophage objects to canvas as circles
+            n.render = true;
+            entityCount ++;
+        } else {
+            // prevents collisions with unrendered macrophages
+            n.render = false;
+        }
+        intraACount += n.YPa;
+    }
+
+    
+    // decides how many type a and b bacteria to display based on render cap
+    let aLen = extracellBacteriaA.length;
+    let bLen = extracellBacteriaB.length;
+    let numA;
+    let numB;
+    if (aLen + bLen <= entityCap) {
+        // if render cap is not surpassed
+        numA = aLen;
+        numB = bLen;
+    } else {
+        // if render cap is surpassed
+        let entityBuget = entityCap - entityCount;
+        numB = floor(bLen / (bLen + aLen) * entityBuget);
+        numA = entityBuget - numB; 
+    }
+    
+    // renders type a bacteria 
+    renderBacteria(numA, extracellBacteriaA);
+    // renders type b bacteria
+    renderBacteria(numB, extracellBacteriaB);
+    
+
+    // updates non rendered bacteria only every 60 frames to increase speed
+    if (running) {
+        if (frameCount % 60 == 0) {
+            for (let i = numA; i < aLen; i++) {
+                extracellBacteriaA[i].bigStep();
+                //extracellBacteriaA[i].display(); 
+            }
+            for (let i = numB; i < bLen; i++) {
+                extracellBacteriaB[i].bigStep();
+                //extracellBacteriaB[i].display(); 
+            }
+        }
+    }
+    
+
+    displayBactImages();
+    displayMphImages();        
+}
+
+
+function renderBacteria(number, array) {
+    for (let i = 0 ; i < number; i++) {
+        let yp = array[i];
+        if (running) {
+            yp.update();
+        }
+        yp.display(); 
+        entityCount ++;    
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// Initiation 
+
+function initiateMacrophages() {
+    // initiates macrophages
+    for (let i = 0; i < initialN; i++) {  
+        let vSpan = 0.1;  // initial velocity for each macrophage
+        let radius = 25;
+        let lMargin = radius + 10; // initial minimum distance from origin
+        
+        // initial location of each macrophage
+        /* the following chunk of code is in place to ensure that initial placements
+        don't overlap (viability is obviously limited by size of canvas in relation to 
+        the number of macrophages and their radii)*/
+        let placed = false;
+        let l; // placing location
+        let iter = 0; // variable to stop while loop running indefinately if placement is not possible
+        while (!placed && iter < 50000) {
+            l = createVector(random(margin + lMargin, margin + activeWidth-lMargin), random(margin + lMargin, margin + activeHeight-lMargin));
+            if (macrophages.length != 0) {
+                let overlapped = false;
+                for (let m of macrophages) {
+                    if (m.checkOverlap(l, radius)) {
+                        // if the current choice of location will cause an overlap with a previously placed macrophage
+                        overlapped = true;
+                        break;
+                    } 
+                }
+                if (overlapped == false) {
+                    placed = true;
+                } else { 
+                    iter += 1;
+                    continue;
+                }  
+            // if this is the first macrophage  
+            } else {
+                placed = true;
+            }
+        }
+        // once the position of the macrophage is decided on, it is instantiated by the following 
+        // initial velocity
+        let v = createVector(random(-vSpan, vSpan), random(-vSpan, vSpan));
+        
+        // adding macrophages with one Y. pestis type a (YPa)
+        if (i < filled) {
+            macrophages.push(new Macrophage(l, v, radius, 1, 0));
+        }
+        // adding macrophages with no YPa
+        else {
+            macrophages.push(new Macrophage(l, v, radius, 0, 0));
+        }
+    }
+}
+
+
+
+
+
+
+
+function initiateNeurtophils() {
+    // initiates macrophages
+    for (let i = 0; i < 10; i++) {  
+        let vSpan = 0.1;  // initial velocity for each macrophage
+        let radius = 17;
+        let lMargin = radius + 10; // initial minimum distance from origin
+        
+        // initial location of each macrophage
+        /* the following chunk of code is in place to ensure that initial placements
+        don't overlap (viability is obviously limited by size of canvas in relation to 
+        the number of macrophages and their radii)*/
+        let placed = false;
+        let l; // placing location
+        let iter = 0; // variable to stop while loop running indefinately if placement is not possible
+        while (!placed && iter < 50000) {
+            l = createVector(random(margin + lMargin, margin + activeWidth-lMargin), random(margin + lMargin, margin + activeHeight-lMargin));
+            if (neutrophils.length != 0) {
+                let overlapped = false;
+                for (let n of neutrophils) {
+                    if (n.checkOverlap(l, radius)) {
+                        // if the current choice of location will cause an overlap with a previously placed macrophage
+                        overlapped = true;
+                        break;
+                    } 
+                }
+                if (overlapped == false) {
+                    placed = true;
+                } else { 
+                    iter += 1;
+                    continue;
+                }  
+            // if this is the first macrophage  
+            } else {
+                placed = true;
+            }
+        }
+        // once the position of the macrophage is decided on, it is instantiated by the following 
+        // initial velocity
+        let v = createVector(random(-vSpan, vSpan), random(-vSpan, vSpan));
+        
+        neutrophils.push(new Neutrophil(l, v, radius));
+    }   
+}
+
+
+
+</script>
+    <script>// function for getting sum of elements in an array
+function sum(array) {
+    let total = 0;
+    for (let item of array) {
+        total += item;
+    }
+    return total
+}
+  
+  
+function weightedChoice(rates) {
+    // chooses an event randomly weighted by the current effective rates
+    let index;
+    let bag = [];   
+    // add to bag
+    for (let i = 0; i < rates.length; i++) {
+        let numToAdd = floor(100 * rates[i]);
+        for (let j = 0; j < numToAdd; j++) {
+            bag.push(i);
+        }
+    }
+    // select at random
+    let choicePosition = floor(random(bag.length));
+    index = bag[choicePosition];    
+    return index;
+}
+
+
+function pullRates() {
+  ba = baTextBox.value();
+  mua = muaTextBox.value();
+  bb = bbTextBox.value();
+  mub = mubTextBox.value();
+  gam = gamTextBox.value();
+  del = delTextBox.value();
+  alphaM = alphaTextBox.value();  
+}
+
+
+function startStop() {
+  running = !running;
+}
+
+
+function resetSketch() {
+  initiateModel()
+  renderCapSlider.value(100); 
+}
+
+
+function toggleFancy() {
+  fancyRendering = !fancyRendering;
+  if (fancyRendering) {
+      graphicsTextTimerOn = 10;
+      graphicsTextTimerOff = 0;
+  } else {
+      graphicsTextTimerOff = 10;
+      graphicsTextTimerOn = 0;
+  }
+  renderTextTimer = 0;
+  dynamicRenderTextTimerOn = 0;
+  dynamicRenderTextTimerOff = 0;
+}
+
+
+function toggleDynamRend() {
+  dynamicRender = !dynamicRender;
+  if (dynamicRender) {
+    dynamicRenderTextTimerOn = 10;
+    dynamicRenderTextTimerOff = 0;
+  } else {
+    dynamicRenderTextTimerOff = 10;
+    dynamicRenderTextTimerOn = 0;
+  }
+  renderTextTimer = 0;
+  graphicsTextTimerOn = 0;
+  graphicsTextTimerOff = 0;
+}
+
+
+function renderSliderChanged() {
+  renderTextTimer = 10;
+  graphicsTextTimerOn = 0;
+  graphicsTextTimerOff = 0;
+  dynamicRenderTextTimerOn = 0;
+  dynamicRenderTextTimerOff = 0;
+}
+
+
+function resetRates() {
+  // resets sloder values
+  baSlider.value(baI);
+  muaSlider.value(muaI);
+  bbSlider.value(bbI);
+  mubSlider.value(mubI);
+  gamSlider.value(gamI);
+  delSlider.value(delI);
+  alphaSlider.value(alphaIM);
+  // resets input box values
+  baTextBox.value(baI);
+  muaTextBox.value(muaI);
+  bbTextBox.value(bbI);
+  mubTextBox.value(mubI);
+  gamTextBox.value(gamI);
+  delTextBox.value(delI);
+  alphaTextBox.value(alphaIM);
+}
+
+
+function dynamicRendering() {
+  if (dynamicRender) {
+      if (frameCount % 10 == 0 && running) {
+
+          let currentRendCapSlid = renderCapSlider.value();
+          let currentFR = frameRate();
+          //console.log(currentFR);
+          if (currentFR < 25 && currentRendCapSlid >= 10) {
+              renderCapSlider.value(currentRendCapSlid-10);
+              renderSliderChanged(); 
+          } else if (currentFR > 35 && currentRendCapSlid < 100) {
+              renderCapSlider.value(currentRendCapSlid+1); 
+              renderSliderChanged();
+          }
+      }
+  }
+}
+
+
+
+
+
+
+
+</script>
+    <script>
+//
+//let entityPanelCol = color(198, 183, 83);
+
+
+
+let boxWid = 160;
+let renderTextTimer = 0;
+let graphicsTextTimerOn = 0;
+let graphicsTextTimerOff = 0;
+let dynamicRenderTextTimerOn = 0;
+let dynamicRenderTextTimerOff = 0;
+
+function displayBackPanels() {
+    let entityPanelCol = color(110,80,80);
+    let mainPanelCol = color(80,60,60);
+    let backCol = color(77, 0, 0);
+
+    background(backCol);
+    //background(backCol);
+
+    fill(109, 60, 60);
+    rect(margin, margin, activeWidth, activeHeight);
+    fill(mainPanelCol);
+    noStroke();
+    rect(3 * margin + activeWidth, 2/3*margin, activeWidth, activeHeight/2 + margin/6 + activeHeight/9); // top graph box
+    rect(3 * margin + activeWidth, (activeHeight + 4*margin)/2 - margin/6 + activeHeight/9, activeWidth, (activeHeight)/2+ margin/6 - activeHeight/9 - 2/3*margin); // bottom graph box
+    rect(2/3*margin, 3 * margin + activeWidth, 2/3*margin + activeWidth, 90 + 2*margin); // dials
+    rect(3 * margin + activeWidth, 3 * margin + activeWidth, 224, 90 + 2*margin);
+    
+    rect(width - boxWid - margin,  3 * margin + activeWidth, boxWid,90 + 2*margin );
+
+    fill(entityPanelCol);
+    rect(width - boxWid , 3 * margin + activeWidth + 5, boxWid - 2*margin, 57 ); // entity count
+    textSize(15);
+    fill(255);
+    let spac = 1.8;
+    if (totalEntities >= entityCap) {      
+        fill(255,0,0);
+        rect(width - boxWid , 3 * margin + activeWidth + 5, boxWid - 2*margin, 57 );
+        fill(255);
+        text('(partial render)',width - (boxWid/2+margin), activeHeight +(4.3+2*spac)*margin); 
+    }
+    
+    text('Entity count:',width - (boxWid/2+margin), activeHeight +4.6*margin); 
+    text(str(totalEntities),width - (boxWid/2+margin), activeHeight +(4.6+spac)*margin);
+    textSize(12);
+ 
+    if (graphicsTextTimerOn > 0) {
+        renderTextOpacity(graphicsTextTimerOn)
+        text('Better graphics: ON',width - (boxWid/2+margin), activeHeight +103); 
+        graphicsTextTimerOn -= 0.074;
+    }
+    if (graphicsTextTimerOff > 0) {
+        renderTextOpacity(graphicsTextTimerOff)
+        text('Better graphics: OFF',width - (boxWid/2+margin), activeHeight +103); 
+        graphicsTextTimerOff -= 0.074;
+    }
+    if (renderTextTimer > 0) {
+        renderTextOpacity(renderTextTimer)
+        text('Render cap: '+str(floor(entityCap)),width - (boxWid/2+margin), activeHeight +103); 
+        renderTextTimer -= 0.074;
+    }
+    if (dynamicRenderTextTimerOn > 0) {
+        renderTextOpacity(dynamicRenderTextTimerOn)
+        text('Dynamic render cap: ON',width - (boxWid/2+margin), activeHeight +103); 
+        dynamicRenderTextTimerOn -= 0.074;
+    }
+    if (dynamicRenderTextTimerOff > 0) {
+        renderTextOpacity(dynamicRenderTextTimerOff)
+        text('Dynamic render cap: OFF',width - (boxWid/2+margin), activeHeight +103); 
+        dynamicRenderTextTimerOff -= 0.074;
+    }
+}
+
+
+function renderTextOpacity(timer) {
+    if (timer < 5) {
+        fill(255, 51 * timer);
+    }
+}
+
+
+function displayModelTrim() {
+    
+    fill(77, 0, 0);
+    noStroke();
+    rect(0, 0, 2*margin + activeWidth, margin);
+    rect(0, margin, margin,  activeHeight);
+    rect(margin + activeWidth, margin, margin, activeHeight);
+    rect(0, margin + activeHeight, 2*margin + activeWidth, margin);
+    fill(80,60,60);
+    rect(2/3*margin, 2/3*margin, 2/3*margin + activeWidth, margin/3);
+    rect(2/3*margin, margin, margin/3,  activeHeight);
+    rect(margin + activeWidth, margin, margin/3, activeHeight);
+    rect(2/3*margin, margin + activeHeight, 2/3*margin + activeWidth, margin/3);
+
+}
+
+
+let baSlider;
+let muaSlider;
+let bbSlider;
+let mubSlider;
+let gamSlider;
+let delSlider;
+let alphaSlider;
+let baTextBox;
+let muaTextBox;
+let bbTextBox;
+let mubTextBox;
+let gamTextBox;
+let delTextBox;
+let alphaTextBox;
+let gap = 45;
+let xshift = 88;
+
+function initiateControls() {
+    let buttonCol = color(66, 66, 158);
+    let buttonTextCol = color(220);
+
+    let xs = 0;
+    let ys = 0;
+    
+    // initiate buttons
+    buttonStart = createButton('Start/Stop');
+    buttonStart.parent("YPModel");
+    buttonStart.position(margin+xs, activeHeight + 4*margin+ys);
+    buttonStart.mousePressed(startStop);
+    buttonStart.style('backgroundColor', buttonCol);
+    buttonStart.style('borderColor', buttonCol);
+    buttonStart.style('color', buttonTextCol);
+    buttonStart.size(70, 40);
+
+    buttonReset = createButton('Reset');
+    buttonReset.parent("YPModel");
+    buttonReset.position(margin+xs, activeHeight + 4*margin + 50+ys);
+    buttonReset.mousePressed(resetSketch);
+    buttonReset.style('backgroundColor', buttonCol);
+    buttonReset.style('borderColor', buttonCol);
+    buttonReset.style('color', buttonTextCol);
+    buttonReset.size(70, 25);
+
+    buttonRateReset = createButton('Rates');
+    buttonRateReset.parent("YPModel");
+    buttonRateReset.position(margin+xs, activeHeight + 4*margin + 50 + 26+ys   );
+    buttonRateReset.mousePressed(resetRates);
+    buttonRateReset.style('backgroundColor', buttonCol);
+    buttonRateReset.style('borderColor', buttonCol);
+    buttonRateReset.style('font-size : 8px');
+    buttonRateReset.style('color', buttonTextCol);
+    buttonRateReset.size(70, 20);
+
+    // initiate slider objects
+    let mul = 6;
+    baSlider = createSlider(0, mul*baI, baI, 0.001);
+    baSlider.parent("YPModel");
+    muaSlider = createSlider(0, mul*muaI, muaI, 0.001);
+    muaSlider.parent("YPModel");
+    bbSlider = createSlider(0, mul*bbI, bbI, 0.001);
+    bbSlider.parent("YPModel");
+    mubSlider = createSlider(0, mul*mubI, mubI, 0.001);
+    mubSlider.parent("YPModel");
+    gamSlider = createSlider(0, mul*gamI, gamI, 0.001);
+    gamSlider.parent("YPModel");
+    delSlider = createSlider(0, mul*delI, delI, 0.001);
+    delSlider.parent("YPModel");
+    alphaSlider = createSlider(0, mul*alphaIM, alphaIM, 0.001);
+    alphaSlider.parent("YPModel");
+    // initiate input boxes under sliders
+    baTextBox = createInput(str(baSlider.value()));
+    baTextBox.parent("YPModel");
+    muaTextBox = createInput(str(muaSlider.value()));
+    muaTextBox.parent("YPModel");
+    bbTextBox = createInput(str(bbSlider.value()));
+    bbTextBox.parent("YPModel");
+    mubTextBox = createInput(str(mubSlider.value()));
+    mubTextBox.parent("YPModel");
+    gamTextBox = createInput(str(gamSlider.value()));
+    gamTextBox.parent("YPModel");
+    delTextBox = createInput(str(delSlider.value()));
+    delTextBox.parent("YPModel");
+    alphaTextBox = createInput(str(alphaSlider.value()));
+    alphaTextBox.parent("YPModel");
+    
+    // sets up sliders in their positions and with associated text boxes
+    initSlider(baSlider, baTextBox, 0,xs,ys);
+    initSlider(muaSlider, muaTextBox, gap,xs,ys);
+    initSlider(bbSlider, bbTextBox, 2*gap,xs,ys);
+    initSlider(mubSlider, mubTextBox, 3*gap,xs,ys);
+    initSlider(gamSlider, gamTextBox, 4*gap,xs,ys);
+    initSlider(delSlider, delTextBox, 5*gap,xs,ys);
+    initSlider(alphaSlider, alphaTextBox, 6*gap,xs,ys);
+
+    // sets up 'fancy render' checkbox
+    fancyRender = createCheckbox('', true);
+    fancyRender.parent("YPModel");
+    fancyRender.changed(toggleFancy);
+    fancyRender.position(width - 34+xs, height - 34+ys);
+
+    // sets up 'fancy render' checkbox
+    dynamicRender = createCheckbox('', true);
+    dynamicRender.parent("YPModel");
+    dynamicRender.changed(toggleDynamRend);
+    dynamicRender.position(width -53+xs, height - 34+ys);
+    
+    // render cap slider
+    renderCapSlider = createSlider(0, 100, 100, 0.01);
+    renderCapSlider.parent("YPModel");
+    renderCapSlider.size(100);
+    renderCapSlider.position(width - boxWid + 2+xs, height - 40+ys);
+    renderCapSlider.changed(renderSliderChanged);
+
+    // neutrophil button
+    buttonNeut = createButton('Neutrophils');
+    buttonNeut.parent("YPModel");
+    buttonNeut.position(activeWidth + 4*margin+xs, activeHeight + 4*margin+ys);
+    buttonNeut.mousePressed(initiateNeurtophils);
+    buttonNeut.style('backgroundColor', buttonCol);
+    buttonNeut.style('borderColor', buttonCol);
+    buttonNeut.style('color', buttonTextCol);
+    buttonNeut.size(90, 40);
+    
+    lockControlsToContainer();
+}
+
+
+// initiates sliders and text boxes controlling  model rates
+function initSlider(sliderObject, textBox, x,xs,ys) {
+    sliderObject.position(xshift+x+xs,  activeHeight + 4*margin + 25 +ys);
+    sliderObject.size(70);
+    sliderObject.style('transform: rotate(270deg);');
+    textBox.style('font-size', '8px');
+    textBox.position(xshift+26+x+xs, activeHeight + 4*margin + 75+ys);
+    textBox.size(19, 8);
+    textBox.changed(function() {sliderObject.value(str(textBox.value()))});
+    sliderObject.changed(function() {textBox.value(str(sliderObject.value()))});
+    
+}
+
+
+// draws text next to sliders
+function drawSliderText(textIn, gap) {
+  push();
+  translate( gap + xshift + 19, activeHeight + 4*margin + 36);
+  fill(255);
+  textSize(13);
+  rotate( 3*PI/2 );
+  text(textIn, 0,0);
+  pop();
+}
+
+
+function drawSliderLabels() {
+  drawSliderText('a - birth', 0);
+  drawSliderText('a - death', gap);
+  drawSliderText('b - birth', 2*gap);
+  drawSliderText('b - death', 3*gap);
+  drawSliderText('transition', 4*gap);
+  drawSliderText('rupture', 5*gap);
+  drawSliderText('absorption', 6*gap);
+}
+
+
+function makeRecordForBarCharts() {
+    if (frameCount % 20 == 0 && running) {
+        // makes a record of how many bacteria there are to produce bar chart
+        let singleRecordBact = [extraBCount, intraBCount, extraACount, intraACount];
+        historyBact.push(singleRecordBact);
+        histSumsBact.push(sum(singleRecordBact));
+        if (historyBact.length > bars) {
+            historyBact.splice(0, 1); 
+            histSumsBact.splice(0, 1); 
+        } 
+        // makes a record of how many leukocytes there are to produce bar chart
+        let singleRecordLeuko = [MphCount, NutCount];
+        historyLeuko.push(singleRecordLeuko);
+        histSumsLeuko.push(sum(singleRecordLeuko));
+        if (historyLeuko.length > bars) {
+            historyLeuko.splice(0, 1); 
+            histSumsLeuko.splice(0, 1); 
+        }   
+    }
+}
+
+
+
+// useful dimensions
+let gBoxHeight = (activeHeight)/2 + margin/6;
+let LB = gBoxHeight - 5*margin + activeHeight/9;
+let LL = gBoxHeight - 5*margin - activeHeight/9 - 2/3*margin;
+// draws bar charts on right hand panels
+function drawGraphs() {
+    // find maximum number entities contributing to a particular bar over the
+    // set of all recordings to be displayed. Used for bar scaling
+    let maxCountBact = max(histSumsBact);
+    let maxCountLeuko = max(histSumsLeuko);
+    let barCountBact = historyBact.length
+    let barCountLeuko = historyLeuko.length
+    
+    // bacteria bar charts
+    push();
+    translate(activeWidth + 6*margin, 11/3*margin)
+
+    fill(255);
+    textSize(9); 
+    
+    let totalBactStr = str(maxCountBact);
+    if (barCountBact > 0) {
+        text(totalBactStr, -16, 0);
+        stroke(20);
+        line(2,0,-1 - 1.6*(5 - totalBactStr.length),0);
+    }
+    
+    noStroke();
+    fill(250);  
+    
+    for (let i = 0; i < barCountBact; i++) {
+
+        let C = histSumsBact[i];
+        let Lt = C*LB/maxCountBact; // length this
+
+        let thisRecord = historyBact[i];
+        let n1 = thisRecord[0] // extra B
+        let n2 = thisRecord[1] // intra B
+        let n3 = thisRecord[2] // extra A
+        let n4 = thisRecord[3] // intra A
+    
+        let x1 = LB-Lt;
+        let x2 = n1*Lt/C + x1;
+        let x3 = n2*Lt/C + x2;
+        let x4 = n3*Lt/C + x3;
+
+        let l1 = ceil(n1*Lt/C);
+        let l2 = ceil(n2*Lt/C);
+        let l3 = ceil(n3*Lt/C);
+        let l4 = ceil(n4*Lt/C);
+
+        // draws rectangles for bar charts
+        //extracellular type b
+        fill(230,110,110, 255);
+        rect( 2 + (bars-barCountBact+i) * 12,    x1 , margin, l1);
+        //intracellular type b
+        fill(200,60,60, 255);
+        rect( 2 + (bars-barCountBact+i) * 12,    x2 , margin, l2);
+        //extracellular type a
+        fill(110,110,230, 255);
+        rect( 2 + (bars-barCountBact+i) * 12,    x3 , margin, l3);
+        //intracellular type a
+        fill(60,60,200, 255);
+        rect( 2 + (bars-barCountBact+i) * 12,    x4 , margin, l4);
+    }
+
+    stroke(20);
+    strokeWeight(4);
+    line(0, LB, activeWidth - 6*margin, LB);
+    line(0, -1*margin, 0, LB);
+
+    pop();
+
+    // leukocyte bar charts
+    push();
+    translate(activeWidth + 6*margin, 29/6*margin + (activeHeight)/2 + activeHeight/9 )
+
+    fill(255);
+    textSize(9); 
+    
+    let totalLeukoStr = str(maxCountLeuko);
+    if (barCountLeuko > 0) {
+        text(totalLeukoStr, -16, 0);
+        stroke(20);
+        line(2,0,-1 - 1.6*(5 - totalLeukoStr.length),0);
+    }
+    
+    noStroke();
+    fill(250);  
+    for (let i = 0; i < barCountLeuko; i++) {
+
+        let C = histSumsLeuko[i];
+        let Lt = C*LL/maxCountLeuko; // length this
+
+        let thisRecord = historyLeuko[i];
+        
+        let n1 = thisRecord[0] // macrophages 
+        let n2 = thisRecord[1] // neutrophils
+        
+        let x1 = LL-Lt;
+        let x2 = n1*Lt/C + x1;
+        
+        let l1 = ceil(n1*Lt/C);
+        let l2 = ceil(n2*Lt/C);
+        
+        // draws rectangles for bar charts
+        fill(80,200,80);
+        rect( 2 + (bars-barCountLeuko+i) * 12,    x1 , margin, l1);
+        fill(80,200,200);
+        rect( 2 + (bars-barCountLeuko+i) * 12,    x2 , margin, l2);
+        
+    }
+
+    stroke(20);
+    strokeWeight(4);
+    line(0, LL, activeWidth - 6*margin, LL);
+    line(0, -1*margin, 0, LL);
+
+    pop();   
+}
+
+</script>
+</head>
+<body>
+    <aside class="sidebar">
+
+    </aside>
+
+    <main class="mainContent">
+        <header>
+            <h1>Yersinia pestis Cellular Pathogenesis</h1>
+            <p class="subheading">Modeling intracellular and extracellular dynamics during macrophage interaction</p>
+        </header>
+
+        <section class="topFold">
+            <section class="modelCanvas">
+                <div class="content">
+                    <div class="modelScaleFrame">
+                        <div id="YPModel"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="summary">
+                <h2>Summary</h2>
+                <p>
+                    <em>Yersinia pestis</em> passes through two phases inside a mammalian host. What a flea bite delivers is a vector-adapted population, unarmed for the host it has just entered: the bacteria are readily taken up by macrophages, and within the spacious <em>Yersinia</em>-containing vacuole they replicate under body temperature, reduced pH and oxidative stress. Those stresses are also signals. They induce the F1 capsule, the pH&nbsp;6 antigen and the Ysc&ndash;Yop type III secretion system, and the cell that needed invasive factors to get in now presents a surface that refuses re-entry. How the intracellular phase ends &mdash; by which host-cell death programme, and on what timing &mdash; remains unresolved.
+                </p>
+            </section>
+        </section>
+
+        <section class="details">
+            <h2>Interpretation</h2>
+            <p>
+                Each macrophage here runs a two-type birth&ndash;death process with one-way conversion: early bacteria (blue) replicate and mature into the adapted type (red), and any resident bacterium can trigger rupture, so containment fails at a rate proportional to the load the cell is carrying. A burst frees the whole cohort at once. Loose early-type bacteria may be taken up again; adapted ones refuse, and arriving neutrophils clear only the former. Rupture is phenotype-blind here &mdash; one rate for both types.
+            </p>
+        </section>
+
+        <footer>
+            <p> 2025 Adam Aldridge</p>
+        </footer>
+    </main>
+</body>
+</html>

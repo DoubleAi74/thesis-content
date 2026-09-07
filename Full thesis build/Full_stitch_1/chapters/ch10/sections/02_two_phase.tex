@@ -1,33 +1,4 @@
-\section{Two phase}
-
-
-
-Thinking about the replication of Yersinia pestis within the body. There are two distinct phases in its pathogenesis. Namely, the preinflamatory and the postinflamatory periods.To recall,  in the first of these, YP replicates mostly intracellularly within macrophages. Then, as the body recognizes the alien presence and mounts a neutrophil attack, YP switches to extracellular replication. 
-
-Due to the fact YP doesn't begin with extracellular replication, it seems sensible to assume that there is an advantage to living within macrophages. As a rudimentary model of this behavior, we can take in simple terms that the replication rate is higher in this proinflammatory phase. That viral multiplication is easier within the macrophage intracellular environment. 
-
-In the cell there are fewer of the extracellular mechanisms of innate immunity: thinking specifically about complement and bacteriophages. 
-
-Perhaps there is an adaption to the specific presentation of bacteriophages in a particular host on the time scale of YP infection dynamics. That is, within only a handful of replication cycles, small variations to the bacteria cause the population to gain resistance to these host-specific bacteriophages. 
-
-Such a dynamic could be captured with a model using the two phases, but with a decaying death rate in the second extracellular phase
-$\mu(t) = a + a\ee^{-t}$. If we were to take this process individually. That is with some initial count of replicators undergoing only this second phase. Given the decaying death rate, there may be an initial period in which replication is subcritical. And in this case, the size of the initial population would become vitally important to whether the infection persists.
-
-
-
-\subsection{Host to host Galton Watson process}
-
-
-
-Consider a host-to-host branching process in which the dynamics are a basic Galton-Watson process with probability $p$. But that $p$ is defined by a within-host dynamic. Essentially, if the infection within the host attains a threshold bacterial load, the infected person will infect two more people. If it does not and gets killed off by the immune system, no further infections will result from that individual. Thus, the replication probability, $p$, results from the chance of this happening; of the infection persisting and ascending to a high infectious load. \par
-
-The simplest version of this would be a simple birth-death process and a defined threshold value.  We are then interested in the probability of the process ``hitting'' one threshold or the other (either the upper positive threshold, or 0), and this is the replication probability.\par
-
-Then, we are in a position to compare different models. Especially, the two-phase models (with and without variable death rate). It will be straightforward to show that probability of ``host-to-host transmission''  (reaching the threshold) will be greatly altered by the inclusion of this initial phase. The time at the beginning when YP temporarily exploits the within macrophage environment to gain an early advantage. This early advantage being of vital importance to the outcome from the onset of the second phase. 
-
-
-
-\subsection{Two phase PGF}
+\section{Two phase PGF}
 
 For reasons soon described, we are really only interested in the overall extinction probability, but this is the starting point. 
 
@@ -85,7 +56,6 @@ BDC higher replication rate (goes on for time dictated by cat rate)
     \includegraphics[width=0.5\textwidth]{figures/IMG_ch9/rough.png} % Adjust the width as needed
     \caption{ $(\lambda, \mu) = (1, 0.2)$ in the first phase, and $(\beta, \nu) = (1, 0.9)$. This is the host-to-host GW proliferability measure ($\mean{Z}$) in the BDC to BD case. The plot shows $\mean{Z}$ plotted against $\delta$. What is shown is that for supercritical epidemic spread (under the given assumptions), the initial phase of infection in macrophages should produce a sufficient bacterial load to overcome the likelihood of extinction in only near-supercritical growth in the extracellular phase. This is a consequence of $\delta$ being sufficiently small. That is, the propensity for the macrophage to burst being low permits a higher expected release in this crucial initial phase.}
 \end{figure}
-
 
 
 \begin{figure}[H]
