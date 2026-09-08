@@ -1,0 +1,43 @@
+% Front-matter summary: section 5 of originality.tex, without its old number.
+% All chapter, result and page references resolve against the thesis labels.
+\chapter*{Contributions at a glance}
+\phantomsection
+\label{oi:summary}
+\addcontentsline{toc}{chapter}{Contributions at a glance}
+\markboth{CONTRIBUTIONS AT A GLANCE}{CONTRIBUTIONS AT A GLANCE}
+\begingroup
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\arraystretch}{1.18}
+
+\vspace{0.15\baselineskip}
+{\footnotesize
+\begin{xltabular}{\linewidth}{@{}p{7mm}p{18mm}O@{}}
+\toprule
+\oihead{Ch} & \oihead{Pages} & \oihead{What it contributes} \\
+\midrule
+\endfirsthead
+\toprule
+\oihead{Ch} & \oihead{Pages} & \oihead{What it contributes} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\ref{ch:introduction} & \oichapterpages{ch:introduction}{m:ch:math-intro} & Framing, biology and motivation. No result is claimed here. \\
+\ref{m:ch:math-intro} & \oichapterpages{m:ch:math-intro}{gw:ch:galton-watson} & Toolkit: Markov chains, branching processes, the birth--death--catastrophe process. The increment is gated release with a state-dependent opening intensity (p.\,\pageref{m:sec:gated}). \\
+\ref{gw:ch:galton-watson} & \oichapterpages{gw:ch:galton-watson}{bdc:ch:core} & Kolmogorov's constant $A(p)$, recast as the Koenigs linearising function of the logistic map and shown hypertranscendental (\oiref{Thm}{gw:thm:main}, p.\,\pageref{gw:thm:main}). \\
+\ref{bdc:ch:core} & \oichapterpages{bdc:ch:core}{dist:ch:distribution-theory} & The intracellular calculus: the released count $W_t$ as a second coordinate, and every load moment as a polynomial in $I$ (\oirange{Thms}{bdc:thm:V}{bdc:thm:Wsq}, \oiref{Prop}{bdc:prop:polynomial}). \\
+\ref{dist:ch:distribution-theory} & \oichapterpages{dist:ch:distribution-theory}{p:ch:one-cell-to-population} & The complete law of one bursting cell --- burst size, burst timing, several founders, chained transfer (\oiref{Thm}{dist:thm:identity}, \oirange{Props}{dist:prop:taugivenk}{dist:prop:tauburst}). \\
+\ref{p:ch:one-cell-to-population} & \oichapterpages{p:ch:one-cell-to-population}{tt:ch:two-type} & \textbf{Two of the four new statements.} The renewal embedding, and the criterion $L$ ordering bursting against budding (\oiref{Thm}{p:thm:flood}, \oiref{Prop}{p:prop:L1}). \\
+\ref{tt:ch:two-type} & \oichapterpages{tt:ch:two-type}{path:ch:pathogenesis} & \textbf{Two of the four new statements.} Exact finite-time survival under two-type killing, and the killed bivariate generating function (\oiref{Thm}{tt:thm:main}, \oiref{Eq.}{eq:pgf-F1-solution}). \\
+\ref{path:ch:pathogenesis} & \oichapterpages{path:ch:pathogenesis}{var:ch:rates} & Two finite-budget immune caricatures, and the reversal of the flooding criterion under threshold removal (\oiref{Prop}{path:prop:reversal}). \\
+\ref{var:ch:rates} & \oichapterpages{var:ch:rates}{ch:conclusion} & A two-layer capacity clock on a Yule process (\oiref{Cor}{var:cor:logistic-limit}) and a moving critical point in the Pimentel chain (\oiref{Eq.}{var:eq:icrit}). \\
+\ref{ch:conclusion} & \oichapterpages{ch:conclusion}{oi:details} & Synthesis, and a consistency check on the \yp{} release strategy (\oiref{Eq.}{con:eq:threshold}, p.\,\pageref{con:eq:threshold}) offered explicitly as a check rather than a proof. \\
+\end{xltabular}\par}
+
+\vspace{0.5\baselineskip}
+{\footnotesize\noindent
+An \hyperref[oi:details]{expanded originality index} appears at the end of the
+thesis, immediately before the references (p.\,\pageref{oi:details}).\par}
+
+\endgroup

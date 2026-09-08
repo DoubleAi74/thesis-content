@@ -1,0 +1,15 @@
+{
+  "figure": "fig08",
+  "chapter_number": "5.8",
+  "label": "dist:fig:jointtauk",
+  "slug": "joint_tau_K",
+  "included_from": "sections/06_burst_size.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig08.pdf",
+    "fig08.png"
+  ],
+  "simulation": false
+}

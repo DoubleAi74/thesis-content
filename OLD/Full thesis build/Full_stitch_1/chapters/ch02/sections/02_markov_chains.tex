@@ -1,0 +1,965 @@
+% The helper below gives readable standalone fallbacks for labels defined in
+% Section 1.3. In the complete chapter, the real cleveref target is used.
+\providecommand{\mextref}[2]{%
+  \ifcsname r@#1\endcsname\cref{#1}\else#2\fi}
+
+\section{Markov chains}
+\label{m:sec:chains}
+
+The preceding overview separated the stochastic processes used in this thesis
+from the methods used to analyse them. Their common probabilistic structure is
+the Markov property: conditional on the present state, the future is independent
+of the past. This section introduces the relevant classes of process and records
+the identities that make their behaviour concrete. Standard references are
+Norris \cite{Norris1997}, Karlin and Taylor \cite{KarlinTaylor1975}, and, for
+biological applications, Allen \cite{Allen2010}.
+
+\subsection{Discrete-time Markov chains}
+\label{m:sec:dtmc}
+
+Let $\{X_n:n=0,1,2,\ldots\}$ take values in a countable state space
+$\mathcal S$. It is a \emph{discrete-time Markov chain} if
+\begin{equation}
+\label{m:eq:dtmarkov}
+\pr{X_{n+1}=j\mid X_n=i,X_{n-1},\ldots,X_0}
+=\pr{X_{n+1}=j\mid X_n=i}=:P_{ij},
+\end{equation}
+where the right-hand side is independent of $n$ for a \emph{time-homogeneous}
+chain. The transition matrix $P=(P_{ij})$ has non-negative entries and row sums
+equal to one. Decomposing a path at an intermediate state gives the
+Chapman--Kolmogorov identity
+\begin{equation}
+\label{m:eq:chapmankolmogorov}
+\pr{X_{n+m}=j\mid X_0=i}
+=\sum_{k\in\mathcal S}
+  \pr{X_n=k\mid X_0=i}\,
+  \pr{X_m=j\mid X_0=k},
+\end{equation}
+and hence $\pr{X_n=j\mid X_0=i}=(P^n)_{ij}$. Thus repeated steps correspond
+to matrix multiplication. A state $i$ with $P_{ii}=1$ is \emph{absorbing}:
+once entered, it cannot be left.
+
+\subsubsection{Simple random walks}
+\label{m:sec:randomwalk}
+
+The simplest non-trivial chain moves one step at a time on the integers. Fix
+$q\in(0,1)$ and set
+\begin{equation}
+\label{m:eq:rwrates}
+P_{i,i+1}=q,
+\qquad
+P_{i,i-1}=1-q.
+\end{equation}
+Then $X_n=X_0+\sum_{k=1}^n\xi_k$, where the independent increments $\xi_k$
+equal $+1$ with probability $q$ and $-1$ otherwise. The walk is symmetric
+when $q=\tfrac12$, and, for deterministic $X_0$,
+\begin{equation}
+\label{m:eq:rwmoments}
+\ex{X_n}=X_0+n(2q-1),
+\qquad
+\var{X_n}=4nq(1-q).
+\end{equation}
+The first quantity records the drift; the second records the diffusive spread
+that the mean omits.
+
+The full $n$-step law is also elementary. If $R$ of the $n$ increments are
+positive, then $R\sim\operatorname{Bin}(n,q)$ and $X_n=X_0+2R-n$, so
+\begin{equation}
+\label{m:eq:rwlaw}
+\pr{X_n=X_0+2r-n}
+=\binom nr q^r(1-q)^{n-r},
+\qquad r=0,1,\ldots,n.
+\end{equation}
+Only lattice points of the same parity as $X_0+n$ are possible
+(\cref{m:fig:rwlaw}). This closed form depends on the increments being
+independent of the current state. When the transition law depends on the
+population already present, as it does for branching processes, generating
+functions replace convolution; that method is developed in
+\mextref{m:sec:pgfmethod}{Section~1.3.1.2}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.70\textwidth]{rw_transition.pdf}
+\caption{The displacement law \cref{m:eq:rwlaw} after $n=40$ steps, for
+$q=0.4,0.5,0.6$ and $X_0=0$. Dotted lines mark the means $n(2q-1)$.
+Changing $q$ mainly translates the distribution over this range, since its
+standard deviation $\sqrt{4nq(1-q)}$ changes comparatively little.}
+\label{m:fig:rwlaw}
+\end{figure}
+
+The random walk also appears inside continuous-time chains. Every such chain
+separates into holding times and jumps, and the sequence of states visited at
+the jumps is a discrete-time \emph{embedded jump chain}. For the linear
+birth--death process of \cref{m:sec:bd}, the rates out of state $i\ge1$ are
+$\lambda i$ and $\mu i$. Their common factor cancels, leaving the random walk
+\cref{m:eq:rwrates} with
+\begin{equation}
+\label{m:eq:embedded}
+q=\frac{\lambda}{\lambda+\mu}.
+\end{equation}
+Hitting probabilities therefore depend only on this embedded walk; holding
+times matter when the question asks \emph{when} a state is reached.
+
+For example, impose absorbing barriers at $0$ and $M$, and let $h_i$ be the
+probability of reaching $M$ before $0$ from $i$. The first-step relation
+$h_i=qh_{i+1}+(1-q)h_{i-1}$, with $h_0=0$ and $h_M=1$, gives
+\begin{equation}
+\label{m:eq:gamblersruin}
+h_i=
+\begin{cases}
+\displaystyle\frac{1-\theta^i}{1-\theta^M},
+& \displaystyle\theta:=\frac{1-q}{q}\ne1,\\[10pt]
+\displaystyle\frac{i}{M},&q=\tfrac12.
+\end{cases}
+\end{equation}
+This gambler's-ruin calculation is the elementary instance of the general
+first-step principle in \mextref{m:sec:firststep}{Section~1.3.1.1}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{random_walk.pdf}
+\caption{Two views of the walk \cref{m:eq:rwrates}. (a) Seven paths from
+$X_0=0$ with $q=0.45$, together with the mean and one-standard-deviation
+envelope from \cref{m:eq:rwmoments}. (b) The probability
+\cref{m:eq:gamblersruin} of reaching $M=20$ before $0$. The symmetric case
+$\theta=1$ is linear; drift towards $M$ ($\theta<1$) bends the probability
+upwards, while drift towards $0$ bends it downwards.}
+\label{m:fig:randomwalk}
+\end{figure}
+
+\subsubsection{Galton--Watson branching processes}
+\label{m:sec:gw}
+
+The Galton--Watson process is a chain on the non-negative integers in which
+each member of one generation independently produces the next. It is the
+classical model of stochastic branching and the principal discrete-time
+process in this thesis; standard accounts are Harris \cite{Harris1963} and
+Athreya and Ney \cite{Athreya1972}.
+
+Let $L$ be the offspring count of one individual, with
+$\pr{L=k}=p_k$ and mean
+\begin{equation*}
+m:=\ex{L}.
+\end{equation*}
+Starting from one progenitor, $Z_0=1$, the population evolves as
+\begin{equation}
+\label{m:eq:gwrecursion}
+Z_{n+1}=\sum_{i=1}^{Z_n}L_i,
+\end{equation}
+where the $L_i$ are independent copies of $L$. Conditioning on $Z_n$ gives
+$\ex{Z_{n+1}}=m\ex{Z_n}$ and therefore
+$\ex{Z_n}=m^n$. The regimes $m<1$, $m=1$, and $m>1$ are called
+subcritical, critical, and supercritical.
+
+The random sum in \cref{m:eq:gwrecursion} becomes a composition under a
+\pgf{}. Write $\phi(z)=\ex{z^L}$ and let $\phi_n$ be the generating function
+of $Z_n$. Then
+\begin{equation}
+\label{m:eq:gwcomposition}
+\phi_{n+1}=\phi_n\circ\phi,
+\qquad \phi_0(z)=z,
+\end{equation}
+so $\phi_n$ is the $n$-fold iterate of the offspring generating function.
+The process is therefore encoded by the orbit of a single map, although that
+orbit seldom has a closed form.
+
+\paragraph{The binary case.}
+The thesis specialises to the binary, or \emph{simple}, process in which an
+individual divides into two or dies:
+\begin{equation}
+\label{m:eq:binarylaw}
+p_2=p\quad\text{(division)},
+\qquad
+p_0=1-p\quad\text{(death)},
+\qquad
+p_k=0\quad(k\notin\{0,2\}).
+\end{equation}
+Here $m=2p$, $\ex{Z_n}=(2p)^n$, and
+\begin{equation}
+\label{m:eq:pgfbinary}
+\phi(z)=pz^2+(1-p).
+\end{equation}
+If $u_n=\pr{Z_n=0}$ and $S_n=1-u_n=\pr{Z_n>0}$, evaluating
+\cref{m:eq:gwcomposition} at $z=0$ gives
+\begin{equation}
+\label{m:eq:SnIter}
+S_{n+1}=2pS_n-pS_n^2,
+\qquad S_0=1.
+\end{equation}
+For $0<p\le\tfrac12$, $S_n$ decreases to zero but is positive at every finite
+generation; for $p>\tfrac12$ it decreases to the positive fixed point
+$(2p-1)/p$. Thus subcritical and critical survival generally \emph{converges}
+to zero rather than reaching it after finitely many iterations. The following
+chapter studies the rate of this convergence and the constant that remains
+after conditioning on survival; the present chapter needs only the process,
+its mean, and the functional iteration above.
+
+\FloatBarrier
+
+\subsection{Continuous-time Markov chains}
+\label{m:sec:ctmc}
+
+Let $\{X_t:t\ge0\}$ take values in a countable state space $\mathcal S$. It
+is a \emph{continuous-time Markov chain} if, for all $s,t\ge0$,
+\begin{equation}
+\label{m:eq:markov}
+\pr{X_{t+s}=j\mid X_t=i,\{X_u\}_{u<t}}
+=\pr{X_{t+s}=j\mid X_t=i},
+\end{equation}
+and it is time homogeneous when the right-hand side depends on $s$ but not
+on $t$. A homogeneous chain is specified by its generator $Q=(q_{ij})$,
+whose off-diagonal entries are transition rates:
+\begin{equation}
+\label{m:eq:generator}
+q_{ij}=\lim_{\Delta t\downarrow0}
+\frac{\pr{X_{t+\Delta t}=j\mid X_t=i}}{\Delta t}\quad(j\ne i),
+\qquad
+q_{ii}=-\sum_{j\ne i}q_{ij}=:-q_i.
+\end{equation}
+Equivalently,
+\begin{equation}
+\label{m:eq:infinitesimal}
+\pr{X_{t+\Delta t}=j\mid X_t=i}
+=q_{ij}\Delta t+o(\Delta t)\qquad(j\ne i),
+\end{equation}
+with probability $1-q_i\Delta t+o(\Delta t)$ of no jump. A state with
+$q_i=0$ is absorbing.
+
+\subsubsection{Exponential clocks}
+\label{m:sec:exp}
+
+The holding times of a homogeneous chain are exponential. A non-negative
+\rv{} $T$ has the exponential distribution with rate $\theta>0$, written
+$T\sim\operatorname{Exp}(\theta)$, when
+\begin{equation}
+\label{m:eq:expdef}
+f_T(t)=\theta\ee^{-\theta t},
+\qquad
+\pr{T>t}=\ee^{-\theta t}
+\qquad(t\ge0).
+\end{equation}
+Its mean is $1/\theta$ and its variance is $1/\theta^2$. The decisive
+property is memorylessness:
+\begin{equation}
+\label{m:eq:memoryless}
+\pr{T>t_1+t_2\mid T>t_1}
+=\frac{\ee^{-\theta(t_1+t_2)}}{\ee^{-\theta t_1}}
+=\pr{T>t_2}.
+\end{equation}
+Thus the elapsed holding time carries no information about the residual
+wait. Among non-degenerate continuous waiting-time distributions on the
+non-negative line, this property characterises the exponential law.
+
+Several possible transitions can be represented by independent clocks.
+
+\begin{proposition}[Competing clocks]
+\label{m:prop:race}
+Let $T_1,\ldots,T_r$ be independent, with
+$T_k\sim\operatorname{Exp}(\theta_k)$. If
+$T=\min_kT_k$ and $\Theta=\sum_k\theta_k$, then
+\begin{equation}
+\label{m:eq:race}
+T\sim\operatorname{Exp}(\Theta),
+\qquad
+\pr{T_k=T}=\frac{\theta_k}{\Theta},
+\end{equation}
+and the winning clock is independent of $T$.
+\end{proposition}
+
+\begin{proof}
+Independence gives
+$\pr{T>t}=\prod_k\ee^{-\theta_kt}=\ee^{-\Theta t}$. Moreover,
+\[
+\pr{T_k=T,\ T>t}
+=\int_t^\infty\theta_k\ee^{-\Theta u}\,\dd u
+=\frac{\theta_k}{\Theta}\ee^{-\Theta t},
+\]
+which gives both the probability of clock $k$ winning and its independence
+from the minimum.
+\end{proof}
+
+Consequently, a chain leaves state $i$ after an
+$\operatorname{Exp}(q_i)$ holding time and then jumps to $j$ with
+probability $q_{ij}/q_i$, independently of the holding time. This separates
+the timing of a jump from its destination and produces the embedded chain
+used in \cref{m:eq:embedded}.
+
+\begin{remark}[Direct simulation]
+\label{m:rem:gillespie}
+The same construction gives Gillespie's direct method \cite{Gillespie1977}.
+At the current state, calculate the event rates $\theta_k$ and their total
+$\Theta$; draw a holding time from $\operatorname{Exp}(\Theta)$; select event
+$k$ with probability $\theta_k/\Theta$; update the state and repeat. The
+method generates exact CTMC paths, up to numerical round-off, and is used in
+this thesis to check analytical calculations and to study models without
+closed transient laws.
+\end{remark}
+
+\subsubsection{The Poisson process}
+\label{m:sec:poisson}
+
+The Poisson process counts events that occur at a constant rate. Let $N_t$
+take values in $\{0,1,2,\ldots\}$, with the sole non-zero transition rate
+\begin{equation}
+\label{m:eq:poissonrates}
+q_{n,n+1}=\alpha,
+\qquad n\ge0.
+\end{equation}
+Every holding time is therefore an independent
+$\operatorname{Exp}(\alpha)$ variable. Starting from $N_0=0$, the count at
+time $t$ has law
+\begin{equation}
+\label{m:eq:poissonlaw}
+\pr{N_t=n}=\ee^{-\alpha t}\frac{(\alpha t)^n}{n!},
+\qquad
+\ex{N_t}=\var{N_t}=\alpha t.
+\end{equation}
+The equality of mean and variance is a characteristic baseline for comparison
+with the over-dispersion of branching populations.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{poisson_process.pdf}
+\caption{A Poisson process of rate $\alpha=1.5$. (a) One path, with its
+exponential holding intervals and mean $\alpha t$. (b) The law
+\cref{m:eq:poissonlaw} at $t=1,3,6$. Its absolute width grows with time, while
+its coefficient of variation $1/\sqrt{\alpha t}$ decreases.}
+\label{m:fig:poisson}
+\end{figure}
+
+Counts in disjoint intervals are independent, and the distribution of an
+increment depends only on the interval length. If each event is retained
+independently with probability $\varpi$, the retained events form a Poisson
+process of rate $\varpi\alpha$; this thinning property will also be useful for
+simulating time-dependent rates.
+
+\subsubsection{The Yule process}
+\label{m:sec:yule}
+
+Replacing the constant Poisson rate by a rate proportional to the population
+produces the \emph{Yule process}. Each individual gives birth at rate
+$\lambda$ and no individual dies, so, from a single founder, the only non-zero
+rate is
+\begin{equation}
+\label{m:eq:yulerates}
+q_{n,n+1}=\lambda n,
+\qquad n\ge1.
+\end{equation}
+The holding time in state $n$ is $\operatorname{Exp}(\lambda n)$ and shortens
+as the population grows. The count $Y_t$ is geometric:
+\begin{equation}
+\label{m:eq:yulelaw}
+\pr{Y_t=n}=\ee^{-\lambda t}
+\lrb{1-\ee^{-\lambda t}}^{n-1},
+\qquad
+\ex{Y_t}=\ee^{\lambda t},
+\qquad
+\var{Y_t}=\ee^{\lambda t}\lrb{\ee^{\lambda t}-1},
+\end{equation}
+for $n=1,2,\ldots$. Unlike the Poisson process, its relative fluctuations do
+not vanish: the coefficient of variation tends to one. Early random
+differences are amplified by later births. A process begun from $k$ founders
+is the sum of $k$ independent one-founder processes and has the corresponding
+negative-binomial law.
+
+\begin{remark}[Origin and purpose]
+\label{m:rem:yuleorigin}
+The process arose from a biological question rather than as an abstract
+chain. Willis argued in \emph{Age and Area} \cite{Willis1922} that the highly
+skewed distribution of species among genera required a quantitative account.
+Yule supplied one in 1925 \cite{Yule1925}: species arise within a genus by a
+neutral pure-birth mechanism of the form above, while new genera continue to
+appear. Mixing the geometric within-genus law over genus ages produces the
+heavy-tailed genus-size frequencies later associated with the Yule--Simon
+distribution, after Simon's urn-model treatment \cite{Simon1955}. The same
+linear pure-birth dynamics appeared independently in Furry's 1937 model of
+cosmic-ray cascades \cite{Furry1937}, hence the name Yule--Furry process in
+the physics literature. The subsequent probability theory of birth--death
+processes, including Kendall's 1948 treatment \cite{Kendall1948}, developed
+largely through Feller's and Bartlett's line of work rather than from Yule's
+paper. The model now serves as the null process of diversification without
+extinction: its pure-birth limit underlies reconstructed phylogenetic
+likelihoods \cite{Nee1994} and the one-parameter Yule tree prior implemented
+in Bayesian software such as BEAST \cite{Bouckaert2014}.
+\end{remark}
+
+\subsubsection{Birth--death processes}
+\label{m:sec:bd}
+
+Let $X_t$ count individuals that independently give birth at rate $\lambda$
+and die at rate $\mu$. The non-zero rates out of $n\ge1$ are
+\begin{equation}
+\label{m:eq:bdrates}
+q_{n,n+1}=\lambda n,
+\qquad
+q_{n,n-1}=\mu n.
+\end{equation}
+State $0$ is absorbing, and $\mu=0$ recovers the Yule process. This
+\emph{linear birth--death process} is the continuous-time counterpart of the
+Galton--Watson process and the running example for the methods of
+\mextref{m:sec:ctmethods}{Section~1.3.2}. From $X_0=N$, its mean is
+$N\ee^{(\lambda-\mu)t}$. Its embedded chain is \cref{m:eq:rwrates} with
+$q=\lambda/(\lambda+\mu)$, so the gambler's-ruin calculation determines
+which boundaries are reached even though it does not determine when.
+
+The comparison between paths and their mean is particularly instructive.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{birth_death_paths.pdf}
+\caption{Nine paths of the linear birth--death process from $X_0=5$, with
+$\mu=1$ and three values of $\lambda$; red curves show
+$5\ee^{(\lambda-\mu)t}$. At criticality the mean remains five although some
+paths are already extinct and others are much larger. Supercritical growth
+also permits early extinction, whose eventual probability here is
+$(\mu/\lambda)^5$.}
+\label{m:fig:bdpaths}
+\end{figure}
+
+For one founder, extinction is certain when $\lambda\le\mu$ and has probability
+$\mu/\lambda$ when $\lambda>\mu$; from $N$ founders the latter probability is
+$(\mu/\lambda)^N$. Thus even a correct mean can conceal the absorbing fate of
+most or some of the population. General birth--death chains permit
+state-dependent rates $\lambda_n$ and $\mu_n$; the linear case is special
+because individuals act independently and its generating functions and
+moments close.
+
+\FloatBarrier
+
+\subsubsection{Birth--death--catastrophe processes}
+\label{m:sec:bdc}
+
+The process central to the later modelling chapters adds a third event. In
+addition to individual births and deaths, any replicative unit may trigger an
+abrupt catastrophe that terminates the whole intracellular population.
+
+\begin{definition}[Birth--death--catastrophe process]
+\label{m:def:bdc}
+Let $X_t$ take values in $\{0,1,2,\ldots\}\cup\{H\}$ and record the
+intracellular count while the compartment remains intact. Each replicative
+unit independently gives birth at rate $\lambda$, dies at rate $\mu$, and
+triggers catastrophe at rate $\delta$. For $n\ge1$, the non-zero transition
+rates are
+\begin{equation}
+\label{m:eq:bdcrates}
+q_{n,n+1}=\lambda n,
+\qquad
+q_{n,n-1}=\mu n,
+\qquad
+q_{n,H}=\delta n,
+\end{equation}
+and both $0$ and $H$ are absorbing.
+\end{definition}
+
+The absorbing states represent different terminal fates. State $0$ is
+internal extinction after the last ordinary death; $H$ is catastrophe or
+rupture and must not be identified with $0$. Let
+$\tau=\inf\{t:X_t=H\}$ be the catastrophe time. The released-count process
+used in Chapter~3 is
+\begin{equation}
+\label{m:eq:bdcrelease}
+W_t=
+\begin{cases}
+0,&t<\tau,\\
+X_{\tau-},&t\ge\tau,
+\end{cases}
+\qquad
+K:=X_{\tau-},
+\end{equation}
+where $K$ is the burst size on paths that rupture. The left limit is essential:
+at time $\tau$ the internal state jumps to $H$, whereas the released load is
+the count present immediately beforehand.
+
+Because the total catastrophe rate is $\delta n$ in state $n$, rupture is more
+likely from a fuller compartment. Before the first trigger, the family trees
+and catastrophe clocks descending from distinct founders can be constructed
+independently. If
+$I(t)=\pr{X_t\ne H\mid X_0=1}$ is the non-catastrophe probability, then the
+corresponding probability from $k$ founders is $I(t)^k$. This factorisation
+does not make post-trigger lineages independent: the first catastrophe stops
+them all simultaneously.
+
+\begin{figure}[!htbp]
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[
+  >={Stealth[length=1.9mm]},
+  st/.style={circle,draw,thick,minimum size=7.5mm,inner sep=0pt,font=\small},
+  ab/.style={circle,draw,thick,double,double distance=0.7pt,
+             minimum size=7.5mm,inner sep=0pt,font=\small},
+  lb/.style={font=\footnotesize,inner sep=1.6pt},
+  rowlab/.style={font=\small\itshape,anchor=west},
+  every path/.style={thick}
+]
+\node[rowlab] at (-1.9,1.15) {birth--death};
+\node[ab] (a0) at (0,0) {$0$};
+\node[st] (a1) at (2.1,0) {$1$};
+\node[st] (a2) at (4.2,0) {$2$};
+\node[st] (a3) at (6.3,0) {$3$};
+\node (a4) at (7.9,0) {$\cdots$};
+\draw[->] (a1) to[bend left=38] node[above,lb]{$\lambda$} (a2);
+\draw[->] (a2) to[bend left=38] node[above,lb]{$2\lambda$} (a3);
+\draw[->] (a3) to[bend left=38] node[above,lb]{$3\lambda$} (a4);
+\draw[->] (a1) to[bend left=38] node[below,lb]{$\mu$} (a0);
+\draw[->] (a2) to[bend left=38] node[below,lb]{$2\mu$} (a1);
+\draw[->] (a3) to[bend left=38] node[below,lb]{$3\mu$} (a2);
+
+\begin{scope}[yshift=-3.5cm]
+\node[rowlab] at (-1.9,1.15) {birth--death--catastrophe};
+\node[ab] (b0) at (0,0) {$0$};
+\node[st] (b1) at (2.1,0) {$1$};
+\node[st] (b2) at (4.2,0) {$2$};
+\node[st] (b3) at (6.3,0) {$3$};
+\node (b4) at (7.9,0) {$\cdots$};
+\draw[->] (b1) to[bend left=38] node[above,lb]{$\lambda$} (b2);
+\draw[->] (b2) to[bend left=38] node[above,lb]{$2\lambda$} (b3);
+\draw[->] (b3) to[bend left=38] node[above,lb]{$3\lambda$} (b4);
+\draw[->] (b1) to[bend left=38] node[below,lb]{$\mu$} (b0);
+\draw[->] (b2) to[bend left=38] node[below,lb]{$2\mu$} (b1);
+\draw[->] (b3) to[bend left=38] node[below,lb]{$3\mu$} (b2);
+\node[ab] (bh) at (4.2,-2.35) {$H$};
+\draw[->,densely dashed] (b1) to[bend right=12]
+  node[pos=0.68,left=1.5pt,lb]{$\delta$} (bh);
+\draw[->,densely dashed] (b2) --
+  node[pos=0.68,right=1.5pt,lb]{$2\delta$} (bh);
+\draw[->,densely dashed] (b3) to[bend left=12]
+  node[pos=0.68,right=1.5pt,lb]{$3\delta$} (bh);
+\end{scope}
+\end{tikzpicture}}
+\caption{Linear birth--death dynamics (top) and the
+birth--death--catastrophe extension (bottom). Double circles are absorbing.
+Ordinary extinction enters $0$ only from state $1$; catastrophe instead jumps
+from any positive count to the distinct state $H$, at total rate $\delta n$.}
+\label{m:fig:ratediagram}
+\end{figure}
+
+The detailed BDC analysis is deferred to
+\fwd{bdc}{the chapter on the birth--death--catastrophe process}, where
+non-catastrophe, internal-extinction and non-fixation probabilities are kept
+separate and the moments of $X_t$ and $W_t$ are derived. One modelling caution
+is important enough to establish here before making that deferral.
+
+\begin{remark}[A state-dependent catastrophe is not a mean-field hazard]
+\label{m:rem:notmeanfield}
+Write $\chi\in(0,1)$ for the probability that one individual initiates
+catastrophe during a discrete generation. This is a probability per
+generation, distinct from the continuous-time per-capita rate $\delta$. Let
+$\widetilde X_i$ be the branching population with catastrophe disabled and
+let its cumulative exposure before generation $n$ be
+\[
+\mathcal E_n=\sum_{i=0}^{n-1}\widetilde X_i.
+\]
+Conditional on this catastrophe-free genealogy, every exposed individual
+fails to trigger independently, and therefore
+\begin{equation}
+\label{m:eq:norupture}
+\pr{\text{no catastrophe before generation }n}
+=\ex{(1-\chi)^{\mathcal E_n}}.
+\end{equation}
+Replacing $\mathcal E_n$ by its mean is not exact. Since
+$e\mapsto(1-\chi)^e$ is convex, Jensen's inequality gives
+\[
+\ex{(1-\chi)^{\mathcal E_n}}
+\ge(1-\chi)^{\ex{\mathcal E_n}},
+\]
+so the mean-population substitution underestimates the non-catastrophe
+probability and overestimates catastrophe risk. Nor is non-catastrophe the
+same as continued population survival: their intersection has probability
+$\ex{\ind\{\widetilde X_n>0\}(1-\chi)^{\mathcal E_n}}$, to which this Jensen
+bound does not apply. The exact hazard depends on cumulative path exposure,
+not on the population mean at a single time.
+\end{remark}
+
+\FloatBarrier
+
+\subsection{Time-inhomogeneous processes}
+\label{m:sec:inhomogeneous}
+
+The preceding chains are time homogeneous: their rates depend on the state
+but not on the clock. A time-inhomogeneous CTMC has a generator $Q(t)$ and
+two-time transition probabilities
+\begin{equation}
+\label{m:eq:inhomogtrans}
+p_{ij}(s,t)=\pr{X_t=j\mid X_s=i},
+\qquad s\le t.
+\end{equation}
+For $s\le u\le t$, Chapman--Kolmogorov becomes
+$P(s,t)=P(s,u)P(u,t)$. Under the usual regularity conditions, differentiation
+at either endpoint gives
+\begin{equation}
+\label{m:eq:inhomogkolmogorov}
+\pdd{}{t}P(s,t)=P(s,t)Q(t),
+\qquad
+\pdd{}{s}P(s,t)=-Q(s)P(s,t).
+\end{equation}
+The solution is generally a time-ordered product rather than
+$\ee^{(t-s)Q}$; the ordinary exponential is recovered when the generators
+at different times commute. Simulation likewise uses integrated hazards or
+thinning, since event rates can change between jumps even while the state is
+fixed.
+
+\paragraph{Linear birth--death rates.}
+\label{m:sec:tibd}
+Suppose the per-capita birth and death rates are prescribed calendar-time
+functions $\lambda(t)$ and $\mu(t)$. Linearity still closes the mean:
+\begin{equation}
+\label{m:eq:meanodeinhom}
+\ex{X_t\mid X_0=n_0}
+=n_0\exp\lrb{\int_0^t\bigl(\lambda(r)-\mu(r)\bigr)\,\dd r}.
+\end{equation}
+Extinction requires more care because the starting and terminal times play
+different roles. The natural backward quantity is
+\[
+u(s,T):=\pr{X_T=0\mid X_s=1}.
+\]
+A first-step expansion at time $s$ gives the backward Riccati equation
+\begin{equation}
+\label{m:eq:riccatiext}
+-\pdd{u}{s}
+=\mu(s)-\bigl(\lambda(s)+\mu(s)\bigr)u+\lambda(s)u^2,
+\qquad
+u(T,T)=0.
+\end{equation}
+By contrast, the forward-endpoint probability
+$u_{\mathrm f}(t):=\pr{X_t=0\mid X_0=1}=u(0,t)$ is, in Kendall's notation
+\cite{Kendall1948},
+\begin{equation}
+\label{m:eq:inhomextforward}
+u_{\mathrm f}(t)=\frac{B(t)}{1+B(t)},
+\qquad
+B(t)=\int_0^t\mu(s)
+\exp\lrb{\int_0^s\bigl(\mu(r)-\lambda(r)\bigr)\,\dd r}\,\dd s.
+\end{equation}
+It does not generally satisfy \cref{m:eq:riccatiext} with $s$ replaced by
+$t$. If time is reparametrised by the remaining horizon,
+$v(r)=u(T-r,T)$, then the Riccati coefficients are
+$\lambda(T-r)$ and $\mu(T-r)$; the familiar one-variable homogeneous formula
+is recovered when the rates are constant. This distinction prevents a
+calendar-time rate schedule from being read backwards inadvertently.
+
+\subsubsection{The seasonal Lotka--Volterra process}
+\label{m:sec:seasonallv}
+
+Externally imposed time dependence remains visible when populations interact.
+Let $X_t$ and $Y_t$ be prey and predator counts. Prey reproduction is seasonal,
+predation converts one prey into one predator, and predators die individually:
+\begin{equation}
+\label{m:eq:lvrate}
+q_{(x,y),(x+1,y)}(t)=b\mathcal S^+(t)x,
+\qquad
+q_{(x,y),(x-1,y+1)}(t)=exy,
+\qquad
+q_{(x,y),(x,y-1)}(t)=dy.
+\end{equation}
+The seasonal multiplier is the positive part of a sinusoid,
+\begin{equation}
+\label{m:eq:lvkernel}
+\mathcal S^+(t)=\max\{0,1+A\sin(\omega t)\}.
+\end{equation}
+Clipping is required because a transition rate cannot be negative. For $A>1$,
+each period $2\pi/\omega$ contains a closed season of length
+$(2/\omega)\arccos(1/A)$ during which prey births stop.
+
+On the predator-free axis, $Y_t\equiv0$ and $X_t$ is a time-inhomogeneous
+Yule process with per-capita rate $b\mathcal S^+(t)$. Hence
+\[
+\ex{X_t\mid X_0=x_0,Y_0=0}
+=x_0\exp\lrb{b\int_0^t\mathcal S^+(s)\,\dd s},
+\]
+and extinction is impossible on that axis. In the interior, the interaction
+is quadratic. The exact first moments involve $\ex{X_tY_t}$ and do not close;
+for comparison, the corresponding deterministic system is
+\begin{equation}
+\label{m:eq:lvmeanfield}
+\dot x=b\mathcal S^+(t)x-exy,
+\qquad
+\dot y=exy-dy.
+\end{equation}
+Thus this model marks the limit of what a closed mean can reveal: the forcing
+is prescribed, but the interacting stochastic law is not reduced to
+\cref{m:eq:meanodeinhom}. Exact paths can be simulated by thinning against
+$\mathcal S^+(t)\le1+A$.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{seasonal_lv.pdf}
+\caption{The seasonal Lotka--Volterra process with $A=2$, $\omega=2\pi$,
+$b=2$, $e=0.005$, $d=2$, and $(X_0,Y_0)=(300,100)$. (a) Clipping the forcing
+creates a closed season occupying one third of every period. (b) Ten exact
+prey--predator paths. (c) Pointwise medians and 10--90\% bands from 200 paths,
+with \cref{m:eq:lvmeanfield} dashed. The first cycle is calendar-locked and
+tightly concentrated; later interaction amplifies phase and amplitude
+differences. If prey reach zero, the remaining predators form a pure-death
+process and the path eventually reaches $(0,0)$.}
+\label{m:fig:seasonallv}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{The logistic speciation model}
+\label{m:sec:logisticspeciation}
+
+The second example is a pure-birth species process driven by a prescribed
+deterministic environment. Let $N(t)$ be total abundance across all species,
+assumed large enough to follow the logistic equation
+\begin{equation}
+\label{m:eq:logisticode}
+\dda{N}{t}=rN\lrb{1-\frac{N}{C}},
+\qquad
+N(0)=N_0,
+\qquad 0<N_0<C,
+\end{equation}
+where $C$ is environmental capacity. Its solution is
+\begin{equation}
+\label{m:eq:logisticsol}
+N(t)=\frac{C\ee^{rt}}{\xi+\ee^{rt}},
+\qquad
+\xi=\frac{C}{N_0}-1.
+\end{equation}
+
+Let $S_t$ be the number of species, with $S_0=1$. Species do not become extinct
+in this basic model. Each existing species gives rise to a new one at the
+per-species rate
+\begin{equation}
+\label{m:eq:speciationrate}
+\beta(t)=\sigma\bigl(C-N(t)\bigr),
+\end{equation}
+so $q_{s,s+1}(t)=\beta(t)s$. The model is therefore exactly a Yule process
+under a deterministic time change; it is not claimed to be an exact reduction
+of a state-dependent stochastic population model. Substitution of
+\cref{m:eq:logisticsol} gives
+\begin{equation}
+\label{m:eq:lambdat}
+\beta(t)=\sigma C\frac{\xi}{\xi+\ee^{rt}},
+\end{equation}
+which decreases to zero as the environment fills. Its cumulative intensity is
+\begin{equation}
+\label{m:eq:lambdaint}
+\mathcal B(t):=\int_0^t\beta(s)\,\dd s
+=\sigma Ct+\frac{\sigma C}{r}
+\log\lrb{\frac{\xi+1}{\xi+\ee^{rt}}}.
+\end{equation}
+Replacing $\lambda t$ by $\mathcal B(t)$ in the Yule law
+\cref{m:eq:yulelaw} gives the complete fixed-time distribution. In particular,
+\begin{equation}
+\label{m:eq:logspecmean}
+\ex{S_t}=\ee^{\mathcal B(t)}
+=\ee^{\sigma Ct}
+\lrb{\frac{\xi+1}{\xi+\ee^{rt}}}^{\sigma C/r}
+\xrightarrow[t\to\infty]{}
+(\xi+1)^{\sigma C/r}
+=\lrb{\frac{C}{N_0}}^{\sigma C/r}.
+\end{equation}
+The count is non-decreasing and has a bounded limiting mean, so it converges
+almost surely to a finite random species count. This is a one-way coupling:
+the environment sets the speciation clock, while $S_t$ does not feed back into
+$N(t)$.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.73\textwidth]{logspec_yule_mean.pdf}
+\caption{Mean species count \cref{m:eq:logspecmean} for
+$N_0=1,2,5$, with $C=10$, $r=1$, and $\sigma=0.08$; dashed lines are the
+limits $(C/N_0)^{\sigma C/r}$. A smaller founding abundance leaves more
+integrated unused capacity, so the limiting mean is higher.}
+\label{m:fig:logspecmean}
+\end{figure}
+
+The same deterministic logistic environment can drive nearby stochastic
+models without changing the status of the process just analysed. In
+\cref{m:fig:lsmean}, the per-species origination rate is instead
+$\beta_{\mathrm{bd}}(t)=\sigma N'(t)$ and each species becomes extinct at a
+constant per-species rate $\varepsilon>0$. Its mean can therefore rise and
+then fall. This is a numerical comparison, not an alternative interpretation
+of \cref{m:eq:speciationrate}: the basic model above has no species extinction
+and its paths remain non-decreasing.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.58\textwidth]{LSMean.png}
+\caption{Numerical comparison with a logistic-environment birth--death
+variant. Pale blue curves are species-count paths and the dark blue curve is
+their sample mean; the lower panel shows the per-species origination rate
+$\sigma N'(t)$ and a constant extinction rate. Richness turns over after
+origination falls below extinction. The ordinate $X_t$ in the supplied
+illustration denotes the species count $S_t$ used in this section; this is not
+the pure-birth model of \cref{m:eq:speciationrate,m:eq:logspecmean}.}
+\label{m:fig:lsmean}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Coupled ODE--CTMC systems}
+\label{m:sec:coupled}
+
+A continuous trajectory and a discrete chain can be combined in three
+distinct ways. Write $\mathbf y(t)\in\mathbb R^d$ for the continuous state and
+$M_t\in\mathcal S$ for the discrete mode.
+
+\begin{enumerate}[label=(\roman*),leftmargin=*,itemsep=0.45em]
+\item An autonomous Markov chain may switch the vector field:
+\begin{equation}
+\label{m:eq:coupledone}
+\dda{\mathbf y}{t}=F\bigl(\mathbf y(t),M_t\bigr),
+\qquad M_t\text{ autonomous}.
+\end{equation}
+Here $M_t$ remains Markov on its own; $\mathbf y(t)$ generally does not,
+because its future also depends on the unobserved current mode.
+
+\item A prescribed continuous trajectory may drive the chain rates:
+\begin{equation}
+\label{m:eq:coupledtwo}
+\dda{\mathbf y}{t}=F\bigl(\mathbf y(t)\bigr),
+\qquad
+q_{ij}(t)=q_{ij}\bigl(\mathbf y(t)\bigr).
+\end{equation}
+The trajectory can be solved first, and $M_t$ is then a time-inhomogeneous
+Markov chain. The logistic speciation model is of this form.
+
+\item In genuine two-way coupling, each component drives the other:
+\begin{equation}
+\label{m:eq:coupledthree}
+\dda{\mathbf y}{t}=F\bigl(\mathbf y(t),M_t\bigr),
+\qquad
+q_{ij}=q_{ij}\bigl(\mathbf y(t)\bigr).
+\end{equation}
+Neither component can generally be solved in isolation.
+\end{enumerate}
+
+In all three cases the pair is naturally a piecewise-deterministic Markov
+process \cite{Davis1993}; in the two-way case it is generally the pair, rather
+than either component alone, that is Markov. For a suitable test function
+$f(\mathbf y,i)$, the joint generator is
+\begin{equation}
+\label{m:eq:coupledgenerator}
+(\mathcal Lf)(\mathbf y,i)
+=F(\mathbf y,i)\mathbin{\cdot}\nabla_{\mathbf y}f(\mathbf y,i)
++\sum_{j\ne i}q_{ij}(\mathbf y)
+  \bigl[f(\mathbf y,j)-f(\mathbf y,i)\bigr].
+\end{equation}
+The first term transports the continuous state along its deterministic flow;
+the second is the usual jump generator. Removing the $\mathbf y$-dependence
+of the rates gives case (i), while removing the mode-dependence of $F$ gives
+case (ii).
+
+\subsubsection{Accumulation with gated release}
+\label{m:sec:gated}
+
+Let $A_t$ be an accumulated amount, $R_t$ the amount transferred into a
+receiving population, and $G_t\in\{0,1\}$ a closed/open gate. Between gate
+jumps,
+\begin{equation}
+\label{m:eq:gatedflow}
+\dda{A_t}{t}=\rho-G_tcA_t,
+\qquad
+\dda{R_t}{t}=G_tcA_t,
+\end{equation}
+where $\rho>0$ is the external input and $c>0$ the transfer rate. The gate
+opens faster when more has accumulated and closes at a constant rate:
+\begin{equation}
+\label{m:eq:gatedjumps}
+\pr{G_{t+\Delta t}=1\mid G_t=0,A_t=a}
+=\eta a\,\Delta t+o(\Delta t),
+\qquad
+\pr{G_{t+\Delta t}=0\mid G_t=1}
+=\gamma\,\Delta t+o(\Delta t).
+\end{equation}
+Thus $\eta$ has units of inverse amount--time, whereas $\gamma$ is a rate.
+Both directions of \cref{m:eq:coupledthree} are present.
+
+Adding the flow equations gives the pathwise balance law
+\begin{equation}
+\label{m:eq:gatedbalance}
+A_t+R_t=A_0+R_0+\rho t.
+\end{equation}
+Transfer conserves the total, and only the external input changes it. From
+non-negative initial conditions, both components remain non-negative and
+$R_t$ is non-decreasing. The first moment already exposes the coupling:
+$\dda{}{t}\ex{A_t}=\rho-c\ex{G_tA_t}$, which is not closed in
+$\ex{A_t}$ and $\ex{G_t}$ separately.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.68\textwidth]{gated_paths.pdf}
+\caption{Three exact paths of gated release from
+$(A_0,R_0,G_0)=(5,0,0)$, with $\rho=2$, $c=4$, $\eta=0.015$, and
+$\gamma=1.45$. While the gate is closed, $A_t$ grows linearly and $R_t$ is
+constant; an open gate transfers the accumulated amount into $R_t$ and pulls
+$A_t$ towards $\rho/c$. State-dependent opening produces intermittent
+releases.}
+\label{m:fig:gatedpaths}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Accumulation with surging gated release}
+\label{m:sec:surging}
+
+The surging variant retains the flow \cref{m:eq:gatedflow} and closing rate
+$\gamma$, but opens the gate autonomously at rate $\nu$:
+\begin{equation}
+\label{m:eq:surgingjumps}
+\pr{G_{t+\Delta t}=1\mid G_t=0}
+=\nu\,\Delta t+o(\Delta t).
+\end{equation}
+Here $G_t$ is an autonomous two-state CTMC, so the model is case (i) of the
+taxonomy. Its mean closes:
+\begin{equation}
+\label{m:eq:gatemean}
+\dda{}{t}\ex{G_t}
+=\nu\bigl(1-\ex{G_t}\bigr)-\gamma\ex{G_t},
+\qquad
+\ex{G_t}\longrightarrow\frac{\nu}{\nu+\gamma}.
+\end{equation}
+The population moment still contains $\ex{G_tA_t}$, since the flow is driven
+by the gate. The balance law \cref{m:eq:gatedbalance} is unchanged.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{gated_ensemble.pdf}
+\caption{Medians and pointwise 10--90\% bands from 2000 paths. Both models
+use $\rho=2$, $c=4$, $\gamma=1.45$, and $(A_0,R_0,G_0)=(5,0,0)$. Gated
+release (left) opens at intensity $\eta A_t$ with $\eta=0.015$; surging
+release (right) opens at the autonomous rate $\nu=0.3$. The parameters have
+different dimensions, and the two opening mechanisms produce visibly
+different accumulation levels.}
+\label{m:fig:gatedensemble}
+\end{figure}
+
+\subsubsection{Simulating a coupled system}
+\label{m:sec:coupledsim}
+
+The competing-clock construction extends to the joint process, but the
+continuous motion makes the jump rates vary between events. Suppose the
+current absolute time is $t$, the discrete mode is $i$, and
+$\mathbf y_u$ denotes the deterministic flow with that mode held fixed. If
+$T$ is the next jump time, then, for $s\ge t$,
+\begin{equation}
+\label{m:eq:coupledholding}
+\pr{T>s\mid\mathbf y_t,M_t=i}
+=\exp\lrb{-\int_t^s q_i(\mathbf y_u)\,\dd u},
+\qquad
+q_i(\mathbf y)=\sum_{j\ne i}q_{ij}(\mathbf y).
+\end{equation}
+At $T$, the destination is selected with probability
+$q_{ij}(\mathbf y_T)/q_i(\mathbf y_T)$. The integrated hazard can be inverted
+directly when a closed form is available, or handled by quadrature or
+thinning otherwise.
+
+For gated release, a closed gate gives $A_{t+r}=A_t+\rho r$, so its cumulative
+opening hazard over a wait $r$ is
+\[
+\eta\int_0^r(A_t+\rho u)\,\dd u
+=\eta\lrb{A_tr+\tfrac12\rho r^2}.
+\]
+Equating this expression to an $\operatorname{Exp}(1)$ variate gives the next
+opening by a quadratic solve; closing waits are
+$\operatorname{Exp}(\gamma)$. In the surging model, the opening wait is simply
+$\operatorname{Exp}(\nu)$. The fixed-gate flows also solve exactly, so both
+models admit event-driven simulation without time-step error in the switching.
+Their analysis nevertheless begins with the joint generator
+\cref{m:eq:coupledgenerator}: the countable-state methods of
+\mextref{m:sec:ctmethods}{Section~1.3.2} do not by themselves close the
+continuous-state transport or the mixed moment $\ex{G_tA_t}$.
+
+\FloatBarrier

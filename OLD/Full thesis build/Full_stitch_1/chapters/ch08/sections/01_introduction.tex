@@ -1,0 +1,145 @@
+% Introduction.  Opening follows the CH2/CH7 grammar: question, setting,
+% object, results, organisation.  Three candidate advantages kept as content.
+
+\section{Introduction}
+\label{path:sec:introduction}
+
+Under linear clearance the schedule by which an infected cell releases its
+load is invisible to the basic reproduction number: replacing constant
+budding by a single burst leaves $R_0$ exactly unchanged, a fact proved in
+\ChPop{} (\cref{p:thm:R0inv}). The schedule is not invisible to
+establishment, but that comparison is again a comparison of branching
+structures at fixed mean. This chapter asks whether a depletable defence
+changes either conclusion --- whether bursting can be an advantage, or a
+disadvantage, once the host's capacity to kill is finite.
+
+Two sites are treated. Inside the host cell, some leucocytes carry a finite
+store of oxidative granules, spent as they act. Outside it, killer cells in
+the extracellular matrix remove free agents on contact and are themselves
+used up. In both cases the per-agent hazard depends on how many agents
+arrive at once. Constant budding, as used in the basic model of viral
+replication \cite{anderson1988role,perelson1996hiv,nowak1996population}, is
+an approximation that ignores that dependence; single-cell observations of
+HIV release are already intermittent rather than constant
+\cite{ribeiro2010estimation,capistran2018extracellular,ciupe2017host}.
+Eclipse phases and load-dependent production
+\cite{nelson2004age,kitagawa2018pde,rong2013analysis} address a different
+approximation, and are not pursued here.
+
+Comparing bursting with budding is not new
+\cite{pearson2011stochastic,komarova2007viral,bird2015escape,bird2015nonlytic,garoff1998virus}.
+What is added is a quantification of \emph{flooding} --- that a burst-style
+release is more likely to exhaust the local killing capacity. The word is
+used below in two senses that must be kept apart --- a comparison of two
+offspring laws at one delivery, and a comparison of the same yield split
+across more deliveries --- and the two do not always agree.
+
+\subsection{Three candidate advantages}
+\label{path:sec:advantages}
+
+Is there a fundamental advantage to bursting dynamics in pathogenesis? For
+\ft{} and \yp{}, host cell lysis may be no more than the simplest available
+means of release: bacteria are large in comparison with the protein complexes
+that constitute a cell membrane, so it would be difficult to employ a
+strategy in which some but not all of the pathogen were released. Viruses are
+different. They are small enough to allow partial release of an
+intracellular load, and for viruses such as HIV there is an explicit
+advantage to not killing the cell, since its machinery continues to produce
+virions. That an all-at-once strategy nonetheless persists is what needs
+explaining, and the explanations on offer fall into three categories.
+
+\begin{description}[leftmargin=1.4em,style=unboxed,itemsep=0.2em]
+\item[Subductive proliferation.] Replication rate declines over time within
+a host cell, perhaps following recognition, or as the resources available
+there are used up.
+\item[Limited killing.] The means of removing agents are finite on the
+relevant timescales, so the effective death rate of invading pathogen falls
+as the incident cohort is killed. This may happen inside the cell, where
+some host cells carry oxidative granules of finite number, or outside it.
+\item[Detection avoidance.] Continual budding may be detected more readily,
+by immune cells that induce apoptosis, than release that is sporadic and
+clustered, as HIV's is observed to be.
+\end{description}
+
+All three amount to catching some immune mechanism off guard. This chapter
+pursues the second, because it is the one that can be settled by
+calculation; the other two are named here and left. Subductive proliferation
+would need no new machinery, its dynamics being the standard
+time-inhomogeneous theory already available in \cref{m:sec:inhomogeneous},
+but that theory does not by itself distinguish bursting from budding.
+Detection avoidance would need a model of detection, which this chapter does
+not have. \Cref{path:sec:limitations} returns to both.
+
+Three results carry what follows. If a fixed count $\vartheta$ of released
+agents is removed on each delivery, the expected surviving release of one
+cell is $\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$, where $V_\infty$
+is the expected lifetime yield of an infected cell and $a$ is the larger
+root of the characteristic quadratic taken from \ChCore{}. Every unit of
+removal costs the burst one factor of $a$. In the replicator--suppressor
+model of \cref{path:sec:intracellular}, survival is certain once the
+incident cohort exceeds the granule store; on the matched diagonal the
+infection fails with a probability that decays only polynomially in cohort
+size, at exponent $\lambda/\varsigma$. And the flooding criterion of
+\ChPop{} reverses under a removal threshold: bursting wins the matched-mean
+comparison exactly when $L<1$, the complement of \cref{p:thm:flood}.
+
+The derivation proceeds as follows.
+\begin{itemize}[leftmargin=1.6em,itemsep=0.25em,topsep=0.35em]
+\item A chained birth--death--catastrophe process with complete transfer
+cannot prefer one release schedule, so a nonlinearity is forced into the
+model.
+\item The intracellular chain is solved by first-step analysis; the
+certainty threshold and the diagonal law are closed.
+\item The extracellular toll is reduced to an integer budget, and
+memorylessness of the burst law gives $\mathcal{R}(\vartheta)$.
+\item The same functional is compared across bursting and budding, and the
+criterion reverses.
+\end{itemize}
+
+The intracellular process, its roots $a$ and $b$, its lifetime yield
+$V_\infty$ and its burst-size law are taken from \ChCore{}
+(\cref{bdc:lem:roots,bdc:eq:Vinf,dist:eq:burstlaw}); the single-cell
+comparison of the two release strategies is established in \ChDist{}
+(\cref{dist:sec:budding}); and the population comparison, the flooding
+theorem and the catalogue of intermediate release mechanisms are proved in
+\ChPop{} (\cref{p:thm:flood,p:sec:reach}). New here are the two depletion
+models, the closed form $\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$,
+and the reversal. \Cref{path:sec:schedule} forces the nonlinearity;
+\cref{path:sec:intracellular,path:sec:removal} supply it, one site each;
+\cref{path:sec:selection} places the result against the flooding theorem and
+closes on \yp{}. \Cref{path:app:verification} records the numerical checks.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+\multicolumn{2}{@{}l}{\itshape Inherited, and used here without redefinition} \\
+$\lambda,\mu,\delta$ & birth, death and catastrophe rates of one replicator \\
+$a,b$ & roots of the characteristic quadratic, $b<1<a$ \\
+$L=a(1-b)$ & the flooding parameter of \cref{p:thm:flood} \\
+$W_t$ & agents released by one infected cell up to time $t$ \\
+$V_\infty$ & expected lifetime release of one infected cell, $\lim_t\ex{W_t}$ \\
+$r$ & burst size: the load released at rupture \\
+$q$ & probability that a released agent infects a new cell \\
+\addlinespace[2pt]
+\multicolumn{2}{@{}l}{\itshape Particular to this chapter} \\
+$\vartheta$ & fixed removal budget, an integer count of killed agents \\
+$\vartheta^{\ast}$ & the budget at which $\mathcal{R}=1$, $\log V_\infty/\log a$ \\
+$\mathcal{R}(\vartheta)$ & expected surviving release per cell under budget $\vartheta$ \\
+$X_t,\;Q_t$ & intracellular replicators, and remaining granules \\
+$\varsigma$ & suppression rate per replicator--granule pair \\
+$\pi_{i,j}$ & probability of extinction from $i$ replicators, $j$ granules \\
+$N$ & granule store of a fresh host cell \\
+\bottomrule
+\end{tabular}
+\caption{Notation. The upper block is taken from \ChCore{} and \ChPop{}; the
+lower block carries meanings specific to this chapter, and those letters
+were chosen to avoid collisions with the ones those meanings would otherwise
+have taken.}
+\label{path:tab:notation}
+\end{table}
+
+\FloatBarrier

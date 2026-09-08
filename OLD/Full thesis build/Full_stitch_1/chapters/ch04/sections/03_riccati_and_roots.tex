@@ -1,0 +1,344 @@
+\section{The Riccati equation and its two roots}
+\label{bdc:sec:riccati}
+
+Three probabilities sit close together in this process and are easily confused:
+the cell may have avoided rupture, it may have died internally, or it may still
+be productive. Their meanings differ, yet all three can be obtained from one
+scalar differential equation. We derive that equation first, then follow its
+flow from two initial conditions.
+
+\subsection{First-step decomposition}
+\label{bdc:sec:firststep}
+
+Let
+\[
+I(t)=\pr{X_t\neq H \mid X_0=1}
+\]
+be the \emph{non-catastrophe probability}, the chance that rupture has not
+occurred by time $t$. A path counted by $I(t)$ may still be productive or it may
+already have died at $0$; it is excluded only if it has reached $H$.
+
+Consider the first event experienced by the founding unit during a short
+interval. Time homogeneity allows the process left after that event to be
+followed for a further duration $t$:
+\[
+I(t+\Delta t) = \mu\,\Delta t
++ \bigl[1-(\lambda+\mu+\delta)\Delta t\bigr]I(t)
++ \lambda\,\Delta t\,I(t)^2 + o(\Delta t).
+\]
+If the founder dies, rupture has been avoided for good, giving the first term.
+A rupture contributes nothing. If the founder divides, both descendant families
+must avoid rupture, and the branching property gives probability $I(t)^2$.
+After rearrangement,
+\[
+\frac{I(t+\Delta t)-I(t)}{\Delta t}
+= \mu - (\lambda+\mu+\delta)I(t) + \lambda I(t)^2
++ \frac{o(\Delta t)}{\Delta t}.
+\]
+Taking $\Delta t\to0$ gives
+\begin{equation}
+\label{bdc:eq:riccati}
+\ddt{I} = \mu - (\lambda+\mu+\delta)I + \lambda I^2,
+\qquad I(0)=1.
+\end{equation}
+This is a Riccati equation, but its useful feature is simpler than the name
+suggests: the right-hand side contains $I$ and the three rates, and nothing else.
+The equation closes before any moments have been introduced.
+
+\subsection{The two roots}
+\label{bdc:sec:roots}
+
+The quadratic on the right of \cref{bdc:eq:riccati} becomes transparent once its
+roots are named.
+
+\begin{lemma}[The characteristic quadratic has one root on either side of unity]
+\label{bdc:lem:roots}
+Let $\lambda>0$, $\mu\ge0$ and $\delta>0$, and set
+\[
+q(x)=\lambda x^2-(\lambda+\mu+\delta)x+\mu,
+\qquad
+\eta=\frac{\lambda+\mu+\delta}{2\lambda}.
+\]
+Then $q$ has two real roots
+\[
+a=\eta+\sqrt{\eta^2-\frac{\mu}{\lambda}},
+\qquad
+b=\eta-\sqrt{\eta^2-\frac{\mu}{\lambda}},
+\]
+satisfying $b<1<a$, with $ab=\mu/\lambda$ and
+$a+b=(\lambda+\mu+\delta)/\lambda$. Moreover $b\in[0,1)$, with $b=0$ if and
+only if $\mu=0$.
+\end{lemma}
+
+\begin{proof}
+The roots are real and distinct because
+\[
+\eta^2-\frac{\mu}{\lambda}
+=\frac{(\lambda+\mu+\delta)^2-4\lambda\mu}{4\lambda^2}
+=\frac{(\lambda-\mu)^2+\delta(\delta+2\lambda+2\mu)}{4\lambda^2}>0
+\]
+when $\delta>0$. Since
+$q(1)=\lambda-(\lambda+\mu+\delta)+\mu=-\delta<0$, the value at $1$ lies below
+the axis of an upward-opening parabola, so one root lies on each side of unity.
+Finally, Vieta's relation gives $ab=\mu/\lambda\ge0$. As $a>0$, this implies
+$b\ge0$, with equality precisely when $\mu=0$.
+\end{proof}
+
+\begin{remark}[Standing assumptions]
+\label{bdc:rem:assumptions}
+Unless a limiting case is being considered, we take
+$\lambda>0$, $\mu\ge0$ and $\delta>0$, and set $X_0=1$.
+The case $\delta=0$ is the linear birth--death process of
+\mextref{m:sec:bd}{Section 2.2.3 of \ChM}; it returns in
+\cref{bdc:app:nocatastrophe} as a limit. The linear state dependence of the
+rates also makes the process non-explosive, with finite moments at every finite
+time. This permits the differentiations under expectation used in
+\cref{bdc:sec:moments}.
+\end{remark}
+
+The Riccati equation now reads
+\begin{equation}
+\label{bdc:eq:riccatifact}
+\ddt{I} = \lambda(I-a)(I-b).
+\end{equation}
+This factorisation gives a phase-line picture before it gives a formula.
+The initial value $I(0)=1$ lies between $b$ and $a$, where the derivative is
+negative. Consequently $I(t)$ decreases towards $b$ and never crosses it.
+\Cref{bdc:fig:roots} draws this motion; the single observation
+$q(1)=-\delta$ places the initial point between the two roots.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{F4_quadratic_roots.pdf}
+\caption{The characteristic quadratic and its flow for $\lambda=1$, $\mu=0.2$
+and $\delta=0.05$. The roots $b=0.188$ and $a=1.062$ lie on either side of
+unity because $q(1)=-\delta$. A trajectory beginning at $I(0)=1$ moves
+towards the stable root $b$. The distances $A=a-1$ and $B=1-b$ recur in the
+closed forms.}
+\label{bdc:fig:roots}
+\end{figure}
+
+Two short distances from unity make the later algebra easier to read:
+\[
+A=a-1,\qquad B=1-b.
+\]
+Vieta's relations then yield
+\[
+AB=(a-1)(1-b)=a+b-ab-1
+=\frac{\lambda+\mu+\delta}{\lambda}-\frac{\mu}{\lambda}-1
+=\frac{\delta}{\lambda},
+\]
+while $A+B=a-b$. We collect the identities here and name the exponential rate
+that will recur:
+\begin{equation}
+\label{bdc:eq:identities}
+ab=\frac{\mu}{\lambda},\qquad
+a+b=\frac{\lambda+\mu+\delta}{\lambda},\qquad
+AB=\frac{\delta}{\lambda},\qquad
+A+B=a-b,\qquad
+\theta=\lambda(a-b).
+\end{equation}
+The point of these relations is practical. Expressions which are cumbersome in
+$\lambda$, $\mu$ and $\delta$ often fall into a recognisable shape in
+$a$, $b$, $A$ and $B$.
+
+\subsection{Solving for \texorpdfstring{$I(t)$}{I(t)}}
+\label{bdc:sec:solveI}
+
+Equation~\cref{bdc:eq:riccatifact} separates:
+\[
+\int \frac{\dd I}{(I-a)(I-b)} = \lambda t + \text{const}.
+\]
+Using
+\[
+\frac{1}{(I-a)(I-b)}
+=\frac{1}{a-b}\lrb{\frac{1}{I-a}-\frac{1}{I-b}},
+\]
+we obtain
+\begin{equation}
+\label{bdc:eq:ratio}
+\frac{I(t)-a}{I(t)-b}
+=\frac{I(0)-a}{I(0)-b}\,\ee^{\lambda(a-b)t}
+=\frac{I(0)-a}{I(0)-b}\,w,
+\qquad w:=\ee^{\theta t}.
+\end{equation}
+For $I(0)=1$, the initial ratio is $-A/B$, and solving for $I(t)$ gives the
+first main formula.
+
+\begin{theorem}[The non-catastrophe probability]
+\label{bdc:thm:I}
+From one founder, the probability that catastrophe has not occurred by time $t$
+is
+\begin{equation}
+\label{bdc:eq:I}
+I(t) = \frac{aB + bA\,w}{B + A\,w},
+\qquad w=\ee^{\theta t},\quad \theta=\lambda(a-b),
+\end{equation}
+where $a$ and $b$ are given in \cref{bdc:lem:roots}, with $A=a-1$ and
+$B=1-b$.
+\end{theorem}
+
+As $t$ grows, $w$ grows and
+\[
+\lim_{t\to\infty}I(t)
+=\lim_{t\to\infty}\frac{aB+bAw}{B+Aw}=b.
+\]
+When $\mu>0$, the paths which avoid rupture indefinitely are exactly those which
+die internally first. Thus $b$ is the probability of internal extinction before
+rupture. When $\mu=0$, death is impossible, $b=0$, and every path eventually
+ruptures. The lower root is therefore both the stable point of the differential
+equation and a probability. The upper root is not visited by $I(t)$, although it
+will acquire its own probabilistic role through the burst-size law.
+
+\subsection{The same equation again: internal extinction}
+\label{bdc:sec:D}
+
+Let
+\[
+D(t)=p_0(t)=\pr{X_t=0\mid X_0=1}
+\]
+be the probability of internal extinction by time $t$. The first-step argument
+has the same shape as before. Death of the founder contributes certainty;
+division requires both descendant families to die; rupture contributes nothing.
+Consequently
+\begin{equation}
+\label{bdc:eq:riccatiD}
+\ddt{D} = \mu - (\lambda+\mu+\delta)D + \lambda D^2,
+\qquad D(0)=0.
+\end{equation}
+The meanings of $I$ and $D$ differ, but their motion is governed by the same
+flow. For $b>0$, inserting $D(0)=0$ into \cref{bdc:eq:ratio} gives the initial
+ratio $a/b$ and hence the following expression. When $b=0$, internal extinction
+is impossible and the same formula is recovered directly as $D\equiv0$.
+
+\begin{theorem}[The internal-extinction probability]
+\label{bdc:thm:D}
+The probability that the process has died out internally by time $t$ is
+\begin{equation}
+\label{bdc:eq:D}
+D(t) = \frac{ab(w-1)}{aw-b}.
+\end{equation}
+\end{theorem}
+
+The two solutions approach $b$ from opposite sides: $I$ descends from $1$ and
+$D$ rises from $0$. Their narrowing separation is the probability that the cell
+is still productive.
+
+\subsection{The non-fixation probability}
+\label{bdc:sec:Ifix}
+
+Define
+\[
+\Ifix(t)=\pr{X_t\notin\{0,H\}\mid X_0=1}.
+\]
+Since $0$ and $H$ are the only ways to leave the productive states,
+\[
+\Ifix(t)=I(t)-D(t).
+\]
+Equivalently, if $T_0$ and $T_H$ are the two hitting times, then
+$\Ifix(t)=\pr{t<T_0\wedge T_H}$. This is the survival event used for
+conditioning in \fwd{singlecell}{Chapter~5}: the cell must remain intact
+\emph{and} retain a positive load.
+
+A direct first-step calculation is useful because it anticipates the
+multi-founder case. Following a birth, the combined process is productive at
+time $t$ provided no descendant family has triggered catastrophe and the two
+families have not both died out. Those events have probabilities $I(t)^2$ and
+$D(t)^2$, respectively, so the birth branch contributes $I^2-D^2$. Thus
+\begin{equation}
+\label{bdc:eq:ddIfix}
+\ddt{\Ifix}
+=-(\lambda+\mu+\delta)\Ifix+\lambda\lrb{I^2-D^2},
+\qquad \Ifix(0)=1.
+\end{equation}
+Subtracting \cref{bdc:eq:riccatiD} from \cref{bdc:eq:riccati} gives the same
+equation, as it should.
+
+\begin{theorem}[The non-fixation probability]
+\label{bdc:thm:Ifix}
+The probability that the process remains productive at time $t$ is
+\begin{equation}
+\label{bdc:eq:Ifix}
+\Ifix(t) = I(t)-D(t)
+= \frac{aB+bAw}{B+Aw}-\frac{ab(w-1)}{aw-b}
+= \frac{(a-b)^2\,w}{(B+Aw)(aw-b)}.
+\end{equation}
+\end{theorem}
+
+The boundary values fit the interpretation. At $t=0$, the last expression is
+one; as $t\to\infty$, its numerator grows as $w$ and its denominator as $w^2$,
+so it tends to zero. Evaluating the differential equation at the origin gives
+\[
+\Ifix'(0)=-(\lambda+\mu+\delta)+\lambda=-(\mu+\delta),
+\]
+the combined rate at which the founding unit is lost either to death or to
+rupture. A birth does not end productivity.
+
+If $\mu=0$, then $b=0$ and $D\equiv0$, so $\Ifix=I$. When $\mu>0$, the
+two functions separate, and conditioning on non-catastrophe alone admits cells
+which are intact but already empty. \Cref{bdc:fig:fixation} shows this
+separation and the eventual closing of the gap.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{F4_fate_probabilities.pdf}
+\caption{Non-catastrophe, internal-extinction, and productive probabilities
+for $\lambda=1$, $\mu=0.2$ and $\delta=0.05$. The non-catastrophe probability
+$I(t)$ falls to $b$ while the internal-extinction probability $D(t)$ rises to
+it. Their difference $\Ifix(t)$ is the probability of continued productivity
+and tends to zero.}
+\label{bdc:fig:fixation}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Several founders}
+\label{bdc:sec:multifounder}
+
+Now suppose that the cell begins with $X_0=k$. Up to the first catastrophe, the
+family trees and trigger clocks descending from the founders may be constructed
+independently, as described in
+\mextref{m:sec:bdc}{Section 2.2.4 of \ChM}. The chance that none of the $k$
+families has triggered rupture by time $t$ is
+\[
+I_k(t)=\pr{X_t\neq H\mid X_0=k}=I(t)^k,
+\]
+whereas extinction of the whole population requires every family to die, giving
+$D_k(t)=D(t)^k$. Their difference is
+\begin{equation}
+\label{bdc:eq:Ifixk}
+\Ifix[,{k}](t)
+=\pr{X_t\notin\{0,H\}\mid X_0=k}
+=I(t)^k-D(t)^k.
+\end{equation}
+
+\begin{remark}[Non-fixation does not factorise]
+\label{bdc:rem:multifounder}
+For $\mu>0$, the tempting identity
+$\Ifix[,{k}]=\Ifix^k$ is false. If one family dies while another remains
+productive, the cell has not fixed; these mixed configurations are retained by
+$I^k-D^k$ but omitted by $(I-D)^k$. Catastrophe is different from the death of
+one lineage: the first trigger ruptures the cell and stops all lineages at once.
+Only when $\mu=0$, so that $D\equiv0$, do the two expressions coincide.
+\end{remark}
+
+\Cref{bdc:fig:multifounder} makes the omitted configurations visible. For two
+founders the naive power lies below the exact probability, and the gap is the
+probability that one lineage has died while the other is still productive.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{F4_multi_founder.pdf}
+\caption{Non-fixation from several founders. (a) Exact probabilities
+$\Ifix[,{k}](t)=I(t)^k-D(t)^k$ for $k=1,2,3,5$. (b) For two founders,
+$[I(t)-D(t)]^2$ lies below the exact result because it omits mixed configurations
+with one extinct and one productive lineage. $\lambda=1$, $\mu=0.2$ and
+$\delta=0.05$.}
+\label{bdc:fig:multifounder}
+\end{figure}
+
+These multi-founder quantities return in \fwd{singlecell}{Chapter~5}, where
+the generating functions provide a second derivation and allow several incoming
+particles to found one infection.
+
+\FloatBarrier

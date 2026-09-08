@@ -1,0 +1,121 @@
+% Discussion --- plan \S3.3, "\S6".
+% Sources: 03_fixed_removal.tex:266 (the author's doubt about subductive
+% proliferation, carried over in impersonal register).  The rest is new.
+
+\section{Discussion}
+\label{path:sec:discussion}
+
+\subsection{Limitations}
+\label{path:sec:limitations}
+
+Of the three candidate advantages set out in \cref{path:sec:advantages},
+this chapter settles one. \emph{Limited killing} is what
+\cref{path:sec:intracellular,path:sec:removal} model, and the results are
+the certainty threshold, the diagonal law and
+$\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$. The other two were named
+there and left, and this is where the reasons are given.
+
+\emph{Subductive proliferation} --- a replication rate that declines during
+residence in a host cell --- has its machinery already: it is a
+time-inhomogeneous birth process, a special case of \cref{m:eq:meanodeinhom}
+with $\lambda(t)=\beta\ee^{-\alpha t}+\gamma$, and the first-jump
+probability, the mean and the deterministic trajectory are all elementary.
+That material is not carried in this chapter, because it does not by itself
+distinguish the two release strategies. Indeed it is not obviously an
+argument for bursting at all: a rate that decays with residence time
+penalises precisely the strategy that waits before releasing, so the sign of
+the effect is unclear before the calculation is done, and the calculation is
+not done here. The apparatus is retained as a candidate worked example for
+\cref{m:sec:inhomogeneous}, where the general result it specialises already
+lives.
+
+\emph{Detection avoidance} is named and not pursued because this chapter
+has no model of detection. It would need a hazard that responds to the rate
+of release rather than to its size, which is the opposite dependence from
+the one modelled here, and it is the mechanism most often invoked for HIV,
+where release is observed to be clustered and where the responding immune
+compartment has models of its own \cite{conway2018modeling}.
+
+Four further restrictions are worth stating.
+
+The replicator--suppressor process of \cref{path:def:rs} lets the pathogen
+grow without bound once the store is spent. Real intracellular capacity is
+finite, and a full model would terminate the run at rupture rather than let
+$X_t$ diverge. Nothing in \cref{path:prop:certainty} or
+\cref{path:prop:diagonal} depends on the late-time behaviour --- both are
+statements about which absorbing set is reached --- but the survival maps of
+\cref{path:sec:rsnumerics} should be read as probabilities of avoiding
+clearance, not as predictions of intracellular load.
+
+The granule store is never replenished (\cref{path:rem:noreplenish}). This
+is the assumption that makes depletion permanent, and it is what turns a
+larger cohort into a lasting advantage rather than a temporary one. With
+replenishment at any positive rate the certainty threshold would soften into
+a race between refill and consumption.
+
+The removal budget is fixed, and \cref{path:fig:logremoval,path:fig:capped}
+show what is being idealised: a slowly saturating casualty count is replaced by a
+step. The replacement is what makes \cref{path:eq:R0} available in closed
+form, and the honest claim is the one made in \cref{path:sec:playingfield},
+that the qualitative dynamics are expected to be shared with the logarithmic
+case rather than that the two agree; which of a model's predictions survive
+such a substitution is not a question that answers itself
+\cite{deboer2012our}. It also fixes $\vartheta$ as an integer
+(\cref{path:rem:integer}), which is right for a count of killed particles
+and wrong for an average over deliveries.
+
+Finally, \cref{path:prop:reversal} compares single batches. It matches two
+laws at one delivery each, exactly as \cref{p:thm:flood} does, and
+\cref{path:rem:scope} sets out what that does and does not license. In
+particular it is not a statement about a whole infection, and the
+population-level consequences of a threshold clearance are not derived
+anywhere in this thesis.
+
+\subsection{Open problems}
+\label{path:sec:open}
+
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.25em]
+\item \textbf{The chained process at $\mu>0$.} The joint laws of the rupture
+times and sizes $(t_k,r_k)$ are known in closed form only for $\mu=0$.
+\Cref{dist:sec:chained-scope} states why the decomposition fails once a
+lineage can vanish internally, and states the problem first; this chapter
+inherits it, because \cref{path:sec:chainedruptures} is the model it
+concerns.
+\item \textbf{Off the diagonal.} \Cref{path:prop:diagonal} gives
+$\pi_{j,j}$ in closed form because level~0 of the first-step system closes
+on itself. No such product form is available for $\pi_{i,j}$ with $i<j$: the
+generating function in $i$ couples level $j$ to level $j-1$ with $\pi_{1,j}$
+entering as an unknown fixed by a degree condition. Off-diagonal values are
+computed and tabulated (\cref{path:fig:repsupp20,path:fig:repsupp10}) and
+left at that.
+\item \textbf{The reversal at intermediate $\varphi$.}
+\Cref{p:sec:open-problems} asks where on the partial-release continuum of
+\cref{p:sec:partial} the flooding advantage of \cref{p:thm:flood} survives.
+\Cref{path:prop:reversal} answers the same question from the other side, at
+the two endpoints, and finds the criterion reversed. What happens at
+intermediate $\varphi$ under a threshold is not known, and the two
+sub-questions are plainly the same problem viewed from opposite ends.
+\item \textbf{Clustered deliveries and a recovering field.} If the killer
+field recovers on a timescale comparable with the interval between
+deliveries, then \cref{path:rem:reset} fails and the toll paid at successive
+deliveries is correlated. \Cref{path:sec:spectrum} notes that
+self-excitation is the one mechanism in \cref{p:sec:reach} for which this
+matters, and the question of whether reduced tolls can compensate for extra
+deliveries needs a model that carries the recovery timescale, which this one
+does not.
+\end{enumerate}
+
+\subsection{Connections forward}
+\label{path:sec:forward}
+
+The selection gradient identified in \cref{path:sec:spectrum} is a
+statement about variation between release phenotypes, and \ChEvo{} is where
+variability itself becomes the object of study rather than a property of a
+fixed mechanism. The \yp{} account of \cref{path:sec:ypestis} is the piece
+this chapter contributes to \fwd{conclusion}{the concluding chapter}, whose
+subject is the evolved strategy of that organism: what is offered here is
+one testable number, the threshold budget $\vartheta^{\ast}$, and the claim
+that the switch between the intracellular and extracellular phases should
+occur where the effector density crosses it.
+
+\FloatBarrier

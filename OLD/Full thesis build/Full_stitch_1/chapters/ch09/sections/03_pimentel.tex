@@ -1,0 +1,308 @@
+% Competitive reversal: the Pimentel model --- plan \S3.3, "\S3".
+% Sources: 09/05:1-205.  Heading spelling corrected throughout: the source has
+% "Pimental" in every heading and "Pimentel" in the body and the bib key.
+% Rename: evolution rate \mu -> \varepsilon (plan \S7.2).
+% Repairs: the alpha = 1 to alpha = 10 jump at 09/05:78-83, and the forward
+% reference to nodisp2runs at 09/05:80.
+
+\section{Competitive reversal: the Pimentel model}
+\label{var:sec:pimentel}
+
+The speciation model of the previous section lets variation out when there
+is room. This one asks the complement: what happens when two populations
+share the room, and the minority is the one under selection.
+
+\subsection{The experiment}
+\label{var:sec:pimentelexperiment}
+
+Pimentel and colleagues devised and ran an experiment in which two
+populations of flies are pitted against one another in a fight for domination
+and, ultimately, survival \cite{pimentel1965selection,hutchingson2018ecological}.
+Place a colony of houseflies (\textit{Musca domestica}) in one side of a
+boxed enclosure and a competing number of blowflies (\textit{Phaenicia}) at
+the other, and give them an ample but finite supply of food. Before long one
+of the species dominates the niche. The arrangement is unstable, and either
+the housefly or the blowfly population eventually sees off the other.
+
+Pimentel and his colleagues did something clever to augment the dynamics.
+They contrived an enclosure --- the original box, but with a myriad of
+internal sub-compartments, a three-dimensional maze of tunnels and small
+chambers. That arrangement gives the enclosure a desirable property: with the
+populations initially placed at opposing sides, communication by contact is
+delayed by a period greater than the average lifespan of either species. In
+the months taken for a species to spread from one side to the other, multiple
+generations ensue.
+
+Why is that desirable? By slowing the potential spread, Pimentel imposes the
+constraint that a total domination, if one is arrived at, cannot be won in
+one or a few fly lifespans. The war must be won over succeeding generations,
+grandchildren's grandchildren all fighting for the same cause, and that is
+what allows the hand of Darwinian selection to come into play.
+
+The observed dynamic was the following. Blowflies were pushed almost to
+extinction by the initially superior numbers of \textit{Musca domestica}, and
+then the tide turned: from the brink, the blowfly underdogs clawed back their
+footing and eventually overthrew the advances of their adversaries. The
+hypothesis is that during this squeeze of reduced population the blowflies
+began to select, among their limited numbers, for the abilities favouring
+direct competition with their adversaries. The houseflies, doing well as they
+were, were subject to no such channelling selection; they became complacent
+while their foes grew strong, cut into shape by a harshly oppressive
+environment.
+
+It has not been achieved experimentally, but Pimentel proposed that with the
+enclosure arranged correctly an oscillation could be set up, in which the
+upper hand passes continually from one side to the other, each being pushed
+to the brink and moulded to competitive advantage in times of scarcity --- a
+continual arms race for survival. The question this section asks is whether a
+Markov chain with evolving blocking probabilities can reverse in the same way.
+
+\subsection{The model}
+\label{var:sec:pimentelmodel}
+
+Consider two populations competing for space in a finite domain they both
+occupy. Let $A_t$ count one of them, labelled $a$, and $B_t$ the other,
+labelled $b$, both in discrete time $t\in\mathbb{N}\cup\{0\}$. Finiteness of
+the enclosure is imposed by $A_t+B_t\le N$ for a maximum capacity $N$, and
+with the initial condition $A_0=B_0=N/2$ for even $N$ the two counts are tied
+by $B_t=N-A_t$ throughout, so it is enough to follow $A_t$. Its transition
+probabilities are
+\begin{equation}
+\pr{A_{t+1}=j\mid A_t=i}=
+\begin{cases}
+q_a=\dfrac{i}{N}(1-p_b), & j=i+1,\\[4pt]
+q_b=\lrb{1-\dfrac{i}{N}}(1-p_a), & j=i-1,\\[4pt]
+q_c=\dfrac{i}{N}p_b+\lrb{1-\dfrac{i}{N}}p_a, & j=i,\\[4pt]
+0 & \text{otherwise,}
+\end{cases}
+\label{var:eq:kernel}
+\end{equation}
+for $0<i<N$, with $i=0$ and $i=N$ absorbing.
+
+The three cases come from the following step rule, viewed from the
+perspective of population $a$.
+
+\begin{description}[leftmargin=1.6em,style=unboxed,itemsep=0.15em]
+\item[Whose move.] With probability $i/N$ population $a$ attempts to advance;
+with probability $1-i/N$ the opponent attempts to, potentially forcing $a$
+back one.
+\item[Advancing.] If $a$ has decided to advance it does so, unless it is
+blocked, which happens with probability $p_b$.
+\item[Being advanced upon.] If the opponent is advancing, $a$ blocks with
+probability $p_a$; if it fails to, it is forced back a step.
+\item[Stalemate.] If a block is effective, both parties remain where they
+are, and $A_{t+1}=A_t$.
+\end{description}
+
+The capacity to block is the model's evolving quantity. Let it depend on a
+\emph{resistance} $R_k$ for $k=a,b$ through
+\begin{equation}
+p_a=\max\left\{0,\,1-\frac{R_b}{R_a}\right\},
+\qquad
+p_b=\max\left\{0,\,1-\frac{R_a}{R_b}\right\},
+\label{var:eq:blockprobs}
+\end{equation}
+so that at most one of the two is non-zero: whichever population has the
+higher resistance blocks, and the other does not. If $R_a\gg R_b$ then
+$p_a$ is close to one and $p_b$ is zero.
+
+Resistances are driven up when the associated population is in a minority.
+They are updated at each step by
+\begin{equation}
+R_{k,t+1}=R_{k,t}+\varepsilon\,\Delta R_{k,t},
+\label{var:eq:resistupdate}
+\end{equation}
+at an evolution rate $\varepsilon$, with
+\begin{equation}
+\Delta R_{a,t}=\max\left\{0,\lrb{\frac{N-A_t}{A_t}}^{\!\alpha}\right\},
+\qquad
+\Delta R_{b,t}=\max\left\{0,\lrb{\frac{A_t}{N-A_t}}^{\!\alpha}\right\}.
+\label{var:eq:dR}
+\end{equation}
+Each increment grows as its population is squeezed towards its absorbing
+boundary, and is larger for the population in the minority. Only the ratio
+$R_b/R_a$ enters \cref{var:eq:blockprobs}, so what drives the blocking
+probabilities is the \emph{difference} between the two increments rather than
+either alone. The
+mechanism intended is the one Pimentel proposed: most of the competitive
+interactions experienced by members of the smaller population are with the
+opposition, and the drive for selection towards competitive ability is
+correspondingly stronger, while the majority population meets mostly its own
+kind and is under no such pressure. The exponent $\alpha$ sharpens that
+drive near the boundaries. Taking $\alpha=1$ makes the increment simply
+proportional to the ratio of interspecific to intraspecific encounters, which
+is the physical case; $\alpha>1$ is retained because it is what makes the
+criticality of \cref{var:sec:critical} visible.
+
+The initial resistances need saying, because the model is not scale-free in
+them. Since \cref{var:eq:blockprobs} depends on $R_a$ and $R_b$ only through
+their ratio, while \cref{var:eq:resistupdate} adds an absolute increment,
+scaling $R_{a,0}$, $R_{b,0}$ and $\varepsilon$ by a common factor leaves every
+trajectory unchanged: the two enter only through $\varepsilon/R_0$. Taking
+$R_{a,0}=R_{b,0}=1$ throughout therefore costs nothing and fixes what
+$\varepsilon$ means.
+
+Two things about \cref{var:eq:kernel,var:eq:blockprobs,var:eq:dR} are worth
+naming, since they are what make this a chapter about moving rates. The first
+is that the step probabilities are functions of the resistances and the
+resistances are functions of the state, so the transition kernel at time $t$
+depends on the whole path up to $t$ and not on $A_t$ alone. The second follows:
+the triple $(A_t,R_{a,t},R_{b,t})$ is Markov, and $A_t$ by itself is not.
+
+\subsection{Results}
+\label{var:sec:pimentelresults}
+
+Simulated at $\alpha=1$, the model does what Pimentel observed. Both
+realisations in \cref{var:fig:pim-two-runs} take the same shape: one
+population reaches a position of real advantage, and does not keep it.
+Trained by interspecific competition, the oppressed population makes a
+striking comeback and overthrows its adversary completely. At this exponent
+the reversal happens once or twice and then the chain is absorbed, so what
+Pimentel hoped for arrives as an episode rather than as a cycle.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{fig03_pimentel_runs/fig03}
+\caption{Two realisations of the Pimentel chain at $\alpha=1$, $N=100$,
+$\varepsilon=10$, the physical case. Each reverses: an early advantage is
+not kept, and the two histories, started from the same symmetric state,
+absorb at opposite boundaries.}
+\label{var:fig:pim-two-runs}
+\end{figure}
+
+Raising $\alpha$ sharpens the resistance drive near the boundaries, and with
+it the sensitivity of a trajectory to where it starts.
+\Cref{var:fig:pim-runs} makes that comparison at $\alpha=10$ and
+$N=10^{5}$, running two independent realisations from each of two
+initial conditions: one with the populations evenly matched, one with a bias
+imposed at the outset. Started well matched, the two realisations diverge
+substantially; started biased, they stay close for far longer. What differs
+is not the noise, which is the same in both, but where the trajectory sits
+relative to the state at which the chain has no preferred direction.
+
+Raising $\alpha$ also buys far more of the behaviour the model was built for.
+Where $\alpha=1$ gives one reversal or two, $\alpha=10$ buys of order ten
+reversals before fixation, and the swing grows rather than decays.
+\Cref{var:fig:pim-runs} under-shows that run: the full excursion, at the same
+parameters, continues for several million further steps before absorption.
+The oscillation Pimentel conjectured is therefore not absent from the model,
+only impermanent. Every run here still fixates in the end, and what raising
+$\alpha$ moves is how long the alternation lasts before it does.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{fig04_pimentel_ic/fig04}
+\caption{Two independent realisations from each of two initial conditions, at
+$\alpha=10$, $N=10^{5}$, $\varepsilon=1$, over $2\times10^{6}$ steps.
+Panel~(a): started evenly matched, and so near the critical state, the runs
+separate early and stay apart. Panel~(b): started with one in the majority,
+and so away from it, they track one another. Proximity to the critical
+state, not the size of the noise, decides how far apart two histories of the
+same model end up.}
+\label{var:fig:pim-runs}
+\end{figure}
+
+\subsection{The moving critical point}
+\label{var:sec:critical}
+
+That state can be located exactly. The chain is at its \emph{critical point}
+when a step up and a step down are equally likely, that is when $q_a=q_b$ in
+\cref{var:eq:kernel}. Writing $i_c$ for the state at which this holds and
+using the mutual exclusivity of $p_a$ and $p_b$,
+\begin{equation}
+i_c=
+\begin{cases}
+N\dfrac{1-p_a}{2-p_a}, & p_a>0 \text{ and } p_b=0,\\[8pt]
+N\dfrac{1}{2-p_b}, & p_b>0 \text{ and } p_a=0.
+\end{cases}
+\label{var:eq:icrit}
+\end{equation}
+When neither population blocks, $p_a=p_b=0$ and $i_c=N/2$, the symmetric
+point. Blocking moves it off centre, and moves it towards the boundary the
+\emph{leading} population is heading for: if $a$ is in the majority then it
+is $b$ that accumulates resistance, so $p_b>0$ and $i_c=N/(2-p_b)$ climbs
+towards $N$. And $i_c$ is an \emph{unstable} point --- comparing $q_a$
+with $q_b$ in \cref{var:eq:kernel} gives $q_a>q_b$ exactly when $i>i_c$, in
+both cases of \cref{var:eq:icrit} --- so the chain is carried away from it
+rather than returned to it. A reversal is what happens when $i_c$, climbing
+after the leader, overtakes the trajectory, and the drift that was carrying
+the majority forward begins to carry it back.
+
+\Cref{var:eq:icrit} is less analytic than it looks. Since $p_a$ and $p_b$
+depend on $R_a$ and $R_b$, and those are accumulated along a stochastic
+trajectory by \cref{var:eq:resistupdate}, $i_c$ is a function of the path and
+not of the parameters alone. What it is not is intractable. Given a
+realisation, the sequence $i_{c,t}$ is computed step by step at the cost of
+the simulation itself and can then be drawn over the trajectory that produced
+it, which is what \cref{var:fig:pim-critical} does.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{fig05_pimentel_icrit/fig05}
+\caption{A single realisation at $\alpha=3$, $N=10^{4}$, $\varepsilon=1$,
+with the critical state $i_{c,t}$ of \cref{var:eq:icrit} overlaid. The
+critical state does not stay put. It is dragged towards whichever boundary
+the leading population is heading for, and saturates near $0$ or near $N$
+while that population is well ahead; each reversal of $A_t$ follows $i_{c,t}$
+crossing it.}
+\label{var:fig:pim-critical}
+\end{figure}
+
+Read against \cref{var:fig:pim-runs}, \cref{var:fig:pim-critical} makes the
+mechanism plain: trajectories diverge exactly where $A_t$ is near $i_{c,t}$,
+because there the drift that would otherwise restore them is absent. That is
+what the resistance dynamics buy. An ordinary random walk on $\{0,\dots,N\}$
+is critical only if its step probabilities happen to be balanced, whereas
+here the resistance update \emph{drags the critical point after the leading
+population} and so keeps returning the process to a state at which its own
+future is undetermined. The reversal Pimentel observed is therefore not a
+deterministic consequence of the squeeze; it is what a squeeze does to a
+chain that the squeeze itself has made critical.
+
+\subsection{A spatial version}
+\label{var:sec:automaton}
+
+The model above has no geometry, where Pimentel's enclosure had a great deal
+of it. A spatial version was therefore written as a cellular automaton, in
+\texttt{C++} using the SFML graphics library, each cell holding one of the two
+populations and resistances being inherited and updated locally by the same
+rule; \cref{var:fig:automaton} shows six frames from it. A model of
+evolutionary reversal in competitive dominance had been proposed before
+\cite{pease1984evolutionary}; the model here was not derived from it and
+differs in form.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{fig06_automaton/fig06}
+\caption{Six frames from the spatial version, left to right along the top row
+then the bottom: advance, squeeze, fringe, crossing, recovery, fixation.
+Unoccupied cells are green in the first frame. Red advances until blue is
+confined to one corner, where a pale fringe of elevated resistance appears;
+blue then crosses back and takes the domain. The reversal is spatial as well
+as numerical.}
+\label{var:fig:automaton}
+\end{figure}
+
+\input{sections/04_pimentel_plus}
+
+\paragraph{Open questions.}\label{var:rem:open-pimentel}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em,topsep=0.2em]
+\item \textbf{Fixation.} The fixation probability and the expected time to
+fixation, as functions of $(\alpha,\varepsilon,N)$, were never computed. The
+first-step machinery of \cref{m:prop:firststep} applies to the enlarged chain
+$(A_t,R_{a,t},R_{b,t})$, which is where the work would start.
+\item \textbf{Whether the oscillation persists.} Every realisation run here
+eventually fixated, at $\alpha=1$ after an episode and at $\alpha=10$ after
+of order ten reversals. So the question is not whether the alternation exists
+but whether it can be made to last: does the expected number of reversals
+before fixation grow without bound in $\alpha$, $\varepsilon$ or $N$, or does
+it saturate? This is the sharpest question in the section, because it is the
+one the model was built to answer.
+\item \textbf{A diffusion limit.} For large $N$ there should be a diffusion
+approximation in which \cref{var:eq:icrit} becomes a moving unstable
+equilibrium and the divergence of nearby trajectories is a statement about a
+local Lyapunov exponent. That would turn the qualitative observation of
+\cref{var:fig:pim-critical} into a rate.
+\end{enumerate}
+
+\FloatBarrier

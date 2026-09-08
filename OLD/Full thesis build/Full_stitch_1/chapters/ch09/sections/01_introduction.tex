@@ -1,0 +1,213 @@
+% Introduction. Architecture follows CH7 (question, taxonomy, results in
+% advance, organisation) and CH2 (threads), not the four-preface CH8 template.
+% Streamlined after the removal of the two-phase section and the demotion of
+% the birth--plague and public-good models to appendices: the taxonomy figure
+% is gone and its content carried in prose, the headline results are three
+% rather than four, and the notation table covers the body only.
+
+\section{Introduction}
+\label{var:sec:introduction}
+
+Every model carried through to a result in the preceding chapters holds its
+rates fixed. A replicative unit is born at rate $\lambda$, dies at rate $\mu$
+and triggers catastrophe at rate $\delta$, and those three numbers are the
+same at the end of the process as at the beginning. That assumption is what
+makes the generating functions close, and it buys a great deal: the roots $a$
+and $b$, the burst-size law, the flooding criterion and the removal budget.
+It is also the first thing an ecologist will question, because in almost
+every setting one might want to describe, a rate is not a constant ---
+resources run out, competitors adapt, and success carries its own cost.
+
+This chapter asks what happens when a rate is allowed to move. The models
+collected here were built at different times and stand at different stages of
+completion, but they sort by one structural feature: \emph{what moves the
+rate}. Four mechanisms recur, and where a rate is driven by the process's own
+state, the behaviour turns on whether the feedback exhausts a quantity or
+replenishes it.
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.35em,topsep=0.35em]
+\item \textbf{Room that is spent and never returned.} Speciation under
+logistic growth consumes remaining capacity $K-N(t)$, the integrated rate
+converges, and the species count has a proper limit law
+(\cref{var:sec:speciation}).
+\item \textbf{A critical point dragged after the leader.} Resistance in the
+Pimentel model acts not on a level but on the state of no preferred
+direction, and so keeps restoring criticality rather than approaching an
+equilibrium (\cref{var:sec:pimentel}).
+\item \textbf{A potential restocked from outside.} An accumulating potential,
+consumed per capita and replenished at a constant inflow, yields a cycle in
+four movements (\cref{var:sec:rrrr}).
+\item \textbf{A potential the population makes for itself.} Take that same
+hazard and let the inflow be produced by the population's own area, with the
+cost charged per \emph{type} rather than per head. The cycle becomes a
+marginal state; the catastrophe divides rather than destroys; and because its
+products obey the same law, the cycle branches instead of repeating
+(\cref{var:sec:ca}).
+\end{itemize}
+
+The last two are a matched pair, and the chapter is arranged so that they can
+be read as one movement. They also mark where the mathematics stops. The
+first two sections carry closed-form results; the second two carry
+simulations of models that outrun the machinery of the preceding chapters,
+and say as exactly as they can what would have to be proved.
+
+Three results carry the finished mathematics, and each is stated here so that
+the derivations may be read knowing where they go.
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.35em,topsep=0.35em]
+\item For a pure birth process from one founder with per-capita rate
+$\beta(t)$, the species count $S_t$ is geometric on $\{1,2,\dots\}$ with
+parameter $\ee^{-\Bint(t)}$, where $\Bint(t)=\int_0^t\beta(u)\,\dd u$
+(\cref{var:prop:yule-geom}). The rate law enters the distribution only
+through its integral.
+\item Under the logistic rate that integral converges, so the process has a
+proper limit law and not merely a finite late-time mean: $S_\infty$ is
+geometric with mean $(K/N_0)^{\sigma K/\varrho}$
+(\cref{var:cor:logistic-limit}), depending on the parameters through exactly
+those two dimensionless groups.
+\item In the Pimentel competition model the state at which the chain is
+equally likely to step up as down is available in closed form
+(\cref{var:eq:icrit}), and it is unstable. Two trajectories started from the
+same state diverge exactly when they are near it.
+\end{itemize}
+
+To these the automaton of \cref{var:sec:ca} adds an observation rather than a
+theorem, and it is the one most worth taking further: a species is driven
+onto the locus $X_i=\varphi N_i/c$ at which production and dissipation
+cancel, and \emph{on} that locus its catastrophe hazard is proportional to
+its area --- which is \ChCore{}'s own $\delta X_t$. The chapter's least
+tractable model may therefore reduce to the chapter's own machinery, and
+\cref{var:rem:open-ca} says what would have to be shown.
+
+The Yule process, its geometric marginal and the method of characteristics
+are \ChM{}'s; the logistic speciation model itself, with its mean, is already
+a worked example there. The birth--death--catastrophe process, the roots $a$
+and $b$ and the burst-size law are \ChCore{}'s and \ChDist{}'s. None of that
+is re-derived here. What this chapter adds is the distribution under a moving
+speciation rate, the moving critical point of the Pimentel chain, the
+automaton and its balance point, and the remaining specifications, stated
+precisely enough to be taken up where they stop.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}c>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.21\textwidth}@{}}
+\toprule
+\S & Model & What moves the rate & Status \\
+\midrule
+\ref{var:sec:speciation} & Logistic speciation
+  & remaining capacity $K-N(t)$ & closed form \\
+\ref{var:sec:pimentel} & Pimentel competition
+  & evolving resistance, itself driven by the state
+  & closed-form critical point; simulated \\
+\ref{var:sec:pimentelplus} & Pimentel+
+  & fitness driven by dominance, reduced by species count & specified \\
+\ref{var:sec:rrrr} & Rise, run, ruin, rejuvenation
+  & potential $V$; catastrophe by scarcity $X_t/V$ & simulated \\
+\ref{var:sec:ca} & Multiplicative dissipation
+  & potential $V_i$ made by area, spent per type; fragmentation at
+    $\delta X_i/V_i$ & simulated \\
+\midrule
+\ref{var:app:plague} & Birth--plague
+  & loss channel driven by the coupled component $Y_t$ & specified \\
+\ref{var:app:publicgood} & Public good
+  & $\lambda(t)=\lambda_0+\alpha P(t)$, $P$ made by the population
+  & $K^\ast$ computed \\
+\bottomrule
+\end{tabular}
+\caption{The models, and the mechanism by which a rate moves in each. The
+last column is the shape of the chapter: \cref{var:sec:speciation} is its
+mathematical end, and the rows below it halt at a closed-form fragment or at
+a simulation. The two below the rule are carried as bare specifications in
+\cref{var:app:plague,var:app:publicgood}, the birth--plague model in two
+variants, so the count of distinct specifications is eight.}
+\label{var:tab:models}
+\end{table}
+
+\subsection{Notation}
+\label{var:sec:notation}
+
+Symbols are reused across models but never within one section, and never
+against a thesis-wide meaning. The table records the assignment for the body
+of the chapter; the two appendix specifications gloss their own parameters
+where they stand.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{0.56\textwidth}@{}}
+\toprule
+\S & Symbol & Meaning \\
+\midrule
+all & $\lambda,\mu,\delta$ & birth, death and catastrophe rates, as in
+  \ChCore{} \\
+& $a,b$ & roots of the characteristic quadratic, $b<1<a$
+  (\cref{bdc:lem:roots}) \\
+& $\Kb$ & burst size of a birth--death--catastrophe process \\
+\midrule
+\ref{var:sec:speciation}
+ & $S_t$ & species count, $S_0=1$ \\
+ & $N(t),K,N_0$ & total abundance, carrying capacity, initial abundance \\
+ & $\varrho$ & logistic growth rate \\
+ & $\sigma$ & speciation coefficient; $\beta(t)=\sigma(K-N(t))$ \\
+ & $\xi$ & the constant $K/N_0-1$ \\
+ & $\beta(t)$ & speciation rate per species; $\beta$ is this and nothing else \\
+ & $\Bint(t)$ & integrated rate $\int_0^t\beta(u)\,\dd u$; $\eta$ is a constant floor added to $\beta$ in two of the alternative laws \\
+\midrule
+\ref{var:sec:pimentel},
+\ref{var:sec:pimentelplus}
+ & $A_t,B_t$ & counts of the two competing populations, $A_t+B_t=N$ \\
+ & $N$ & capacity of the enclosure, an integer \\
+ & $R_a,R_b$ & resistance of each population \\
+ & $p_a,p_b$ & blocking probabilities, at most one non-zero \\
+ & $\varepsilon,\alpha$ & evolution rate (the step size of the resistance update) and the exponent sharpening that drive near a boundary \\
+ & $i_c$ & the critical state \cref{var:eq:icrit} \\
+ & $f_a,f_b$ & fitness, the Pimentel+ recasting of $R_a,R_b$ \\
+ & $S^{(a)}_t,S^{(b)}_t$ & per-population species counts; $\zeta$ couples dominance to speciation and $\gamma$ penalises fitness per species \\
+\midrule
+\ref{var:sec:rrrr}
+ & $X_t,V(t)$ & count of replicative agencies, and accumulated potential \\
+ & $\phi,c,\omega$ & potential inflow, potential consumed per agency, revival rate out of the empty state \\
+\midrule
+\ref{var:sec:ca}
+ & $L$ & side of the lattice; $L^2$ cells, Moore neighbourhood, periodic \\
+ & $N_i,X_i,V_i$ & cells held by species $i$, its extant sub-species, and
+   its accumulated potential \\
+ & $\varphi,c$ & potential supplied per cell, and spent per extant
+   sub-species; $V_0$ is the potential a fragment is reset to \\
+ & $m$ & mutation coefficient; the per-cell rate is $mV_i$ \\
+ & $\theta,\nu$ & neighbour-support exponent, and the rare-type advantage
+   within a species \\
+ & $\kappa_i$ & mean sub-species area $N_i/X_i$; $d$ is the resistance of
+   empty ground \\
+\bottomrule
+\end{tabular}
+\caption{Notation, organised by model. The rates $\lambda$, $\mu$ and
+$\delta$, the roots $a$ and $b$ and the burst size $\Kb$ carry their
+thesis-wide meanings everywhere in this chapter and are never redefined.
+$V$ and $c$ are shared between \cref{var:sec:rrrr,var:sec:ca} with the
+\emph{same} meanings, a potential and the rate at which it is spent, which is
+the point of the pairing: what differs between the two models is that
+\cref{var:sec:ca} charges the inflow per cell and the outflow per type. Where
+one letter genuinely serves two models --- $\alpha$ as an exponent in
+\cref{var:sec:pimentel,var:sec:pimentelplus}, $N$ as an abundance in
+\cref{var:sec:speciation} and an integer capacity in
+\cref{var:sec:pimentel}, $X$ as a count of individuals in
+\cref{var:sec:rrrr} and of types in \cref{var:sec:ca} --- the two uses are
+separated by this table and never occur in the same section.}
+\label{var:tab:notation}
+\end{table}
+
+\Cref{var:sec:speciation} takes the moving speciation rate as far as it will
+go, which is a proper limit law. \Cref{var:sec:pimentel} obtains the moving
+critical point of the Pimentel chain and, in
+\cref{var:sec:pimentelplus}, specifies the coupling that would let excess
+variation weaken a winner. \Cref{var:sec:rrrr,var:sec:ca} are the matched
+pair: the first drives catastrophe by a potential restocked from outside, the
+second by one the population makes for itself, and the second is where the
+chapter's open questions concentrate. \Cref{var:app:plague,var:app:publicgood}
+carry two further specifications in bare form, and \cref{var:app:pgf} gives
+the generating-function proof of \cref{var:prop:yule-geom}.
+
+\FloatBarrier

@@ -1,0 +1,40 @@
+{
+  "figure": "fig02_path_exposure",
+  "generated": "2026-07-24T18:09:36",
+  "deterministic": true,
+  "seed": null,
+  "parameters": {
+    "delta1": 0.06,
+    "delta2": 0.1,
+    "T": 10.0
+  },
+  "results": {
+    "exposure_A": 2.716,
+    "exposure_B": 1.1320000000000001,
+    "weight_A": 0.06613878114551128,
+    "weight_B": 0.3223878355454255,
+    "terminal_hazard": 0.22,
+    "exposure_ratio_A_over_B": 2.399293286219081,
+    "weight_ratio_B_over_A": 4.874414525966894,
+    "person_time": {
+      "A": {
+        "X": 34.6,
+        "Y": 6.3999999999999995
+      },
+      "B": {
+        "X": 13.2,
+        "Y": 3.4000000000000004
+      }
+    }
+  },
+  "validation": {
+    "max_abs_trapezoid_vs_analytic_Lambda": 1.699999530035967e-08,
+    "note": "lambda is piecewise constant, so the exposure integral Lambda(t) is computed in closed form; an independent trapezoidal quadrature on a grid that straddles every jump agrees to the reported tolerance (limited only by the +/-1e-7 straddle)."
+  },
+  "typography": "usetex",
+  "tool_versions": {
+    "python": "3.14.3",
+    "numpy": "2.4.2",
+    "matplotlib": "3.10.8"
+  }
+}

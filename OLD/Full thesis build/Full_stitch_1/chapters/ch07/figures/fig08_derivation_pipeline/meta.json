@@ -1,0 +1,40 @@
+{
+  "id": "fig08_derivation_pipeline",
+  "title": "Roadmap of the exact solution: derivation pipeline (Section 4)",
+  "supports_sections": ["1", "3", "4"],
+  "type": "schematic",
+  "tool": "TikZ/PGF via pdflatex (TeX Live 2024); Ghostscript 10.05 for PNG",
+  "numerical_simulation": false,
+  "seed": null,
+  "parameters": "symbolic only",
+  "layout": "serpentine flowchart, 2 rows x 4 large nodes",
+  "stages": [
+    {"n": 1, "name": "Autonomous type-2 solve", "role": "type-2 input", "key": "G -> r_{2,-}; z_2 = z_{2,0} e^{q2 t}"},
+    {"n": 2, "name": "Substitute into type 1", "role": "type-1", "key": "non-autonomous Riccati for S"},
+    {"n": 3, "name": "Shift by long-time root", "role": "type-1", "key": "S = X + h, lower root h"},
+    {"n": 4, "name": "Linearise", "role": "type-1", "key": "X = -Z'/Z; linear ODE for Z"},
+    {"n": 5, "name": "Change of variable", "role": "type-1", "key": "t -> z_2, Z = Phi(z_2)"},
+    {"n": 6, "name": "Gauss equation", "role": "type-1", "key": "2F1 basis U,V; params A,B,C"},
+    {"n": 7, "name": "Initial condition", "role": "type-1", "key": "Wronskian coefficients K_U, K_V"},
+    {"n": 8, "name": "Exact finite-time S(t)", "role": "output", "key": "S = h - q2 z_2 (K_U U' + K_V V')/(K_U U + K_V V)"}
+  ],
+  "notation_source": "sections/03_autonomous.tex, sections/04_main_result.tex, sections/01_introduction.tex",
+  "png": { "width_px": 4603, "height_px": 3032, "dpi": 600, "background": "white" },
+  "palette": {
+    "type1": "#0072B2",
+    "type2": "#D55E00",
+    "result_accent": "#2E7D32",
+    "ink": "#1A1C1F",
+    "ink_soft": "#565B62",
+    "rule": "#E3E6EA"
+  },
+  "files": [
+    "fig08.png",
+    "fig08.pdf",
+    "caption.md",
+    "README.md",
+    "meta.json",
+    "src/fig08.tex",
+    "src/build.sh"
+  ]
+}

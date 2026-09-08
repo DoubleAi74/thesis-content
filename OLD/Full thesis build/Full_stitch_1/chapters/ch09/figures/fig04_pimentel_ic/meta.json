@@ -1,0 +1,20 @@
+{
+  "id": "fig04_pimentel_ic",
+  "simulation": true,
+  "parameters": {
+    "N": 100000,
+    "alpha": 10.0,
+    "epsilon": 1.0,
+    "steps_cap": 2000000,
+    "A0_even": 50000,
+    "A0_bias": 62000
+  },
+  "seeds_even": [
+    4,
+    7
+  ],
+  "seeds_bias": [
+    4,
+    7
+  ]
+}

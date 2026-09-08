@@ -1,0 +1,32 @@
+{
+  "id": "fig01_process_schematic",
+  "title": "Two-type birth-death-conversion process with a single global absorbing catastrophe",
+  "supports_sections": ["1", "2"],
+  "type": "schematic",
+  "tool": "TikZ/PGF via pdflatex (TeX Live 2024); Ghostscript 10.05 for PNG",
+  "numerical_simulation": false,
+  "seed": null,
+  "parameters": "symbolic only",
+  "rates_shown": ["lambda_1", "mu_1", "nu", "lambda_2", "mu_2", "delta_1", "delta_2"],
+  "hazard": "delta_1 * x + delta_2 * y",
+  "absorbing_state": "(R, R)",
+  "notation_source": "sections/02_model.tex (Definition 2.1, Eq. (1))",
+  "png": { "width_px": 3649, "height_px": 2878, "dpi": 670, "background": "white" },
+  "palette": {
+    "type1": "#0072B2",
+    "type2": "#D55E00",
+    "catastrophe": "#9A2820",
+    "ink": "#1A1C1F",
+    "ink_soft": "#565B62",
+    "rule": "#E3E6EA"
+  },
+  "files": [
+    "fig01.png",
+    "fig01.pdf",
+    "caption.md",
+    "README.md",
+    "meta.json",
+    "src/fig01.tex",
+    "src/build.sh"
+  ]
+}

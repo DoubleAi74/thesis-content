@@ -1,0 +1,640 @@
+% GENERATED FILE -- do not edit.
+% Source: CH10/main.tex, between the CHAPTER BODY markers.
+% Regenerate with scratchpad/sync_ch10.py
+
+\chapter[Conclusion]{Conclusion: the evolved strategy of
+\texorpdfstring{\textit{Yersinia pestis}}{Yersinia pestis}}
+\label{ch:conclusion}
+
+This thesis began with one organism and one peculiarity. \yp{} enters a
+mammalian host from a flea bite, permits itself to be taken up by
+macrophages, replicates inside them for a while, and only then reverses
+course and resists phagocytosis altogether. The reversal is not incidental
+book-keeping. It is among the sharpest differences between \yp{} and the
+comparatively mild ancestor it descends from, and it is the sort of thing
+that invites a mathematical answer, because it is a choice between two
+strategies whose returns can in principle be written down and compared. I
+wanted to know whether the switch could be shown to pay, and to say in what
+currency it pays.
+
+Most of the thesis is the machinery that question turned out to need. The
+choice is made by a small number of bacteria inside a single cell, where
+whether the lineage survives at all is settled by chance rather than by a
+mean, so the object required is a distribution and not a trajectory. Getting
+that distribution for a cell that grows its occupants and then ruptures took
+\mextref{bdc:ch:core}{Chapter~4} and then
+\mextref{dist:ch:distribution-theory}{Chapter~5}; carrying it up to a
+population took \mextref{p:ch:one-cell-to-population}{Chapter~6}; and asking
+what the release schedule is worth against defences that can be exhausted
+took \mextref{path:ch:pathogenesis}{Chapter~8}. Along the way two questions
+detained the work longer than they strictly deserved, and both became
+chapters of their own: a constant governing subcritical branching
+conditioned on survival (\mextref{gw:ch:galton-watson}{Chapter~3}), and the problem of writing down
+Markov chains whose rates are allowed to move
+(\mextref{var:ch:rates}{Chapter~9}).
+
+What follows is a reckoning rather than a summary. \Cref{con:sec:contributions}
+sets out what each chapter established and what it left standing.
+\Cref{con:sec:questions} returns to the four questions posed in
+\mextref{ch:introduction}{Chapter~1} and answers them as far as the work
+allows, which in two cases is not all the way.
+\Cref{con:sec:quadrant} gives the one argument that never found a home in a
+chapter of its own: a small piece of reasoning about why an organism might
+want to be eaten early and not late. \Cref{con:sec:limits} says what the
+thesis does not establish, and \cref{con:sec:closing} closes.
+
+\section{Contributions, chapter by chapter}
+\label{con:sec:contributions}
+
+\Mextref{m:ch:math-intro}{Chapter~2} assembles the objects and the methods:
+Markov chains in discrete and continuous time, the branching processes that
+matter here, and the generating-function machinery --- forward and backward
+equations, extinction probabilities, limiting conditional means, and the
+method of characteristics --- each developed once, on whichever process shows
+it most plainly. Two of its appendices are more than review. The first
+records how heavily survival near criticality depends on the size of the
+founding cohort (\mextref{m:app:smallpops}{Section~2.A}), which is the fact
+that almost everything downstream leans on. The second solves a family of
+absorption models in which particles are drawn into a compartment and may
+then replicate inside it; the hardest member of that family is solved here
+for the first time (\mextref{m:app:absorption}{Section~2.B}).
+
+\Mextref{gw:ch:galton-watson}{Chapter~3} is the chapter furthest from plague,
+and it is kept because the question it answers is a real one and the answer
+is complete. For the subcritical binary Galton--Watson process the
+survival probability decays as $S_n\sim A(p)(2p)^n$, and that single constant
+also fixes the population conditioned on survival, whose mean converges to
+$1/A(p)$. The constant exists because the limit can be rewritten as a
+convergent infinite product. Rescaling the survival recursion to the logistic
+map identifies it with a value of the associated Koenigs linearising
+function, and a theorem of Becker and Bergweiler shows that function to be
+hypertranscendental (\mextref{gw:thm:main}{Theorem~3.5}), which does not
+settle the closed-form question for $p\mapsto A(p)$ but does explain why a
+long search for a formula came to nothing. What remains is practical: the
+product, together with the near-critical asymptotic $A(p)\sim2(1-2p)$,
+describes the constant across the whole subcritical range.
+
+\Mextref{bdc:ch:core}{Chapter~4} introduces the process the rest of the
+thesis is built on. Inside one host cell each pathogen particle divides at
+rate $\lambda$, dies at rate $\mu$, and triggers rupture of the whole cell at
+rate $\delta$. The calculation closes because the probability of no rupture
+yet, $I(t)$, obeys an autonomous Riccati equation; the two roots $a$ and $b$
+of its characteristic quadratic then carry every closed form in the thesis.
+Cell-fate probabilities, the mean and second moment of the intracellular
+load, the mean release and the first two conditional moments of the burst
+size all follow in that one coordinate, and several of them --- the second
+moment expressed through $I$, the variances, the joint load--release moments
+--- go beyond what the birth--death--catastrophe literature had recorded.
+
+\Mextref{dist:ch:distribution-theory}{Chapter~5} completes the single cell in
+distribution. The load is geometric at every time, with a ratio that slides
+towards $1/a$; the quasi-stationary law is that endpoint
+(\mextref{dist:thm:qsd}{Theorem~5.6}); and the burst size, averaged over the
+instant of rupture, is the same law
+(\mextref{dist:thm:identity}{Theorem~5.10}). That the two coincide is the most
+satisfying result in the thesis, because the two constructions share no step:
+one conditions a surviving trajectory on never being absorbed, the other
+averages over rupture times, and the identity turns out to hold because
+size-biasing telescopes the occupation integral onto the endpoint of the
+process's own geometric ratio. Two probes then mark the boundary of the
+structure. Several founders sharing a cell leave it intact; chaining one
+cell's burst into the next destroys it as soon as internal extinction is
+possible, and that case remains open.
+
+\Mextref{p:ch:one-cell-to-population}{Chapter~6} embeds the cell in a
+population. The survival and release statistics become age-structured
+kernels, and the resulting renewal system is exact in the mean. Three
+consequences follow. The standard model of within-host virus dynamics is a
+projection of that system, valid one exponential phase at a time
+(\mextref{p:thm:projection}{Theorem~6.3}), so a fitted release rate is a
+property of the phase and not of the organism, and a model that already
+carries a hand-fitted eclipse alongside a bursting pathogen is fitting the
+same delay twice. No fit of the two population constants recovers the three
+intracellular rates (\mextref{p:sec:identifiability}{\S6.5.6}), so a
+population fit is worth doing only alongside a single-cell measurement.
+And at fixed total output under linear clearance the release schedule is
+invisible to $R_0$ (\mextref{p:thm:R0inv}{Theorem~6.6}) while remaining
+visible to establishment: bursting strictly lowers the extinction
+probability of a small inoculum if and only if the flooding parameter
+$L=a(1-b)$ exceeds one (\mextref{p:thm:flood}{Theorem~6.8}).
+
+\Mextref{tt:ch:two-type}{Chapter~7} solves a two-type version exactly. Type~1
+converts irreversibly into type~2, either type may trigger a single global
+catastrophe, and because the catastrophe rate depends on the whole path the
+natural object is an occupation-time transform rather than a terminal-count
+generating function. The backward system is triangular, and after
+linearisation the surviving Riccati equation becomes the Gauss hypergeometric
+equation, giving a closed formula for the finite-time probability of avoiding
+catastrophe (\mextref{tt:thm:main}{Theorem~7.4}) which holds for any ordering
+of the type-specific rates and reduces to the two-type branching equations of
+Antal and Krapivsky \cite{antal2011exact} when the catastrophe rates vanish.
+Read biologically, the two types are early and adapted intracellular
+phenotypes and the catastrophe is irreversible loss of containment.
+
+\Mextref{path:ch:pathogenesis}{Chapter~8} asks what a burst is worth when the
+defence can be used up. Inside the cell, a replicator--suppressor process
+with a granule store that is never replenished makes a larger founding cohort
+disproportionately safer, because the cohort itself spends the store. Outside
+it, a fixed removal budget $\vartheta$ per delivery gives the surviving
+release in closed form, $\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$, and
+with it a reversal: against a threshold rather than a
+rate, the flooding criterion flips, and bursting beats matched-mean budding
+precisely when $L<1$ (\mextref{path:prop:reversal}{Proposition~8.12}). The
+reason is a single fact about variance. Extinction probability rewards low
+offspring variance whereas the surplus above a threshold is convex and
+rewards high variance, so the sign of $L-1$ drives both criteria and drives
+them opposite ways. The chapter also yields the number that reappears below:
+a removal budget $\vartheta^{\ast}=\log V_\infty/\log a$ beyond which no
+intracellular strategy stays supercritical
+(\mextref{path:cor:threshold}{Corollary~8.8}).
+
+\Mextref{var:ch:rates}{Chapter~9} lets the rates move. Under a
+time-varying per-capita birth rate the species count stays geometric and
+depends on the rate law only through its integral, which under logistic
+growth converges and leaves a proper limit law rather than merely a finite
+late-time mean (\mextref{var:cor:logistic-limit}{Corollary~9.3}). In a model
+of Pimentel's competition experiment the state at which the chain is equally
+likely to step up as down is available in closed form and is unstable
+(\mextref{var:eq:icrit}{(9.21)}), which is a different thing from a process
+approaching an equilibrium. Two further models are carried only as far as
+simulation. The chapter's general observation is worth repeating, because it
+is not the obvious one: what costs the generating function is not feedback as
+such but \emph{continuous bending} of a rate. A process may act on its own
+circumstances as much as it likes and stay solvable, provided what survives
+the interaction is a random time or a random count rather than a moving rate.
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}@{}}
+\toprule
+Ch. & What it establishes & What it leaves \\
+\midrule
+2 & Objects and methods; survival of founding cohorts near criticality;
+    a family of absorption models solved
+  & The absorption models are not used by the modelling chapters \\
+3 & $A(p)$ exists, equals a Koenigs value, has no elementary formula in $z$,
+    and is computable across $(0,\tfrac12)$
+  & Whether $p\mapsto A(p)$ has a closed form \\
+4 & The birth--death--catastrophe cell: fates, moments, mean release, burst
+    moments, all through $I(t)$
+  & Rates unmeasured for \yp{}; no data confrontation \\
+5 & Geometric load at every time; quasi-stationary law; burst-size law
+    identical to it, with a structural proof
+  & The chained process for $\mu>0$; whether the telescoping criterion is
+    necessary \\
+6 & An exact burst-aware renewal model; the standard model as its
+    projection; non-identifiability; the flooding criterion $L>1$
+  & Where \yp{} sits relative to $L=1$; multiplicity through the population
+    layer \\
+7 & Exact hypergeometric no-catastrophe probability for two types with one
+    global catastrophe
+  & Killed second moments, which an eclipse-aware renewal model needs \\
+8 & Depletable defences: certainty threshold, $\mathcal{R}(\vartheta)$, the
+    reversal at $L=1$, and the budget $\vartheta^{\ast}$
+  & Population-level consequences of a threshold clearance \\
+9 & Distribution under a moving birth rate; logistic limit law; an unstable
+    moving critical point
+  & Four of the models are specifications or simulations only \\
+\bottomrule
+\end{tabular}
+\caption{What each chapter settles, and what it hands on. The right-hand
+column is drawn from the chapters' own statements of scope, not added here.}
+\label{con:tab:contributions}
+\end{table}
+
+\FloatBarrier
+
+\section{The four questions, answered}
+\label{con:sec:questions}
+
+\subsection{Why \texorpdfstring{\yp{}}{Y. pestis} switches phase}
+\label{con:sec:q1}
+
+Two arguments in this thesis reach the switch, by different routes, and they
+agree on its shape if not yet on its position. The first is the quadrant
+argument of \cref{con:sec:quadrant}: with three environments ordered by
+hostility, the expected return on accepting phagocytosis falls linearly as
+the neutrophil fraction rises, crosses the constant return on resisting it,
+and the crossing sits strictly inside $(0,1)$. The second is the removal
+budget of \mextref{path:sec:ypestis}{\S8.5.4}: while the killer-cell density
+is roughly constant a cell releasing its whole load at once pays one toll
+where a budding cell would pay many, and once a rise in that density pushes
+the toll past $\vartheta^{\ast}=\log V_\infty/\log a$ no intracellular
+strategy remains supercritical. A third strand supports both without
+deciding either. Just above criticality the size of a founding cohort weighs
+very heavily on whether a lineage survives at all
+(\mextref{m:app:smallpops}{Section~2.A}), and the intracellular phase is
+exactly a device for arriving in numbers.
+
+The common prediction is worth isolating, because it is the part that could
+be wrong in an interesting way. Both arguments key the switch to \emph{how
+much of the killer field is present}, not to a clock: to the fraction of
+phagocytes that are neutrophils in one case, to the number of agents removed
+per delivery in the other. Neither predicts a fixed interval after inoculation. The histology
+does place the switch alongside the neutrophil response
+\cite{BosioEtAl2005,PetersEtAl2013}, which is consistent with both accounts
+and discriminates between neither, and whether the neutrophils drive the
+switch or merely arrive with it is not settled by those studies.
+
+Three things cannot be claimed. The two thresholds have not been shown to be
+consistent --- whether the neutrophil fraction that crosses $p_N^{\ast}$ is
+the one that carries the toll past $\vartheta^{\ast}$ is an open problem
+recorded in \mextref{path:sec:open}{\S8.6.2} and repeated in
+\cref{con:sec:limits}. Neither threshold has been put against data. And
+neither argument excludes the plainer explanations: that macrophages are
+being used as transport to the draining lymph nodes, or that the early
+pro-phagocytic phase is a hangover from life inside the flea. What the
+mathematics supplies is not a proof that the strategy is optimal but a
+statement of what would have to be measured for the question to be settled.
+
+\subsection{Whether bursting pays}
+\label{con:sec:q2}
+
+It does, but ``bursting pays'' turns out not to be one claim. Four
+comparisons run through \mextref{p:ch:one-cell-to-population}{Chapter~6} and
+\mextref{path:ch:pathogenesis}{Chapter~8}, and they do not agree with one
+another, which is the finding rather than a defect.
+
+At fixed total output per cell and linear clearance, replacing a constant
+drip by a single burst leaves $R_0$ exactly unchanged: the schedule is
+invisible to the reproduction number. At the same fixed mean, the schedule is
+nevertheless not invisible to establishment, and bursting strictly lowers the
+extinction probability of a small inoculum precisely when $L=a(1-b)$ exceeds
+one. Against a defence with a fixed removal budget rather than a clearance
+rate, that criterion reverses exactly, and bursting wins when $L<1$. A fourth
+comparison, holding the release law fixed and asking how the same total fares
+when split across more deliveries, favours concentration unconditionally,
+because a toll paid per delivery is paid once by a bursting cell and $n$
+times by a budding one.
+
+So the honest answer is that a depletable defence supplies a genuine
+selection gradient towards fewer and larger deliveries, and that whether one
+particular bursting law beats one particular budding law at matched mean
+depends on whether the defence is a rate or a budget, with $L$ the quantity
+that decides. What remains out of reach is placing \yp{} on that scale. Doing
+so needs $\lambda$, $\mu$ and $\delta$ for the macrophage phase, and $\delta$
+is fixed
+by the exit mechanism, which is exactly the thing the primary literature
+still treats as unresolved --- apoptosis, pyroptosis and necroptosis are all
+reported \cite{MonackEtAl1997,ZaubermanEtAl2006,PetersEtAl2013}. The two
+parameter sets available in the right form belong to \ft{}
+\cite{carruthers2020stochastic} and to \textit{B.~anthracis}
+\cite{williams2021anthrax}, and they describe cells at opposite extremes of
+what the model allows --- near-certain rupture releasing hundreds in the one
+case, near-certain clearance with minimal release in the other. Neither is
+\yp{}.
+
+\subsection{An intracellular replacement for the standard model}
+\label{con:sec:q3}
+
+Yes, and it is more than a substitution of one rate for another. The standard
+model gives an infected cell two constants, a release rate and a removal
+rate, and for a budding virus that is an exact description rather than an
+approximation. For a lytic pathogen it is wrong in mechanism, because release
+and death are not independent events but the same event. The renewal system
+of \mextref{p:ch:one-cell-to-population}{Chapter~6} replaces the two
+constants with two kernels derived from the intracellular process, is exact
+in the mean, and returns the standard model as a projection of itself, valid
+one exponential phase at a time. Three consequences bear directly on fitting
+practice: acute-phase and set-point estimates of the release rate should
+differ systematically and by a bounded amount; the eclipse emerges from the
+intracellular dynamics with no extra parameter, so a model carrying a fitted
+one may be counting the same delay twice; and because the population fit is
+not identifiable for the three intracellular rates, it is worth doing only
+alongside a single-cell companion measurement. The single-cell predictions
+that would supply that companion are listed in
+\mextref{dist:sec:discussion-assay}{\S5.12.1}, and are sharp enough to be
+wrong.
+
+\subsection{Rates that move}
+\label{con:sec:q4}
+
+Partially, and the partial answer has a clean edge to it. Three results in
+\mextref{var:ch:rates}{Chapter~9} carry closed forms --- the geometric law
+under a moving birth rate, the logistic-speciation limit law, and the
+unstable moving critical point of the Pimentel chain --- and the remaining
+models are specifications or simulations that outrun the machinery of the
+earlier chapters. What that collection shows is where the machinery gives
+out, and the boundary is not the expected one. It is not feedback that costs
+the generating function. A process may consume a
+capacity, harden a competitor or infect its neighbours and still be solvable,
+provided the interaction leaves behind a random time or a random count rather
+than a rate that goes on bending. That is a modest observation, but it is a
+usable one: it says which of the models in that chapter are worth attacking
+analytically and which should be left to simulation.
+
+\section{The quadrant argument}
+\label{con:sec:quadrant}
+
+The argument here is the crudest in the thesis and, for that reason, the one
+whose assumptions are easiest to see. It sorts the bacterium's options into a
+two-by-two --- accept or resist phagocytosis, before or after the neutrophil
+influx --- and asks which cell of that grid offers the better return. The
+claim is that the best cell moves along the diagonal as the influx proceeds,
+and that it does so at a threshold which can be written down.
+
+\subsection{Three environments, one ordering}
+\label{con:sec:quadrant-ordering}
+
+Simplify the intracellular options to macrophages and neutrophils, setting
+aside dendritic cells, eosinophils, basophils and mast cells, which are no
+doubt relevant in reality. Macrophages are generalist phagocytes; neutrophils
+are specialist killers, and it is mainly neutrophils that are recruited in
+numbers once a bacterial infection of this kind is recognised. Treat
+replication in each of the three environments --- inside a macrophage, inside
+a neutrophil, and extracellular --- as a simple birth--death process with
+rates $(\beta_i,\mu_i)$ for $i\in\{M,N,E\}$. The difference in hostility then
+sits in the death rate, and
+
+\begin{equation}
+\mu_N>\mu_E>\mu_M .
+\label{con:eq:ordering}
+\end{equation}
+
+The outer inequalities are the substance of the model, and each is an
+inference from the strategy itself rather than an independent measurement.
+That \yp{} evolved to exploit the macrophage interior at all is the reason
+for taking $\mu_M<\mu_E$; if there were no advantage inside, there would be
+no reason to go in. That it resists phagocytosis once neutrophils arrive in
+force is the reason for taking $\mu_E<\mu_N$; if the neutrophil interior were
+the better place, resisting entry to it would be perverse. The argument is
+therefore not a derivation of the strategy from first principles. It is a
+consistency check: it asks whether one ordering of three death rates can
+account for both halves of the observed behaviour at once.
+
+Take the birth rates equal,
+\begin{equation}
+\beta_M=\beta_E=\beta_N=\beta ,
+\label{con:eq:births}
+\end{equation}
+which is certainly false in detail --- nutrient and energy supply differ
+inside a cell and outside it --- but which keeps the comparison to one axis.
+What matters to the comparison is the net rate $\beta_i-\mu_i$ in any case,
+and by \cref{con:eq:ordering,con:eq:births},
+\begin{equation}
+\beta_M-\mu_M \;>\; \beta_E-\mu_E \;>\; \beta_N-\mu_N .
+\label{con:eq:netordering}
+\end{equation}
+The macrophage is the best environment available. The bacterium cannot,
+however, choose it: the assumption here is that \yp{} can decide whether to
+permit phagocytosis but cannot decide which phagocyte performs it.
+
+\begin{remark}[What the argument does not consider]
+\label{con:rem:alternatives}
+There are other reasons \yp{} might favour macrophage uptake early. The
+infected macrophage may serve chiefly as transport to the draining lymph
+nodes, where the food supply is better; and the pro-phagocytic phase may be a
+lingering hangover from life inside the flea, where the temperature cue for
+the second phase is absent. Neither possibility is excluded by anything
+below. The argument explores whether a more fundamental strategic advantage
+is available in addition, not instead.
+\end{remark}
+
+Also folded into a constant here is the mechanism of the killing itself.
+Leucocytes kill from a store of granules, and
+\mextref{path:sec:intracellular}{\S8.3} shows that when the store is
+depletable the effective death rate falls as a cohort spends it --- so
+$\mu_M$ and $\mu_N$ are not constants but declining functions of how much
+killing has already been done. Taking them fixed is the approximation that
+makes the present argument a two-line calculation, and
+\cref{con:sec:limits} records it as the place where the argument is weakest.
+
+\subsection{Where the two strategies cross}
+\label{con:sec:quadrant-threshold}
+
+Following pathogen recognition the body delivers neutrophils to the site, so
+that the composition of the phagocyte population shifts. Write
+\begin{equation}
+p_M=\frac{\#M}{\#M+\#N},\qquad
+p_N=\frac{\#N}{\#M+\#N}=1-p_M ,
+\label{con:eq:fractions}
+\end{equation}
+for the probability that an uptake event is performed by each type, and take
+$p_N$ to rise at the influx. A bacterium that permits phagocytosis therefore
+draws its environment at random from the two, while one that resists it takes
+the extracellular rate with certainty:
+\begin{align}
+R_{\mathrm{pro}}&=p_M(\beta_M-\mu_M)+p_N(\beta_N-\mu_N),
+\label{con:eq:Rpro}\\
+R_{\mathrm{anti}}&=\beta_E-\mu_E .
+\label{con:eq:Ranti}
+\end{align}
+Eliminating $p_M$ makes the dependence on the influx explicit,
+\begin{equation}
+R_{\mathrm{pro}}
+=(\beta_M-\mu_M)+p_N\lrbs{(\beta_N-\mu_N)-(\beta_M-\mu_M)} ,
+\label{con:eq:Rpro-linear}
+\end{equation}
+so that $R_{\mathrm{pro}}$ falls linearly in $p_N$, from $\beta_M-\mu_M$ at
+$p_N=0$ to $\beta_N-\mu_N$ at $p_N=1$, while $R_{\mathrm{anti}}$ does not
+move. The two therefore cross exactly once. Resisting phagocytosis becomes
+the better strategy when $R_{\mathrm{anti}}>R_{\mathrm{pro}}$, which by
+\cref{con:eq:Rpro-linear} --- and remembering that the bracket is negative,
+so that the inequality reverses on division --- occurs when
+\begin{equation}
+p_N \;>\;
+\frac{(\beta_E-\mu_E)-(\beta_M-\mu_M)}{(\beta_N-\mu_N)-(\beta_M-\mu_M)} ,
+\label{con:eq:threshold-general}
+\end{equation}
+and with the birth rates equal this reduces to
+\begin{equation}
+\boxed{\;p_N \;>\; p_N^{\ast}
+:=\frac{\mu_E-\mu_M}{\mu_N-\mu_M}\;}
+\label{con:eq:threshold}
+\end{equation}
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[>={Stealth[length=1.9mm]},font=\small]
+% axes
+\draw[->,inksoft,thick] (0,0) -- (9.3,0)
+  node[below left=1pt and -6pt,font=\footnotesize]{$p_N$};
+\draw[->,inksoft,thick] (0,0) -- (0,4.3)
+  node[above,font=\footnotesize]{net rate};
+\node[font=\footnotesize,inksoft] at (0,-0.32) {$0$};
+\node[font=\footnotesize,inksoft] at (8.6,-0.32) {$1$};
+% R_pro: falls from beta_M-mu_M to beta_N-mu_N
+\draw[accent,very thick] (0,3.7) -- (8.6,0.7);
+\node[accent,font=\footnotesize,anchor=west] at (0.15,3.98)
+  {$R_{\mathrm{pro}}$};
+\node[inksoft,font=\scriptsize,anchor=east] at (-0.12,3.7)
+  {$\beta_M-\mu_M$};
+\node[inksoft,font=\scriptsize,anchor=west] at (8.75,0.7)
+  {$\beta_N-\mu_N$};
+% R_anti constant
+\draw[type2,very thick] (0,2.3) -- (8.6,2.3);
+\node[type2,font=\footnotesize,anchor=west] at (7.0,2.62)
+  {$R_{\mathrm{anti}}=\beta_E-\mu_E$};
+% crossing
+\coordinate (X) at (4.01,2.3);
+\fill[ink] (X) circle (2.1pt);
+\draw[ink,densely dashed] (X) -- (4.01,0);
+\node[ink,font=\footnotesize,anchor=north] at (4.01,-0.12)
+  {$p_N^{\ast}$};
+% regime labels
+\node[inksoft,font=\scriptsize,align=center] at (2.0,0.80)
+  {accept phagocytosis};
+\node[inksoft,font=\scriptsize,align=center] at (6.15,0.80)
+  {resist phagocytosis};
+% direction of the influx, kept clear of the axis labels
+\draw[->,inksoft] (2.6,-1.15) -- (5.9,-1.15);
+\node[inksoft,font=\scriptsize,anchor=south] at (4.25,-1.10)
+  {neutrophil influx};
+\end{tikzpicture}
+\caption{The crossing. The expected net replication rate under a
+pro-phagocytic strategy falls linearly in the neutrophil fraction $p_N$,
+because a larger fraction of uptake events delivers the bacterium into the
+more hostile of the two cell types; the anti-phagocytic rate does not depend
+on $p_N$ at all. The single crossing is $p_N^{\ast}$ of
+\cref{con:eq:threshold}, and it lies strictly between $0$ and $1$ exactly
+when the ordering \cref{con:eq:ordering} holds.}
+\label{con:fig:quadrant}
+\end{figure}
+
+\subsection{What the threshold says}
+\label{con:sec:quadrant-reading}
+
+\Cref{con:eq:threshold} has a reading that makes the ordering assumption do
+visible work rather than sit in the background. The threshold is the position
+of the extracellular death rate on the interval running from the macrophage
+rate to the neutrophil rate: if the outside world is a quarter of the way
+from macrophage to neutrophil in hostility, the switch comes when a quarter
+of the phagocytes on the scene are neutrophils. That reading also shows what
+the ordering buys, since $p_N^{\ast}$ lies in $(0,1)$ if and only if
+\cref{con:eq:ordering} holds. Were the extracellular environment kinder than
+the macrophage interior, the threshold would be negative and resistance would
+be right from the first moment; were it harsher than the neutrophil interior,
+the threshold would exceed one and the bacterium should accept phagocytosis
+however many neutrophils arrive. A biphasic strategy is optimal only in the
+intermediate case, and the intermediate case is precisely the ordering
+inferred from the strategy. The argument is a consistency check that passes,
+and it should be read as no stronger than that.
+
+Two things follow that are not merely restatements. The first is that the
+switch is keyed to a composition and not to an elapsed time, so anything that
+changes the arriving mixture should move it. Neutrophil depletion should
+delay the switch or remove it; accelerated recruitment should bring it
+forward. That is the same shape of prediction as the removal budget
+$\vartheta^{\ast}$ of \mextref{path:sec:ypestis}{\S8.5.4}, reached from a
+different model with different machinery, and the two accounts have not been
+reconciled. The second is that $p_N^{\ast}$ is written entirely in death
+rates, which are in principle measurable: intracellular survival of \yp{} in
+macrophages and in neutrophils, and survival in the extracellular medium, are
+three quantities of the same kind, and the argument stands or falls on
+whether the middle one lies between the other two.
+
+Finally, the argument as set out is indifferent to \emph{when} the influx
+happens. That the bacterium's residence in macrophages may itself delay
+neutrophil recruitment, by hiding the infection, is a real effect and would
+show up as $t_N$ depending on the strategy chosen. It does not enter here,
+because whether uptake is advantageous at a given moment depends on the
+mixture present at that moment and not on the history that produced it.
+
+\section{Limitations and open problems}
+\label{con:sec:limits}
+
+Nothing in this thesis has been fitted to plague data. The rates the models
+need for the intracellular phase of \yp{} do not exist in the literature in
+the form required, and the two published parameter sets used for illustration
+in \mextref{dist:ch:distribution-theory}{Chapter~5} belong to other
+organisms. Everything said about \yp{} is therefore a hypothesis compatible
+with the cited intracellular literature, not an inference this work can
+check.
+
+Four assumptions carry the closed forms and none is innocuous. Birth is
+linear, so the conditional load has no intracellular carrying capacity; the
+defence is that the rupture hazard is itself proportional to load and so
+regulates it, but the sensitivity of the burst statistics to a logistic birth
+rate has not been checked. The rupture hazard is exactly $\delta n$ --- not
+$\delta n^{2}$, not a critical load, not a maturation-timed lysis --- and
+this is the strongest assumption anywhere in the thesis, because the burst
+law and its telescoping proof both depend on it. Release is instantaneous and
+complete, which is what makes the burst a single random variable; an assay
+that saw graded release would refute the premise before reaching any of the
+theory. And the rates are constant in time, which \mextref{var:ch:rates}{Chapter~9}
+relaxes only in models that no longer close.
+
+The quadrant argument of \cref{con:sec:quadrant} is the weakest piece of
+mathematics in the thesis, and it is kept because it is transparent rather
+than because it is strong. It treats $\mu_M$ and $\mu_N$ as constants at
+exactly the point where \mextref{path:ch:pathogenesis}{Chapter~8} shows them
+not to be: killing from a depletable granule store means the death rate falls
+as a cohort spends the store, so the comparison between environments should
+depend on cohort size, and in this argument it does not. It also compares
+instantaneous rates rather than probabilities of establishment, which is the
+quantity that actually decides the fate of a small founding population.
+
+Two structural gaps remain between the chapters. There is no host-to-host
+layer: the released particles are counted and then forgotten, so the
+population-level consequences of a threshold clearance are not derived
+anywhere. And multiplicity of infection, which the single-cell theory handles
+cleanly, has not been carried through the population layer, even though the
+kernels for it are available and add no fitted parameters.
+
+Of the open problems recorded across the chapters, four are the ones worth
+taking first.
+
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.3em]
+\item \textbf{Reconcile the two thresholds.} Whether the neutrophil fraction
+that crosses $p_N^{\ast}$ in \cref{con:eq:threshold} is the same event as the
+toll crossing $\vartheta^{\ast}$ in
+\mextref{path:cor:threshold}{Corollary~8.8}. Two accounts of one transition,
+in different currencies, is one account too many.
+\item \textbf{Two-type killed second moments.} These are what an
+eclipse-aware renewal model needs, and they are the principal technical
+obstacle between \mextref{p:ch:one-cell-to-population}{Chapter~6} and
+\mextref{tt:ch:two-type}{Chapter~7}. The one-type escape was to
+differentiate the Riccati equation; the two-type route should be to
+differentiate the backward system. It should not be assumed easy.
+\item \textbf{Locate \yp{} relative to $L=1$.} This is the question that
+would turn the bursting comparison from a criterion into a statement about
+the organism, and it needs $\delta$, which needs the exit mechanism.
+\item \textbf{The chained process at $\mu>0$.} The joint laws of rupture
+times and sizes are known in closed form only when internal extinction is
+impossible, and the decomposition fails as soon as a lineage has two ways to
+stop rather than one.
+\end{enumerate}
+
+\section{Closing}
+\label{con:sec:closing}
+
+Set against one switch, what this thesis can offer is two thresholds and a
+parameter. The thresholds are $p_N^{\ast}$, the neutrophil fraction at which
+being eaten stops paying, and $\vartheta^{\ast}$, the removal budget beyond
+which no intracellular strategy stays supercritical; the parameter is
+$L=a(1-b)$, which decides whether releasing everything at once is a good bet
+or a bad one and changes its answer according to whether the defence facing
+the release is a rate or a budget. None of the three is measured. All three
+are written in quantities that could be.
+
+That is a narrower return than the question seemed to promise, and the reason
+is worth naming, because it is also the pattern that recurred throughout. So
+much of the biology turns on arriving in numbers rather than on replicating
+quickly. A near-critical population is almost indifferent to its growth rate
+and acutely sensitive to how many founders it started with; depletable
+defences reward the cohort that spends them together; and the whole
+intracellular phase reads, from far enough back, as a device for converting a
+slow advantage into a large one at a single instant. The mathematics of that
+conversion is what the middle chapters are about, and the burst-size law is
+where it is at its most compact: a geometric distribution whose ratio is the
+larger root of a quadratic in three rates.
+
+\Mextref{var:ch:rates}{Chapter~9} came from a different appetite, and it
+marks plainly which of its parts are results and which are hunches. The
+suspicion that drove it --- that tension accumulates and releases in cycles
+across scales, and that the release is where new form appears --- remains a
+suspicion. What it produced that is defensible is narrower and worth having:
+the observation that a process may act on its own circumstances and stay
+solvable, so long as what crosses the join is a random time rather than a
+bending rate. \yp{} is a good illustration of that principle, since the whole
+of its intracellular phase reaches the extracellular one through a single
+number, the size of the burst.
+
+What would settle the questions this thesis leaves open is not more theory.
+It is three death rates and a rupture rate, measured for one organism in one
+cell type: time-lapse imaging of infected macrophages held to rupture, with
+the moment of release recorded and the payload counted. The predictions are
+sharp enough to be wrong, which is the most that a model of this kind should
+be asked to be.

@@ -1,0 +1,15 @@
+{
+  "figure": "fig03",
+  "chapter_number": "5.3",
+  "label": "dist:fig:slide",
+  "slug": "geometric_slide",
+  "included_from": "sections/04_geometric.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig03.pdf",
+    "fig03.png"
+  ],
+  "simulation": false
+}

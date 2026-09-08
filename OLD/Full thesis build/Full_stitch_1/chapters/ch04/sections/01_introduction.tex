@@ -1,0 +1,129 @@
+\section{Introduction}
+\label{bdc:sec:intro}
+
+A cell can empty by ordinary deaths, or it can rupture and release its load.
+At the first handful of replicative cycles those fates are decided by chance:
+a deterministic trajectory that moves smoothly between one bacterium and none
+answers the wrong question. What one wants is the chance that the infection
+establishes itself at all, and how large the intracellular population is if it
+does.
+
+The process that answers those questions is elementary. Each replicative unit
+inside the cell independently
+\begin{itemize}[leftmargin=1.8em,itemsep=0.15em,topsep=0.25em]
+\item divides at rate $\lambda$,
+\item dies at rate $\mu$, or
+\item triggers rupture of the whole cell at rate $\delta$.
+\end{itemize}
+That is the birth--death--catastrophe (BDC) process, restated as
+\cref{bdc:def:bdc} below. A positive integer is the intracellular load; $0$ is
+internal extinction; $H$ records that the cell has ruptured.
+
+One reading is the early intracellular phase of \yp{} in the macrophage: the
+bacterium replicates within the cell and then lyses it, releasing the
+accumulated load. The word ``catastrophe'' names that bursting event, not an
+adverse judgement on the bacterium, and its hazard grows with the
+intracellular population. Closely related stochastic models have been used for
+\ft{} \cite{carruthers2020stochastic,oyston2004tularaemia}, for
+\textit{Salmonella enterica} \cite{brown2006intracellular}, and for anthrax
+\cite{williams2021anthrax}. More broadly, the balance between establishment
+and collapse in small infected populations is itself a stochastic object
+\cite{hataye2019principles,williams2024reproduction}. None of the formulae
+requires that biological reading.
+
+The process used here is a specialisation of the birth--immigration--catastrophe
+model of Brockwell, Gani and Resnick \cite{brockwell1982birth}, who wrote in 1982
+that
+\begin{quotation}
+\textquotedblleft There has recently been a great deal of interest in the
+development and analysis of stochastic models for the growth of populations
+which are subject to catastrophes due either to death or large-scale
+emigrations.\textquotedblright
+\end{quotation}
+The process they introduced was more general than the one used here. It also
+allowed immigration, through single upward steps arriving at a constant Poisson
+rate, and catastrophes whose sizes were independent random variables. In the
+present model immigration is absent, and a catastrophe ends the intracellular
+process altogether rather than removing a random number of individuals. The
+population moves directly to $0$, or to a distinct post-catastrophe state $H$,
+and thereafter remains fixed. The mathematics rests on the classical theory of
+birth--death processes and their killed variants
+\cite{karlin1957classification,karlin1982linear,di2008note}.
+
+The derivation proceeds as follows.
+\begin{itemize}[leftmargin=1.8em,itemsep=0.2em,topsep=0.3em]
+\item A first-step argument produces an autonomous Riccati equation for the
+non-catastrophe probability $I(t)$.
+\item Internal extinction $D(t)$ obeys the same flow from a different initial
+condition; their difference is the productive probability $\Ifix=I-D$.
+\item The mean load is $J=-I'/\delta$; higher load moments are polynomials in
+$I$.
+\item Release moments follow by balance, using the same higher-order terms.
+\item Burst size and burst time are read off from those functions.
+\end{itemize}
+Once $I$ is known, no other state probability is needed to advance it in time.
+The roots $a>1>b$ of the
+characteristic quadratic make the closed forms readable. The lower root $b$ is
+the probability of internal extinction before rupture; $1/a$ is the ratio of
+the geometric burst-size law; their difference supplies the time scale
+$\theta=\lambda(a-b)$. Write $A=a-1$ and $B=1-b$.
+
+The principal results, in advance, are these. From one founder, $I(t)$,
+$D(t)$ and $\Ifix(t)$ are explicit in $a$, $b$ and $w=\ee^{\theta t}$. The
+mean load and mean release are
+\[
+J=-\frac{\lambda}{\delta}(I-a)(I-b),
+\qquad
+V=(1-I)\Bigl[1+\frac{\lambda}{\delta}(1-I)\Bigr],
+\]
+with late-time release $V_\infty=aB/A$. Neither is a typical-cell history:
+$J$ mixes large loads from a dwindling productive set with zeros from every
+path that has finished, and $V_\infty$ averages over realisations that never
+rupture. Conditional on rupture, the first two burst-size moments match a
+geometric law of ratio $1/a$; the law itself is derived in
+\fwd{singlecell}{Chapter~5}. Variances of load and release are likewise
+functions of $I$.
+
+\begin{remark}[What is classical here, and what is developed here]
+\label{bdc:rem:novelty}
+The Riccati equation for the non-catastrophe probability, together with its two
+roots, belongs to the classical theory of birth--death processes with killing
+\cite{karlin1982linear}. The process is a special case of the
+birth--immigration--catastrophe model of Brockwell, Gani and Resnick
+\cite{brockwell1982birth}, and the lower root $b$ is the familiar extinction
+fixed point from branching-process theory \cite{Athreya1972,Harris1963}.
+
+The present treatment keeps the released count $W_t$ alongside the load $X_t$,
+which gives its first two moments and the corresponding conditional burst
+moments. It also keeps non-catastrophe, internal extinction and continued
+productivity separate; this distinction is lost when death and rupture share a
+single absorbing state, yet it is needed for the quasi-stationary analysis of
+\fwd{singlecell}{Chapter~5}. Finally, expressing the load moments as polynomials
+in $I$ supplies the age-dependent quantities used by the population model of
+\fwd{population}{Chapter~6}.
+\end{remark}
+
+Four assumptions are load-bearing, and all four are contestable.
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.2em,topsep=0.3em]
+\item \textbf{Linear birth.} Each particle divides at rate $\lambda$ whatever
+the current load: there is no intracellular carrying capacity.
+\item \textbf{Catastrophe hazard $\delta n$.} Rupture is triggered at rate
+$\delta n$ from load $n$, not $\delta n^2$ and not a threshold at a critical
+load.
+\item \textbf{Instantaneous, complete release.} The whole load leaves the cell
+at one instant.
+\item \textbf{Constant rates.} No eclipse phase and no age-dependence within
+the cell.
+\end{enumerate}
+
+\Cref{bdc:sec:process} defines the pair $(X_t,W_t)$ and fixes the conventions.
+\Cref{bdc:sec:riccati} derives and solves the scalar equation for the three
+cell-fate probabilities. The moment calculation follows in
+\cref{bdc:sec:moments}, after which \cref{bdc:sec:economy} explains the special
+role of $I$. \Cref{bdc:sec:burst} turns the moment results into statements about
+burst size and burst time, and \cref{bdc:sec:summary} collects the formulae for
+later use. The final section records the boundary of the calculation and the
+connection to the next two chapters; \cref{bdc:app:limits} records the
+principal limiting checks.
+
+\FloatBarrier

@@ -1,0 +1,334 @@
+% Bursting and budding: where the advantage lives --- plan \S3.3, "\S5".
+% Largely new.  This section discharges O1-O4 (plan \S1.3): the evolutionary
+% framing, the selection argument over the phenotypes of \cref{p:sec:reach},
+% the placement of the flooding result relative to the spectrum, and the
+% "which pathogens sit where" scope \ChDist{} asked for.
+% Source material: 03_fixed_removal.tex:88 (the batch-count argument),
+% :275 (the \yp{} argument).
+% NOTHING from \cref{p:sec:reach} is rebuilt here; every mechanism is cited.
+
+\section{Bursting and budding: where the advantage lives}
+\label{path:sec:selection}
+
+\subsection{What is settled, and what was left open}
+\label{path:sec:settled}
+
+\ChPopcap{} settles the comparison under linear clearance, and it does so
+twice. First, at fixed total per-cell output $V_\infty$, replacing constant
+budding by bursting leaves the basic reproduction number exactly unchanged
+(\cref{p:thm:R0inv}): under linear clearance the release schedule is
+invisible to $R_0$. Second, the schedule is nevertheless not invisible to
+establishment. \Cref{p:thm:flood} shows that bursting strictly lowers the
+extinction probability of a small inoculum, relative to matched-mean
+budding, if and only if the flooding parameter
+\begin{equation}
+L:=a(1-b)=a-\frac{\mu}{\lambda}
+\label{path:eq:L}
+\end{equation}
+exceeds one, equivalently $1/\delta<1/\lambda+1/\mu$
+(\cref{p:eq:floodcrit}); at $L=1$ the two offspring laws coincide exactly
+and every functional of them ties (\cref{p:prop:L1}).
+
+The letter $R_0$ in \ChPop{} denotes the expected number of secondary
+infections produced by one infected cell in a wholly susceptible population
+under linear clearance, in the sense of \cite{diekmann1990definition}; a
+theorem there proves that quantity invariant. The quantity of
+\cref{path:eq:R0} is not that: it is the expected number of \emph{surviving}
+released agents per infected cell when the clearance is a threshold rather
+than a rate. Under linear clearance at infection probability $q$ the two
+agree up to the thinning factor, since $\mathcal{R}(0)=V_\infty$ and the
+mean offspring number in \ChPop{} is $qV_\infty$. Under threshold removal
+they part company, and hence the different letter. Reading
+$\mathcal{R}(\vartheta)$ as $R_0$ would put this chapter in contradiction
+with \cref{p:thm:R0inv}, and there is none.
+
+\Cref{p:rem:flood-scope} records that both results in \ChPop{} compare
+branching structures at fixed offspring mean, and therefore say nothing
+about nonlinear effects. Fixed removal is exactly such an effect --- a
+threshold is not a rate --- so the comparison can be run again through it.
+It does not come out the same way.
+
+\subsection{The reversal}
+\label{path:sec:reversal}
+
+Two arguments will appear, and they are not the same argument. The
+distributional one holds the number of deliveries fixed at one and compares
+two laws for that delivery, matched at mean $V_\infty$; its verdict depends
+on $L$. The batch-count one holds the law fixed and asks how the same total
+fares when split across more deliveries, each paying a toll $\vartheta$;
+its verdict is unconditional concentration. The reversal below is the
+first. The spectrum figure is the second.
+
+\begin{proposition}[The flooding criterion reverses under threshold removal]
+\label{path:prop:reversal}
+Let the budding comparator of \cref{p:sec:flooding} release a total that is
+geometric on $\{0,1,2,\dots\}$ with the same mean $V_\infty$, and write
+$\sigma=V_\infty/(1+V_\infty)$. Then under an integer removal budget
+$\vartheta$,
+\begin{equation}
+\mathcal{R}_{\mathrm{burst}}(\vartheta)=V_\infty\,a^{-\vartheta},
+\qquad
+\mathcal{R}_{\mathrm{bud}}(\vartheta)=V_\infty\,\sigma^{\vartheta},
+\label{path:eq:reversal}
+\end{equation}
+so bursting exceeds matched-mean budding if and only if $1/a>\sigma$, that
+is if and only if $V_\infty(a-1)<1$, that is if and only if $L<1$ --- the
+exact complement of \cref{p:thm:flood}. At $L=1$ the two laws coincide by
+\cref{p:prop:L1} and every functional ties.
+\end{proposition}
+
+\begin{proof}
+Both expressions in \cref{path:eq:reversal} follow from the memorylessness
+argument of \cref{path:prop:ratio}, applied to a geometric law on
+$\{1,2,\dots\}$ with ratio $1/a$ in the first case and to one on
+$\{0,1,2,\dots\}$ with ratio $\sigma$ in the second. For the criterion,
+take \cref{path:prop:ratio} at $\vartheta=1$ against the tail
+\cref{path:eq:tail}: $V_\infty/a=\ex{r}-\pr{r\ge1}=V_\infty-(1-b)$, whence
+$V_\infty=a(1-b)/(a-1)=L/(a-1)$. Therefore
+\[
+\frac1a>\frac{V_\infty}{1+V_\infty}
+\iff 1+V_\infty>aV_\infty
+\iff V_\infty(a-1)<1
+\iff L<1. \qedhere
+\]
+\end{proof}
+
+The result is a reversal rather than a contradiction, and the reason is a
+single fact about variance. At matched mean, extinction probability rewards
+\emph{low} offspring variance, whereas $\ex{\max(0,r-\vartheta)}$ is a convex
+functional of the offspring count and so rewards \emph{high} variance.
+\Cref{p:eq:varorder} gives the variance ordering in terms of the same
+parameter,
+$\var{\,\cdot\,}_{\mathrm{bud}}-\var{\,\cdot\,}_{\mathrm{burst}}
+=2q^{2}V_\infty(L-1)/(a-1)$. The sign of $L-1$ therefore drives both
+criteria, and drives them opposite ways: where bursting is the safer bet for
+establishment it is the worse bet against a threshold, and conversely. Both
+criteria turn on the offspring count being integer-valued. Only an integer
+count lets a threshold bite, and the same feature governs establishment
+\cite{williams2024reproduction}.
+
+\begin{table}[tbp]
+\centering
+\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}lccccll@{}}
+\toprule
+& & & & & \multicolumn{2}{c@{}}{winner under} \\
+\cmidrule(l){6-7}
+$(\lambda,\mu,\delta)$ & $L$ & $\vartheta$
+& $\mathcal{R}_{\mathrm{burst}}$ & $\mathcal{R}_{\mathrm{bud}}$
+& linear clearance & threshold removal \\
+\midrule
+$(1,0,0.1)$    & $1.100$ & $5$  & $6.830$ & $7.120$ & bursting & budding \\
+$(1,0.5,1/3)$  & $1.000$ & $5$  & $0.263$ & $0.263$ & tie      & tie \\
+$(1,0.9,0.1)$  & $0.416$ & $5$  & $0.333$ & $0.078$ & budding  & bursting \\
+$(1,0.2,0.05)$ & $0.862$ & $10$ & $7.692$ & $7.011$ & budding  & bursting \\
+$(1,0.9,0.02)$ & $0.207$ & $5$  & $1.164$ & $0.241$ & budding  & bursting \\
+$(1,0.95,0.5)$ & $1.017$ & $3$  & $0.138$ & $0.142$ & bursting & budding \\
+\bottomrule
+\end{tabular}
+\caption{The reversal in six regimes. The last two columns name which
+strategy wins under linear clearance and which under threshold removal, and
+they disagree in every row except the tie. The middle row is the boundary
+$L=1$, where the bursting offspring law is exactly geometric
+(\cref{p:prop:L1}) and the two ratios agree to the digits shown. The
+fourth row is strongly supercritical on both sides, so the reversal is not
+an artefact of one of them being near extinction.}
+\label{path:tab:reversal}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\textwidth]{flooding_reversal.pdf}
+\caption{The sign change, drawn. The gap
+$\mathcal{R}_{\mathrm{burst}}-\mathcal{R}_{\mathrm{bud}}$ against $\delta$
+at $\lambda=1$, $\mu=0.5$, for three removal budgets. All three curves cross
+zero at the same place, the flooding boundary
+$\delta_{*}=\lambda\mu/(\lambda+\mu)=1/3$ of \cref{p:eq:floodcrit}, and they
+cross it in the direction opposite to \cref{p:thm:flood}: bursting wins to
+the \emph{left}, where $L<1$. Raising the budget deepens the advantage on
+the left without moving the boundary, because the boundary is a property of
+the two laws and not of the toll.}
+\label{path:fig:reversal}
+\end{figure}
+
+\Cref{path:tab:reversal,path:fig:reversal} exhibit the reversal. The
+boundary is unmoved by $\vartheta$. Carry that forward: the removal budget
+sets how much the winner wins by, and the rate constants alone set who
+wins.
+
+If the toll is paid \emph{per delivery}, a cell that delivers a total yield
+$V_\infty$ in $n$ instalments retains $\max(0,V_\infty-n\vartheta)$, against
+a bursting cell's $\max(0,V_\infty-\vartheta)$. Since $n\ge1$, concentration
+wins for every $n$, every $\vartheta$ and every $L$: there is no threshold
+and no reversal in this version. That is the batch-count argument of
+\cref{path:sec:playingfield}, not \cref{path:prop:reversal}.
+\label{path:sec:twoarguments}
+
+\begin{remark}[Scope of the comparison]
+\label{path:rem:scope}
+The two arguments answer different questions and neither subsumes the other.
+The distributional one holds the number of deliveries fixed at one and asks
+which \emph{law} for that delivery does better, and its answer depends on
+$L$. The batch-count one holds the law fixed and asks how the same total
+fares when split across more deliveries, and its answer does not depend on
+$L$ at all. Conflating them produces the impression that flooding is
+unconditionally advantageous under depletion --- true of the second
+argument, false of the first.
+\end{remark}
+
+\subsection{Placement on the spectrum}
+\label{path:sec:spectrum}
+
+\Cref{p:sec:reach} lays the release mechanisms out as a spectrum
+(\cref{p:fig:spectrum}). The catalogue is built there and is not rebuilt
+here. What a per-delivery toll does at each station follows from the batch
+count without a new derivation: the surviving output is set by how many
+times $\vartheta$ is paid.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[>=Stealth, font=\footnotesize]
+\draw[->, line width=0.8pt, color=inksoft] (0,0) -- (12.4,0);
+\node[below, font=\scriptsize\itshape, text=inksoft] at (0.15,-0.15) {budding};
+\node[below, font=\scriptsize\itshape, text=inksoft] at (12.15,-0.15) {bursting};
+\foreach \x/\lab/\toll in {%
+  1.3/{constant $p$}/{pays $n\vartheta$, $n$ large},%
+  3.7/{stock-and-export}/{pays per export},%
+  6.2/{reset / partial $\varphi$}/{pays $\sim\vartheta/\varphi$},%
+  8.8/{full clear}/{pays once per dump},%
+  11.2/{absorbing BDC}/{pays once}}
+{\draw[na1] (\x,-0.08) -- (\x,0.08);
+ \node[above=0.22cm, align=center, font=\scriptsize] at (\x,0) {\lab};
+ \node[below=0.38cm, align=center, font=\scriptsize, text=inksoft] at (\x,0) {\toll};}
+\end{tikzpicture}
+\caption{Per-delivery toll along the budding--bursting spectrum of
+\cref{p:fig:spectrum}. Moving right, fewer deliveries are made and a
+smaller total is paid. The ordering is the batch count, not the
+distributional reversal.}
+\label{path:fig:tollspectrum}
+\end{figure}
+
+Under a per-delivery toll, selection on release phenotypes is therefore
+monotone toward fewer, larger deliveries
+(\cref{path:fig:tollspectrum,p:fig:spectrum}). That is a different
+statement from \cref{path:prop:reversal}, which compares two laws at one
+delivery each and can go either way. It is also what makes depletion a
+candidate selective pressure at all, in the sense in which nested
+within-host models pose the question \cite{gilchrist2006evolution}: it
+supplies a gradient rather than merely a difference.
+
+That gradient does not run unopposed. It runs against the one \ChPop{}
+identifies, since concentrating release lengthens the generation time and so
+lowers the deterministic growth rate \cite{wallinga2007generation}, and the
+phage lysis-timing literature poses the same trade-off in its own terms
+\cite{wang2006lysis}; how a lytic strategy can be evolutionarily competitive
+at all under that tension is asked directly \cite{komarova2007viral}. The
+contribution here is to name the third quantity in the trade-off and to give
+it a closed form.
+
+Self-excitation (\cref{p:sec:selfexcite}) is the one station where the toll
+itself moves. \Cref{path:rem:reset} assumes the killer field has recovered
+between deliveries; a self-exciting mechanism makes deliveries cluster in
+time, so successive dumps meet a field that has not recovered and pay less
+than $\vartheta$ each. Whether that is enough to overcome the batch-count
+penalty of making several deliveries instead of one is not settled here ---
+it depends on the recovery timescale, which the model does not carry --- and
+it is recorded as an open problem in \cref{path:sec:open}. It is worth
+naming because it is the only mechanism in the catalogue for which the two
+arguments of \cref{path:rem:scope} pull in opposite directions.
+
+This is a statement about which release phenotypes a depletable defence
+favours, not about which pathogens possess which phenotypes, and it holds
+at the level of one cell's output. It inherits the restriction that
+\cref{p:thm:flood} and \cite{pearson2011stochastic} carry: what is being
+described is the early phase \cite{hataye2019principles}.
+
+\subsection{\texorpdfstring{\yp{}}{Y. pestis}}
+\label{path:sec:ypestis}
+
+One reading takes the model of \cref{path:sec:removal} in the context of
+\yp{} and neutrophils: the target cells are macrophages, the killer cells
+are neutrophils. \yp{} does replicate within macrophages
+\cite{PujolBliska2003,KeEtAl2013}, subverting the phagosome rather than
+being destroyed by it \cite{ConnorEtAl2018,PujolBliska2005}, and it
+encounters those cells early in the pulmonary route
+\cite{BosioEtAl2005}. The injected effectors of
+\cref{path:sec:chainedruptures} act on the same cells, driving or
+withholding apoptosis
+\cite{MonackEtAl1997,ZaubermanEtAl2006,PetersEtAl2013}. Both actors of the
+model are present. The formulae themselves do not depend on that reading.
+
+\begin{table}[!htbp]
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Model & Reading \\
+\midrule
+replicators $X_t$ & intracellular pathogen in one macrophage \\
+granules $Q_t$ & remaining oxidative store \\
+$\varsigma$ & suppression per replicator--granule pair \\
+burst size $r$ & load at rupture \\
+budget $\vartheta$ & killer cells removed per delivery \\
+$\mathcal{R}(\vartheta)$ & expected surviving release \\
+\bottomrule
+\end{tabular}
+\caption{A reading of already-named objects under the \yp{} mapping.
+The formulae themselves do not depend on it.}
+\label{path:tab:ypestis}
+\end{table}
+
+Read that way, the argument is two-phase. While killer-cell density is
+roughly constant, the bursting advantage of \cref{path:sec:spectrum}
+applies: a macrophage releasing its whole load at once pays one toll where
+a budding cell would pay many. If a later rise in killer cells pushes the
+toll past $\vartheta^{\ast}=\log V_\infty/\log a$, no intracellular strategy
+remains supercritical (\cref{path:cor:threshold}), and the advantage lies
+with becoming extracellular. Why not replicate extracellularly from the
+beginning is then a separate question: being within macrophages may buy
+transport to lymph nodes, and perhaps food itself.
+
+% NEEDS-BIOLOGY: that \yp{} sits at the bursting end of the release
+% spectrum, and what intracellular constraint puts it there (bacterial size
+% relative to the membrane machinery is the candidate reason given in
+% \cref{path:sec:advantages}).
+% Candidate sources already copied into references.bib: PujolBliska2003,
+% KeEtAl2013, ConnorEtAl2018.
+%
+% NEEDS-BIOLOGY: that plague infection proceeds in two phases, an early
+% intracellular (macrophage) phase followed by a predominantly
+% extracellular one, and what the histology shows about the transition.
+% Candidate sources already copied into references.bib: BosioEtAl2005,
+% PetersEtAl2013, MonackEtAl1997.
+%
+% NEEDS-BIOLOGY: that neutrophil density at the site of infection rises
+% sharply between those two phases, with an order of magnitude if one is
+% available; this is the quantity that plays the role of \vartheta and the
+% whole two-phase argument turns on it.
+% Candidate sources already copied into references.bib: PetersEtAl2013,
+% BosioEtAl2005.  No entry in the donor pool states a density.
+%
+% NEEDS-BIOLOGY: that infected macrophages transport \yp{} to draining
+% lymph nodes, and that this is an advantage of the intracellular phase
+% sufficient to explain why it comes first.
+% Candidate sources already copied into references.bib: BosioEtAl2005,
+% PujolBliska2005.
+%
+% NEEDS-BIOLOGY: whether HIV's observed release clustering is detection
+% avoidance, which is the third advantage of \cref{path:sec:advantages} and
+% is named there and not pursued.
+% Candidate sources already copied into references.bib: conway2018modeling,
+% hataye2019principles.
+
+What the mathematics supplies is a single number. At
+$(\lambda,\mu,\delta)=(1,0.5,1/3)$ one has $\vartheta^{\ast}=1.71$, so a
+killer field able to remove two agents per delivery already forces the
+switch; at $(1,0.2,0.05)$ it is $44.13$. If effector density at the site
+crosses $\vartheta^{\ast}$ during the infection, the intracellular phase
+should end at a level set by the intracellular rate constants and by
+nothing else. An analogous reading for \ft{}
+\cite{oyston2004tularaemia,carruthers2020stochastic} would use the same
+threshold with different constants.
+
+\FloatBarrier

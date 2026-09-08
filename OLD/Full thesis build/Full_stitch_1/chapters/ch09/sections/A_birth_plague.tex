@@ -1,0 +1,87 @@
+% --- Chapter appendices, numbered <chapter>.A, .B, ... -----------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+% Appendix A --- the birth--plague model, reduced to a bare specification.
+% Was \S1.5 of the body.  Cut: the motivation, the rate diagram, the
+% discussion of what the coupling does, and the open questions.  One figure
+% retained.
+% The NEEDS-AUTHOR question on the vitality variant stands: the source
+% (09/09:11) specifies dV/dt = \xi - p X_t and then uses V in none of the
+% transition rates.  Written here as corruption at \delta X_t / V(t), by
+% consistency with the catastrophe channel of \cref{var:eq:rrrr}, which is the
+% model the variant says it is borrowing from.  The alternative reading is
+% \delta X_t^2 / V(t), under which the loss channel is quadratic in X and the
+% collapse is sharper.  Author to confirm; nothing else depends on it.
+
+\section{The birth--plague model}
+\label{var:app:plague}
+
+Where \cref{var:sec:rrrr} drives the loss rate by a potential carried
+alongside a single count, this model drives it by a second count, so that
+what accelerates the loss of one component is the size of the other. It is
+recorded here as a specification; it has been simulated but not analysed.
+
+Let $X_t$ count uninfected individuals and $Y_t$ the infected. In a vanishing
+interval,
+\begin{align}
+\pr{\Delta X_t=1,\ \Delta Y_t=0\mid X_t,Y_t}
+  &=\lambda X_t\,\Delta t+o(\Delta t),
+  \label{var:eq:plague}\\
+\pr{\Delta X_t=-1,\ \Delta Y_t=1\mid X_t,Y_t}
+  &=\bigl(\delta+\chi Y_t\bigr)X_t\,\Delta t+o(\Delta t),\notag\\
+\pr{\Delta X_t=0,\ \Delta Y_t=-1\mid X_t,Y_t}
+  &=\mu Y_t\,\Delta t+o(\Delta t),\notag\\
+\pr{\Delta X_t=\Delta Y_t=0\mid X_t,Y_t}
+  &=1-\bigl[(\lambda+\delta+\chi Y_t)X_t+\mu Y_t\bigr]\Delta t+o(\Delta t),
+  \notag
+\end{align}
+with $\lambda$ the birth rate, $\delta$ the rate of spontaneous corruption,
+$\chi$ the contact-infection coefficient and $\mu$ the clearance rate of
+infected individuals.
+
+The middle channel is written once and carries two mechanisms superposed. An
+uninfected individual is lost to corruption spontaneously at the constant
+per-capita rate $\delta$, and to infection by contact at rate $\chi$ per
+uninfected--infected pair. Both produce the same jump, so the only thing that
+distinguishes them is how their rates scale: the first is linear in $X_t$,
+the second bilinear in $X_tY_t$. Only that channel carries $Y_t$, but the
+coupling is two-way, since every infection removes one $X$ and adds one $Y$.
+
+\paragraph{The vitality-coupled variant.} Carry a vitality $V(t)$ alongside
+the pair, replenished at a constant rate and drawn down in proportion to the
+population,
+\begin{equation}
+\ddt{V}=\phi-c\,X_t ,
+\label{var:eq:vitalityV}
+\end{equation}
+and divide the spontaneous part of the loss channel by it:
+\begin{equation}
+\pr{\Delta X_t=-1,\ \Delta Y_t=1\mid X_t,Y_t}
+=\lrb{\frac{\delta}{V(t)}+\chi Y_t}X_t\,\Delta t+o(\Delta t),
+\label{var:eq:vitality}
+\end{equation}
+the other three channels being unchanged. The reason for wanting the variant
+is that \cref{var:eq:plague} has no mechanism for a collapse: its infected
+count rises when $X_t$ is large and falls when it is small, which damps
+rather than amplifies. Dividing corruption by a vitality the population
+itself depletes supplies the missing amplification, since a population which
+has grown large drives $V$ down and so raises its own loss rate --- the
+ingredient \cref{var:sec:rrrr} used to close its cycle. Whether the
+combination gives a sustained cycle or a single collapse followed by a
+low-level steady state is the question the variant exists to ask. It has not
+been simulated.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{fig09_plague_paths/fig09}
+\caption{Two realisations of \cref{var:eq:plague} at
+$(\lambda,\delta,\chi,\mu)=(1,\,0.1,\,0.02,\,10)$: uninfected count $X_t$ in
+blue, infected count $Y_t$ in vermillion. The clearance rate is large
+relative to the contact rate, so infected individuals never accumulate and
+the epidemic acts as a brake on $X_t$ rather than as a collapse of it. Set
+beside \cref{var:fig:vbc-many}, the fluctuations never reset a phase.}
+\label{var:fig:bpplots}
+\end{figure}
+
+\FloatBarrier

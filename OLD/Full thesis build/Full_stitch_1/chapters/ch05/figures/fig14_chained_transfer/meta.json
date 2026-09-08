@@ -1,0 +1,15 @@
+{
+  "figure": "fig14",
+  "chapter_number": "5.14",
+  "label": "dist:fig:chained",
+  "slug": "chained_transfer",
+  "included_from": "sections/10_chained_transfer.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig14.pdf",
+    "fig14.png"
+  ],
+  "simulation": false
+}

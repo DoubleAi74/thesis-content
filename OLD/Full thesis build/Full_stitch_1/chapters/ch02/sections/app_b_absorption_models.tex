@@ -1,0 +1,387 @@
+\section{The absorption models in full}
+\label{m:app:absorption}
+
+\Cref{m:sec:moc} developed the method of characteristics on one absorption model.
+This appendix collects the family that model belongs to: the simplest member, in
+which particles are only taken up; and the hardest, in which they may replicate
+once inside, and for which the closed form obtained is a result of this thesis.
+
+The setting is a single compartment drawing particles from a surrounding medium.
+Once several compartments share a medium, a question arises that the models of
+\cref{m:sec:chains} do not address: what becomes of the contents of the first
+compartment to rupture? The shared medium acquires, at a stroke, a potentially
+large cohort of particles available for subsequent absorption by the compartments
+that remain. The analysis elsewhere in this thesis assumes \emph{immediate
+transfer}, in which the entire contents of a ruptured compartment relocate at once.
+The alternative is an \emph{absorption period}, during which absorption events
+redistribute the released cohort among the remaining compartments and only then do
+birth, death and rupture resume.
+
+Throughout, $X_t$ and $Y_t$ count particles inside and outside the compartment, the
+initial condition is $X_0=0$, $Y_0=N$, and events have exponentially distributed
+inter-event times.
+
+\subsection{Absorption only}
+\label{m:app:absonly}
+
+The simplest case has no dynamics inside the compartment at all:
+\begin{align*}
+\pr{\Delta X=1,\ \Delta Y=-1\mid Y_t=j} &= j\alpha\,\Delta t, &&\text{(absorption)}\\
+\pr{\Delta X=0,\ \Delta Y=0\mid Y_t=j} &= 1-j\alpha\,\Delta t, &&\text{(no event)}
+\end{align*}
+the factor $j$ recording that each exterior particle is independently subject to
+the same probability $\alpha\Delta t$ of being taken up. The forward equations are
+\begin{equation}
+\label{m:eq:FK1}
+\ddt{p_{i,j}} = \alpha(j+1)p_{i-1,j+1} - \alpha j\,p_{i,j},
+\end{equation}
+and the construction of \cref{m:sec:backward} gives
+\begin{equation}
+\label{m:eq:PDE1}
+\pddt{G} = \alpha(x-y)\pdd{G}{y},
+\qquad
+G(x,y,0) = y^N .
+\end{equation}
+The sums involved are finite, because $p_{i,j}(t)=0$ whenever $i+j\neq N$: particles
+in this model are neither created nor destroyed.
+
+Because the particles never interact, the generating function factorises. Writing
+$G_n$ for the function with $n$ initial exterior particles and decomposing
+$X_t = \sum_kX_t^{(k)}$, $Y_t = \sum_kY_t^{(k)}$ into single-particle contributions,
+independence gives
+\begin{equation}
+\label{m:eq:indRelPGF}
+G_n(x,y,t)
+= \ex{\prod_{k=1}^{n}x^{X_t^{(k)}}y^{Y_t^{(k)}}}
+= \prod_{k=1}^{n}\ex{x^{X_t^{(k)}}y^{Y_t^{(k)}}}
+= \bigl(G_1(x,y,t)\bigr)^n .
+\end{equation}
+For a single particle only two states are reachable, so
+$\dd p_{0,1}/\dd t = -\alpha p_{0,1}$ and $\dd p_{1,0}/\dd t = \alpha p_{0,1}$,
+giving $p_{0,1}(t) = \ee^{-\alpha t}$ and $p_{1,0}(t) = 1-\ee^{-\alpha t}$
+(\cref{m:fig:abs1}); hence
+\begin{equation}
+\label{m:eq:Gabsonly}
+G_n(x,y,t) = \Bigl(\lrb{1-\ee^{-\alpha t}}x+\ee^{-\alpha t}y\Bigr)^n .
+\end{equation}
+This satisfies \cref{m:eq:PDE1} with the required initial condition, and the form is
+recognisable: $X_t\sim\text{Binomial}(n,1-\ee^{-\alpha t})$, as it must be, since
+the $n$ particles are absorbed independently and each has been taken up by time $t$
+with probability $1-\ee^{-\alpha t}$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.58\textwidth]{abs1.pdf}
+\caption{State probabilities for the single-particle absorption-only model. The
+particle begins outside the compartment ($p_{0,1}$, decaying exponentially at rate
+$\alpha$) and ends inside it ($p_{1,0}$). There is nowhere else for it to go, so
+the two curves sum to one at every time.}
+\label{m:fig:abs1}
+\end{figure}
+
+\subsection{Absorption--birth--death}
+\label{m:app:absbirthdeath}
+
+Introducing replication for particles inside the compartment, the factorisation
+\cref{m:eq:indRelPGF} survives but no longer helps: from a single initial particle,
+birth events make infinitely many states reachable, so $G_1$ is an infinite sum.
+The partial differential equation must be solved directly.
+
+Birth at per-capita rate $\lambda$ is added to the absorption--death model of
+\cref{m:sec:mocworked}:
+\begin{align*}
+\pr{\Delta X=1,\ \Delta Y=-1\mid Y_t=j} &= j\alpha\,\Delta t, &&\text{(absorption)}\\
+\pr{\Delta X=1,\ \Delta Y=0\mid X_t=i} &= i\lambda\,\Delta t, &&\text{(birth)}\\
+\pr{\Delta X=-1,\ \Delta Y=0\mid X_t=i} &= i\mu\,\Delta t, &&\text{(death)}\\
+\pr{\Delta X=0,\ \Delta Y=0\mid X_t=i,\ Y_t=j} &= 1-(j\alpha+i\mu+i\lambda)\Delta t, &&\text{(no event)}
+\end{align*}
+with forward equation
+\begin{equation}
+\label{m:eq:FK3}
+\ddt{p_{i,j}} = \alpha(j+1)p_{i-1,j+1} + \mu(i+1)p_{i+1,j} + \lambda(i-1)p_{i-1,j}
+- (\alpha j+\mu i+\lambda i)p_{i,j},
+\end{equation}
+and generating-function equation
+\begin{equation}
+\label{m:eq:PDE3}
+\pddt{G} = \bigl(\mu-(\mu+\lambda)x+\lambda x^2\bigr)\pdd{G}{x}
++ \alpha(x-y)\pdd{G}{y},
+\qquad
+G(x,y,0)=y^N ,
+\end{equation}
+whose $x$-coefficient is exactly the quadratic met in \cref{m:eq:bdpde} for the
+linear birth--death process. The characteristic system
+\cref{m:eq:genericcharacteristics} is
+\begin{align}
+\dda{G}{\tau} &= 0, \label{m:eq:ch21}\\
+\dda{t}{\tau} &= -1, \label{m:eq:ch22}\\
+\dda{x}{\tau} &= \mu-(\mu+\lambda)x+\lambda x^2, \label{m:eq:ch23}\\
+\dda{y}{\tau} &= \alpha(x-y), \label{m:eq:ch24}
+\end{align}
+with the initial conditions \cref{m:eq:ICpar}.
+
+\paragraph{The equations for $G$ and $t$.}
+As in \cref{m:sec:mocworked}, and for the same universal reasons,
+\begin{equation}
+\label{m:eq:GetaN2}
+G(\sigma,\eta,\tau) = \eta^N,
+\qquad
+t = -\tau .
+\end{equation}
+
+\paragraph{The equation for $x$, \eqref{m:eq:ch23}.}
+This is a Riccati equation of the same shape as \cref{m:eq:riccatiext}, and here it
+is an exact consequence of the model rather than a continuum approximation to a
+difference equation. Its right-hand
+side factorises, and the roots are elementary rather than the surd expression that
+mechanical use of the quadratic formula suggests:
+\begin{equation}
+\label{m:eq:xpm}
+\mu-(\mu+\lambda)x+\lambda x^2 = \lambda(x-x_+)(x-x_-),
+\qquad
+x_+ = 1,\quad x_- = \frac{\mu}{\lambda} .
+\end{equation}
+Name the combination that appears throughout,
+\begin{equation}
+\label{m:eq:b1}
+b_1 = \lambda(x_+-x_-) = \lambda-\mu ,
+\end{equation}
+the net interior growth rate. Separating variables and applying \cref{m:eq:ICpar}
+gives the characteristic in the compact form
+\begin{equation}
+\label{m:eq:xratio}
+\frac{x-x_+}{x-x_-} = \lrb{\frac{\sigma-x_+}{\sigma-x_-}}\ee^{b_1\tau},
+\end{equation}
+or, solved for $x$,
+\begin{equation}
+\label{m:eq:xabd}
+x(\tau) = \frac{x_+(\sigma-x_-) - x_-(\sigma-x_+)\ee^{b_1\tau}}
+{(\sigma-x_-) - (\sigma-x_+)\ee^{b_1\tau}} .
+\end{equation}
+
+\paragraph{The equation for $y$, \eqref{m:eq:ch24}.}
+With an integrating factor this is
+\begin{equation}
+\label{m:eq:yint}
+\dda{}{\tau}\lrb{\ee^{\alpha\tau}y} = \alpha\,\ee^{\alpha\tau}x(\tau),
+\end{equation}
+and the integral on the right is where the difficulty lies. Rather than substitute
+\cref{m:eq:xabd} and split the resulting quotient, it is cleaner to expand
+$x(\tau)$ first. Writing $x-x_- = (x-x_+)+(x_+-x_-)$ in \cref{m:eq:xratio} and
+solving for $x$ gives
+\begin{equation}
+\label{m:eq:xgeom}
+x(\tau) = x_+ + (x_+-x_-)\frac{\zeta(\tau)}{1-\zeta(\tau)},
+\qquad
+\zeta(\tau) = \lrb{\frac{\sigma-x_+}{\sigma-x_-}}\ee^{b_1\tau},
+\end{equation}
+so that for $|\zeta|<1$,
+$x(\tau) = x_+ + (x_+-x_-)\sum_{n\ge1}\zeta(\tau)^n$. Every term is now a pure
+exponential in $\tau$ and integrates immediately. Writing
+$Z = (\sigma-x_+)/(\sigma-x_-)$, so that $\zeta(\tau)=Z\ee^{b_1\tau}$,
+\begin{align*}
+\alpha\int\ee^{\alpha\tau}x(\tau)\,\dd\tau
+&= \alpha x_+\!\int\!\ee^{\alpha\tau}\dd\tau
+ + \alpha(x_+-x_-)\sum_{n=1}^{\infty}Z^n\!\int\!\ee^{(\alpha+nb_1)\tau}\dd\tau\\
+&= \ee^{\alpha\tau}\lrbs{x_+ + \alpha(x_+-x_-)\sum_{n=1}^{\infty}\frac{\zeta^n}{\alpha+nb_1}}
+ + \text{const} .
+\end{align*}
+Setting $\omega = \alpha/b_1$, the absorption rate measured in units of the net
+interior growth rate, and using $\alpha(x_+-x_-)/b_1 = \alpha/\lambda$ by
+\cref{m:eq:b1},
+\begin{equation}
+\label{m:eq:Psidef}
+\Psi(\zeta) = x_+ + \frac{\alpha}{\lambda}\sum_{n=1}^{\infty}\frac{\zeta^{\,n}}{n+\omega},
+\qquad
+\omega = \frac{\alpha}{b_1} = \frac{\alpha}{\lambda-\mu} .
+\end{equation}
+Integrating \cref{m:eq:yint} gives
+$\ee^{\alpha\tau}y = \ee^{\alpha\tau}\Psi(\zeta(\tau))+\text{const}$, and the
+initial condition $y(\sigma,\eta,0)=\eta$, at which $\zeta(0)=Z$, fixes the constant
+as $\eta-\Psi(Z)$, so
+\begin{equation}
+\label{m:eq:etasolved}
+\eta = \ee^{\alpha\tau}\Bigl[y-\Psi\bigl(\zeta(\tau)\bigr)\Bigr] + \Psi(Z) .
+\end{equation}
+Finally, put $\tau=-t$ and write $W = (x-x_+)/(x-x_-)$, so that $\zeta(\tau)=W$ and
+$Z = W\ee^{b_1t}$ by \cref{m:eq:xratio}. Substituting into \cref{m:eq:etasolved} and
+applying \cref{m:eq:GetaN2} gives the solution.
+
+\begin{proposition}[Generating function for absorption--birth--death]
+\label{m:prop:Gabd}
+With $x_+=1$, $x_-=\mu/\lambda$, $b_1=\lambda-\mu$, $\omega=\alpha/b_1$,
+$W = (x-x_+)/(x-x_-)$ and $\Psi$ as in \cref{m:eq:Psidef},
+\begin{equation}
+\label{m:eq:Gabd}
+\boxed{\;
+G(x,y,t) = \Bigl\{\ee^{-\alpha t}\bigl[y-\Psi(W)\bigr] + \Psi\bigl(W\ee^{b_1t}\bigr)\Bigr\}^{N} . \;}
+\end{equation}
+\end{proposition}
+
+Three checks confirm the result. At $t=0$ the two $\Psi$ terms cancel and $G=y^N$,
+the required initial condition. At $x=y=1$ we have $W=0$ and $\Psi(0)=x_+=1$, so
+$G=1$ and probability is conserved. And setting $x=1$ alone gives
+$G(1,y,t) = (\ee^{-\alpha t}y+1-\ee^{-\alpha t})^N$, so
+$Y_t\sim\text{Binomial}(N,\ee^{-\alpha t})$ --- exactly right, since the exterior
+particles are absorbed independently at rate $\alpha$ and what happens inside the
+compartment cannot affect them. Beyond these, \cref{m:eq:Gabd} has been verified
+numerically against direct integration of \cref{m:eq:FK3}, agreeing to around
+$10^{-13}$ across sub- and supercritical interior regimes and for $N=1,2,3$.
+
+\subsection{A parameter-regular representation}
+\label{m:app:abdregular}
+
+The form \cref{m:eq:Gabd} is compact, but its derivation separated an antiderivative
+into pieces that are individually singular at certain parameter values. The
+underlying probability calculation supplies a second representation that stays
+finite everywhere.
+
+Let $F(x,t)$ be the generating function, at time $t$, of an interior linear
+birth--death process started from a single particle. Conditioning on the first
+event gives its backward equation,
+\begin{equation}
+\label{m:eq:interiorbackward}
+\pddt{F} = \lambda F^2 - (\lambda+\mu)F + \mu,
+\qquad F(x,0)=x ,
+\end{equation}
+which is \cref{m:eq:bdpde} read along characteristics. For $\lambda\neq\mu$ its
+solution is the ratio already met in \cref{m:eq:xratio},
+\begin{equation}
+\label{m:eq:interiorratio}
+\frac{F(x,t)-1}{F(x,t)-x_-} = \frac{x-1}{x-x_-}\,\ee^{b_1t},
+\end{equation}
+while at $\lambda=\mu$ the roots coincide and
+\begin{equation}
+\label{m:eq:interiorcritical}
+F(x,t) = 1-\frac{1-x}{1+\lambda t(1-x)} .
+\end{equation}
+Now follow a single exterior particle. Either it has not been absorbed by time $t$,
+which happens with probability $\ee^{-\alpha t}$ and contributes $y$; or it is
+absorbed at some time $v\in(0,t)$, with density $\alpha\ee^{-\alpha v}$, and
+thereafter founds an interior birth--death process of duration $t-v$. Conditioning
+on the absorption time,
+\begin{equation}
+\label{m:eq:abdconvolution}
+g(x,y,t) = \ee^{-\alpha t}y
++ \alpha\ee^{-\alpha t}\int_0^t\ee^{\alpha v}F(x,v)\,\dd v ,
+\qquad
+G(x,y,t) = g(x,y,t)^N ,
+\end{equation}
+the second identity because the $N$ exterior particles are independent throughout.
+\Cref{m:eq:abdconvolution} is real and finite for $x,y\in[0,1]$ and all positive
+rates, including $\lambda=\mu$ where \cref{m:eq:Gabd} degenerates. For
+$\lambda\neq\mu$, substituting \cref{m:eq:interiorratio} into the integral and
+integrating term by term returns \cref{m:eq:Gabd}; so \cref{m:eq:abdconvolution}
+also specifies unambiguously which continuation of the special-function expression
+is intended.
+
+\subsection{Hypergeometric form, domain and resonance}
+\label{m:app:abdhyp}
+
+The series in \cref{m:eq:Psidef} is a Gauss hypergeometric function in disguise.
+With
+\begin{equation}
+\label{m:eq:2F1def}
+{}_2F_1(a,b;c;z) = \sum_{n=0}^{\infty}\frac{(a)_n(b)_n}{(c)_n}\frac{z^n}{n!},
+\qquad
+(q)_n = \begin{cases}1, & n=0,\\ q(q+1)\cdots(q+n-1), & n\ge1,\end{cases}
+\end{equation}
+where $(q)_n$ is the rising Pochhammer symbol \cite{Olver2010}, the case $a=1$,
+$b=\omega$, $c=\omega+1$ collapses to a single ratio. Since $(1)_n=n!$ and
+\begin{equation}
+\label{m:eq:pochcancel}
+\frac{(\omega)_n}{(\omega+1)_n}
+= \frac{\omega(\omega+1)\cdots(\omega+n-1)}{(\omega+1)\cdots(\omega+n-1)(\omega+n)}
+= \frac{\omega}{\omega+n},
+\end{equation}
+we have ${}_2F_1(1,\omega;\omega+1;z) = \sum_{n\ge0}\frac{\omega}{\omega+n}z^n$.
+Comparing with \cref{m:eq:Psidef} and using
+$\alpha/(\lambda\omega) = b_1/\lambda = x_+-x_-$,
+\begin{equation}
+\label{m:eq:Psihyp}
+\Psi(\zeta) = x_+ + (x_+-x_-)\Bigl[{}_2F_1(1,\omega;\omega+1;\zeta)-1\Bigr] .
+\end{equation}
+\Cref{m:eq:Gabd} together with \cref{m:eq:Psihyp} is the closed form. It is not
+pretty, but it is a genuine closed form in terms of a standard special function,
+and the elementary series \cref{m:eq:Psidef} is what one would actually evaluate. An
+alternative derivation, by way of the integral
+$\int\ee^{h\tau}/(P+Q\ee^{k\tau})\,\dd\tau$, is given in \cref{m:app:hyp}.
+
+\begin{remark}[Domain of validity]
+\label{m:rem:domain}
+The series \cref{m:eq:Psidef} converges for $|\zeta|<1$, and the arguments appearing
+in \cref{m:eq:Gabd} are $W$ and $W\ee^{b_1t}$. In the subcritical interior regime
+$\mu>\lambda$ we have $b_1<0$ and $x_-=\mu/\lambda>1$, so for $x\in[0,1]$
+\begin{equation*}
+0\le W\le\frac{\lambda}{\mu}<1,
+\qquad
+0\le W\ee^{b_1t}\le W :
+\end{equation*}
+the series representation is valid on the whole of the unit square, which is the
+case of most interest here. When $\lambda>\mu$ the arguments may leave the unit disc
+or cross the standard hypergeometric cut; one may then continue analytically,
+tracking the branch along the characteristic, but the real integral
+\cref{m:eq:abdconvolution} is usually safer. A convenient continuation is the Euler
+integral
+\begin{equation*}
+{}_2F_1(1,\omega;\omega+1;\zeta) = \omega\int_0^1\frac{u^{\omega-1}}{1-\zeta u}\,\dd u
+\qquad(\omega>0,\ \zeta\notin[1,\infty)),
+\end{equation*}
+which was used for the numerical verification quoted above. The apparent
+singularity of $W$ at $x=x_-$ is a coordinate singularity only: $F(x_-,t)=x_-$ for
+every $t$, and the limit of \cref{m:eq:abdconvolution} there is perfectly regular.
+\end{remark}
+
+\begin{remark}[Resonance]
+\label{m:rem:resonance}
+The denominators in \cref{m:eq:Psidef} vanish when $n+\omega=0$ for some integer
+$n\ge1$, that is when
+\begin{equation}
+\label{m:eq:resonance}
+\alpha = n(\mu-\lambda),\qquad n=1,2,\dots
+\end{equation}
+This is the classical resonance condition for linearising the $y$-equation: the
+decay rate $\alpha$ of the absorption channel coincides with a harmonic of the
+interior relaxation rate $\mu-\lambda$. The generating function itself is perfectly
+regular there. The two $\Psi$ terms of \cref{m:eq:Gabd} each acquire a pole, but
+their combination does not: in the resonant term the difference
+\begin{equation*}
+\frac{\bigl(W\ee^{b_1t}\bigr)^{n} - \ee^{-\alpha t}W^{n}}{n+\omega}
+\end{equation*}
+has a finite limit as $\omega\to-n$, producing the familiar secular factor
+$t\,\ee^{-\alpha t}$ in place of a simple exponential. Equivalently
+\cref{m:eq:abdconvolution} has no singular denominator at all and supplies the
+limit directly. The resonant parameter values form a set of measure zero, but the
+degeneracy should be kept in mind when $\alpha$ happens to sit near an integer
+multiple of $\mu-\lambda$.
+\end{remark}
+
+\subsection{Recovering state probabilities}
+\label{m:app:coefrecovery}
+
+In every model above,
+\begin{equation}
+\label{m:eq:bivariatecoef}
+p_{i,j}(t) = [x^iy^j]\,G(x,y,t)
+= \frac{1}{i!\,j!}\left.\frac{\partial^{\,i+j}G}{\partial x^i\partial y^{\,j}}
+\right|_{x=y=0} .
+\end{equation}
+For absorption--birth--death the parameter-regular representation separates the two
+extractions cleanly. Writing
+\begin{equation}
+\label{m:eq:hdef}
+h(x,t) := \alpha\ee^{-\alpha t}\int_0^t\ee^{\alpha v}F(x,v)\,\dd v,
+\qquad
+g(x,y,t) = \ee^{-\alpha t}y + h(x,t),
+\end{equation}
+the exterior variable appears only in the finite binomial expansion of $g^N$, so
+\begin{equation}
+\label{m:eq:abdcoef}
+p_{i,j}(t) = \binom{N}{j}\ee^{-\alpha tj}\,[x^i]\,h(x,t)^{\,N-j},
+\qquad 0\le j\le N .
+\end{equation}
+The remaining univariate coefficient can be obtained by differentiation, by
+convolution of truncated series, or by Cauchy's integral formula on a circle
+$|x|=\varrho<1$.
+
+\FloatBarrier

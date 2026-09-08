@@ -1,0 +1,15 @@
+{
+  "figure": "fig07",
+  "chapter_number": "5.7",
+  "label": "dist:fig:latemean",
+  "slug": "late_burst_mean",
+  "included_from": "sections/06_burst_size.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig07.pdf",
+    "fig07.png"
+  ],
+  "simulation": false
+}

@@ -1,0 +1,80 @@
+{
+  "description": "Deterministic hand-designed illustrative population histories (t, X, Y); state held from t until the next row; final row held to T. Both start (1,0), both end (2,1).",
+  "T": 10.0,
+  "delta1": 0.06,
+  "delta2": 0.1,
+  "path_A": [
+    {
+      "t": 0.0,
+      "X": 1,
+      "Y": 0
+    },
+    {
+      "t": 0.5,
+      "X": 2,
+      "Y": 0
+    },
+    {
+      "t": 0.9,
+      "X": 3,
+      "Y": 0
+    },
+    {
+      "t": 1.4,
+      "X": 4,
+      "Y": 0
+    },
+    {
+      "t": 1.9,
+      "X": 5,
+      "Y": 0
+    },
+    {
+      "t": 2.5,
+      "X": 6,
+      "Y": 0
+    },
+    {
+      "t": 3.6,
+      "X": 5,
+      "Y": 1
+    },
+    {
+      "t": 4.6,
+      "X": 4,
+      "Y": 1
+    },
+    {
+      "t": 5.8,
+      "X": 3,
+      "Y": 1
+    },
+    {
+      "t": 7.8,
+      "X": 2,
+      "Y": 1
+    }
+  ],
+  "path_B": [
+    {
+      "t": 0.0,
+      "X": 1,
+      "Y": 0
+    },
+    {
+      "t": 5.8,
+      "X": 2,
+      "Y": 0
+    },
+    {
+      "t": 6.6,
+      "X": 1,
+      "Y": 1
+    },
+    {
+      "t": 7.6,
+      "X": 2,
+      "Y": 1
+    }
+  ]
+}

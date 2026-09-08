@@ -1,0 +1,22 @@
+% PGF plots in the Galton--Watson chapter.
+\pgfplotsset{
+    myplotstyle/.style={
+        width=\dimexpr\textwidth-30pt\relax,
+        height=\dimexpr\textwidth-30pt\relax,
+        scale only axis,
+        axis lines=left,
+        xlabel={$S$},
+        ylabel={},
+        xmin=0, xmax=1,
+        ymin=0, ymax=1,
+        xtick={0,0.5,1},
+        ytick={0,0.5,1},
+        grid=major,
+        grid style={dashed, gray!30},
+        samples=100,
+        domain=0:1,
+        thick,
+        tick label style={font=\tiny},
+        label style={font=\small}
+    }
+}

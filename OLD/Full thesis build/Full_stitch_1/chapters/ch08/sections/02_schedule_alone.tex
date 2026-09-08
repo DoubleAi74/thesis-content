@@ -1,0 +1,123 @@
+% Why the release schedule alone cannot matter --- plan \S3.3, "\S2".
+% Sources: 03_fixed_removal.tex:5, :7, :12-15, :16-17; figure from
+% 01_opening.tex:84-120.
+%
+% PRESERVED NEAR-VERBATIM, do not restyle (plan \S3.6, report item 2):
+%   * the negative result, 03:5-9;
+%   * the Brownian-drift and macrophage-motility caveats, 03:16-17, which
+%     \ChDist{} depends on (ch5_handoffs.md entry 3).
+
+\section{Why the release schedule alone cannot matter}
+\label{path:sec:schedule}
+
+In the pursuit of modelling multi-stage intracellular infection, an obvious
+first move is an iterated birth--death--catastrophe process with the
+assumption of complete transfer --- chained ruptures. In trying to determine
+whether there is a fundamental reason for bursting dynamics in pathogenesis,
+this model is of limited efficacy. With agents replicating identically
+whenever they are within a host cell, it matters not how they are moved,
+just that they are replicating. With chained ruptures, the burst event is
+merely a recorded instance without tangible implication to agent spread. And
+if instead the bacteria modelled were to make their way one by one to a new
+host, or even to multiple hosts, no change would be made to the expected
+growth rate of the overall population. Even if some delay were introduced
+for unit transfer between hosts, this would merely have the effect of adding
+intervals of inactivity to the time axis; broad propagation dynamics would
+remain identical.
+
+It seems, then, that if we wish to understand why pathogens follow a
+bursting regime of infection --- or whether there is a reason at all --- we
+must consider additional factors. Namely, we must take into account that the
+death and replication rates of individual agents are not entirely
+independent of the surrounding cohort. Various of the body's immune factors
+are depletable. Leucocytes including macrophages and neutrophils contain on
+the order of ten so-called granules, small packets containing oxidising
+compounds with a toxic effect on invading pathogens. Given that these can be
+used up, the effective within-host death rate of infectious agent will
+reduce as more and more of the incident cohort are killed. There are likely
+extracellular immune factors which exhibit a similar pattern of depletion.
+
+\subsection{Successive birth--death--catastrophe}
+\label{path:sec:chainedruptures}
+
+The concept of chained ruptures is simple. A series of
+birth--death--catastrophe processes follow on from one another, the result
+of the last going on to found an initial condition for the next
+\cite{brockwell1986extinction,stirzaker2006processes,di2008note}. Starting
+with a single replicative unit, the first process undergoes the standard
+dynamics of birth and death. Then, at the time of the catastrophe event, the
+quantity of units present immediately transfers into another target cell,
+founding the second process with its initial condition as given. This is the
+main assumption: that released replicative units somehow find their way, all
+at once, to the same host cell. Of course this is quite reduced from the
+biological context. \ChDistcap{} solves the chain in closed form at $\mu=0$ for
+every chain position, giving the rupture-size law $\pr{r_k=n} =
+\binom{n+k-2}{k-1}s^k\rho^{\,n-1}$ of \cref{dist:eq:rklaw} together with its
+moments and rupture times, and records the case $\mu>0$ as open
+(\cref{dist:sec:chained-scope}).
+
+A less restricted view would be that following rupture, all of the $r_1$
+released bacteria undergo Brownian motion and drift gradually from the burst
+location. The cohort, as it spreads out, will encounter multiple new target
+cells and get taken up one by one. Albeit less so, this is also greatly
+reduced from biological reality, which in its full complexity will be beyond
+the scope of concise mathematical description. For example, the target cells
+we have focused on mostly are macrophages. Macrophages do not merely float
+around in Brownian drift; they are motile, and essentially walk around their
+environment seeking out debris and alien material to engulf and make away
+with. The agents themselves are little more straightforward. \yp{} can
+``decide'' whether it will be absorbed or not by such phagocytes
+\cite{MonackEtAl1997,PujolBliska2005}. In addition to this, the bacteria can
+inject immune cells with a host of special proteins with various effects
+including neutralisation \cite{KeEtAl2013}.
+
+Generally, the playing field of these actors is just that, an environment of
+play, in which the responsive agents interact with one another; causal
+relationships ensue which go far beyond mere drift and chance.
+
+\begin{figure}[htbp]
+    \centering
+    \setlength{\tabcolsep}{1.5pt}
+    \begin{tabular}{@{}cccc@{}}
+      \multicolumn{4}{c}{\footnotesize time $\longrightarrow$} \\[1pt]
+      \includegraphics[height=0.23\textwidth]{basic1.png}
+      & \includegraphics[height=0.23\textwidth]{basic2.png}
+      & \includegraphics[height=0.23\textwidth]{basic3.png}
+      & \includegraphics[height=0.23\textwidth]{basic4.png} \\
+      {\footnotesize (a)} & {\footnotesize (b)}
+      & {\footnotesize (c)} & {\footnotesize (d)} \\
+    \end{tabular}
+    \caption{Four frames of a particle simulation, showing what the chained
+    model leaves out. (a) Intracellular replication before bursting: the
+    load accumulates out of reach. (b) The cell bursts and the contents
+    span the extracellular space before finding new hosts --- the interval
+    the chained model collapses to a point. (c) Macrophages are motile;
+    they wander the extracellular matrix phagocytosing debris and
+    extracellular pathogens alike, so which cell a released agent reaches
+    is not settled by diffusion alone. (d) A second round of bursting, here
+    with a larger load. Under identical intracellular rates the growth rate
+    is the same however the transfers between (a) and (d) are arranged,
+    which is why the argument of this section forces a nonlinearity into
+    the model.}
+    \label{path:fig:basic}
+\end{figure}
+
+\Cref{path:fig:basic} shows the four stages of that picture as a simulation
+run. What matters for the argument is the contrast between panels (a) and
+(d): both show a burst, and under identical intracellular rates the two
+carry the same expected yield whatever route the released agents take
+between them.
+
+The conclusion is negative, and it sets the chapter's agenda. A release
+schedule can only matter if something in the environment responds to how
+many agents arrive at once --- if the per-agent hazard depends on the size
+of the cohort it arrives in. Two such mechanisms are treated in what
+follows, one inside the host cell and one outside it:
+\cref{path:sec:intracellular} makes the intracellular killing capacity
+finite and depletable, and \cref{path:sec:removal} does the same for the
+extracellular one. Both are nonlinear, and both are therefore outside the
+scope of the branching comparison in \ChPop{}, which compares offspring
+distributions at fixed mean and says so explicitly
+(\cref{p:rem:flood-scope}).
+
+\FloatBarrier

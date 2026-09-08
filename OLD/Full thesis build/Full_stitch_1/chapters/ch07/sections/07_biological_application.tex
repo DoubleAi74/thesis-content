@@ -1,0 +1,78 @@
+\section{Intracellular application: comparing catastrophe-rate regimes}
+\label{sec:biology}
+
+The formula of \cref{sec:main_result} holds for any non-negative pair of type specific catastrophe rates $(\delta_1,\delta_2)$, and the two rates enter it asymmetrically: $\delta_2$ reshapes the autonomous type-2 coordinate that drives the whole system, while $\delta_1$ does not feed back into $G$. That asymmetry is not only algebraic. In physical applications, there may be cases where two types lead to a global absorbing event at differing rates. In the case of \textit{Yersinia pestis}, it is scientifically unsettled whether an early or a later bacterial state is more associated with lysis of their host cells. We will explore that application in this section by fixing a reading of the model's components, and use the exact expression to compare four orderings of $(\delta_1,\delta_2)$. The aim is not to determine which case is likely to represent physical reality, but to show what an exact finite-time probability makes visible within the context of this modelling regime.
+
+\subsection{Intracellular mapping and scope}
+
+Throughout this section the unit of analysis is a single host cell with a resident bacterial population. Catastrophe means irreversible loss of intracellular containment (burst, lysis, terminal death with release, or another failure of the compartment). It is distinct from ordinary bacterial death of individual cells, which is already encoded by the per-capita rates $\mu_i$. Lung-level spread, immune recruitment, transmission, and the extracellular phase after $\tau_c$ lie outside the process.
+
+\begin{center}
+\small
+\captionof{table}{Reading of mathematical components in an early intracellular infection setting.}
+\label{tab:bio-mapping} 
+\begin{tabular}{@{}p{0.32\textwidth}p{0.58\textwidth}@{}}
+\toprule
+Model component & Biological meaning under this reading \\
+\midrule
+$X_t$ (type 1) & Early or incompletely adapted intracellular phenotype \\
+$Y_t$ (type 2) & Later mammalian-adapted intracellular phenotype \\
+Births ($\lambda_i$) & Intracellular replication of that phenotype \\
+Deaths ($\mu_i$) & Ordinary bacterial killing or non-replicative loss \\
+Conversion ($\nu$) & Progressive physiological adaptation (one-way) \\
+Catastrophe rates ($\delta_i$) & Per-capita association with containment failure \\
+Absorbing state & Irreversible loss of intracellular containment \\
+Termination at $\tau_c$ & End of the intracellular process for this cell \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\Cref{tab:bio-mapping} is the map used below. The coefficients $\delta_i$ are effective per-capita \emph{associations} with containment failure under a linear additive intensity $\delta_1X_t+\delta_2Y_t$; they are not molecular claims that every adapted bacterium has completed effector injection.
+
+A short biological rationale is enough to make the map usable. In mammalian hosts \textit{Y.\ pestis} typically begins with an intracellular phase in which a subset of the initial inoculum is taken up by, and survives within, macrophages. Extracellular proliferation follows only after a period of intracellular adaptation. During a time within the relatively protected niche, the bacterium remodels its surface proteins under host temperature and phagosomal stress \cite{PujolBliska2003,ConnorEtAl2018,KeEtAl2013}. Newly internalised bacteria occupy a specialised vacuole, survive and replicate, and reprogramme toward the temperature-induced virulence package of F1 capsule, pH~6 antigen (Psa), and the Ysc--Yop type~III secretion system that defines a later anti-phagocytic bacterial phase. Once that programme is in place, adapted bacteria leave the intracellular niche and grow freely outside the cell, resisting re-uptake. The model coarse-grains this continuous intracellular maturation into two states linked by one-way conversion: type~1 represents the early, incompletely adapted bacterial phase; type~2 the later conditioned bacterial phase; conversion~$\nu$ the arming step between them; and catastrophe the irreversible loss of host-cell containment, the release event that ends the single-cell process and opens extracellular outgrowth.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.74\textwidth,keepaspectratio]{figures/fig_bio_mapping/fig_bio_mapping.png}
+\end{figure}
+
+How the intracellular phase ends remains incompletely resolved: host-cell death programmes and timing depend on strain, host background, and infection conditions \cite{ZaubermanEtAl2006,PetersEtAl2013}. Pathogenic yersiniae can kill macrophages; the best-characterised genetically supported link is apoptosis driven by the type~III secretion system (T3SS) effector YopJ \cite{MonackEtAl1997}, and components of the temperature-induced virulence package associated with a later anti-phagocytic phenotype may raise the per-capita association with containment failure after intracellular conditioning \cite{PetersEtAl2013,PujolBliska2005}. That supplies a working hypothesis for a maturation-associated ordering of $(\delta_1,\delta_2)$, not a theorem of active type-2-driven rupture. Survival and replication within macrophages can, moreover, be established without treating the T3SS as the main intracellular survival engine \cite{PujolBliska2003,PujolBliska2005}. Holding $(\lambda_i,\mu_i,\nu)$ fixed while comparing $(\delta_1,\delta_2)$ is therefore a controlled mathematical comparison that is compatible with that literature, rather than a claim of full biological independence between growth and catastrophe.
+
+\subsection{Four catastrophe-rate regimes}
+
+Unequal $(\delta_1,\delta_2)$ encode different ideas about whether adaptation advances, delays, or leaves unchanged the end of the intracellular phase. We label four regimes for reference. When they are compared later they share the same growth and conversion rates.
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.35em,topsep=0.4em]
+\item \textbf{EQ.} $\delta_1=\delta_2=\delta>0$: phenotype-blind per-capita rate (null: failure tracks total load rather than adapted-state machinery).
+\item \textbf{MAT.} $0<\delta_1<\delta_2$: higher adapted-type rate (maturation-associated). Working hypothesis under the reading above: adaptation raises failure association while residual early risk remains nonzero.
+\item \textbf{GATE.} $\delta_1=0<\delta_2$: idealised type-2-only extreme, so failure is possible only after conversion and $S'(0)=0$. Pure GATE may overstate exclusivity of type-2 contribution, because efficient Yop injection is often studied for extracellular bacteria contacting the plasma membrane, whereas bacteria sealed in an intact vacuole may not have the same access.
+\item \textbf{EARLY.} $\delta_1>\delta_2\ge 0$ (illustrations take $\delta_2>0$): higher early-type rate, so adaptation may prolong containment (reverse ordering).
+\end{itemize}
+
+Which ordering holds is an empirical question. Under the illustrative normalisation $\delta_1+\delta_2=c$ used in \cref{fig:bio-regimes}, GATE sits at $(0,c)$ while MAT uses $(\delta_1,c-\delta_1)$ with $\delta_1>0$; both coefficients differ, so GATE is the type-2-only boundary of that family with $S'(0)=0$, not simply ``MAT with $\delta_1$ set to zero''.
+
+\subsection{Exact comparison and limits of inference}
+
+From one early founder, $S(t)=\Prob_{(1,0)}\{\tau_c>t\}$ is the probability that containment still holds at time $t$. Its time derivative supplies the probability density of the catastrophe time: $f(t)=-S'(t)$ is the unconditional rate at which still-open infections fail at age $t$, and $\int_0^\infty f=1-h$ whenever a positive mass $h=\lim S$ never fails. Among infections that remain contained at $t$, the relevant object is not $f$ itself but the conditional intensity
+\[
+q_S(t)=\frac{f(t)}{S(t)}=-\frac{S'(t)}{S(t)}.
+\]
+Conditioning on $\{\tau_{\!c}>t\}$ discards paths that have already failed, so $q_S(t)\,\Delta t$ is the short-time probability of loss of containment in $[t,t+\Delta t]$ given that the host cell is still intact. The identity $S'(0)=-\delta_1$ (equivalently $q_S(0)=\delta_1$) is general mathematics: at the instant of founding there is no selection among survivors yet, and the initial hazard is simply the type-1 catastrophe rate.
+
+\Cref{fig:bio-regimes} compares EQ, MAT, GATE, and EARLY under shared growth rates and the coefficient normalisation $\delta_1+\delta_2=c$. The parameters are illustrative, not fitted. Realised process intensity remains $\delta_1X_t+\delta_2Y_t$, so equalising the coefficient sum does not equalise realised exposure. Under this normalisation the survival curves $S(t)$ separate only modestly, whereas the early hazard separates sharply because $q_S(0)=\delta_1$, and GATE's zero intercept is forced by $S'(0)=0$. Later features of both panels are specific to the chosen rates. By one-way conversion, $G$ depends on $\delta_2$ alone, so an adapted-founder experiment isolates the type-2 channel in a way that $S$ cannot. Changing $\nu$ can advance or shorten engagement of the higher-rate class depending on the ordering, so faster adaptation is not universally more hazardous; elevated risk may also reflect greater type-2 abundance through net growth rather than a larger intrinsic $\delta_2$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_bio_regimes/fig_bio_regimes.pdf}
+  \caption{Competing catastrophe-rate regimes under an intracellular \textit{Y.\ pestis} reading.
+  (A)~Survival $S(t)$ from one early founder; (B)~conditional intensity $q_S=-S'/S$.
+  Shared growth rates with $\delta_1+\delta_2=c=0.30$ (coefficient normalisation, not matched realised exposure):
+  EQ $(0.15,0.15)$, MAT $(0.05,0.25)$, GATE $(0,0.30)$, EARLY $(0.25,0.05)$
+  ($\lambda_1=1$, $\mu_1=0.45$, $\nu=0.35$, $\lambda_2=0.85$, $\mu_2=0.40$).
+  Parameters are illustrative, not fitted.
+  MAT is a working hypothesis; GATE is the type-2-only extreme ($S'(0)=0$).
+  Exact closed form for $S$; $q_S$ from the ODE on the solution path.}
+  \label{fig:bio-regimes}
+\end{figure}
+
+The measurements that help most are joint and time-resolved intracellular burden, a phenotype or adaptation marker, and host-cell fate, including the fraction of cells that clear without containment failure. Failure times alone are likely under-identifying: there are trade-offs among $(\lambda_i,\mu_i,\nu,\delta_i)$, and survival curves need not separate intrinsic $\delta_2$ from type-2 abundance. Even under MAT or GATE, agreement with data would support an association between a latent adapted state and failure risk under the stated assumptions, not a proof that adapted bacteria actively rupture the host cell. Alternatives include infection-age markers correlated with burden, host-driven deterioration concurrent with maturation, or mechanisms outside a two-type description. Beyond containment failure itself, the release distributions of \cref{sec:ultimate-release,fig:release-law} record the pre-catastrophe load and offer a natural next link from these exact laws toward host-level outcomes.

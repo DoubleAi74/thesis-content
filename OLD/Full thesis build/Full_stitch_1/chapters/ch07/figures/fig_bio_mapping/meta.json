@@ -1,0 +1,43 @@
+{
+  "id": "fig_bio_mapping",
+  "title": "Biological reading of the two-type intracellular model",
+  "supports_sections": ["5", "5.1"],
+  "type": "schematic",
+  "tool": "TikZ/PGF via pdflatex (TeX Live 2024); Ghostscript 10.05 for PNG; dvisvgm+libgs for SVG",
+  "numerical_simulation": false,
+  "seed": null,
+  "parameters": "symbolic only",
+  "rates_shown": ["lambda_1", "mu_1", "nu", "lambda_2", "mu_2", "delta_1", "delta_2", "tau_c"],
+  "hazard": "delta_1 * x + delta_2 * y",
+  "absorbing_event": "loss of intracellular containment (tau_c)",
+  "notation_source": "sections/07_biological_application.tex (Table tab:bio-mapping); sections/02_model.tex",
+  "placement": "Immediately after Table tab:bio-mapping in sec:biology / 5.1",
+  "png": { "width_px": 4312, "height_px": 2978, "dpi": 670, "background": "white" },
+  "palette": {
+    "type1": "#0072B2",
+    "type2": "#D55E00",
+    "catastrophe": "#9A2820",
+    "ink": "#1A1C1F",
+    "ink_soft": "#565B62",
+    "rule": "#E3E6EA",
+    "host_fill": "#F4F1EC",
+    "vacuole_fill": "#FBFCFD"
+  },
+  "scientific_caveats": [
+    "Type 2 is a coarse-grained latent adapted state, not a resolved molecular programme",
+    "delta_i are effective per-capita associations with containment failure, not proof of active rupture",
+    "Does not privilege MAT or GATE among the four regimes",
+    "T3SS / surface cues are schematic and unlabelled if present",
+    "Extracellular phase is outside the model"
+  ],
+  "files": [
+    "fig_bio_mapping.png",
+    "fig_bio_mapping.pdf",
+    "fig_bio_mapping.svg",
+    "caption.md",
+    "README.md",
+    "meta.json",
+    "src/fig_bio_mapping.tex",
+    "src/build.sh"
+  ]
+}

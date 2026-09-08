@@ -1,0 +1,125 @@
+\section{Summary of results}
+\label{bdc:sec:summary}
+
+For reference, \cref{bdc:tab:notation} collects the notation,
+\cref{bdc:tab:closedforms} the principal closed forms, and
+\cref{bdc:tab:odes} the four differential equations from which they are
+obtained. Together with $I(0)=J(0)=K(0)=1$ and $V(0)=0$, these equations are
+enough to reconstruct the moment calculation.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{Notation for the birth--death--catastrophe process.}
+\label{bdc:tab:notation}
+\begin{tabular}{@{}l p{0.50\textwidth} l@{}}
+\toprule
+Symbol & Meaning & Established \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Parameters}}\\
+$\lambda$ & birth rate per replicative unit & \cref{bdc:eq:rates}\\
+$\mu$ & death rate per replicative unit & \cref{bdc:eq:rates}\\
+$\delta$ & catastrophe rate per replicative unit & \cref{bdc:eq:rates}\\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{States and released quantities}}\\
+$X_t$ & intracellular state; numerical load is zero at $H$ & \cref{bdc:sec:notation}\\
+$X_t=0$ & absorbing internal-extinction state & \cref{bdc:eq:rates}\\
+$X_t=H$ & distinct absorbing catastrophe state & \cref{bdc:eq:rates}\\
+$W_t$ & zero before rupture; $X_{\tau-}$ afterwards & \cref{bdc:eq:release}\\
+$\tau$ & catastrophe time $\inf\{t:X_t=H\}$ & \cref{bdc:eq:release}\\
+$\Kb$ & burst size $X_{\tau-}$ & \cref{bdc:eq:release}\\
+$p_n(t)$ & state probability $\pr{X_t=n}$ & \cref{bdc:sec:J}\\
+$P_k$ & defective burst-size mass $\pr{\Kb=k,\ \tau<\infty}$ &
+\cref{bdc:sec:next-singlecell}\\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Cell-fate probabilities}}\\
+$I(t)$ & non-catastrophe probability $\pr{X_t\ne H}$ & \cref{bdc:eq:I}\\
+$D(t)$ & internal-extinction probability $p_0(t)$ & \cref{bdc:eq:D}\\
+$\Ifix(t)$ & productive probability $I(t)-D(t)$ & \cref{bdc:eq:Ifix}\\
+$\Ifix[,{k}](t)$ & productive probability from $k$ founders, $I^k-D^k$ &
+\cref{bdc:eq:Ifixk}\\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Moments and measures of stochasticity}}\\
+$J(t)$ & mean load $\ex{X_t}$ & \cref{bdc:eq:J}\\
+$K(t)$ & second load moment $\ex{X_t^2}$ & \cref{bdc:eq:K}\\
+$V(t)$ & mean release $\ex{W_t}$ & \cref{bdc:eq:V}\\
+$V_\infty$ & late-time mean release $aB/A$ & \cref{bdc:eq:Vinf}\\
+$\ex{W_t^2}$ & second release moment & \cref{bdc:eq:Wsq}\\
+$\var{X_t}$ & $K-J^2$ & \cref{bdc:eq:VarX}\\
+$\var{W_t}$ & $\ex{W_t^2}-V^2$ & \cref{bdc:eq:VarW}\\
+$\cova{X_t,W_t}$ & $-JV$ & \cref{bdc:eq:cov}\\
+$\varphi(t)$ & finite-time burst density $\delta J(t)$ & \cref{bdc:eq:bursttime}\\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Parameter combinations}}\\
+$\eta$ & $(\lambda+\mu+\delta)/(2\lambda)$ & \cref{bdc:lem:roots}\\
+$a$ & $\eta+\sqrt{\eta^2-\mu/\lambda}$, with $a>1$ & \cref{bdc:lem:roots}\\
+$b$ & $\eta-\sqrt{\eta^2-\mu/\lambda}$, with $0\le b<1$ &
+\cref{bdc:lem:roots}\\
+$A,\;B$ & $a-1$ and $1-b$ & \cref{bdc:eq:identities}\\
+$\theta$ & $\lambda(a-b)$ & \cref{bdc:eq:identities}\\
+$w$ & $\ee^{\theta t}$ & \cref{bdc:eq:ratio}\\
+$\kappa$ & $1+\delta/(2\lambda)$, the third root of $K(I)$ &
+\cref{bdc:eq:KI}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{Principal closed forms, from one founder.}
+\label{bdc:tab:closedforms}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}l l l@{}}
+\toprule
+Quantity & Closed form & \\
+\midrule
+$I(t)$ & $(aB+bAw)/(B+Aw)$ & \cref{bdc:eq:I}\\
+$D(t)$ & $ab(w-1)/(aw-b)$ & \cref{bdc:eq:D}\\
+$\Ifix(t)$ & $(a-b)^2 w/[(B+Aw)(aw-b)]$ & \cref{bdc:eq:Ifix}\\
+$J(t)$ & $-\frac{\lambda}{\delta}(I-a)(I-b)$ & \cref{bdc:eq:J}\\
+$K(I)$ & $\frac{2\lambda^2}{\delta^2}(I-\kappa)(I-a)(I-b)$ & \cref{bdc:eq:KI}\\
+$V(t)$ & $(1-I)[1+\frac{\lambda}{\delta}(1-I)]$ & \cref{bdc:eq:V}\\
+$V_\infty$ & $aB/A$ & \cref{bdc:eq:Vinf}\\
+$\ex{\Kb\mid\text{burst}}$ & $a/(a-1)$ & \cref{bdc:eq:burstmean}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{The four differential relations underlying the closed forms.}
+\label{bdc:tab:odes}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{@{}l l@{}}
+\toprule
+Equation & Interpretation \\
+\midrule
+$\ddt{I}=\lambda(I-a)(I-b)$ & autonomous Riccati equation \\
+$\ddt{I}=-\delta J$ & non-catastrophe probability and mean load \\
+$\ddt{J}=(\lambda-\mu)J-\delta K$ & mean load and second moment \\
+$\ddt{V}=\delta K$ & accumulation of mean release \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The roots also give a compact view of parameter dependence.
+\Cref{bdc:fig:landscape} shows $b$, the probability of internal extinction
+before rupture, and $V_\infty$, the mean release over all realisations, across
+the $(\mu,\delta)$ plane with $\lambda$ fixed. Increasing the death rate makes
+internal extinction more likely; increasing the catastrophe rate makes it less
+likely. Mean release is largest when catastrophe is rare enough to permit
+growth, although internal death continues to compete with that growth.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{F4_b_Vinf_landscape.pdf}
+\caption{Rate landscapes at $\lambda=1$, for $\mu\in[0,1]$ and
+$\delta\in[0.01,1]$. (a) The probability $b$ of internal extinction before
+rupture. (b) The mean release $V_\infty$. The star marks
+$(\mu,\delta)=(0.2,0.05)$, used in most figures; the diamond marks the no-death
+point $(0,0.1)$. The catastrophe-rate axis is logarithmic.}
+\label{bdc:fig:landscape}
+\end{figure}
+
+\FloatBarrier

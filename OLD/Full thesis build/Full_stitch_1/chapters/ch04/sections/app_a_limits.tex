@@ -1,0 +1,173 @@
+% --- Chapter appendices, numbered <chapter>.A, .B, ... -----------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+\section{Checks and limiting cases}
+\label{bdc:app:limits}
+
+The main derivations assume positive birth and catastrophe rates and begin from
+one founder. This appendix checks the endpoints of the closed forms and then
+approaches the boundaries at which the two-root description degenerates.
+
+\subsection{Initial values}
+\label{bdc:app:initial}
+
+At $t=0$, the process contains one unit and no event has occurred. Thus
+\[
+I(0)=1,\qquad D(0)=0,\qquad \Ifix(0)=1,\qquad
+J(0)=K(0)=1,\qquad V(0)=0.
+\]
+Setting $w=1$ recovers each value from the corresponding closed form. The
+initial slopes also have a direct interpretation. Equation~\cref{bdc:eq:IJ}
+gives
+\[
+I'(0)=-\delta J(0)=-\delta,
+\]
+the rate at which the founder triggers rupture. Similarly,
+\[
+\Ifix'(0)=-(\lambda+\mu+\delta)+\lambda=-(\mu+\delta).
+\]
+Birth is absent from this loss rate because division leaves the cell productive;
+only death or rupture can remove it at the first instant.
+
+\subsection{Late-time values}
+\label{bdc:app:late}
+
+As $t\to\infty$, $w\to\infty$, and
+\[
+I\to b,\qquad D\to b,\qquad \Ifix\to0,\qquad
+J\to0,\qquad K\to0,\qquad
+V\to V_\infty=\frac{aB}{A}.
+\]
+The equality of the first two limits is not accidental. At late time, a path
+which has avoided rupture must have died internally; the productive probability
+is the vanishing difference between those two events.
+
+\subsection{No death}
+\label{bdc:app:nodeath}
+
+Set $\mu=0$. From $ab=\mu/\lambda$ we have $b=0$, while
+$a=(\lambda+\delta)/\lambda$. Internal extinction is then impossible:
+$D\equiv0$ and $\Ifix=I$. Every path ruptures eventually, and
+\[
+V_\infty=1+\frac{\lambda}{\delta}
+=\ex{\Kb\mid\text{burst}}.
+\]
+This is the simplest setting in which to check the geometric burst-size moments,
+as done in \cref{bdc:sec:conditioning}.
+
+\subsection{No catastrophe}
+\label{bdc:app:nocatastrophe}
+
+Setting $\delta=0$ removes rupture and returns the classical linear
+birth--death process. Since the main formulae contain $\delta$ in their
+denominators, we take the limit $\delta\downarrow0$ in the supercritical regime
+$\lambda>\mu$. Then
+\[
+a\to1,\qquad b\to\frac{\mu}{\lambda},\qquad
+A=a-1\to0,\qquad I(t)\to1.
+\]
+The internal-extinction probability approaches
+\[
+D(t)\longrightarrow
+\frac{\mu}{\lambda}
+\frac{w-1}{w-\mu/\lambda},
+\qquad
+w=\ee^{(\lambda-\mu)t},
+\]
+which is the standard finite-time extinction probability of the linear
+birth--death process from one founder. At
+$(\lambda,\mu,t)=(1,0.3,3)$, the limiting formula gives $0.27330340$.
+Meanwhile $V_\infty\to\infty$: for positive but increasingly small
+$\delta$, a supercritical population can grow for an increasingly long time
+before release.
+
+\subsection{Critical births and deaths}
+\label{bdc:app:critical}
+
+When $\lambda=\mu$, Vieta's relation gives $ab=1$, and hence
+\[
+b=\frac{1}{a}.
+\]
+At criticality, the probability of internal extinction before rupture equals
+the ratio of the geometric burst-size law. For
+$(\lambda,\mu,\delta)=(1,1,0.05)$, the two roots are $a=1.25$ and $b=0.8$.
+Away from criticality the equality generally disappears.
+
+\subsection{No births}
+\label{bdc:app:nobirths}
+
+Finally, let $\lambda\downarrow0$. The upper root escapes to infinity and the
+quadratic Riccati equation becomes linear:
+\[
+\ddt{I}=\mu-(\mu+\delta)I,
+\qquad I(0)=1.
+\]
+The remaining finite root tends to
+\[
+b\longrightarrow\frac{\mu}{\mu+\delta}.
+\]
+This is exactly the chance that a non-replicating founder dies before it
+triggers rupture: the two exponential clocks divide the outcome in proportion
+to their rates. The two-root machinery has degenerated, but its surviving root
+retains the correct probabilistic meaning.
+
+\subsection{The second moment of the release}
+\label{bdc:app:Wsq}
+
+At rupture from state $n$, $W_t^2$ increases from zero to $n^2$, and this
+happens at rate $\delta n$. Therefore
+\begin{equation}
+\label{bdc:eq:ddWsq}
+\ddt{}\ex{W_t^2}=\delta\ex{X_t^3}.
+\end{equation}
+The third moment has appeared, but the equation for $K$ contains the same term.
+A unit change in $X_t$ does not produce a unit change in $X_t^2$.
+
+\begin{table}[!htbp]
+\centering
+\caption{Changes in $X_t^2$ under the three event types.}
+\label{bdc:tab:xsqchanges}
+\begin{tabular}{lcl}
+\toprule
+Rate & Change in $X_t$ & Change in $X_t^2$\\
+\midrule
+$\lambda X_t$ & $+1$ & $(X_t+1)^2-X_t^2=2X_t+1$\\
+$\mu X_t$ & $-1$ & $(X_t-1)^2-X_t^2=-2X_t+1$\\
+$\delta X_t$ & $-X_t$ & $(X_t-X_t)^2-X_t^2=-X_t^2$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The entries in \cref{bdc:tab:xsqchanges} give
+\begin{align*}
+\ex{X_{t+\Delta t}^2-X_t^2}
+&=\ex{\lambda X_t\Delta t\,(2X_t+1)
++\mu X_t\Delta t\,(-2X_t+1)
++\delta X_t\Delta t\,(-X_t^2)}\\
+&=\Bigl[2(\lambda-\mu)\ex{X_t^2}
++(\lambda+\mu)\ex{X_t}
+-\delta\ex{X_t^3}\Bigr]\Delta t,
+\end{align*}
+and hence
+\begin{equation}
+\label{bdc:eq:ddK}
+\ddt{K}
+=2(\lambda-\mu)K+(\lambda+\mu)J-\delta\ex{X_t^3}.
+\end{equation}
+Using \cref{bdc:eq:ddWsq} to remove the third moment,
+\begin{equation}
+\label{bdc:eq:dWsq}
+\ddt{}\ex{W_t^2}
+=2(\lambda-\mu)K+(\lambda+\mu)J-\ddt{K}.
+\end{equation}
+Integration from $0$ to $t$, together with $V'=\delta K$ and
+$I'=-\delta J$, gives
+\begin{align*}
+\ex{W_t^2}
+&=2(\lambda-\mu)\int_0^tK\,\dd s
++(\lambda+\mu)\int_0^tJ\,\dd s-K(t)+K(0)\\
+&=\frac{2(\lambda-\mu)}{\delta}V(t)
++\frac{\lambda+\mu}{\delta}[1-I(t)]-K(t)+K(0),
+\end{align*}
+where $K(0)=1$. This is \cref{bdc:eq:Wsq}.

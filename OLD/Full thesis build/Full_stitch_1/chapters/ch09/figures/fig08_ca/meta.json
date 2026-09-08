@@ -1,0 +1,20 @@
+{
+  "id": "fig08_ca",
+  "simulation": true,
+  "seed": 20260903,
+  "lattice": 256,
+  "frame_events": 80000,
+  "parameters": {
+    "phi": 0.0316,
+    "c": 0.2884,
+    "defaults": "page defaults"
+  },
+  "burst_time": 354.002,
+  "peak_energy": 752.8779,
+  "peak_time": 290.002,
+  "final": {
+    "V": 731.2914,
+    "X": 964.0,
+    "N": 8689.0
+  }
+}

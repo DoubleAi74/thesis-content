@@ -1,0 +1,156 @@
+\section{Technical derivations}
+\label{dist:app:technical}
+
+\subsection{Lifetime yield from \texorpdfstring{$k$}{k} founders}
+\label{dist:app:vk}
+
+We derive \cref{dist:eq:vk}. Start from
+$V_\infty^{(k)}=\int_0^\infty g_k(t)\,\dd t$ with $g_k$ from
+\cref{dist:eq:gkflux}, and change variables from $t$ to $x=I(t)$: as $t$ runs
+$0\to\infty$, $I$ runs $1\to b$, and since $\dd I/\dd t=-\delta J$ we have
+$\dd t=-\dd x/(\delta J)$. The first part of $g_k$ gives
+\[
+\int_0^\infty\delta k K I^{k-1}\dd t
+=\int_b^1 k\,\frac{K}{J}\,x^{k-1}\dd x
+=\int_b^1 k\Bigl(1+\frac{2\lambda}{\delta}-\frac{2\lambda}{\delta}x\Bigr)
+x^{k-1}\dd x,
+\]
+using $K/J=1+2\lambda(1-I)/\delta$. Integrating,
+\[
+=\Bigl(1+\frac{2\lambda}{\delta}\Bigr)(1-b^k)
+-\frac{2\lambda k}{\delta}\,\frac{1-b^{k+1}}{k+1}
+=(1-b^k)+\frac{2\lambda}{\delta}
+\Bigl[\frac{1}{k+1}-b^k+\frac{k\,b^{k+1}}{k+1}\Bigr],
+\]
+where the second form collects terms over the common denominator $k+1$. The
+second part of $g_k$ gives, with $J=-\frac{\lambda}{\delta}(I-a)(I-b)$,
+\[
+\int_0^\infty\delta k(k-1)J^2 I^{k-2}\dd t
+=\int_b^1 k(k-1)J\,x^{k-2}\dd x
+=k(k-1)\frac{\lambda}{\delta}\int_1^b (x-a)(x-b)x^{k-2}\dd x,
+\]
+on reversing the limits. Adding the two parts yields \cref{dist:eq:vk}. The
+formula also holds at $k=1$, the integral term vanishing, and reduces to
+$V_\infty=(1-b)[1+\lambda(1-b)/\delta]$ of \cref{dist:eq:vinf}. When $\mu=0$,
+$b=0$ and the integral simplifies to
+$k(k-1)\frac{\lambda}{\delta}\int_1^0(x-a)x^{k-1}\dd x
+=k(k-1)\frac{\lambda}{\delta}\bigl[\frac{a-1}{k}-\frac{1}{k+1}\bigr]$, which
+combines with the first part to give $k+\lambda/\delta$ --- the elementary
+result of \cref{dist:eq:vkmuzero}, recovered analytically.
+
+\subsection{Coefficient extraction for general initial conditions}
+\label{dist:app:extract}
+
+The general-$\mu$ route for the chained model of \cref{dist:sec:chained} runs
+through the $k$-founder PGF. From \cref{dist:sec:pgf-k-founders}, in the
+catastrophe convention,
+\begin{equation}
+G_k(z,t)=\Biggl[\frac{ab\gamma(t)+v(t)z}{1-\gamma(t)z}\Biggr]^k,
+\qquad
+\gamma(t)=\frac{1-w}{b-aw},
+\qquad
+v(t)=\frac{bw-a}{b-aw},
+\label{dist:eq:gkgamma}
+\end{equation}
+with $w=\ee^{\theta t}$; note that $\gamma$ is the sliding ratio $P$ of
+\cref{dist:eq:pdef}. Writing
+$\Theta_m=\binom{k}{m}(ab)^{k-m}\gamma(t)^{k-m}v(t)^m$ and
+$\Omega_n=\binom{k-1+n}{n}\gamma(t)^n$, the binomial expansion of the
+numerator and the negative-binomial series of $(1-\gamma z)^{-k}$ give
+$G_k(z,t)=\bigl(\sum_{m=0}^k\Theta_m z^m\bigr)\bigl(\sum_{n\ge0}\Omega_n
+z^n\bigr)$, so that the state-probability coefficients are, with $H$ here
+denoting the power of $z$ rather than the rupture state,
+\begin{equation}
+[z^H]G_k=
+\sum_{i=0}^{\min(H,k)}
+\Theta_{k-i}\,\Omega_{i+\max(0,H-k)}.
+\label{dist:eq:zHGk}
+\end{equation}
+The chained burst-size laws then require integrals of the form
+$\int_0^\infty\gamma(t)^n v(t)^m\dd t$ for arbitrary $n,m\in\mathbb{N}$.
+Binomial-expanding the two numerators,
+\begin{equation}
+(1-w)^n(bw-a)^m=\sum_{i=0}^{n+m}C_i\,w^{i}
+\label{dist:eq:cexpand}
+\end{equation}
+for explicit constants $C_i$, and the problem reduces to the elementary
+building blocks
+\begin{equation}
+\int\frac{w^{i}}{(b-aw)^j}\dd t
+=-\frac{i\,w^{i}\,(b-aw)^{1-j}}{b\,\theta}\,
+\Fhyp\Bigl(1,(1+i)-j;1+i;\frac{aw}{b}\Bigr),
+\label{dist:eq:hypantideriv}
+\end{equation}
+whose integral identity is established in
+\mextref{m:app:hyp}{the hypergeometric identity of \ChM}, at
+\mextref{m:prop:hypIden}{that proposition} and
+\mextref{m:eq:hypIden}{its displayed identity}. The burst-size law for the
+$k$th rupture then follows by summing over the initial-condition
+distribution. For $\mu=0$ this entire machinery collapses to the geometric
+decomposition of \cref{dist:sec:key-observation}; for $\mu>0$ it remains the
+available route, and the joint laws are the open problem of
+\cref{dist:sec:open-problems}. One step here is not routine: the interchange
+of summation and integration in \cref{dist:eq:cexpand} is justified termwise
+for $t$ bounded, but in the limit it is asserted rather than proved.
+
+\subsection{Inter-rupture intervals and the second rupture time}
+\label{dist:app:chained-transforms}
+
+Given $k$ founders, the interval $T(k)$ until rupture decomposes over the
+holding times: if $G=g$ births precede the catastrophe, the load runs through
+$k,k+1,\ldots,k+g$, so
+\begin{equation}
+T(k)=\sum_{j=k}^{k+G}\xi_j,
+\qquad
+\xi_j\sim\mathrm{Exp}\lrb{(\lambda+\delta)j}\ \text{independent}.
+\label{dist:eq:tkdecomp}
+\end{equation}
+Averaging over $G\sim\mathrm{Geom}_0(s)$, the Laplace transform is
+\begin{equation}
+\Lap{T}(k,u)=\E{\ee^{-uT(k)}}
+=\sum_{g\ge0}s\rho^g\prod_{j=k}^{k+g}\frac{(\lambda+\delta)j}
+{(\lambda+\delta)j+u}.
+\label{dist:eq:ltk}
+\end{equation}
+Writing $u'=u/(\lambda+\delta)$ and unrolling the product with Gamma
+functions, the series sums to a hypergeometric form --- a theme that recurs in
+\ChPop, whose effective parameters are likewise expressed through
+hypergeometric Laplace transforms:
+\begin{equation}
+\Lap{T}(k,u)=\frac{s\,k}{k+u'}\,\Fhyp\Bigl(k+1,1;k+1+u';\rho\Bigr).
+\label{dist:eq:ltkhyp}
+\end{equation}
+Differentiating \cref{dist:eq:ltk} at $u=0$ gives the exact mean
+\begin{equation}
+\E{T(k)}=\sum_{m\ge0}\frac{\rho^m}{(\lambda+\delta)(k+m)},
+\label{dist:eq:meant}
+\end{equation}
+which is strictly decreasing in $k$: the more a cell inherits, the faster it
+bursts. For $(\lambda,\delta)=(1,1)$ the first four values are
+$\E{T(1..4)}\approx0.693,\,0.386,\,0.273,\,0.212$ at fixed founding loads;
+the chain intervals $T_k$, whose founding loads are themselves random,
+decrease faster still, $0.691,\,0.500,\,0.377,\,0.292$ in simulation.
+
+The chain's dependence structure is visible in the second rupture time. It is
+$t_2=t_1+T_2$, but $t_1$ and $T_2$ are \emph{not} independent: both are
+functions of $G_1$, the number of births in the first cell. Conditional on
+$G_1=g$, however, the two pieces involve disjoint sets of exponential holding
+times, so their Laplace transforms factor:
+\begin{equation}
+\E{\ee^{-ut_2}\mid G_1=g}
+=\Pi(1+g,u)\,\Lap{T}(1+g,u),
+\qquad
+\Pi(m,u)=\prod_{j=1}^{m}\frac{(\lambda+\delta)j}{(\lambda+\delta)j+u}.
+\label{dist:eq:t2cond}
+\end{equation}
+Averaging over $G_1\sim\mathrm{Geom}_0(s)$,
+\begin{equation}
+\Lap{t_2}(u)
+=\sum_{g\ge0} s\rho^g\,\Pi(1+g,u)\,\Lap{T}(1+g,u).
+\label{dist:eq:lt2}
+\end{equation}
+The density itself is computable exactly as a mixture of hypoexponential
+densities, since $t_1\mid G_1$ and $T_2\mid(G_1,G_2)$ are sums of independent
+exponentials, and it is verified against simulation in
+\cref{dist:app:verification}. Moments assemble from the pieces, for instance
+$\E{t_2}=\E{T(1)}+\sum_{n\ge1}\pr{r_1=n}\E{T(n)}$.

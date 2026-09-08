@@ -1,0 +1,530 @@
+% Intracellular depletion --- plan \S3.3, "\S3".
+% Sources: 01_opening.tex:137 (framing question, moved here), :58;
+% 02_replicator_suppressor.tex:50-70, :76-92, :99-103, :107-154 (TikZ 1),
+% :213-259 (TikZ fate regions), :263-366 (TikZ level diagonals), :370-393,
+% :493-538.  The duplicate TikZ state space at 02:158-205 is deleted; the
+% printed 15x15 matrix at 02:397-489 is replaced by prose plus the level
+% diagram; the listing at 02:542-677 goes to Appendix B.
+% Renames applied: alpha -> \varsigma, Y_t -> Q_t, theta_{i,j} -> \pi_{i,j};
+% the abstract rates alpha_i, beta_{i,j} are written out as \lambda i and
+% \varsigma ij.
+
+\section{Intracellular depletion: replicator and suppressor}
+\label{path:sec:intracellular}
+
+A number of replicative units found an infection within a host cell, and
+their dynamics accord with a continuous-time birth process; what is the
+probability that at time $t$ at least one unit is still alive, so that the
+infection has not died out? For a linear process this depends only on the
+criticality --- whether a given unit is expected to leave behind more or
+less than a replacement of itself --- and \cref{m:sec:bd,m:sec:gw} settle
+it. \Cref{m:app:smallpops} asks the question this section asks, in its
+linear form: how much difference does the size of the founding group make?
+What is sought here is that same non-extinction probability through time
+when the dynamics are nonlinear, and with it the effect of the nonlinearity
+on survivability at varied initial counts $X_0=n$.
+
+\subsection{The granule store}
+\label{path:sec:granules}
+
+Most of the handful of leucocyte types known to science carry packets of
+toxic material called granules; granulocytes not least. Their contents are
+generally oxidative, and the immune cell employs them to attack invading
+pathogens \cite{jones2012subversion,cowley2011immunity}. The leucocytes of
+interest in this research, macrophages and neutrophils, both carry granules,
+but they carry different numbers of them and use them differently.
+Neutrophils are of the category granulocyte and, as the name suggests, hold
+more granules than macrophages; they lyse themselves to release those
+inflammatory granules into the extracellular medium. Macrophages instead
+employ their granules intracellularly, merging them with the phagosomal
+membranes that harbour pathogen after engulfing has taken place --- a
+compartment some pathogens escape rather than survive
+\cite{golovliov2003attenuated}.
+% NEEDS-BIOLOGY: whether neutrophils also employ granules intracellularly,
+% in addition to the lytic release route.  The source asserted this as a
+% belief ("I believe Neutrophils dothis as well") with no citation, and it
+% is not checkable from the thesis tree.
+% Candidate sources already copied into references.bib: cowley2011immunity,
+% jones2012subversion.
+
+It is this dynamic which forms the basis of the model presented here.
+Picture a leucocyte which has just engulfed some number of pathogen and
+which holds, besides, some number of toxin-containing granules, assumed to
+be depleted in the process of being used to kill. Because the granules are
+finite in number and depletable, a larger incident cohort of replicators may
+have a greater chance of eventual survival. This is the intracellular form
+of the dose-dependence that stochastic models of \ft{} and of
+\textit{Salmonella} have found at the level of the whole host \cite{carruthers2020stochastic,gillard2014modeling,wood2014dose,brown2006intracellular}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{RS1.png}
+        \caption{}
+    \end{subfigure}
+    \hspace{0.03\textwidth}
+    \begin{subfigure}{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{RS2.png}
+        \caption{}
+    \end{subfigure}
+
+    \caption{The two opposing forces, simulated. Intracellular granules are
+    in red, pathogenic particles in green; when one of each makes contact,
+    both are annihilated, and that mutual annihilation is the depletion the
+    model turns on. (a) Early, with the store still nearly full. (b) Later
+    in the same run, with most of the store spent: the pathogen count is
+    little changed, but the suppression rate $\varsigma i j$ has fallen with
+    $j$, so what remains of the defence can no longer keep pace with the
+    birth rate.}
+    \label{path:fig:rs}
+\end{figure}
+
+\Cref{path:fig:rs} shows the two forces in a simulation. The point to take
+from it is that the granules are consumed as they act: the red population in
+panel~(b) is smaller than in panel~(a), and it is that reduction, not any
+change in the pathogen, which lets the green population run away.
+
+\subsection{The replicator--suppressor process}
+\label{path:sec:rsmodel}
+
+We explore a simple model representing the interplay between the two
+opposing forces: replicative pathogenic particles fighting for survival
+against their host cell's inbuilt defence mechanism. The model constitutes
+two unit types, and from a defined initial condition the dynamic between
+them results in either pathogen extinction or the overthrowing of immunity,
+which here appears as unbounded growth in the replicator count.
+
+\Needspace{16\baselineskip}
+\begin{definition}[Replicator--suppressor process]
+\label{path:def:rs}
+Let $X_t$ count the infectious agents inside one host cell and $Q_t$ the
+remaining number of within-cell granules. The process
+$\mathcal{X}=\{(X_t,Q_t):t\ge0\}$ is the continuous-time Markov chain on
+\begin{equation}
+\mathcal{S}=\bigl\{(i,j)\;:\;i\in\mathbb{N}\cup\{0\},\;j\in\{0,\dots,N\}\bigr\}
+\label{path:eq:statespace}
+\end{equation}
+with, for $(i,j)\in\mathcal{S}$,
+\begin{equation}
+\begin{aligned}
+\pr{\Delta X_t=1,\;\Delta Q_t=0 \mid X_t=i,\,Q_t=j}
+  &= \lambda i\,\Delta t+o(\Delta t),\\
+\pr{\Delta X_t=-1,\;\Delta Q_t=-1 \mid X_t=i,\,Q_t=j}
+  &= \varsigma ij\,\Delta t+o(\Delta t),\\
+\pr{\Delta X_t=0,\;\Delta Q_t=0 \mid X_t=i,\,Q_t=j}
+  &= 1-\lrb{\lambda i+\varsigma ij}\Delta t+o(\Delta t).
+\end{aligned}
+\label{path:eq:rsrates}
+\end{equation}
+\end{definition}
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[
+  scale=0.85, >=Stealth, font=\footnotesize,
+  st/.style={circle, draw, thick, fill=white,
+             minimum size=4.4mm, inner sep=0pt, outer sep=0.4pt},
+  abx/.style={rectangle, rounded corners=1.1pt, draw=Rup2, thick,
+              fill=Rup2, minimum size=4.0mm, inner sep=0pt, outer sep=0.4pt},
+  abq/.style={circle, draw=Rec2, thick, double, double distance=0.7pt,
+              fill=Rec2fill, minimum size=4.4mm, inner sep=0pt, outer sep=0.4pt},
+]
+\draw[thick, color=inksoft] (0,0)--(7.7,0);
+\draw[thick, color=inksoft] (0,0)--(0,4.7);
+\node[below] at (3.85,-1.08) {$X_t$ \textit{replicators}};
+\node[rotate=90] at (-1.18,2.35) {$Q_t$ \textit{granules}};
+\foreach \x in {0,1,2,3,4,5,6,7}
+  \node[below=4.0mm, inner sep=0pt, text=inksoft] at (\x,0) {\x};
+\foreach \y in {1,2,3,4}
+  \node[left=3.6mm, inner sep=0pt, text=inksoft] at (0,\y) {\y};
+
+\foreach \y in {0,1,2,3,4}
+  \node[abx] (s-0-\y) at (0,\y) {};
+\foreach \x in {1,2,3,4,5,6,7}
+  \node[abq] (s-\x-0) at (\x,0) {};
+\foreach \x in {1,2,3,4,5,6,7}
+  \foreach \y in {1,2,3,4}
+    \node[st] (s-\x-\y) at (\x,\y) {};
+
+\foreach \x/\xn in {1/2,2/3,3/4,4/5,5/6,6/7} {
+  \foreach \y in {0,1,2,3,4}
+    \draw[->, thick, na1] (s-\x-\y) -- (s-\xn-\y);
+}
+\foreach \y in {0,1,2,3,4}
+  \draw[->, thick, na1, opacity=0.25] (s-7-\y.east) -- ++(0.48,0);
+
+\foreach \x/\px in {1/0,2/1,3/2,4/3,5/4,6/5,7/6} {
+  \foreach \y/\py in {1/0,2/1,3/2,4/3}
+    \draw[->, thick, mut1] (s-\x-\y) -- (s-\px-\py);
+}
+
+\node[font=\scriptsize, text=na1, inner sep=0.6pt, fill=white]
+  at (4.5,3.28) {$\lambda i$};
+\node[font=\scriptsize, text=mut1, inner sep=0.6pt, fill=white]
+  at (3.22,2.68) {$\varsigma ij$};
+
+\begin{scope}[shift={(8.45,3.45)}, font=\scriptsize]
+\draw[->, thick, na1] (0,0.55) -- (0.7,0.55);
+\node[right, text=inksoft] at (0.8,0.55) {birth};
+\draw[->, thick, mut1] (0.15,0.15) -- (-0.15,-0.15);
+\node[right, text=inksoft] at (0.8,0.0) {suppression};
+\node[abx] at (0.35,-0.58) {};
+\node[right, text=inksoft] at (0.8,-0.58) {$X_t=0$, extinct};
+\node[abq] at (0.35,-1.18) {};
+\node[right, text=inksoft] at (0.8,-1.18) {$Q_t=0$, store spent};
+\end{scope}
+\end{tikzpicture}
+\caption{The state space $\mathcal{S}$ of \cref{path:def:rs}. Births
+move right and spend no granule; suppressions move down and left, spending
+one of each. The column $X_t=0$ is extinction; the row $Q_t=0$ is a spent
+store, from which only births remain, so survival is certain. That is why
+the diagonal $i=j$ matters.}
+\label{path:fig:statespace}
+\end{figure}
+Units of $X_t$ divide and increase according to the standard mechanism of a
+birth process. Suppressive interactions occur at a rate proportional to the
+product of the two counts and result in a single elimination of each type;
+it is that product which makes the process nonlinear, and it is the only
+nonlinearity in the model. Because each suppression costs one of each, a
+cohort that outnumbers the store cannot be cleared.
+
+In reality growth will not be truly without limit --- intracellular capacity
+will eventually impose a threshold on further expansion without cell
+bursting --- but the model is not run beyond the point at which the granules
+are exhausted, so the idealisation costs nothing that is used below.
+\Cref{path:fig:statespace} is the chain.
+
+Our interest is in the relationship between incident pathogen count and
+infection survivability, that is in
+\begin{equation}
+\pr{\text{infection survives}} = 1-\lim_{t\to\infty}\pr{X_t=0},
+\label{path:eq:survival}
+\end{equation}
+which is the probability of late-time non-extinction. Survival is assured on
+any path that exhausts the antagonistic granules: once $Q_t=0$ the process is
+a pure birth process, and extinction is impossible thereafter.
+
+\begin{remark}[No replenishment]
+\label{path:rem:noreplenish}
+The granule store is fixed at $Q_0$ and never supplemented. One may devise a
+model in which granules are produced at some rate by the cell, and for a
+long infection that would be the right model; the version analysed here
+takes the initial immune capacity as given, which is the regime in which a
+single engulfment episode is decided. Every result below is a statement
+about that regime, and the certainty threshold of
+\cref{path:prop:certainty} in particular depends on it.
+\end{remark}
+
+The asymmetry of the two arrow families is the whole model: a birth spends
+nothing, whereas a suppression spends a granule, so the store can only fall
+and each unit of it can be used once.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  scale=0.58, font=\footnotesize,
+  st/.style={circle, draw, thick, fill=white,
+             minimum size=3.8mm, inner sep=0pt, outer sep=0.3pt},
+  abx/.style={rectangle, rounded corners=0.9pt, draw=Rup2, thick,
+              fill=Rup2, minimum size=3.4mm, inner sep=0pt, outer sep=0.3pt},
+  abq/.style={circle, draw=Rec2, thick, double, double distance=0.65pt,
+              fill=Rec2fill, minimum size=3.8mm, inner sep=0pt, outer sep=0.3pt},
+]
+\draw[thick, color=inksoft] (0,0)--(9.4,0);
+\draw[thick, color=inksoft] (0,0)--(0,6.5);
+\node[below] at (4.5,-1.05) {$X_t$ \textit{replicators}};
+\node[rotate=90] at (-1.22,3.2) {$Q_t$ \textit{granules}};
+\foreach \x in {0,1,2,3,4,5,6,7,8}
+  \node[below=3.6mm, inner sep=0pt, text=inksoft] at (\x,0) {\x};
+\node[below=3.6mm, inner sep=0pt, text=inksoft] at (9,0) {$\cdots$};
+\foreach \y in {1,2,3,4,5,6}
+  \node[left=3.4mm, inner sep=0pt, text=inksoft] at (0,\y) {\y};
+
+\begin{scope}
+\clip (0,0) rectangle (9.35,6.5);
+\fill[Rec2fill] (0,0) -- (6.5,6.5) -- (9.35,6.5) -- (9.35,0) -- cycle;
+\fill[nb1, opacity=0.45] (0.42,6.5) -- (6.5,6.5) -- (0.42,0.42) -- cycle;
+\fill[Rup2fill] (0,0) rectangle (0.38,6.5);
+\end{scope}
+
+\foreach \y in {0,1,2,3,4,5,6}
+  \node[abx] at (0,\y) {};
+\foreach \x in {1,2,3,4,5,6,7,8}
+  \node[abq] at (\x,0) {};
+\foreach \x in {1,2,3,4,5,6,7,8}
+  \foreach \y in {1,2,3,4,5,6}
+    \node[st] at (\x,\y) {};
+\foreach \y in {1,2,3,4,5,6}
+  \node at (9,\y) {$\cdots$};
+\node[abq] at (9,0) {};
+
+\begin{scope}[shift={(10.15,4.7)}, font=\scriptsize]
+\fill[Rec2fill] (0,-0.12) rectangle (0.36,0.16);
+\draw[Rec2, thin] (0,-0.12) rectangle (0.36,0.16);
+\node[anchor=west, text=inksoft] at (0.48,0.02) {certain, $i>j$};
+\fill[nb1, opacity=0.45] (0,-0.67) rectangle (0.36,-0.39);
+\draw[inksoft, thin] (0,-0.67) rectangle (0.36,-0.39);
+\node[anchor=west, text=inksoft] at (0.48,-0.53) {contested, $1\le i\le j$};
+\node[abx] at (0.18,-1.12) {};
+\node[anchor=west, text=inksoft] at (0.48,-1.12) {extinct, $i=0$};
+\end{scope}
+\end{tikzpicture}
+\caption{The three fates, read off \cref{path:fig:statespace}. In $i>j$
+survival is certain: extinction would need $i$ suppressions and only $j$
+are available (\cref{path:prop:certainty}). In $1\le i\le j$ both outcomes
+have positive probability, and $\pi_{i,j}$ is what the rest of this section
+computes. The boundary is the diagonal, and it is sharp.}
+\label{path:fig:fate}
+\end{figure}
+
+\Cref{path:fig:fate} is the section's headline. A cohort that outnumbers the
+store cannot be cleared, however unfavourable the rate constants; a cohort
+that does not outnumber it may still win, and with what probability is the
+question.
+
+\subsection{First-step analysis}
+\label{path:sec:rsfirststep}
+
+The process is defined by its one-step transition probabilities,
+\[
+p_{(i,j)\to(k,l)}(\Delta t)
+= \pr{(X_{t+\Delta t},Q_{t+\Delta t})=(k,l)\mid (X_t,Q_t)=(i,j)},
+\]
+and enumerating the steps available from an arbitrary state $(i,j)$ gives
+\begin{equation}
+p_{(i,j)\to(k,l)}(\Delta t)=
+\begin{cases}
+\lambda i\,\Delta t + o(\Delta t), & (k,l)=(i+1,j),\\
+\varsigma ij\,\Delta t + o(\Delta t), & (k,l)=(i-1,j-1),\\
+1-\lrb{\lambda i+\varsigma ij}\Delta t + o(\Delta t), & (k,l)=(i,j),
+\end{cases}
+\label{path:eq:onestep}
+\end{equation}
+as $\Delta t\to0$. Write $\pi_{i,j}$ for the probability of fixation in the
+set $\{X_t=0\}$ from the state $(i,j)$. Conditioning on the first jump, and
+using the first-step principle of \cref{m:prop:firststep} in the
+continuous-time form \cref{m:eq:firststep},
+\begin{equation}
+\pi_{i,j} = \hat\alpha_j\,\pi_{i+1,j} + \hat\beta_j\,\pi_{i-1,j-1},
+\qquad
+\hat\alpha_j=\frac{\lambda}{\lambda+\varsigma j},
+\qquad
+\hat\beta_j=\frac{\varsigma j}{\lambda+\varsigma j},
+\label{path:eq:firststep}
+\end{equation}
+with $\pi_{0,j}=1$ for every $j$ and $\pi_{i,0}=0$ for every $i\ge1$. The
+jump probabilities depend on $j$ alone: the competing rates are $\lambda i$
+and $\varsigma ij$, and the common factor $i$ cancels. The replicator count
+therefore affects the outcome only through how many suppressions are needed,
+never through how likely the next event is to be one.
+
+Collecting \cref{path:eq:firststep} over all transient states gives the
+linear system
+\begin{equation}
+\mathbf{p}^{(0)} = \mathbf{A}\,\mathbf{p}^{(0)} + \mathbf{c},
+\label{path:eq:matrixsystem}
+\end{equation}
+in which $\mathbf{p}^{(0)}$ collects the unknowns $\pi_{i,j}$ for
+$1\le i\le j\le N$, the matrix $\mathbf{A}$ carries the coefficients
+$\hat\alpha_j$ and $\hat\beta_j$, and the vector $\mathbf{c}$ carries the
+single inhomogeneous term $\hat\beta_j$ contributed by $\pi_{0,j-1}=1$ at
+$i=1$. The system is block lower-triangular when the states are ordered by
+the level $j-i$, because the two states appearing on the right of
+\cref{path:eq:firststep} sit one at level $j-i-1$ and one at level $j-i$;
+those levels are drawn in \cref{path:fig:levels}. Nothing beyond that
+structure is needed: it makes the system solvable level by level, and the
+solver of \cref{path:app:computational} exploits nothing else.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  scale=0.68, font=\footnotesize,
+  st/.style={circle, draw, thick, fill=white,
+             minimum size=4.0mm, inner sep=0pt, outer sep=0.3pt},
+  abx/.style={rectangle, rounded corners=0.9pt, draw=Rup2, thick,
+              fill=Rup2, minimum size=3.6mm, inner sep=0pt, outer sep=0.3pt},
+  abq/.style={circle, draw=Rec2, thick, double, double distance=0.65pt,
+              fill=Rec2fill, minimum size=4.0mm, inner sep=0pt, outer sep=0.3pt},
+]
+\draw[thick, color=inksoft] (0,0)--(8.2,0);
+\draw[thick, color=inksoft] (0,0)--(0,6.5);
+\node[below] at (3.7,-1.05) {$X_t$ \textit{replicators}};
+\node[rotate=90] at (-1.18,3.1) {$Q_t$ \textit{granules}};
+\foreach \x in {0,1,2,3,4,5,6,7}
+  \node[below=3.6mm, inner sep=0pt, text=inksoft] at (\x,0) {\x};
+\foreach \y in {1,2,3,4,5,6}
+  \node[left=3.4mm, inner sep=0pt, text=inksoft] at (0,\y) {\y};
+
+\begin{scope}
+\clip (0,0) rectangle (8.15,6.5);
+\foreach \k in {0,1,2,3,4,5} {
+  \draw[na1, thick, opacity=0.50]
+    (0.5,{0.5+\k}) -- ({6.5-\k},6.5);
+}
+\end{scope}
+
+\foreach \y in {0,1,2,3,4,5,6}
+  \node[abx] at (0,\y) {};
+\foreach \x in {1,2,3,4,5,6,7}
+  \node[abq] at (\x,0) {};
+\foreach \x in {1,2,3,4,5,6,7}
+  \foreach \y in {1,2,3,4,5,6}
+    \node[st] at (\x,\y) {};
+\foreach \y in {1,2,3,4,5,6}
+  \node at (8,\y) {$\cdots$};
+
+\begin{scope}[shift={(8.55,5.55)}, font=\scriptsize]
+\node[anchor=west, text=inksoft] at (0,0.15) {level $j-i$};
+\foreach \k in {0,1,2,3,4,5} {
+  \draw[na1, thick] (0,{-0.38-0.42*\k}) -- (0.48,{-0.38-0.42*\k});
+  \node[anchor=west, text=na1] at (0.58,{-0.38-0.42*\k}) {\k};
+}
+\end{scope}
+\end{tikzpicture}
+\caption{The level structure of the first-step system
+\cref{path:eq:firststep}. States are grouped by the level $j-i$. A
+suppression stays on its diagonal; a birth moves one level down. No
+transition raises the level, so $\mathbf{A}$ in \cref{path:eq:matrixsystem}
+is block lower-triangular in this ordering and the levels may be solved in
+turn, starting from level~$0$.}
+\label{path:fig:levels}
+\end{figure}
+
+Level~0 is the diagonal $i=j$, and it closes on itself. That is enough for
+two results.
+
+\begin{proposition}[Certainty threshold]
+\label{path:prop:certainty}
+$\pi_{i,j}=0$ whenever $i>j$: the infection survives with probability one as
+soon as the incident cohort exceeds the granule store. For $1\le i\le j$ we
+have $\pi_{i,j}\in(0,1)$.
+\end{proposition}
+
+\begin{proof}
+Each suppression removes one pathogen and one granule; a birth removes no
+granule. Reaching $X=0$ from $(i,j)$ therefore requires at least $i$
+suppressions, so $j\ge i$ as claimed.
+
+Now take $1\le i\le j$. A run of $i$ suppressions reaches $(0,j-i)$ and has
+positive probability, since $\hat\beta_j>0$ at every $j\ge1$; thus
+$\pi_{i,j}>0$. A run of $j-i+1$ births reaches $(j+1,j)$, where
+$\pi=0$ by the first claim, and has positive probability since
+$\hat\alpha_j>0$; thus $\pi_{i,j}<1$.
+\end{proof}
+
+The boundary is the diagonal drawn in \cref{path:fig:fate}, and nothing
+about the rate constants moves it. Consequently the only remaining question
+on the contested side is how $\pi_{i,j}$ varies with dose. Monotonicity in
+$i$ and in $j$ was checked numerically over
+$\varsigma\in\{0.1,0.2,0.3\}$ at $N=20$, and both hold everywhere
+(\cref{path:app:verification}).
+
+\begin{proposition}[The diagonal law]
+\label{path:prop:diagonal}
+Write $\nu=\lambda/\varsigma$. On the matched diagonal,
+\begin{equation}
+\pi_{j,j}
+= \prod_{m=1}^{j}\frac{\varsigma m}{\lambda+\varsigma m}
+= \frac{j!\,\Gamma(\nu+1)}{\Gamma(j+\nu+1)}
+= \binom{j+\nu}{j}^{-1}
+\;\sim\; \Gamma(\nu+1)\,j^{-\nu}
+\qquad (j\to\infty),
+\label{path:eq:diagonal}
+\end{equation}
+so a cohort matched to its own granule store fails with a probability
+falling only polynomially in cohort size, at exponent $\lambda/\varsigma$.
+When $\lambda=\varsigma$ this is exactly $1/(j+1)$.
+\end{proposition}
+
+\begin{proof}
+From $(j,j)$ a birth reaches $(j+1,j)$, where $\pi=0$ by
+\cref{path:prop:certainty}. Hence $\pi_{j,j}=\hat\beta_j\,\pi_{j-1,j-1}$
+with $\hat\beta_j=\varsigma j/(\lambda+\varsigma j)$, and $\pi_{0,0}=1$.
+Iterating gives the product, and the ratio of Gamma functions follows from
+$\prod_{m=1}^{j}\varsigma m=\varsigma^{j}j!$ and
+$\prod_{m=1}^{j}(\lambda+\varsigma m)=\varsigma^{j}\Gamma(j+\nu+1)/\Gamma(\nu+1)$.
+The asymptotic is the standard ratio limit
+$\Gamma(j+1)/\Gamma(j+\nu+1)\sim j^{-\nu}$.
+\end{proof}
+
+\begin{table}[tbp]
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+$\varsigma$ & $\nu=\lambda/\varsigma$ & $\pi_{5,5}$ & $\pi_{10,10}$ & $\pi_{25,25}$ \\
+\midrule
+$0.1$ & $10$   & $3.33\times10^{-4}$ & $5.41\times10^{-6}$ & $5.45\times10^{-9}$ \\
+$0.2$ & $5$    & $3.97\times10^{-3}$ & $3.33\times10^{-4}$ & $7.02\times10^{-6}$ \\
+$0.3$ & $10/3$ & $1.34\times10^{-2}$ & $2.26\times10^{-3}$ & $1.54\times10^{-4}$ \\
+$1.0$ & $1$    & $1.67\times10^{-1}$ & $9.09\times10^{-2}$ & $3.85\times10^{-2}$ \\
+\bottomrule
+\end{tabular}
+\caption{The diagonal law \cref{path:eq:diagonal} at $\lambda=1$. Reading
+across a row shows the decay in cohort size at fixed rates; reading down a
+column shows how much slower that decay becomes as suppression strengthens
+relative to birth. The bottom row is the borderline case $\lambda=\varsigma$,
+where the failure probability is exactly $1/(j+1)$ --- a cohort of
+twenty-five matched to twenty-five granules still fails one time in
+twenty-six.}
+\label{path:tab:diagonal}
+\end{table}
+
+\Cref{path:tab:diagonal} shows why \cref{path:eq:diagonal} is worth stating
+separately. Doubling the cohort on the diagonal does not halve the failure
+probability: it divides it by $2^{\nu}$, and $\nu=\lambda/\varsigma$ is a
+property of the cell rather than of the dose. Safety in numbers is therefore
+real but slow, and qualitatively weaker than the certainty that arrives the
+moment the cohort crosses the store.
+
+\subsection{The survival maps}
+\label{path:sec:rsnumerics}
+
+Solving \cref{path:eq:matrixsystem} over the whole grid gives the survival
+probability $1-\pi_{i,j}$ for every initial condition.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{repsupp_N20.pdf}
+    \caption{Survival probability $1-\pi_{i,j}$ at $\lambda=1$ and $N=20$,
+    for $\varsigma=0.1$, $0.2$ and $0.3$ (left to right). Each lower panel
+    is the full grid of initial conditions, with the dashed line marking the
+    diagonal $i=j$; each upper panel is the marginal at a full store,
+    $1-\pi_{i,N}$, which is the case a freshly engulfing macrophage
+    presents. Everything below the diagonal is certain survival
+    (\cref{path:prop:certainty}); the transition above it steepens as
+    $\varsigma$ falls, so that a weakly armed cell is not merely less
+    effective but less discriminating about dose.}
+    \label{path:fig:repsupp20}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth]{repsupp_N10.pdf}
+    \caption{The same quantity at $N=10$, again with $\lambda=1$ and
+    $\varsigma=0.1$, $0.2$, $0.3$. Halving the store does not halve the dose
+    a pathogen needs: the certainty boundary moves with $N$, so the
+    requirement is a matter of the ratio of cohort to store rather than of
+    the cohort alone.}
+    \label{path:fig:repsupp10}
+\end{figure}
+
+\Cref{path:fig:repsupp20,path:fig:repsupp10} show the maps at $N=20$ and
+$N=10$. Two features carry the section. The first is the flat region of certain survival
+below the diagonal, which is \cref{path:prop:certainty} drawn: it is not
+that survival becomes likely there, but that it becomes certain. The second
+is the marginal bar chart above each map, the case $j=N$ of a full store, in
+which the rise from near-zero to
+near-one is spread over several units of dose rather than concentrated at
+one --- the polynomial decay of \cref{path:eq:diagonal}, seen from the side.
+
+For a pathogen, the reading is direct. If a host cell can be entered by
+several agents at once rather than one at a time, and the store is finite,
+then arriving together is worth more than arriving in succession by exactly
+the margin these maps display. That is the intracellular version of the
+flooding advantage, and \cref{path:sec:removal} builds its extracellular
+counterpart.
+
+\FloatBarrier

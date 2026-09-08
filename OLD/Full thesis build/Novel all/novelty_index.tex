@@ -1,0 +1,1571 @@
+% Novelty index of the thesis --- Fix_Notes item on new results,
+% how they differ from or extend previous work, and why they matter.
+% Build: latexmk -pdf novelty_index.tex
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[margin=22mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{setspace}
+\usepackage[hidelinks,pdfborder={0 0 0}]{hyperref}
+\hypersetup{pageanchor=true}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\setstretch{1.08}
+\setlist[itemize]{leftmargin=1.4em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=0.35em,topsep=0.4em}
+\setcounter{tocdepth}{1}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{10pt}
+\setlength{\tabcolsep}{4pt}
+
+\newcommand{\yp}{\textit{Yersinia pestis}}
+\newcommand{\ft}{\textit{Francisella tularensis}}
+\newcommand{\Ifix}{\widehat{I}}
+\newcommand{\cls}[1]{\textsc{#1}}
+\newcommand{\orig}{\cls{Original}}
+\newcommand{\ext}{\cls{Extends}}
+\newcommand{\alr}{\cls{Already}}
+\newcommand{\nar}{\cls{Not a result}}
+
+% Item-index longtable preamble: ID | name | class | nearest literature
+\newcommand{\itemhead}{%
+  \toprule
+  ID & Short name & Class & Nearest literature \\
+  \midrule
+  \endfirsthead
+  \toprule
+  ID & Short name & Class & Nearest literature \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{4}{r}{\footnotesize\itshape continued} \\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\itemtable}{\begin{longtable}{L{1.55cm}L{4.35cm}L{2.35cm}L{6.55cm}}}
+
+\title{\textbf{Novelty index of the thesis}\\[6pt]
+\large Results that are new, that extend previous work,\\
+and that are already in the literature}
+\author{Adam Aldridge}
+\date{21 August 2026}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\maketitle
+\hypersetup{pageanchor=true}
+
+\begin{quote}
+\small
+\noindent\textit{Fix\_Notes (Novelty).}
+In all the results, both presented and derived, you must emphasize those
+which are new, how they differ from or extend previous work, and a
+discussion of why they are important.
+\end{quote}
+
+\tableofcontents
+\clearpage
+
+% =====================================================================
+\chapter{How to read this index}
+\label{ch:how}
+
+This document is a literature map of every extracted result in the thesis
+(320 items across ten chapters). It is not a rewrite of the chapters. Use
+it to decide what the thesis should cite as known, what it should claim as
+original, and why that claim matters.
+
+Ten extractors listed every theorem, closed form, model, comparison, and
+argument that functions as a result. Literature agents searched the
+mathematical object (not the slogan) against the chapter bibliographies
+and the wider literature. Adversarial checkers then tried to downgrade
+marks of novelty. One checker opened Karlin and Tavar\'e (1982) in full.
+
+\paragraph{Classes.}
+\begin{description}[style=nextline,leftmargin=2.2cm,labelwidth=2.0cm]
+\item[\orig]
+This formula, identity, or named construction was \emph{not found} in the
+literature. Neighbours exist; the method or the question may be published.
+This is the strongest claim made here.
+\item[\ext]
+A published result is the ancestor; the thesis changes the process, the
+object, the hypotheses, or the biological reading.
+\item[\alr]
+Equivalent statement already published, even if re-derived here.
+\item[\nar]
+Recap, definition, figure, or framing.
+\end{description}
+
+\noindent
+``Not found'' is not a uniqueness proof. When evidence was thin, the class
+was moved toward \alr{} or \ext, not toward \orig. After adversarial
+checking, \textbf{no result is without published ancestors.} Several
+statements were still \textbf{not found as written}. Those, together with
+the ancestor and the increment, are what the Fix\_Notes item wants
+emphasized.
+
+% =====================================================================
+\chapter{Whole-thesis verdict}
+\label{ch:verdict}
+
+The analytical spine of the thesis is the linear birth--death process with
+per-capita total catastrophe (killing into a cemetery \(H\)). That process,
+its Riccati / linear-fractional generating function, the geometric
+occupancy, the geometric killing position, and the identity ``burst size
+equals the quasi-stationary law'' are \textbf{Karlin and Tavar\'e
+(1982)}. The constant \(A(p)\) of Chapter~3 is \textbf{Kolmogorov
+(1938)}. Constant-rate BMVR, \(R_0\) at matched lifetime yield, and
+stochastic bursting-versus-budding at establishment are \textbf{Perelson /
+Nowak / McLean} and \textbf{Pearson, Krapivsky and Perelson (2011)}.
+Antibody flooding is \textbf{Komarova (2007)}. Diversity-dependent and
+time-dependent speciation alternatives to Nee's push of the past are a
+large existing literature.
+
+What the thesis actually adds is a \textbf{closed-form intracellular
+calculus} on top of Karlin--Tavar\'e, a \textbf{renewal embedding} of those
+kernels into the within-host model, an \textbf{\(L\)-organised
+comparison} of bursting and budding, a \textbf{two-type killing
+deformation} of Antal--Krapivsky, two \textbf{finite-budget immune
+caricatures}, and a cluster of \textbf{evolutionary / plague-strategy}
+models that are applications or unfinished specifications. Those are the
+results to emphasize. The 1982 / 1938 / 2011 / 2007 facts must be cited as
+such, or the novelty claims will not survive viva.
+
+The four \orig{} statements in the strict sense (no published equivalent
+formula) are CH6-R20, CH6-R21, CH7-R06, and CH7-R23. Adversarial checkers
+would label even those \ext, because Pearson+Karlin--Tavar\'e and
+Antal--Krapivsky supply the \emph{method}. In the thesis, write them as
+original identities obtained by specialising those methods, not as a new
+theory of branching.
+
+% ---------------------------------------------------------------------
+\section{Original statements (not found as written)}
+\label{sec:original}
+
+These are the closest the map comes to ``does not currently show up in the
+literature.'' Each has a named neighbour. Write them as original
+\emph{statements}, with the neighbour cited in the same sentence.
+
+\itemtable
+\itemhead
+CH6-R20 &
+Flooding identity \(\Delta z_{\mathrm{ext}}=(L-1)(1/m-1)\) and criterion
+\(L>1\Leftrightarrow 1/\delta<1/\lambda+1/\mu\) &
+\orig &
+Pearson 2011 (arbitrary burst law vs geometric drip; no \(L\));
+Quirouette 2023 (law, not timing) \\
+CH6-R21 &
+At \(L=1\) the bursting and budding offspring \emph{laws} coincide
+(not just extinction probabilities); variance order flips with \(L-1\) &
+\orig &
+Pearson geometric drip; Karlin--Tavar\'e geometric kill-size; Quirouette \\
+CH7-R06 &
+Exact finite-time no-catastrophe \(S(t)\) for triangular two-type BD with
+type-specific linear catastrophe \(\delta_1 X+\delta_2 Y\), Wronskian mix
+of a real-axis \({}_2F_1\) pair &
+\orig &
+Antal--Krapivsky 2011 (same Gauss reduction, terminal-count PGF, no
+catastrophe). \(\delta=0\) in the survival IVP does \emph{not} recover AK \\
+CH7-R23 &
+Killed (defective) bivariate PGF by the same mix; AK is this object at
+\(\delta_i=0\) &
+\orig &
+AK 2011 (25)--(29) \\
+CH4-R17--R20, R22 &
+Finite-time dump \(W_t\): \(V(t)\), \(\mathbb{E}[W_t^2]\),
+\(\mathrm{Var}(W_t)\), current yield \(\mathbb{E}[X_t+W_t]\) as functions
+of \(I(t)\) &
+\ext &
+KT 1982 killing position is the \emph{eventual} geometric; not a
+time-dependent dump coordinate \\
+CH4-R23 &
+Every load moment is a polynomial \(Q_p(I)\) of stated degree, roots
+\(a,b\), leading coefficient \((-1)^p p!(\lambda/\delta)^p\) &
+\ext &
+Equivalent moments sit in the KT PGF; the named \(I\)-economy was not
+found \\
+CH5-R22 &
+Telescoping / size-bias criterion for ``burst law = QSD'' &
+\ext &
+KT 1982 already has the identity; this is a new \emph{proof and
+characterisation} \\
+CH5-R26--R27 &
+\(\mu=0\): \(\tau\mid\mathcal{K}=n\) harmonic / Gumbel limit &
+\ext &
+Classical Yule maxima; not written as a lytic-cell assay law \\
+CH5-R31--R34 &
+Multi-founder kernels \(g_k\); \(\mu=0\) yield \(k+\lambda/\delta\)
+(sub-extensive) &
+\ext &
+Branching property is classical; this yield identity and the free-sum
+trap were not found \\
+CH5-R35--R42 &
+Chained immediate-transfer BDC: negative-binomial rupture sizes, interval
+Laplace transforms &
+\ext &
+Textbook sums of geometrics; the laboratory was not found under this
+name \\
+CH8-R03 &
+Replicator--suppressor CTMC (birth vs unreplenished one-to-one
+annihilation) &
+\ext &
+Pilyugin--Antia 2000 (finite killers that \emph{recycle}); Lanchester
+linear law \\
+CH8-R11--R12 &
+\(\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}\), threshold
+\(\vartheta^\ast=\log V_\infty/\log a\) &
+\ext &
+Geometric stop-loss is actuarial folklore; not found as a BDC + integer
+immune budget \\
+CH8-R17 &
+Under threshold removal the ChPop flooding criterion \emph{reverses}
+(\(L<1\) vs \(L>1\)) &
+\ext &
+Yuan--Allen 2011 reverse budding vs bursting under a mass-action immune
+term (different mechanism); Komarova flooding is unconditional \\
+\end{longtable}
+
+% ---------------------------------------------------------------------
+\section{Real extensions (ancestor plus increment)}
+\label{sec:extensions}
+
+\itemtable
+\itemhead
+CH3-R14, R17 &
+\(A(p)=2\psi_{2p}(1/2)\); hypertranscendence of the logistic Koenigs
+function as a corollary &
+\ext &
+Kolmogorov 1938 \(A\); Koenigs 1884; Becker--Bergweiler 1995 \\
+CH3-R23, R24, R26 &
+Binary product remainder, hybrid scheme, negative elementary-form search &
+\ext &
+Pollak 1969, Seneta 1968, Pakes 2026; Imomov's candidate fails on discrete
+binary \\
+CH5-R23--R24, R29 &
+Three conditional burst means; late-burst size-bias &
+\ext &
+Geometric QSD (KT). Assay: late bursts are larger \\
+CH5-R45--R48 &
+Single-cell BDC vs budding table; \ft{} / anthrax numerical rows &
+\ext &
+Pearson 2011 population comparison with \emph{fixed} \(N\) \\
+CH6-R04--R06 &
+Nelson's age-structured system forced by closed-form BDC kernels (no free
+\(P(a)\)) &
+\ext &
+Nelson et al.\ 2004; McKendrick--von Foerster \\
+CH6-R09--R10 &
+Exponential-phase map \((p_{\mathrm{eff}}(r), d_{I,\mathrm{eff}}(r))\)
+with BDC endpoints &
+\ext &
+Euler--Lotka; Diekmann; Wallinga--Lipsitch. Fitted \(p\) is a phase
+property \\
+CH6-R16 &
+Concrete 3-to-2 identifiability obstruction &
+\ext &
+Nelson 2004; Miao et al.\ 2011 \\
+CH6-R22--R24 &
+Growth--extinction tradeoff / Pareto in \(\delta\) (numerical) &
+\ext &
+Pearson slower burst establishment; Komarova budding spreads faster \\
+CH7-R18 &
+\(\lambda_2=0\) ordinary Bessel mix &
+\ext &
+AK modified-Bessel bi-critical (different ODE) \\
+CH8-R05--R06 &
+Certainty diagonal \(\pi_{j,j}\); rate-independent \(i>j\Rightarrow\)
+escape &
+\ext &
+Pilyugin's \(P^\ast\) depends on rates because killers recycle \\
+CH8-R18 &
+Distributional flooding vs batch-count flooding &
+\ext &
+Komarova is the batch-count argument \\
+CH9-R03 &
+Two-layer unused-\emph{individual}-capacity clock on a Yule process &
+\ext &
+Kendall 1948 TD-Yule; Sepkoski; Rabosky/Etienne DDD on \emph{species}
+count \\
+CH10-R06, R08 &
+BDC macrophage burst \(\to\) slightly supercritical BD \(\to\) host-to-host
+GW &
+\ext &
+Antia 2003; Pearson; Gilchrist nested WH--BH; Kendall \\
+CH2-R24 &
+Gated release with opening intensity \(\eta A_t\) &
+\ext &
+Davis PDMP; Anick--Mitra--Sondhi on/off \\
+\end{longtable}
+
+% ---------------------------------------------------------------------
+\section{What not to claim as new}
+\label{sec:traps}
+
+These are the statements the chapters (or Chapter~1's roadmap) are most
+likely to over-claim. Cite them as previous work and move the emphasis to
+the increment above.
+
+\itemtable
+\itemhead
+--- &
+The BDC process with cemetery \(H\) &
+\alr &
+Karlin and Tavar\'e 1982. Brockwell--Gani--Resnick 1982 is the
+\emph{more general} neighbour (immigration, random catastrophe sizes) \\
+--- &
+Closed forms \(I(t)\), \(D(t)\), \(\Ifix\), \(J(t)\), \(K(t)\), roots
+\(a,b\) &
+\alr &
+Karlin--Tavar\'e 1982 linear-fractional PGF \\
+--- &
+Occupancy geometric at every \(t\); QSD geometric; burst size = QSD &
+\alr &
+KT 1982 (2.8)--(2.9); Zhang--Zhu 2011 uniqueness. Chapter~5 headlines are
+1982; the telescoping \emph{proof} is the increment \\
+--- &
+Mean productive lifetime \(\lambda^{-1}\log(a/(a-1))\) &
+\alr &
+KT Green function \\
+--- &
+\(A(p)=\lim S_n/(2p)^n\); \(S_n\sim 2/n\) at criticality; Yaglom mean
+\(1/A\) &
+\alr &
+Kolmogorov 1938; Yaglom 1947. Kolmogorov is never cited in Chapter~3 \\
+--- &
+Constant-\(p\) BMVR &
+\alr &
+Perelson 1996; Nowak--Bangham 1996; McLean 1993 \\
+--- &
+\(R_0\) unchanged by bursting vs dripping at matched lifetime yield &
+\alr &
+Pearson 2011, opening paragraph \\
+--- &
+Age-structured replacement of \(pI\) &
+\alr &
+Nelson et al.\ 2004 (as a \emph{system}). The increment is BDC kernels,
+not the renewal skeleton \\
+--- &
+Comparing bursting and budding &
+\alr &
+Pearson 2011; Komarova 2007; Yuan--Allen 2011 \\
+--- &
+Flooding as a biological idea &
+\alr &
+Komarova 2007 (replace the flooding placeholder cite) \\
+--- &
+Finite immune budget / inoculum escapes killing &
+\alr &
+Pilyugin--Antia 2000; Antia--Koella 1994; inoculum effect; complement
+consumption (as a \emph{mechanism}) \\
+--- &
+``Nobody has published a logistic speciation model'' &
+False &
+Sepkoski; Rabosky DDL; Etienne--Haegeman DDD; Kendall TD-Yule \\
+--- &
+A no-death Yule tests Nee's push of the past &
+Cannot &
+POTPa needs extinction and conditioning on survival \\
+--- &
+Neutrophil-fraction threshold as the evolved \yp{} switch &
+\alr &
+Ke, Chen and Yang 2013: switch is temperature / pH / YCV, not \(p_N\).
+The displayed formula also has a sign error \\
+--- &
+Chapter~1: second moment \(K\) ``beyond the current literature'' &
+Not sustained &
+Equivalent to \(\partial_{zz}G(1,t)\) from KT 1982 \\
+--- &
+Chapter~2 hypergeometric integral identity &
+\alr &
+Gradshteyn--Ryzhik 3.194.1 / DLMF 15.6.1 \\
+--- &
+Chapter~2 ABD generating function as ``a result of this thesis'' &
+\alr &
+Kendall interior PGF integrated against exponential absorption \\
+\end{longtable}
+
+% ---------------------------------------------------------------------
+\section{Counts (reconciled)}
+\label{sec:counts}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Chapter & Items & Original & Extends & Already & Not a result \\
+\midrule
+1 Introduction & 26 & 0 & 1 & 14 & 11 \\
+2 Mathematical introduction & 58 & 0 & 7 & 47 & 4 \\
+3 Galton--Watson and \(A(p)\) & 28 & 0 & 5 & 22 & 1 \\
+4 BDC core & 42 & 0 & 5 & 28 & 9 \\
+5 BDC distribution & 49 & 0 & 26 & 22 & 1 \\
+6 Renewal / population & 33 & 2 & 23 & 5 & 3 \\
+7 Two-type BDC & 31 & 2 & 13 & 8 & 8 \\
+8 Bursting and budding pathogenesis & 21 & 0 & 13 & 5 & 3 \\
+9 Variability in evolution & 17 & 0 & 9 & 5 & 3 \\
+10 Conclusion, \yp{} & 15 & 0 & 7 & 6 & 2 \\
+\midrule
+\textbf{Total} & \textbf{320} & \textbf{4} & \textbf{109} & \textbf{162} & \textbf{45} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Citations the thesis is missing or under-using}
+\label{sec:cites}
+
+Add these where the corresponding result is discussed. They are the
+difference between ``we derived \(I(t)\)'' and ``Karlin--Tavar\'e gave
+\(I(t)\); we add \(W_t\) and the \(I\)-polynomials.''
+
+\begin{itemize}
+\item \textbf{Karlin and Tavar\'e (1982)}, \emph{Linear birth and death
+  processes with killing}, J.\ Appl.\ Prob.\ 19:477--487 --- the missing
+  citation for Chapters~4 and~5.
+\item \textbf{Zhang and Zhu (2011)} --- uniqueness of the geometric QSD
+  under dual absorption.
+\item \textbf{Kolmogorov (1938)} --- Chapter~3's \(A(p)\) and
+  \(S_n\sim 2/n\).
+\item \textbf{Yaglom (1947)}; Harris (1963); Athreya--Ney (1972).
+\item \textbf{Pearson, Krapivsky and Perelson (2011)} --- already cited;
+  must be credited with \(R_0\) invariance and the establishment
+  comparison, not only ``the question.''
+\item \textbf{Yuan and Allen (2011)} --- must be cited in Chapter~8.
+  Published ranking-switch of budding vs bursting once an immune term is
+  present.
+\item \textbf{Komarova (2007)} --- replace the flooding placeholder.
+\item \textbf{Nelson, Gilchrist, Coombs, Hyman and Perelson (2004)} ---
+  the renewal/age-structured system Chapter~6 specialises.
+\item \textbf{Miao, Xia, Perelson and Wu (2011)} --- structural
+  non-identifiability.
+\item \textbf{Pilyugin and Antia (2000)}; \textbf{Antia and Koella
+  (1994)} --- finite nonspecific killers (they recycle; that is why their
+  threshold depends on rates).
+\item \textbf{Nee, May and Harvey (1994)}; \textbf{Rabosky and Lovette
+  (2008)}; \textbf{Etienne and Haegeman (2012)}; \textbf{Pannetier et
+  al.\ (2021)} --- Chapter~9 cannot claim uniqueness of a variable-rate
+  alternative to POTPa.
+\item \textbf{Ke, Chen and Yang (2013)}; \textbf{Cavanaugh and Randall
+  (1959)} --- the \yp{} switch is temperature/F1/Yop, not a neutrophil
+  fraction.
+\item \textbf{Pakes (2026)} on the Kolmogorov constant --- no known
+  explicit formula; Imomov's candidate fails on discrete binary.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Suggested sentence shapes}
+\label{sec:sentences}
+
+Do not write ``we obtain the no-rupture probability \(I(t)\).'' Write:
+
+\begin{quote}
+Karlin and Tavar\'e (1982) already give the linear-fractional generating
+function of the linear killing process, and with it \(I(t)\), the
+geometric occupancy, and the geometric killing position. What is
+developed here is the finite-time dump \(W_t\) and the organisation of
+every load moment as a polynomial in \(I\). Those are the kernels that
+later chapters feed into a within-host renewal system.
+\end{quote}
+
+Do not write ``we compare bursting and budding.'' Write:
+
+\begin{quote}
+Pearson et al.\ (2011) showed that at matched lifetime yield the
+mean-field kinetics coincide while stochastic extinction need not.
+Substituting the BDC burst law yields the identity
+\(\Delta z_{\mathrm{ext}}=(L-1)(1/m-1)\), which Pearson's fixed-\(N\)
+comparison cannot flip. Under a finite immune toll the same \(L\)
+criterion reverses (cf.\ Yuan and Allen 2011 for a different immune
+mechanism).
+\end{quote}
+
+Do not write ``we solve the two-type BDC.'' Write:
+
+\begin{quote}
+Antal and Krapivsky (2011) solved the triangular two-type birth--death
+process for terminal counts. Here the same Gauss reduction is applied to
+the no-catastrophe probabilities under type-specific linear killing. The
+objects differ: setting \(\delta_i=0\) in \(S,G\) does not recover their
+generating functions; it recovers them from the killed PGF.
+\end{quote}
+
+% =====================================================================
+\chapter{Chapter 1 --- Introduction}
+\label{ch:1}
+
+\paragraph{Source.} \texttt{CH1/document MAIN/sections/}.
+26 items. No numbered theorems.
+
+\paragraph{Scope.}
+Frames early \yp{} infection as a stochastic small-count problem; reviews
+branching and introduces BDC; sketches biphasic plague pathogenesis,
+BMVR, bursting vs budding (including Komarova flooding); states four
+research questions; roadmaps later chapters.
+
+\paragraph{Verdict.}
+This chapter \emph{presents} results that later chapters derive. Almost
+nothing here is original. Its job, for novelty, is to name the ancestors
+correctly so later claims of extension have a place to sit.
+
+\paragraph{Emphasize (weakly).}
+CH1-R10 is not new mathematics (Kendall/Haldane/Antia: establishment near
+criticality is sensitive to founder number). As a \emph{reading} of the
+macrophage phase it is the biological motivation for the BDC cell. Cite
+Antia et al.\ (2003) and Cavanaugh/Ke; do not call the branching identity
+a result of the thesis. The four research questions (R18--R21) are the
+right organisers; each already has a literature.
+
+\paragraph{Do not claim.}
+Agricultural peak-shift (R01) as a result (the \(\sim 6000\)-year split
+is published; the saddle-crossing gloss is an uncited hypothesis). BDC as
+a process introduced here (R07). Flooding (R14; Komarova 2007). BMVR
+(R12). Biphasic pathogenesis (R08--R09; Cavanaugh 1959; Pujol--Bliska;
+Ke 2013). The roadmap's remark that the second moment of BDC ``extends
+beyond the current literature'' (R23) is not sustained: \(K\) is in the
+Karlin--Tavar\'e PGF.
+
+\itemtable
+\itemhead
+R01 & Agricultural emergence / peak-shift & \ext\ (hypothesis) &
+Achtman 1999; Rasmussen 2015; Rascovan 2019; Newman--Cohen--Kipnis 1985 \\
+R02 & Early-infection stochasticity & \alr &
+Standard small-count branching / epidemic establishment \\
+R03 & Brownian encounters & \nar & --- \\
+R04 & GW / Yule / BD recap & \alr & Galton--Watson; Yule; Kendall \\
+R05 & Critical / super / sub & \alr & Athreya--Ney \\
+R06 & Near-critical sensitivity & \alr & Kendall \((\mu/\lambda)^n\); Haldane \\
+R07 & BDC introduced & \alr &
+Brockwell--Gani--Resnick 1982; Karlin--Tavar\'e 1982 \\
+R08 & Biphasic YP pathogenesis & \alr &
+Cavanaugh and Randall 1959; Pujol and Bliska 2005; Ke et al.\ 2013 \\
+R09 & F1 / Yop / Pla & \alr & Du 2002; Sebbane 2006; Ke 2013 \\
+R10 & Macrophage as near-critical founder boost & \alr\ (as maths) &
+Antia et al.\ 2003; Hataye 2019; Kendall \\
+R11 & HIV as comparator & \alr & Perelson 1996; Hataye 2019 intermittency \\
+R12 & BMVR & \alr & Nowak 1996; Perelson 1996; McLean 1993 \\
+R13 & Bursting vs budding & \alr &
+Pearson 2011; Komarova 2007; Yuan--Allen 2011 \\
+R14 & Flooding advantage & \alr & Komarova 2007. Must cite here \\
+R15 & Eclipse / multiscale aside & \alr &
+Nelson 2004; Rong; Guedj; Ciupe 2024. Sets up Ch.~6 \\
+R16 & Punctuated equilibria motivation & \nar & Eldredge--Gould \\
+R17 & Push of the past & \alr & Nee et al.\ 1994 \\
+R18 & RQ1: why biphasic YP & \nar & Question \\
+R19 & RQ2: bursting advantage & \nar & Question \\
+R20 & RQ3: BMVR intracellular update & \nar & Question \\
+R21 & RQ4: variable-rate evolution & \nar & Question \\
+R22 & Roadmap Ch.~2 & \nar & --- \\
+R23 & Roadmap BDC ``new second moment'' & \alr\ (claim false) &
+Karlin--Tavar\'e. Over-claim. Fix. \\
+R24 & Roadmap two-type / chained & \nar & Points at Ch.~5/7 \\
+R25 & Roadmap bursting--budding models & \nar & Points at Ch.~6/8 \\
+R26 & Roadmap evolution / conclusion & \nar & Points at Ch.~9/10 \\
+\end{longtable}
+
+\paragraph{Why it matters.}
+It is the only place the four questions sit together. For novelty, its
+contribution is attribution: every later original statement needs the
+ancestor named here so the increment is visible.
+
+% =====================================================================
+\chapter{Chapter 2 --- Mathematical introduction}
+\label{ch:2}
+
+\paragraph{Source.} \texttt{CH2/sections/} plus appendices A--D.
+58 items.
+
+\paragraph{Scope.}
+Methods: discrete and continuous Markov chains, branching, linear
+birth--death, BDC as Def.~2.4, method of characteristics, small-population
+examples, absorption models, a hypergeometric integral, coefficient
+extraction. The chapter flags two items as ``of this thesis'': the
+absorption--birth--death generating function and the hypergeometric
+identity. Neither is original.
+
+\paragraph{Verdict.}
+No original statements. This is a toolkit chapter. Do not let worked
+examples (gated release, log-spectral mean, ABD) drift into ``we
+introduce the process.''
+
+\paragraph{Emphasize.}
+Nothing as new mathematics. Optionally, as worked models:
+gated release (R24), opening intensity \(\eta A_t\), sits in Davis's PDMP
+class; published on/off gates are autonomous. Log-spectral /
+logistic-speciation mean (R18, R20--R22) is Kendall time-inhomogeneous
+Yule with an individual-capacity clock; a preview of Chapter~9, not DDD.
+
+\paragraph{Do not claim.}
+ABD generating function (R49) as a result of this thesis (Kendall
+interior PGF integrated against exponential absorption, rewritten by
+GR~3.194.1). Hypergeometric identity (R56) as original (GR~3.194.1 /
+DLMF~15.6.1). BDC (R12) and \(W_t\) (R13) as a new process
+(Karlin--Tavar\'e 1982).
+
+\itemtable
+\itemhead
+R01 & Chapman--Kolmogorov & \alr & Norris; Karlin--Taylor; Allen \\
+R02 & Simple random-walk law & \alr & Feller; Karlin--Taylor \\
+R03 & Birth--death embedded walk & \alr & Standard embedding \\
+R04 & Gambler's ruin & \alr & Feller \\
+R05 & Galton--Watson process & \alr & Harris; Athreya--Ney \\
+R06 & Binary GW survival iteration & \alr & Textbook \\
+R07 & Competing clocks & \alr & Exponential races \\
+R08 & Gillespie direct method & \alr & Gillespie 1977 \\
+R09 & Poisson process law & \alr & Textbook \\
+R10 & Yule process law & \alr & Yule; Kendall \\
+R11 & Linear birth--death process & \alr & Kendall 1948 \\
+R12 & Birth--death--catastrophe process & \alr &
+Karlin--Tavar\'e 1982 linear killing. Chapter over-claims if read as new \\
+R13 & Released count and burst size & \alr &
+KT Lemma~1, killing position \(K=X(T_H)\) \\
+R14 & Non-catastrophe factorisation & \alr & Branching property \\
+R15 & Catastrophe is not mean-field & \alr & Jensen / convexity caution \\
+R16 & Inhomogeneous Kolmogorov & \alr & Standard \\
+R17 & Inhomogeneous linear BD mean and extinction & \alr & Kendall \\
+R18 & Seasonal Lotka--Volterra process & \ext & Classical LV as illustration \\
+R19 & Seasonal LV simulation & \nar & Figure \\
+R20 & Logistic-speciation model & \ext & Kendall TD-Yule; preview of Ch.~9 \\
+R21 & Log-spectral mean closed form & \ext &
+Kendall \(\mathbb{E}=\exp\int\beta\); explicit limit
+\((C/N_0)^{\sigma C/r}\) \\
+R22 & Logistic BD variant / turnover & \ext & Same clock \\
+R23 & ODE--CTMC couplings and PDMP generator & \alr & Davis 1993 \\
+R24 & Gated release process \(\eta A_t\) & \ext &
+Davis PDMP; Anick--Mitra--Sondhi autonomous on/off \\
+R25 & Gated balance and non-closed mean & \alr & \\
+R26 & Surging gated release & \alr & \\
+R27 & Gated vs surging ensemble & \nar & Figure \\
+R28 & Coupled-system simulation & \alr & \\
+R29 & First-step principle & \alr & Feller \\
+R30 & Branching extinction fixed point & \alr & Harris \\
+R31 & Forward/backward master & \alr & Kolmogorov \\
+R32 & Birth--death PGF PDE & \alr & Kendall \\
+R33 & Kendall birth--death generating function & \alr & Kendall 1948 \\
+R34 & Birth--death mean & \alr & \\
+R35 & Birth--death variance & \alr & \\
+R36 & Critical infinite mean absorption time & \alr & \\
+R37 & Birth--death extinction probability & \alr & \((\mu/\lambda)^n\) \\
+R38 & Subcritical survival amplitude & \alr & Continuous-time Kolmogorov \\
+R39 & CT conditional mean and QS limit & \alr & Yaglom / Kendall \\
+R40 & Continuous-time amplitude in \(p\) & \alr & \\
+R41 & Discrete amplitude and two constants & \ext &
+Comparison of two classical survival amplitudes, not a new constant \\
+R42 & Method of characteristics & \alr & PDE method \\
+R43 & Absorption--death generating function & \alr & Linear PGF \\
+R44 & Early-generation survival near criticality & \alr & \\
+R45 & \(k\)-founder survival and establishment & \alr & Branching property \\
+R46 & Cohort longevity / criticality sensitivity & \nar & Reading \\
+R47 & Absorption-only binomial PGF & \alr & Binomial \\
+R48 & ABD model and Riccati characteristic & \ext &
+Two-type CTBP degeneration (Kendall interior + absorption) \\
+R49 & ABD generating function & \alr &
+Kendall + exponential absorption + GR 3.194.1. Chapter over-claims \\
+R50 & ABD generating-function checks & \nar & Internal \\
+R51 & ABD convolution representation & \alr & Standard first-event
+decomposition \\
+R52 & \(\psi\) hypergeometric form & \alr & GR / DLMF \\
+R53 & ABD domain of validity & \alr & Domain of R49 \\
+R54 & ABD resonance & \alr & \\
+R55 & ABD coefficient recovery & \alr & \\
+R56 & Hypergeometric integral identity & \alr &
+GR 3.194.1 / DLMF 15.6.1. Not a result of this thesis \\
+R57 & Coefficient extraction (Maclaurin / Cauchy) & \alr & Standard \\
+R58 & Multilinear trinomial probabilities & \alr & Multinomial theorem \\
+\end{longtable}
+
+\paragraph{Why it matters.}
+It supplies the notation and the BDC definition later chapters use.
+Novelty for the thesis does not live here. The danger is the opposite:
+presenting standard material, or table integrals, as derived results.
+
+% =====================================================================
+\chapter{Chapter 3 --- Galton--Watson and \texorpdfstring{\(A(p)\)}{A(p)}}
+\label{ch:3}
+
+\paragraph{Source.} \texttt{CH3/chapterB.tex}. 28 items.
+
+\paragraph{Scope.}
+Binary Galton--Watson (\(p_2=p\), \(p_0=1-p\)). Survival recursion;
+subcritical Yaglom law with mean \(1/A(p)\); existence of
+\(A(p)=\lim S_n/(2p)^n\); identification with the Koenigs function of the
+logistic map; Becker--Bergweiler hypertranscendence; critical
+\(S_n\sim 2/n\); a hybrid scheme for computing \(A(p)\); a negative
+search for an elementary formula.
+
+\paragraph{Verdict.}
+No original statements. Kolmogorov is never cited, and most of the
+chapter is Kolmogorov (1938) / Yaglom (1947) / Harris. What to emphasize
+is a dictionary and a computational increment, plus a useful negative
+experiment (Imomov's formula fails on discrete binary).
+
+\paragraph{Emphasize.}
+\begin{enumerate}
+\item \(A(p)=2\psi_{2p}(1/2)\) (R14). Koenigs 1884 linearisation of the
+  logistic map, evaluated at \(1/2\), is Kolmogorov's constant. Not a new
+  object: a dictionary. Matters because a closed form for \(A\) would
+  require a closed form for \(\psi\).
+\item Hypertranscendence of \(z\mapsto\psi_r(z)\) (R17). Corollary of
+  Becker--Bergweiler 1995. Closes the ``formula for \(\psi\), hence for
+  \(A\)'' route. Does \emph{not} prove that \(p\mapsto A(p)\) is
+  non-elementary.
+\item Truncation bound and hybrid scheme (R23--R24). Pollak 1969 /
+  Seneta 1968 / Pakes 2026 already iterate \(\mu_n=m^n/S_n\). The binary
+  product remainder and the \(2{-}4p\) switch are the increment.
+\item Negative elementary-form search (R26). Pakes (2026): no known
+  explicit expression. Imomov--Murtazaev's candidate holds for
+  linear-fractional offspring and for continuous-time quadratic, and
+  \emph{fails} for discrete binary (at \(p=0.3\): \(2.25\) vs \(2.825\)).
+  The CT cousin \emph{is} elementary; binary \(A(p)\) is not known to be.
+\end{enumerate}
+
+\paragraph{Do not claim.}
+Existence of \(A(p)\) (R07, R11) --- Kolmogorov 1938. Yaglom mean
+\(1/A(p)\) (R08--R09). Critical \(S_n\sim 2/n\) (R19--R21). That the
+chapter ``introduces'' \(A(p)\). \textbf{Fix:} cite Kolmogorov (1938) in
+the first paragraph that defines \(A(p)\).
+
+\itemtable
+\itemhead
+R01 & Binary GW model & \alr & Galton--Watson; Harris; Athreya--Ney \\
+R02 & Unconditional mean \((2p)^n\); regimes & \alr & Textbook \\
+R03 & Offspring PGF; extinction recursion & \alr & Harris \\
+R04 & Survival recursion & \alr & \\
+R05 & Ultimate survival / extinction certainty & \alr &
+\(p\le 1/2\Rightarrow\eta=1\) \\
+R06 & Finite-\(n\) conditional mean & \alr & \\
+R07 & \(A(p)\) definition, \(S_n\sim A(p)\,(2p)^n\) & \alr &
+\textbf{Kolmogorov 1938} \\
+R08 & QS mean \(1/A(p)\) & \alr & Yaglom \\
+R09 & Yaglom-limit existence & \alr & Yaglom 1947 \\
+R10 & Limiting conditional variance & \alr & Harris / Athreya--Ney \\
+R11 & Infinite-product existence, bounds & \alr & Kolmogorov; telescoping \\
+R12 & Logistic rescaling of survival & \alr &
+Logistic map \(x\mapsto 2px(1-x)\) is the binary GW PGF \\
+R13 & Koenigs linearisation & \alr & Koenigs 1884 \\
+R14 & \(A(p)=2\psi_{2p}(1/2)\) & \ext &
+Dictionary Kolmogorov \(\leftrightarrow\) Koenigs \\
+R15 & BB hypertranscendence of the inverse & \alr &
+Becker--Bergweiler 1995 \\
+R16 & Inverse preserves DA & \alr & Standard lemma (Fernandes 2021) \\
+R17 & HT of the logistic Koenigs function & \ext & Corollary of R15--R16 \\
+R18 & Elementary Koenigs at \(r=2,4\) & \alr & Classical \\
+R19 & Critical \(S_n\sim 2/n\) & \alr & Kolmogorov 1938 \\
+R20 & Infinite expected lifetime at criticality & \alr & \\
+R21 & Critical power-law tails & \alr & \\
+R22 & Near-critical \(A\sim 2\varepsilon\) & \alr & Kolmogorov amplitude \\
+R23 & Truncation bound / stopping rule & \ext & Pollak / Seneta / Pakes \\
+R24 & Product--asymptotic hybrid & \ext &
+Same line; binary remainder is the increment \\
+R25 & Complex-plane Koenigs geometry & \nar & Visual \\
+R26 & Elementary-formula search (negative) & \ext &
+Pakes 2026; Imomov fails on binary \\
+R27 & Unconditional factorial / second moments & \alr & Harris \\
+R28 & Near-critical moment rates & \alr & Yaglom + Kolmogorov amplitude \\
+\end{longtable}
+
+\paragraph{Why it matters.}
+Binary GW is the discrete counterpart of linear birth--death, and
+\(A(p)\) is the discrete cousin of the Karlin--Tavar\'e root \(b\). The
+chapter's genuine service is to show why the discrete constant is harder
+than the CT one, and to give a working numerical scheme.
+
+% =====================================================================
+\chapter{Chapter 4 --- BDC: definition and main results}
+\label{ch:4}
+
+\paragraph{Source.} \texttt{CH4\_REWRITE\_RESTORED/sections/}. 42 items.
+
+\paragraph{Scope.}
+Linear BDC as one lytic infected cell: per-capita rates
+\(\lambda n,\mu n,\delta n\), cemetery \(H\), dump coordinate \(W_t\).
+Riccati for \(I(t)\); roots \(a,b\); \(I,D,\Ifix\); load moments
+\(J,K\); release moments of \(W_t\); burst-size first two moments;
+\(I\)-polynomial organisation.
+
+\paragraph{Verdict.}
+This is the chapter most at risk of over-claiming. Karlin and Tavar\'e
+(1982) already contain the process, the Riccati / linear-fractional PGF,
+\(I(t)\), the geometric killing position with mean \(a/(a-1)\), and the
+geometric QSD. Dictionary: their \((a,b,c)\) (death, birth, killing) are
+this chapter's \((\mu,\lambda,\delta)\). What is \emph{not} in that paper,
+and should be emphasized, is the finite-time dump calculus and the
+\(I\)-economy.
+
+\paragraph{Emphasize.}
+\begin{enumerate}
+\item Dump process \(W_t\) (R17, R18, R20, R22). KT give the
+  \emph{eventual} killing position \(K=X(T_H)\). The chapter keeps a
+  time-dependent released count \(W_t=K\mathbf{1}_{\{t\ge\tau\}}\) and
+  closes \(V(t)\), \(\mathbb{E}[W_t^2]\), \(\mathrm{Var}(W_t)\), and
+  current yield as functions of \(I(t)\). These were not found. They
+  matter because Chapter~6's age kernels are \(\delta K(\alpha)\) and
+  \(V(\alpha)\).
+\item Load moments as polynomials in \(I\) (R23). Equivalent moments live
+  in the PGF. The named proposition (degree \(p+1\), roots at \(a\) and
+  \(b\), leading coefficient \((-1)^p p!(\lambda/\delta)^p\)) was not
+  found. Every later kernel is then a polynomial in one monotone clock.
+\end{enumerate}
+
+\paragraph{Cite as known (KT 1982).}
+Process with cemetery \(H\) (generator (0.4), §2); roots \(a,b\) (2.2);
+linear-fractional PGF (2.5); \(I(t)=P(T_H>t)\) (2.7); geometric killing
+position, mean \(a/(a-1)\) (2.8); geometric QSD (2.9), uniqueness by
+Zhang--Zhu 2011. Also already: \(J\) and \(K\) as derivatives of the PGF
+(so Chapter~1's ``second moment beyond the literature'' is false).
+Brockwell--Gani--Resnick 1982 is the right historical citation but is
+\emph{more general}.
+
+\itemtable
+\itemhead
+R01 & Linear BDC with release & \alr &
+KT 1982; Brockwell et al.\ 1982 more general \\
+R02 & Killing vs catastrophe (\(H\) vs \(0\)) & \alr &
+KT already keep \(H\); Baake et al.\ 2024 revisit the naming \\
+R03 & Riccati for \(I\) & \alr & KT; linear BD Riccati (Kendall) \\
+R04 & Characteristic roots \(a,b\) & \alr & KT (2.2) \\
+R05 & Vieta / gap identities & \alr & Elementary from the quadratic \\
+R06 & \(I(t)\) closed form & \alr & KT (2.7) \\
+R07 & \(b=\) extinction-before-rupture & \alr &
+KT \(P(\text{hit }0\text{ before }H)\) \\
+R08 & \(D(t)\) internal extinction & \alr & Split of the PGF at \(z=0\) \\
+R09 & \(\Ifix=I-D\) & \alr & KT two conditionings \\
+R10 & \(\Ifix\) initial slope & \alr & Differentiation of R09 \\
+R11 & Multi-founder \(I^k-D^k\) & \alr & Branching property \\
+R12 & Non-fixation does not factorise & \alr & Same \\
+R13 & \(\dot I=-\delta J\) & \alr & Flux / Green \\
+R14 & Mean load \(J\) & \alr & \(\partial_z G(1,t)\) \\
+R15 & Open \(J\)--\(K\) hierarchy & \alr & Standard moment ODEs \\
+R16 & Second moment \(K\) & \alr &
+\(\partial_{zz}G\); Chapter~1 over-claim \\
+R17 & Mean release \(V(t)\) & \ext &
+Eventual \(V_\infty\) is KT; finite-time \(V(t)\) not found \\
+R18 & Release second moment & \ext &
+Eventual geometric second moment is KT \\
+R19 & \(\mathrm{Var}(X)\) & \alr & \(K-J^2\) \\
+R20 & \(\mathrm{Var}(W)\) & \ext & Finite-time dump variance not found \\
+R21 & Exclusion / \(\mathrm{Cov}(X,W)=-JV\) & \nar &
+Definitional (\(XW\equiv 0\)) \\
+R22 & Current yield \(\mathbb{E}[X+W]\) & \ext &
+Bookkeeping in the \(W\) calculus \\
+R23 & Load moments polynomials in \(I\) & \ext &
+Organisation of the PGF; named proposition not found \\
+R24 & \(I\) as clock & \nar & Time change of an autonomous ODE \\
+R25 & Burst-size first two moments & \alr &
+KT geometric, mean \(a/(a-1)\) \\
+R26 & Geometric burst preview, \(\mu=0\) & \alr & Yule + killing; KT \\
+R27 & Burst-time density \(\delta J\) & \alr & Flux \\
+R28 & Productive conditional mean plateau & \alr &
+QSD mean (KT / Zhang--Zhu) \\
+R29 & \(J/\Ifix\) vs \(J/I\) & \alr & Two conditionings \\
+R30 & No-death limit & \alr & \\
+R31 & No-catastrophe \(\to\) BD & \alr & Kendall \\
+R32 & Critical births = deaths & \alr & \\
+R33 & No-births limit & \alr & \\
+R34 & Four-ODE reconstruction & \nar & Internal check \\
+R35 & Landscape of \(b\) and \(V_\infty\) & \nar & Figure \\
+R36 & Mean load mixes fates & \nar & Reading of \(J\) \\
+R37 & Load SD exceeds mean & \nar & Reading of R19 \\
+R38 & Endpoints & \nar & Consistency \\
+R39 & Special case of Brockwell & \alr & Correct placement \\
+R40 & \(I_\pm\) notation & \nar & Dictionary \\
+R41 & Non-explosion & \alr & Linear rates; Cairns--Pollett Thm~1 \\
+R42 & Three research questions & \nar & Framing \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+The linear killing process of Karlin and Tavar\'e (1982) is the
+intracellular model. Their generating function already supplies \(I\),
+\(J\), \(K\), and the eventual burst-size moments. The present chapter
+adds the finite-time released count \(W_t\) and shows that every load
+moment is a polynomial in \(I\). Those two additions are what the
+population chapter consumes.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+A lytic cell (\yp{} in a macrophage, \ft{}, lytic phage) does not drip.
+Per-capita catastrophe \(\delta n\) makes a crowded cell more likely to
+burst. Distinguishing internal clearance (\(D\)) from rupture (\(1-I\))
+is the difference between an empty intact cell and a dump. \(V(t)\) is
+the expected dump by age \(t\); that is the object a within-host model
+needs, not a fitted constant \(p\).
+
+% =====================================================================
+\chapter{Chapter 5 --- BDC distribution, QSD, burst statistics}
+\label{ch:5}
+
+\paragraph{Source.} \texttt{CH5\_REWRITE/sections/}. 49 items.
+
+\paragraph{Scope.}
+Complete law of one bursting cell: generating function, sliding geometric
+occupancy, QSD, burst-size identity, burst time, conditional means,
+several founders, chained transfer, single-cell bursting vs budding. The
+chapter organises itself around one identity: the burst-size law equals
+the quasi-stationary law.
+
+\paragraph{Verdict.}
+That identity is Karlin and Tavar\'e (1982), eqs.~(2.8)--(2.9). Zhang and
+Zhu (2011) restate uniqueness of the geometric QSD. Kendall (1948)
+already has the unkilled sliding geometric. Appendix rows marked N for
+\(P(t)\), \(p_n\), QSD, burst law, and \(\mathbb{E}[T_{\mathrm{prod}}]\)
+should be S (standard) or R (recap of Chapter~4). What to emphasize is
+the proof, the timing laws, the multi-founder yield, and the
+chained-transfer laboratory.
+
+\paragraph{Emphasize.}
+\begin{enumerate}
+\item Telescoping / size-bias criterion (R22). New \emph{proof} that
+  burst = QSD, and a characterisation (linear hazard + sliding geometric
+  + \(p_1=P'/\lambda\)).
+\item \(\mu=0\) harmonic / Gumbel timing (R26--R27). \(\tau\mid\mathcal{K}=n\)
+  as a sum of exponentials; Gumbel limit. Budding comparator is linear in
+  \(n\).
+\item Multi-founder kernels (R31--R34). \(g_k\); free-sum trap;
+  \(\mu=0\) lifetime yield \(k+\lambda/\delta\) (sub-extensive
+  unconditionally). Several founders sharing one cell do not add solo
+  yields.
+\item Chained immediate transfer (R35--R42). Wholesale transfer of the
+  load. Negative-binomial rupture sizes are textbook sums of geometrics;
+  the laboratory (and fragility as soon as \(\mu>0\)) was not found under
+  this name.
+\item Three conditional burst means / late-burst factor (R23--R24, R29).
+  Size-bias of the geometric QSD. ``Factor of two'' is \(a\to 1\), not
+  universal.
+\item Single-cell BDC vs budding (R45--R46) and \ft{}/anthrax rows (R48).
+  Pearson 2011 already has mean-matched burst vs continuous at population
+  level with fixed \(N\). Numerical timings at Carruthers \ft{} and
+  Williams anthrax rates are new evaluations.
+\end{enumerate}
+
+\paragraph{Do not claim as new.}
+Sliding geometric occupancy (R08, R11, R12) --- KT (2.5). QSD geometric
+(R14) --- KT (2.9). Burst size = QSD (R20, R21) --- KT (2.8), the
+headline. Mean productive lifetime (R18) --- KT Green function
+\(\lambda^{-1}\log(a/(a-1))\). Recap of Chapter~4 closed forms.
+
+\itemtable
+\itemhead
+R01 & BDC process & \alr & KT 1982 \\
+R02 & Joint process / \(W_t\) & \alr & KT killing position; Ch.~4 \\
+R03 & Roots, AB identity & \alr & Ch.~4 / KT \\
+R04 & \(I,D,\Ifix\) & \alr & Ch.~4 / KT \\
+R05 & \(J,K,V\), conditional mean burst & \alr & Ch.~4 / KT \\
+R06 & Second moment of one-cell release & \alr &
+Ch.~4 (eventual); finite-time is CH4-R18 \\
+R07 & Kolmogorov equations, PGF PDEs & \alr & \\
+R08 & Single-founder GF & \alr & KT (2.5) linear-fractional \\
+R09 & \(k\)-founder GF & \alr & Branching property \\
+R10 & Two rupture conventions & \ext & CH4-R02; bookkeeping \\
+R11 & State probabilities & \alr & Coefficients of (2.5) \\
+R12 & Load is geometric at every time & \alr & KT; Kendall unkilled \\
+R13 & Positive states carry \(\Ifix\) & \alr & \\
+R14 & QSD & \alr & KT (2.9); Zhang--Zhu 2011 \\
+R15 & QSD moments & \alr & Geometric moments \\
+R16 & QSD decay rate & \alr & \\
+R17 & Decay rate = BDC time constant & \alr & \\
+R18 & Mean productive lifetime & \alr & KT Green \\
+R19 & Occupation integral of \(p_k\) & \alr & Green function \\
+R20 & Burst-size distribution & \alr & KT (2.8) \\
+R21 & Burst size = QSD & \alr & \textbf{KT identity} \\
+R22 & Telescoping criterion & \ext & New proof / characterisation of R21 \\
+R23 & Size-biased burst given rupture time & \ext & Geometric size-bias \\
+R24 & Late-burst mean & \ext & \\
+R25 & Defective burst-time density & \alr & Flux \(\delta J\) \\
+R26 & \(\tau\mid k\), \(\mu=0\) & \ext & Yule / exponential order stats \\
+R27 & Conditional CDF, Gumbel limit & \ext & \\
+R28 & Mean burst time on bursting & \ext & Evaluation \\
+R29 & Three conditional burst means & \ext & Circularity warning \\
+R30 & \(k\)-founder fixation & \alr & Branching property \\
+R31 & \(k\)-founder moments, \(g_k\) & \ext & \\
+R32 & Superlinear flux, free-sum trap & \ext & \\
+R33 & Lifetime yield from \(k\) founders & \ext & \\
+R34 & \(\mu=0\) yield, sub-extensivity & \ext & \(k+\lambda/\delta\) \\
+R35 & Chained immediate-transfer model & \ext & Not found as this laboratory \\
+R36 & Event types ignore the load & \alr & Competing exponentials \\
+R37 & NB rupture-size law & \ext & Textbook NB applied here \\
+R38 & Chained rupture-size moments / PGF & \ext & \\
+R39 & Chained rupture times & \ext & \\
+R40 & Inter-rupture Laplace & \ext & Phase-type \\
+R41 & Mean inter-rupture interval & \ext & \\
+R42 & Second rupture-time Laplace & \ext & \\
+R43 & Coefficient extraction, general \(\mu\) & \ext &
+Ch.~2 method applied; \(\mu>0\) open \\
+R44 & Simulation verification & \nar & \\
+R45 & Bursting vs budding structural table & \ext &
+Pearson/Yuan population, fixed \(N\) \\
+R46 & Matching means \(\neq\) matching support & \ext &
+Pearson's logical point, single-cell arithmetic here \\
+R47 & Five limiting-dilution predictions & \ext &
+Translation of R14/R21 into an assay \\
+R48 & \ft{} / anthrax numerical extremes & \ext &
+Carruthers 2020; Williams 2021 rates \\
+R49 & Geometric robust to \(k\), fragile to chaining with death & \ext &
+Synthesis \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+Karlin and Tavar\'e (1982) already proved that for linear birth--death
+with killing, occupancy is linear-fractional, the QSD is geometric, and
+the killing position is that same geometric. The present chapter gives a
+size-bias proof of that identity, the burst-time law at \(\mu=0\), the
+multi-founder yield \(k+\lambda/\delta\), and a chained-transfer
+laboratory in which the geometric structure fails as soon as death is
+present. Those are the distributional facts a lytic-cell assay can test.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+A fitted mean burst size does not determine establishment (Pearson). For
+a genuinely lytic pathogen the whole geometric family is determined by
+\((\lambda,\mu,\delta)\), and the same three rates span \ft{} (rare
+clearance, huge bursts, low ID) and anthrax (almost-sure clearance, tiny
+bursts, high ID). Several co-infecting founders sharing one cell do not
+add solo yields.
+
+% =====================================================================
+\chapter{Chapter 6 --- Burst-aware renewal and population comparison}
+\label{ch:6}
+
+\paragraph{Source.} \texttt{CH6\_REWRITE/sections/}. 33 items.
+
+\paragraph{Scope.}
+What replaces BMVR's \(pI\) when release is terminal and batched.
+Burst-aware renewal forced by BDC kernels; classical BMVR as an
+exponential-phase projection; identifiability; \(R_0\); flooding
+parameter \(L\); growth--extinction tradeoff.
+
+\paragraph{Verdict.}
+This chapter contains two of the four original statements in the thesis
+(the \(L\)-flooding identity and the \(L=1\) coincidence of laws), sitting
+on top of a renewal system that is Nelson et al.\ (2004) and an \(R_0\)
+invariance that is Pearson (2011), first paragraph. Write the skeleton as
+an application of Nelson; write \(R_0\) as Pearson; lead with \(L\).
+
+\paragraph{Emphasize.}
+\begin{enumerate}
+\item Flooding identity (R20) --- original as a statement.
+\[
+z_{\mathrm{ext}}^{\mathrm{burst}}-z_{\mathrm{ext}}^{\mathrm{bud}}
+=(L-1)\Bigl(\frac{1}{m}-1\Bigr),\qquad L:=a(1-b).
+\]
+Bursting lowers establishment extinction iff \(L>1\), i.e.\
+\(1/\delta<1/\lambda+1/\mu\) (\(\mu=0\) always). Pearson 2011 cannot flip
+this sign; Quirouette et al.\ 2023 already said extinction tracks the
+offspring \emph{law}, not timing; Komarova 2007 floods antibodies
+(different object).
+\item \(L=1\) coincidence of laws (R21). When \(L=1\) the two offspring
+  laws are the same geometric. Variance order:
+  \(\mathrm{Var}_{\mathrm{bud}}-\mathrm{Var}_{\mathrm{burst}}\propto(L-1)\).
+\item Kernels from BDC, not posited (R04--R06) --- extends Nelson.
+  \(S\) and \(g=\delta K\) are closed forms in \((\lambda,\mu,\delta)\).
+  No free age schedule to fit. \(p\) is no longer a parameter of the
+  organism.
+\item Exponential-phase projection (R09--R10) --- extends Euler--Lotka.
+  Fitted \(p\) is a \emph{phase} property. Do not claim the projection
+  idea is new.
+\item Identifiability 3-to-2 (R16) --- extends Nelson/Miao.
+\item Growth--extinction tradeoff (R22--R24) --- numerical. General
+  \(r_{\mathrm{bud}}>r_{\mathrm{burst}}\) is unproved --- leave it
+  unproved.
+\end{enumerate}
+
+\paragraph{Do not claim as new.}
+BMVR (R01). Exponential kernels \(\equiv\) BMVR (R07). \textbf{\(R_0\)
+invariance at matched yield (R14). Pearson 2011 opening paragraph.} Use
+it, cite it, do not number it as a new theorem.
+
+\itemtable
+\itemhead
+R01 & Classical BMVR / budding cell & \alr &
+Perelson 1996; Nowak 1996; McLean 1993 \\
+R02 & Synchronous cohort is scheduled & \ext & Obstruction to constant \(p\) \\
+R03 & Obstruction to constant \(p\) & \ext & \\
+R04 & Survival and release kernels & \ext &
+Nelson 2004 posited \(P(a)\); here closed-form BDC \\
+R05 & Burst-aware renewal system & \ext & Nelson eqs.~(1) \\
+R06 & Universal skeleton, any kernels & \ext & Same \\
+R07 & Exponential kernels \(\to\) BMVR & \alr & \\
+R08 & Renewal verification suite & \nar & \\
+R09 & Exponential-phase projection & \ext &
+Euler--Lotka / Diekmann / Nelson \\
+R10 & \(p_{\mathrm{eff}}\) map endpoints & \ext & \\
+R11 & \(p_{\mathrm{eff}}\) decreases in \(r\) (numerical) & \ext & \\
+R12 & Generation kernel, \(R_0\), Euler--Lotka & \ext & Diekmann \\
+R13 & Overlays: what the projection loses & \ext & \\
+R14 & \(R_0\) unchanged by bursting & \alr & \textbf{Pearson 2011} \\
+R15 & Continuum \(R_0\) vs discrete \(m\) & \alr & \\
+R16 & Identifiability obstruction & \ext & Nelson 2004; Miao 2011 \\
+R17 & Fitting-practice predictions & \ext & \\
+R18 & Bursting offspring PGF / moments & \ext &
+Pearson random-burst PGF; KT size-at-killing \\
+R19 & Bursting extinction probability & \ext &
+Pearson root of thinned PGF \\
+R20 & Flooding identity / \(L\) criterion & \orig &
+Pearson (no \(L\)); Quirouette; Komarova different object \\
+R21 & \(L=1\) coincidence of laws & \orig & Linear-fractional family \\
+R22 & Budding invades faster at matched \(R_0\) & \ext &
+Pearson 1.75\,d vs 2.46\,d; Komarova \\
+R23 & Generation-time mechanism & \ext & Wallinga--Lipsitch \\
+R24 & Growth--extinction Pareto in \(\delta\) & \ext &
+Numerical; general order unproved \\
+R25 & Five-ODE ladder & \ext & Reach of the construction \\
+R26 & BMVR as fast-export / QSS & \ext & \\
+R27 & Reset-catastrophe intermediate & \ext & Catalogue \\
+R28 & Partial-release mean field & \ext & \\
+R29 & HIV-stage renewal and Allee & \ext & Application \\
+R30 & HIV mean-linear, not exponential BDC & \alr & Hataye / HIV production \\
+R31 & What carries beyond BDC & \nar & Discussion \\
+R32 & Three regimes, flooding-boundary numerics & \nar & Figures for R20 \\
+R33 & Hypergeometric Laplace of kernels & \ext &
+Ch.~4 \(I\)-polynomials in Laplace space \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+Nelson et al.\ (2004) already replaced constant \(p\) by an age-dependent
+production schedule. Here that schedule is not fitted: it is the BDC flux
+\(\delta K(\alpha)\). Pearson et al.\ (2011) already showed that matched
+lifetime yield equalises \(R_0\) while leaving stochastic extinction
+free. Substituting the BDC burst law yields
+\(\Delta z_{\mathrm{ext}}=(L-1)(1/m-1)\). When \(L=1\) the two offspring
+laws coincide. That is the chapter's original comparison; the renewal
+skeleton and the \(R_0\) lemma are inherited.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+A fitted HIV \(p\) is not a property of \yp{}. For a lytic pathogen,
+release and death are the same event, the extracellular curve is a
+convolution against a closed-form kernel, and whether bursting helps
+establishment is a criterion on \((\lambda,\mu,\delta)\), not a slogan.
+The same criterion will reverse in Chapter~8 once the immune functional
+is a threshold rather than linear thinning.
+
+% =====================================================================
+\chapter{Chapter 7 --- Two-type BDC}
+\label{ch:7}
+
+\paragraph{Source.} \texttt{CH7/Two\_Type\_Chapter/document MAIN/sections/}.
+31 items.
+
+\paragraph{Scope.}
+Triangular two-type birth--death (type 1 \(\to\) type 2 conversion) plus
+a global absorbing catastrophe at rate \(\delta_1 X+\delta_2 Y\).
+Observables: no-catastrophe probabilities \(S(t)\) and \(G(t)\), not
+terminal counts. Type 2 is autonomous; type 1 is a forced Riccati that
+linearises to Gauss hypergeometric. Biological reading: early vs adapted
+intracellular \yp{}.
+
+\paragraph{Verdict.}
+This chapter has the other two original statements (exact \(S\), and the
+killed PGF that recovers Antal--Krapivsky). The \emph{method} is Antal and
+Krapivsky (2011). Type-2 \(G\) is one-type linear BDC (Karlin--Tavar\'e /
+Chapter~4). Write the method as inherited; write the object as original.
+
+Verified from AK arXiv:1105.1157: their backward system is this chapter's
+ODEs at \(\delta_1=\delta_2=0\) with PGF data \(x,y\). Survival data
+\(S(0)=G(0)=1\) then force \(S\equiv G\equiv 1\). So \(\delta=0\) in
+\(S,G\) does \emph{not} recover AK. Recovery holds for the killed PGF.
+Li (2024) ``two-type catastrophes'' is a homonym. No published
+\({}_2F_1\) form for type-specific linear catastrophe \(\delta_1 x+\delta_2 y\)
+was found.
+
+\paragraph{Emphasize.}
+\begin{enumerate}
+\item Exact \(S(t)\) (R06) --- original as a statement. Wronskian mix of
+  a real-axis \({}_2F_1\) pair along \(z_2<0\),
+\[
+\widehat S(\hat t)=h-\hat q_2 z_2(\hat t)
+\frac{K_U U'(z_2)+K_V V'(z_2)}{K_U U(z_2)+K_V V(z_2)},
+\]
+with \(U={}_2F_1\), \(V=(-z)^{1-C}{}_2F_1\). Nearest miss: AK
+terminal-count PGF. A lineage that grew early and died can contribute
+more catastrophe exposure than a small lineage that remains alive.
+\item Killed PGF (R23) --- original as a companion. Same mix, data
+  \(x,y\). AK is \(\delta_i=0\) of \emph{this} object.
+\item Method (R05) --- extends AK. Cite AK 2011 and Bender--Orszag. Do
+  not claim a new special-function theory.
+\item \(\lambda_2=0\) Bessel boundary (R18) --- extends. Ordinary
+  \(J_\rho,Y_\rho\) with \(\delta_2>0\) is not AK's modified-Bessel
+  bi-critical PGF.
+\end{enumerate}
+
+\paragraph{Do not claim.}
+Type-2 \(G\), \(\delta_2=0\) type-1, \(\nu=0\) (R04, R15, R19): one-type
+linear BDC. Under-cited. Point at Karlin--Tavar\'e / Chapter~4 \(I(t)\).
+The biological EQ/MAT/GATE/EARLY comparison as a theorem (MAT is a
+working hypothesis).
+
+\itemtable
+\itemhead
+R01 & Two-type BDC process & \ext & AK skeleton + KT/Brockwell killing \\
+R02 & Backward equations & \alr & Standard first-step / branching \\
+R03 & Autonomous type-2 & \ext & Triangular structure is AK \\
+R04 & Closed form for \(G\) & \alr & KT / Ch.~4 \(I(t)\) (one-type BDC) \\
+R05 & Gauss hypergeometric reduction & \ext & AK §§II--III \\
+R06 & Exact finite-time \(S\) & \orig & AK PGF is a different object \\
+R07--R11 & Derivation steps / branch management & \nar & Method of R06 \\
+R12 & Forever-avoidance \(S\to h\) & \ext & \\
+R13 & \(G\to r_{2,-}\) & \ext & \\
+R14 & Equal-rate gap (no independent form) & \ext & Fair negative remark \\
+R15 & \(\delta_2=0\) elementary Riccati & \alr & One-type \\
+R16 & \(\lambda_1=0\) linear integral & \alr & \\
+R17 & Limits catalogue & \ext & \\
+R18 & \(\lambda_2=0\) Bessel mix & \ext & Not AK's \(I_\nu,K_\nu\) \\
+R19 & \(\nu=0\) decoupled & \alr & Two independent one-type BDCs \\
+R20--R21 & Parameter dictionary / scaling & \alr & \\
+R22 & Killed-PGF backward system & \ext & AK (10)--(11) at \(\delta=0\) \\
+R23 & Killed-PGF closed form & \orig & Recovers AK at \(\delta_i=0\) \\
+R24 & Ultimate counts on catastrophe-free paths & \ext & \\
+R25 & Ultimate release law & \ext &
+KT size-at-killing, two-type packaging \\
+R26 & Interpretation stub & \nar & Empty file \\
+R27 & Biological application (four orderings) & \ext &
+EQ/MAT/GATE/EARLY: reading, not identification \\
+R28--R29 & Companion biology extra arguments & \nar & \\
+R30 & Early vs adapted YP phenotypes & \alr & Ke 2013; Pujol--Bliska \\
+R31 & MAT bursting as working hypothesis & \alr &
+Monack 1997; Peters 2013; not a theorem \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+Antal and Krapivsky (2011) solved the triangular two-type birth--death
+process for terminal population counts by reducing a Riccati system to
+Gauss's equation. The present chapter keeps that triangular skeleton and
+that reduction, and changes the observable: a type-specific linear
+catastrophe clock, and the probability that it has not yet fired. Setting
+the catastrophe rates to zero in those survival probabilities does not
+recover Antal--Krapivsky; it recovers them from the killed generating
+function, which is the same mix with PGF data. Type 2 is the classical
+one-type killing probability.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+Intracellular \yp{} is not one type. Conversion (adaptation, Yop
+expression) and loss of macrophage containment can run at different
+per-capita rates. \(S(t)\) is the chance that a lineage started as the
+early type has not yet blown the cell, integrating exposure along the
+whole path --- the right object if catastrophe is ``being seen'' rather
+than ``being extinct.''
+
+% =====================================================================
+\chapter{Chapter 8 --- Bursting and budding pathogenesis}
+\label{ch:8}
+
+\paragraph{Source.} \texttt{CH8\_REWRITE/sections/}. 21 items.
+
+\paragraph{Scope.}
+Does bursting help once immune capacity is depletable? Schedule-alone
+cannot matter (linear rates). Two nonlinear models: intracellular
+replicator--suppressor; extracellular fixed removal. Closed forms, a
+certainty threshold, \(\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}\),
+and reversal of Chapter~6's flooding criterion. The chapter correctly
+says that comparing bursting and budding is not new (Pearson, Komarova).
+
+\paragraph{Verdict.}
+No original statements in the strict sense after adversarial checking:
+every New mark has a mechanism neighbour (Pilyugin--Antia, geometric
+stop-loss, Yuan--Allen ranking-switch, Komarova flooding). The
+constructions and the \(L\)-reversal under a threshold functional are
+still the chapter's contributions. Cite Yuan 2011 and Pilyugin--Antia
+2000, which the chapter currently misses.
+
+\paragraph{Emphasize.}
+\begin{enumerate}
+\item Reversal of the flooding criterion (R17) --- strongest extension.
+  Same matched-mean pair as Chapter~6; functional
+  \(x\mapsto(x-\vartheta)_+\) is convex, so the Chapter~6 variance order
+  \(\propto(L-1)\) \emph{flips} the sign: bursting now helps when
+  \(L<1\). Yuan and Allen (2011) already reverse budding vs bursting
+  under an HIV-style mass-action immune term. Different mechanism,
+  different criterion, but the qualitative published fact is the
+  ranking-switch. The thesis contribution is the complementary \(L\)
+  criterion on the \emph{same pair of laws} as Chapter~6.
+\item \(\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}\) and
+  \(\vartheta^\ast=\log V_\infty/\log a\) (R11--R12). Geometric stop-loss
+  is actuarial folklore. Not found as a BDC burst + integer immune
+  budget.
+\item Replicator--suppressor CTMC (R03) and certainty diagonal
+  (R05--R06). Pilyugin--Antia 2000: finite macrophage pool that
+  \emph{recycles}; their \(P^\ast\) depends on rates. The
+  consume-not-recycle choice makes \(i>j\Rightarrow\) leftover
+  replicators even with no births --- combinatorial, rate-independent.
+\item Two flooding arguments (R18). Batch-count is Komarova's intuition
+  and is elementary. Distributional (two laws, one toll) is R17.
+\end{enumerate}
+
+\paragraph{Do not claim.}
+Bursting vs budding as a question. Finite killing budget as a new
+mechanism. Schedule-alone invariance (R01) as new. YP two-phase as
+\(\vartheta^\ast\)-crossing (R20): Ke 2013 answers the switch with
+temperature / pH / YCV. Replace the flooding placeholder cite with
+Komarova (2007).
+
+\itemtable
+\itemhead
+R01 & Schedule-alone cannot matter & \alr &
+Pearson mean-field; Ch.~6 \(R_0\); Diekmann \\
+R02 & Chained-rupture process & \alr & Ch.~5 laboratory; successive BDC \\
+R03 & Replicator--suppressor process & \ext &
+Pilyugin--Antia 2000 (recycle); Lanchester \\
+R04 & Replicator--suppressor numerics & \ext & \\
+R05 & Certainty threshold \(i>j\) & \ext &
+Combinatorial; Pilyugin vulnerability; Li 2002 neutrophil threshold \\
+R06 & Diagonal law \(\pi_{j,j}\) & \ext &
+Pochhammer product; \(1/(j+1)\) at \(\nu=1\) classical \\
+R07 & Off-diagonal / simulations & \ext & \(\pi_{i,j}\) open in closed form \\
+R08 & Detection avoidance (named, not modelled) & \nar &
+Conway--Ribeiro 2018 \\
+R09 & Fixed-removal model & \ext &
+Komarova flooding; complement consumption; integer-\(\vartheta\)
+caricature \\
+R10 & Geometric burst law (inherited) & \alr & KT / Ch.~4 / Ch.~5 \\
+R11 & \(\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}\) & \ext &
+Geometric stop-loss \\
+R12 & \(\vartheta^\ast=\log V_\infty/\log a\) & \ext & Corollary of R11 \\
+R13 & Subcritical regime created by \(\vartheta\) & \alr &
+\(V_\infty>1\) inherited; commentary \\
+R14 & Numerical \(\vartheta^\ast\) rows & \ext & Illustration \\
+R15 & Subductive proliferation (named, not modelled) & \nar & \\
+R16 & Ch.~6 \(R_0\) / \(L\) recalled & \alr & Ch.~6 \\
+R17 & Flooding criterion \emph{reverses} & \ext &
+Yuan 2011 ranking-switch (different immune); convex order of Ch.~6 \\
+R18 & Two flooding arguments & \ext & Komarova = batch-count \\
+R19 & Selection on the bursting--budding spectrum & \ext &
+Komarova; Wang lysis-timing; Ch.~6 spectrum \\
+R20 & YP two-phase as threshold-crossing & \ext\ (weak) &
+Ke 2013 temperature cue, not \(\vartheta^\ast\) \\
+R21 & Verification tables & \nar & 0 sign errors on reversal \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+Pearson, Komarova, and Yuan and Allen already compared bursting and
+budding. What is missing from those comparisons, and from Chapter~6's
+linear-clearance flooding theorem, is a finite killing budget. Two
+caricatures are introduced. Intracellularly, unreplenished one-to-one
+annihilation (cf.\ Pilyugin and Antia, who recycle killers) produces a
+rate-independent certainty threshold. Extracellularly, an integer toll
+on the geometric BDC burst yields
+\(\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}\). Because
+\(x\mapsto(x-\vartheta)_+\) is convex, Chapter~6's \(L\) criterion
+reverses. Yuan and Allen (2011) already found a ranking-switch under
+mass-action immunity; the present reversal is the complementary
+criterion on the same BDC/budding pair.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+Macrophage granules and extracellular complement are depletable. Linear
+clearance (Chapter~6) cannot see a safety-in-numbers threshold. Whether
+bursting helps then depends on \emph{which functional} one puts on the
+same two offspring laws --- the point of R17--R18, and the reason
+Komarova's unconditional flooding must not be copied.
+
+% =====================================================================
+\chapter{Chapter 9 --- Variability in evolution}
+\label{ch:9}
+
+\paragraph{Source.} \texttt{CH9/document MAIN/sections/}. 17 items.
+No numbered theorem environments.
+
+\paragraph{Scope.}
+High early diversification after ecological relief as a mechanistic
+variable-rate phenomenon, not only Nee's push-of-the-past sampling
+artefact. Core: no-death time-inhomogeneous Yule whose speciation rate
+tracks logistic \emph{individual} abundance. Then speculative models:
+Pimentel genetic feedback, rise--run--ruin--rejuvenation, birth--plague,
+vitality.
+
+\paragraph{Verdict.}
+No original statements. Diversity-dependent diversification (DDD) and
+time-dependent Yule/birth--death are a mature literature. The chapter's
+claim that ``nobody has published a logistic version'' is false
+(Sepkoski; Rabosky DDL; Etienne--Haegeman DDD). A no-death Yule cannot
+test POTPa, which requires extinction and conditioning on survival. Pull
+of the present is title-only.
+
+\paragraph{Emphasize (weakly).}
+\begin{enumerate}
+\item Logistic-individual Yule (R03). \(N(t)\) is a deterministic
+  individual logistic; \(Y\) is an ordinary inhomogeneous Yule (Kendall
+  1948). DDD puts \(\lambda(n)\propto 1-n/K\) on \emph{species} count.
+  The two-layer unused-capacity coupling is the only residual
+  distinction. Not a new process class.
+\item Pimentel Moran + minority-resistance kernel (R08--R10). Still in
+  the Pimentel--Levin--Pease genetic-feedback class. Simulations show
+  reversal-to-fixation, not Pimentel's missing oscillation. Unfinished.
+\item RRRR and birth--plague (R13, R15). Assemblies of BDC+immigration
+  and SI-with-sparking. Present as exploratory models, not results.
+\end{enumerate}
+
+\paragraph{Do not claim.}
+A new alternative to Nee 1994 (the last two decades of DDD vs
+time-dependent BD vs POTPa \emph{are} that alternative). The explicit
+mean \(e^{\sigma Kt}((\xi+1)/(\xi+e^{rt}))^{\sigma K/r}\) as a named
+discovery (three-line specialisation of Kendall). PGF / geometric
+occupancy (R06--R07): Kendall. Punctuated-equilibria theorem (R01).
+
+\itemtable
+\itemhead
+R01 & Relaxed-selection punctuated equilibria & \ext\ (hypothesis) &
+Eldredge--Gould; Newman--Cohen--Kipnis 1985; Yoder; Lahti \\
+R02 & POTPa vs variable-rate origination & \alr\ (as a question) &
+Nee et al.\ 1994; Budd--Mann 2018; DDD literature \\
+R03 & Logistic-speciation Yule & \ext\ (barely) &
+Kendall TD-Yule; Sepkoski; Rabosky/Etienne DDD on species; Hubbell \\
+R04 & Ensemble slowdown figure & \alr\ (as a pattern) &
+Generic to declining \(\lambda\); Pannetier TD\(\equiv\)DD for LTT \\
+R05 & Logistic-Yule mean & \alr &
+Kendall \(\exp\int\lambda\); elementary integral \\
+R06 & Logistic-Yule PGF & \alr & Kendall inhomogeneous Yule PGF \\
+R07 & Occupancy distribution & \alr & Geometric / Kendall \\
+R08 & Pimentel Moran+resistance & \ext & Pimentel; Levin; Pease \\
+R09 & Reversal and divergence & \ext & Reversal shown, not oscillation \\
+R10 & Critical saddle & \ext & \\
+R11 & Cellular automaton & \ext & Illustration of R08 \\
+R12 & Pimentel + variation collapse & \ext & Unfinished \\
+R13 & Rise--run--ruin--rejuvenation & \ext & Assembly of known pieces \\
+R14 & RRRR cyclic realisations & \nar & Figures \\
+R15 & Birth--plague model & \ext & BDC+immigration; SI with demography \\
+R16 & Birth--plague realisations & \nar & Figures \\
+R17 & Vitality birth--plague & \nar & Vitality never enters the rates \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+Nee, May and Harvey (1994) showed that apparent early bursts can be a
+sampling artefact of constant-rate birth--death conditioned on survival.
+Diversity-dependent and time-dependent speciation models are the existing
+mechanistic alternatives. The model used here is a no-death Yule whose
+rate tracks unused \emph{individual} capacity (Kendall 1948 with a
+logistic clock). It cannot adjudicate push of the past, which requires
+extinction. It is offered as a simple variable-rate illustration, not as
+a new alternative to that literature.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+The thesis's interest is whether \yp{} (and large clades generally) can
+show genuinely elevated origination after ecological relief, rather than
+only a conditioned-BD illusion. That question is real (Budd and Mann).
+This chapter does not yet have a model that can answer it, because the
+analytic core has no death.
+
+% =====================================================================
+\chapter{Chapter 10 --- Conclusion: evolved strategy of \yp{}}
+\label{ch:10}
+
+\paragraph{Source.} \texttt{CH10/document MAIN/sections/}. 15 items.
+No numbered theorems. (Source title: Chapter~8.)
+
+\paragraph{Scope.}
+Why \yp{} uses a two-phase invasion: macrophage then extracellular /
+anti-phagocytic. Conserved-replicative-density mean invariance as a foil;
+two-phase within-host branching embedded in a host-to-host
+Galton--Watson; ``quadrant'' death-rate argument and a
+neutrophil-fraction threshold; speculative public-good accumulation
+inside a macrophage.
+
+\paragraph{Verdict.}
+No original statements. The biology of the switch is Cavanaugh /
+Pujol--Bliska / Ke 2013 (temperature, phagosomal pH, YCV --- not a
+neutrophil fraction). The nested BDC\(\to\)BD\(\to\)GW chain is an
+application of Antia--Pearson--Gilchrist nested epidemiology plus
+Kendall. The public-good model is flagged speculation. Emphasize as
+synthesis and application. Do not present \(p_N\) as an evolutionary
+theorem.
+
+\paragraph{Emphasize (as application).}
+\begin{enumerate}
+\item Macrophage boost is not conserved-potential (R03). Appendix-B / R01
+  says front-loading birth at fixed total potential does not raise
+  expected size. The plague strategy is \emph{not} that comparison: the
+  macrophage is a different environment. R01 does not kill RQ1.
+\item Nested BDC \(\to\) slightly supercritical BD \(\to\) binary
+  host-to-host GW (R06, R08). Architecture is Antia et al.\ 2003 /
+  Pearson / Gilchrist. Algebra is Kendall \((\nu/\beta)^N\) mixed over
+  the burst size. The displayed \(\mathbb{E}[Z]\) likely has a
+  parenthesis error (should be \(2(1-p_0)\)).
+\item Public-good accumulation (R13, R15). Neighbours: Asker et al.\
+  2023; siderophores / yersiniabactin. Known resistance is PhoP/Q, RovA,
+  YCV. Inoculum \(K\) (R14) is not computed. Keep as a possible
+  mechanism, not a result.
+\end{enumerate}
+
+\paragraph{Do not claim.}
+Mean invariance under conserved replicative density (R01) --- Kendall;
+Pearson conserved-yield. Two-phase pathogenesis (R04, R11) --- Cavanaugh
+1959; Ke 2013. Neutrophil-fraction threshold \(p_N\) (R12): elementary
+rearrangement; Ke already answers the switch with temperature; reduced
+form as written has a \textbf{sign error} under
+\(\mu_N>\mu_E>\mu_M\). Intended threshold is
+\((\mu_E-\mu_M)/(\mu_N-\mu_M)\). Two-phase PGF (R07) --- branching
+property.
+
+\itemtable
+\itemhead
+R01 & Conserved-replicative-density mean invariance & \alr &
+Kendall 1948; Pearson 2011 conserved yield \\
+R02 & Exceptions (non-conservation; Matthew effect) & \nar &
+Named, not developed \\
+R03 & Macrophage boost \(\neq\) conserved-potential & \ext\ (remark) &
+Cavanaugh; Pujol--Bliska; Ke 2013 \\
+R04 & Two-phase pathogenesis argument & \alr & Same \\
+R05 & Phage-adaptation decaying extracellular death & \ext &
+Speculative mechanism \\
+R06 & Host-to-host GW embedding & \ext\ (application) &
+Whittle/Bartlett; Antia 2003; Pearson; Gilchrist--Sasaki \\
+R07 & Two-phase PGF & \alr & Branching property \\
+R08 & BDC-to-BD extinction and \(\mathbb{E}[Z]\) & \ext\ (weak) &
+Kendall \((\nu/\beta)^N\); check parenthesis \\
+R09 & Four within-host variants & \ext & Comparison, not a theorem \\
+R10 & Numerical: \(\delta\) controls burst size and \(\mathbb{E}[Z]\) &
+\alr\ (as a lesson) & Haldane/Kendall near-critical founder plot \\
+R11 & Quadrant rate ordering & \alr & Standard \(\mu_N>\mu_E>\mu_M\) \\
+R12 & Neutrophil-fraction threshold \(p_N\) & \alr\ (caricature of Ke) &
+Ke 2013 temperature cue; \textbf{sign error} \\
+R13 & Public-good accumulation model & \ext\ (speculation) &
+Asker 2023; siderophores; local public goods \\
+R14 & Critical inoculum \(K\) & \nar & Not computed \\
+R15 & Confined public good as group advantage & \ext\ (speculation) &
+Nadell/Drescher/Foster \\
+\end{longtable}
+
+\paragraph{Suggested wording.}
+\begin{quote}
+The mean-invariance result of the branching appendix is Kendall's: at
+conserved replicative potential, front-loading birth does not raise
+expected size. That comparison is the wrong one for \yp{}. The macrophage
+is a different environment, not a rearrangement of the same potential
+(Cavanaugh 1959; Ke, Chen and Yang 2013). Embedding a BDC intracellular
+burst in a slightly supercritical extracellular birth--death process, and
+that in a host-to-host Galton--Watson process, is the standard
+nested-epidemic construction (Antia et al.\ 2003; Pearson et al.\ 2011)
+applied to this pathogen. The neutrophil-fraction threshold is a
+caricature of a switch the experimental literature attributes to
+temperature and vacuolar cues, not to leukocyte proportions.
+\end{quote}
+
+\paragraph{Why it matters biologically.}
+RQ1 of the thesis. The strategy is real and famous. The mathematical work
+that bears on it is: (i)~near-critical founder sensitivity (Chapters~1
+and~10, classical); (ii)~BDC burst size as the macrophage dump
+(Chapters~4--5, mostly KT plus \(W_t\)); (iii)~whether bursting then
+helps against depletable neutrophils/complement (Chapter~6 \(L\),
+Chapter~8 reversal). The conclusion should point at those, not at
+\(p_N\).
+
+\end{document}
