@@ -1,0 +1,2004 @@
+% ============================================================================
+%  main.tex --- Every Markov model in the thesis, extracted and specified.
+%
+%  Source: full_draft_thesis/main.pdf ("Stochastic models of early Yersinia
+%  pestis infection", Adam Aldridge, Leeds, September 2026 working draft).
+%  Compiled from the chapter sources under full_draft_thesis/chapters/.
+%
+%  Compile from this directory:  latexmk -pdf main.tex
+%
+%  Self-contained: no thesis macros or preamble required. Thesis \label{}
+%  keys are quoted as stable identifiers next to each result.
+% ============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{microtype}
+
+\newcommand{\PR}{\mathbb{P}}
+\newcommand{\EX}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Ind}{\mathbf{1}}
+\newcommand{\Lap}{\mathcal{L}}      % Laplace transform
+\newcommand{\Rst}{\mathsf{R}}       % two-type absorbing marker
+\newcommand{\Geom}{\operatorname{Geom}}
+\newcommand{\Exp}{\operatorname{Exp}}
+
+\setlist[itemize]{leftmargin=1.4em,itemsep=1pt,topsep=2pt}
+
+\title{Every Markov model in the thesis\\[4pt]
+\large A complete extraction and specification, chapter by chapter}
+\author{Extracted from \textit{Stochastic models of early \textit{Yersinia pestis} infection}\\
+(full draft, September 2026)}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent This document extracts every stochastic model with Markovian
+dynamics that is defined or substantially used in the thesis, and specifies
+each one in a uniform format: class, state space, transition structure
+(rates or probabilities), parameters, initial conditions, principal closed
+forms, and location in the thesis (chapter, section, and \texttt{label}
+key). Thirty-eight numbered models are catalogued, together with four
+general frameworks (discrete- and continuous-time Markov chains,
+time-inhomogeneous chains, and coupled ODE--CTMC systems) and a short
+account of the solution methods the thesis builds around them. Deterministic
+companions (mean-field equations, maps, and limits) are included where they
+carry a Markov model's exact first moments or serve as its comparator, and
+are flagged as such. The document is self-contained and uses standard
+notation; the thesis's own \texttt{label} keys are quoted so every entry can
+be traced to its source.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================================
+\section{Scope, method, and how to read an entry}
+\label{sec:scope}
+% ============================================================================
+
+\paragraph{What counts as a model here.} An entry is included if the thesis
+endows a stochastic process with an explicit transition structure --- a
+transition matrix, a list of infinitesimal transition rates, an offspring
+distribution, or jump rules of an individual-based system --- or if it is a
+deterministic object that carries the exact first moments of such a process
+(the burst-aware renewal system) or serves as its named comparator (the
+basic model of viral replication, the logistic map). Deterministic,
+non-Markovian entries are flagged \textbf{[D]} in their class line. Purely
+analytic machinery with no process attached (the hypergeometric integral
+identity of Appendix 2.C, coefficient extraction of Appendix 2.D, the
+Koenigs function theory) is recorded inside the model entries it serves,
+not as a model of its own.
+
+\paragraph{Source.} All material comes from the stitched draft
+\texttt{full\_draft\_thesis/main.pdf}, read from its LaTeX chapter sources
+(\texttt{chapters/ch01}--\texttt{ch10}). Because the thesis cross-references
+by \texttt{label} key rather than printed number, each entry cites the
+stable keys (e.g.\ \texttt{bdc:thm:I}, \texttt{dist:thm:qsd}); printed
+numbers are avoided except where the conclusion chapter fixes them.
+
+\paragraph{Entry format.} Every model entry follows the same sheet:
+\begin{itemize}
+  \item \textbf{Class} --- DTMC, CTMC, branching process, PDMP, automaton,
+    or \textbf{[D]} deterministic companion;
+  \item \textbf{State space} --- exactly as the thesis gives it;
+  \item \textbf{Dynamics} --- the defining transition probabilities or
+    rates, in the thesis's own equations (house macros normalised to
+    $\PR,\EX,\Var$);
+  \item \textbf{Parameters} --- symbols and meaning;
+  \item \textbf{Initial conditions};
+  \item \textbf{Principal results} --- the key closed forms and laws
+    derived for the model, with thesis \texttt{label} keys;
+  \item \textbf{Location and connections} --- where it lives and how it
+    relates to the other entries.
+\end{itemize}
+
+\paragraph{Notation.} $\PR,\EX,\Var,\Cov$ have their usual meaning;
+$\Exp(\theta)$ is an exponential holding time; $\Lap f(r)=\int_0^\infty
+\ee^{-r\alpha}f(\alpha)\dd\alpha$ is a Laplace transform; $\Ind\{\cdot\}$ an
+indicator. For the central BDC process the thesis's derived constants are
+used throughout: with
+\[
+\eta=\frac{\lambda+\mu+\delta}{2\lambda},\qquad
+a=\eta+\sqrt{\eta^{2}-\tfrac{\mu}{\lambda}},\qquad
+b=\eta-\sqrt{\eta^{2}-\tfrac{\mu}{\lambda}},
+\]
+\[
+A:=a-1,\qquad B:=1-b,\qquad \theta:=\lambda(a-b),\qquad
+\kappa:=1+\frac{\delta}{2\lambda},\qquad w:=\ee^{\theta t},
+\]
+so that $b<1<a$, $ab=\mu/\lambda$, $A+B=a-b$ and $AB=\delta/\lambda$
+(\texttt{bdc:lem:roots}). The symbol $L=a(1-b)=a-\mu/\lambda$ is the
+flooding parameter of Chapter 6. $\Rst$ denotes the two-type chapter's
+marker for the absorbing catastrophe state.
+
+\paragraph{The spine.} One process organises the collection: the linear
+birth--death--catastrophe process (M6) is defined in Chapter 2, solved in
+Chapter 4, given full distribution theory in Chapter 5, lifted to the
+population level in Chapter 6, extended to two types in Chapter 7, and
+passed through selection functionals in Chapter 8. Around it sit the
+discrete-time Galton--Watson branch (M2), the classical chains of the
+mathematical introduction (M1, M3--M5), the two-compartment absorption
+family (M13--M15), and the non-constant-rate models of Chapter 9.
+
+% ============================================================================
+\section{Master inventory}
+% ============================================================================
+
+{\small
+\begin{longtable}{@{}p{0.9cm}p{4.3cm}p{2.6cm}p{2.2cm}p{4.6cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Model} & \textbf{Class} & \textbf{Chapter} &
+\textbf{Defining feature / role} \\
+\midrule
+\endhead
+F1 & Discrete-time Markov chain & framework & 2 & $P_{ij}$, Chapman--Kolmogorov \\
+F2 & Continuous-time Markov chain & framework & 2 & generator $q_{ij}$, exponential clocks \\
+F3 & Time-inhomogeneous CTMC & framework & 2 & $Q(t)$, Kolmogorov equations \\
+F4 & Coupled ODE--CTMC (PDMP) & framework & 2 & joint generator, three coupling types \\
+\midrule
+M1 & Random walk / gambler's ruin & DTMC & 2 & $P_{i,i\pm1}$; ruin probabilities \\
+M2 & Galton--Watson (binary) & DTMC branching & 1--3 & offspring $p_2=p$; $A(p)$, Koenigs \\
+M3 & Poisson process & CTMC & 2 & $q_{n,n+1}=\alpha$ \\
+M4 & Yule process & CTMC & 1, 2 & $q_{n,n+1}=\lambda n$ \\
+M5 & Linear birth--death process & CTMC & 1, 2 & $\lambda n,\mu n$; Kendall solution \\
+M6 & Birth--death--catastrophe (BDC) & CTMC & 2, 4, 5 & $\lambda n,\mu n,\delta n\!\to\!H$; the spine \\
+M7 & Discrete-generation catastrophe & DTMC variant & 2 & per-generation hazard $\chi$; Jensen gap \\
+M8 & Inhomogeneous linear BD & CTMC, $Q(t)$ & 2 & $\lambda(t),\mu(t)$; Riccati \\
+M9 & Seasonal Lotka--Volterra & 2-pop.\ CTMC & 2 & periodic prey birth $\mathcal S^+(t)$ \\
+M10 & Logistic speciation & nonhom.\ Yule & 2, 9 & $\beta(t)=\sigma(K-N(t))$ \\
+M11 & Gated release & PDMP & 2 & gate opens at rate $\eta A_t$ \\
+M12 & Surging gated release & PDMP & 2 & gate opens at rate $\nu$ \\
+M13 & Absorption-only & bivariate CTMC & 2 & uptake $\alpha$ only \\
+M14 & Absorption--death & bivariate CTMC & 2 & uptake $\alpha$, death $\mu$ \\
+M15 & Absorption--birth--death & bivariate CTMC & 2 & $+$ interior BD; novel pgf \\
+\midrule
+M16 & Chained immediate transfer ($\mu=0$) & chained CTMC & 5, 8 & burst founds next cell \\
+M17 & Budding comparator cell & two-stream Poisson & 5, 6 & release $p$, death $d_I$ \\
+\midrule
+M18 & Basic model of viral replication & \textbf{[D]} ODE & 1, 6 & $\dot I=\gamma TV-d_II$, $\dot V=pI-cV$ \\
+M19 & Within-host population process & CTMC population & 6 & BDC cells $+$ virion infect/clear \\
+M20 & Burst-aware renewal system & \textbf{[D]} exact means & 6 & $I=I_0\hat I+(i*\hat I)$, $V'=I_0g+(i*g)-cV$ \\
+M21 & Effective-parameter projection & \textbf{[D]} map & 6 & $p_{\rm eff}(r)$, $d_{I,\rm eff}(r)$ \\
+M22 & Generation kernel (Euler--Lotka) & \textbf{[D]} functional & 6 & $\mathcal A(\alpha)$; $R_0=\gamma TV_\infty/c$ \\
+M23 & Establishment branching process & GW offspring & 6 & burst vs bud offspring; flooding $L$ \\
+M24 & Invasion-speed comparison & \textbf{[D]} & 6 & $r_{\rm bud}>r_{\rm burst}$; Laplace order \\
+M25 & Reset process & CTMC $+$ death & 6 & dumps to $0$ at rate $\delta n$, cell dies $d_I$ \\
+M26 & Partial-release stock model & \textbf{[D]} mean-field & 6 & boolean thinning $\varphi$; stock $Q$ \\
+M27 & HIV skeleton variant & specification & 6 & Allee incidence, Erlang eclipse \\
+\midrule
+M28 & Two-type catastrophe process & 2-type CTMC & 7 & $\lambda_i,\mu_i,\nu$; $\delta_1x+\delta_2y\to\Rst$ \\
+\midrule
+M29 & Replicator--suppressor & nonlinear CTMC & 8 & birth $\lambda i$, kill $\varsigma ij$ \\
+M30 & Playing-field particle model & spatial simulation & 8 & Brownian; killers used up \\
+M31 & Fixed-removal ratio model & functional on M6 & 8 & $\mathcal R(\vartheta)=V_\infty a^{-\vartheta}$ \\
+\midrule
+M32 & Pimentel competition chain & path-dep.\ DTMC & 9 & moving unstable critical point \\
+M33 & Pimentel$+$ & specification & 9 & fitness $+$ species BD coupling \\
+M34 & Rise, run, ruin, rejuvenation & CTMC $+$ ODE & 9 & catastrophe $\delta X_t/V(t)$ \\
+M35 & Multiplicative dissipation & stochastic CA & 9 & torus $256^2$; fragmentation $\delta X_i/V_i$ \\
+M36 & Birth--plague ($+$ vitality) & two-type CTMC & 9 & bilinear infection $\chi X_tY_t$ \\
+M37 & Public good accumulation & CTMC $+$ ODE & 9 & $\lambda(t)=\lambda_0+\alpha P(t)$ \\
+\midrule
+M38 & Quadrant argument & \textbf{[D]} comparison & 10 & threshold $p_N^*=(\mu_E-\mu_M)/(\mu_N-\mu_M)$ \\
+\bottomrule
+\end{longtable}
+}
+
+% ============================================================================
+\section{Frameworks (Chapter 2)}
+% ============================================================================
+
+The mathematical introduction defines four general containers before any
+instance; every catalogue entry is an instance of one of them.
+
+\subsection*{F1 --- Discrete-time Markov chain (\texttt{m:sec:dtmc})}
+Time-homogeneous DTMC on a countable $\mathcal S$ with
+\[
+\PR{X_{n+1}=j\mid X_n=i,X_{n-1},\ldots,X_0}
+=\PR{X_{n+1}=j\mid X_n=i}=:P_{ij}
+\qquad\text{(\texttt{m:eq:dtmarkov})}
+\]
+and the Chapman--Kolmogorov composition
+$(P^{n+m})_{ij}=\sum_k (P^n)_{ik}(P^m)_{kj}$
+(\texttt{m:eq:chapmankolmogorov}). Absorbing states have $P_{ii}=1$.
+
+\subsection*{F2 --- Continuous-time Markov chain (\texttt{m:sec:ctmc})}
+Generator
+\[
+q_{ij}=\lim_{\Delta t\downarrow0}\frac{\PR{X_{t+\Delta t}=j\mid X_t=i}}{\Delta t}\quad(j\ne i),
+\qquad q_{ii}=-\sum_{j\ne i}q_{ij}=:-q_i
+\qquad\text{(\texttt{m:eq:generator})}
+\]
+so $\PR{X_{t+\Delta t}=j\mid X_t=i}=q_{ij}\Delta t+o(\Delta t)$; state $i$
+is absorbing iff $q_i=0$. Holding times are exponential
+(\texttt{m:eq:expdef}); the competing-clocks proposition
+(\texttt{m:prop:race}) gives $\min_k T_k\sim\Exp(\sum_k\theta_k)$ with
+$\PR{T_k\text{ wins}}=\theta_k/\sum\theta_k$, and its consequence is
+Gillespie's direct method (\texttt{m:rem:gillespie}).
+
+\subsection*{F3 --- Time-inhomogeneous CTMC (\texttt{m:sec:inhomogeneous})}
+Two-time kernels $p_{ij}(s,t)$ with matrix Kolmogorov equations
+\[
+\partial_t P(s,t)=P(s,t)Q(t),\qquad \partial_s P(s,t)=-Q(s)P(s,t)
+\qquad\text{(\texttt{m:eq:inhomogkolmogorov})}.
+\]
+
+\subsection*{F4 --- Coupled ODE--CTMC systems / PDMPs (\texttt{m:sec:coupled})}
+Continuous state $\mathbf y\in\mathbb R^d$, discrete mode $M_t\in\mathcal S$,
+joint generator
+\[
+(\mathcal Lf)(\mathbf y,i)
+=F(\mathbf y,i)\cdot\nabla_{\mathbf y}f(\mathbf y,i)
++\sum_{j\ne i}q_{ij}(\mathbf y)\bigl[f(\mathbf y,j)-f(\mathbf y,i)\bigr]
+\qquad\text{(\texttt{m:eq:coupledgenerator})}
+\]
+with three coupling types: (i) autonomous chain switches the vector field;
+(ii) a prescribed trajectory drives the rates,
+$q_{ij}(t)=q_{ij}(\mathbf y(t))$; (iii) two-way coupling. Holding-time law
+for simulation: $\PR{T>s\mid\mathbf y_t,M_t=i}
+=\exp\{-\int_t^s q_i(\mathbf y_u)\dd u\}$ (\texttt{m:eq:coupledholding}).
+
+% ============================================================================
+\section{Catalogue, part I --- the mathematical introduction (Chapters 1--2)}
+% ============================================================================
+
+Chapter 1 (\S1.4) introduces the binary Galton--Watson process, the Yule
+process, the standard birth--death process and the birth--death--catastrophe
+process informally through their infinitesimal rates; the formal definitions
+are those of Chapter 2 reproduced below, and \S1.6 introduces the
+deterministic BMVR (M18). The entries below give the formal specifications.
+
+% ---------------------------------------------------------------
+\subsection{M1 --- Simple random walk and gambler's ruin}
+\label{sec:M1}
+
+\paragraph{Class.} DTMC on the integers.
+
+\paragraph{State space.} $\mathbb Z$; for the ruin problem
+$\{0,1,\ldots,M\}$ with $0,M$ absorbing.
+
+\paragraph{Dynamics.}
+\[
+P_{i,i+1}=q,\qquad P_{i,i-1}=1-q
+\qquad\text{(\texttt{m:eq:rwrates})}.
+\]
+
+\paragraph{Parameters.} $q\in(0,1)$, symmetric at $q=\tfrac12$; initial
+state $X_0$ deterministic.
+
+\paragraph{Initial conditions.} $X_0=i$.
+
+\paragraph{Principal results.} $\EX{X_n}=X_0+n(2q-1)$, $\Var{X_n}=4nq(1-q)$
+(\texttt{m:eq:rwmoments}); with $R\sim\operatorname{Bin}(n,q)$,
+$X_n=X_0+2R-n$ (\texttt{m:eq:rwlaw}). Hitting probability of $M$ before $0$,
+via the first-step relation $h_i=qh_{i+1}+(1-q)h_{i-1}$, $h_0=0$, $h_M=1$
+(\texttt{m:eq:gamblersruin}):
+\[
+h_i=\frac{1-\theta^i}{1-\theta^M}\ \ (\theta=\tfrac{1-q}{q}\ne1),
+\qquad h_i=\frac{i}{M}\ \ (q=\tfrac12).
+\]
+
+\paragraph{Location and connections.} Chapter 2, \S2.2.1
+(\texttt{m:sec:randomwalk}). Elementary instance of the first-step
+principle (\texttt{m:prop:firststep}); the embedded jump chain of the linear
+birth--death process M5 with $q=\lambda/(\lambda+\mu)$
+(\texttt{m:eq:embedded}).
+
+% ---------------------------------------------------------------
+\subsection{M2 --- Galton--Watson branching process (binary specialisation)}
+\label{sec:M2}
+
+\paragraph{Class.} Discrete-time Galton--Watson branching process; ``the
+principal discrete-time process in this thesis''.
+
+\paragraph{State space.} $Z_n\in\{0,1,2,\ldots\}$, population census;
+$0$ absorbing.
+
+\paragraph{Dynamics.} $Z_0=1$; each of the $Z_n$ individuals independently
+leaves an iid number of offspring $L$ with $\PR{L=k}=p_k$,
+\[
+Z_{n+1}=\sum_{i=1}^{Z_n}L_i
+\qquad\text{(\texttt{m:eq:gwrecursion})}.
+\]
+Binary specialisation used throughout (\texttt{m:eq:binarylaw}): replicate
+with probability $p$, die with probability $1-p$,
+\[
+p_2=p,\qquad p_0=1-p,\qquad p_k=0\ (k\notin\{0,2\}),\qquad
+\phi(z)=\EX{z^L}=pz^2+(1-p).
+\]
+
+\paragraph{Parameters.} $p\in(0,1)$; mean offspring $m=\EX{L}=2p$;
+regimes subcritical/critical/supercritical according as $2p\lessgtr1$.
+Chapter 3 writes $\varepsilon:=1-2p$ for the distance from criticality.
+
+\paragraph{Initial conditions.} $Z_0=1$ (single founder); cohort version
+$Z_0=k$ via independence.
+
+\paragraph{Principal results.}
+\begin{itemize}
+\item \emph{PGF iteration} (\texttt{m:eq:gwcomposition}): $\phi_{n+1}=
+  \phi_n\circ\phi$, $\phi_0(z)=z$, hence $\EX{Z_n}=(2p)^n$.
+\item \emph{Extinction/survival recursions} (\texttt{m:eq:unrec},
+  \texttt{eq:SnIter}): with $u_n=\PR{Z_n=0}$, $S_n=1-u_n$,
+  \[
+  u_{n+1}=(1-p)+pu_n^2=\phi(u_n),\qquad
+  S_{n+1}=2pS_n-pS_n^2,\qquad S_0=1.
+  \]
+  Fixed points $0$ and $S_\infty=(2p-1)/p$ (positive only for $p>\tfrac12$;
+  extinction certain otherwise).
+\item \emph{The constant $A(p)$} (\texttt{m:eq:Apdef},
+  \texttt{eq:Ap-def-main}, \texttt{eq:Sn-asymp}), for $0<p<\tfrac12$:
+  \[
+  S_n\sim A(p)\,(2p)^n,\qquad
+  A(p)=\lim_{n\to\infty}\frac{S_n}{(2p)^n}
+  =\frac12\prod_{k=1}^{\infty}\Bigl(1-\frac{S_k}{2}\Bigr),
+  \]
+  with endpoint $A(0)=\tfrac12$.
+\item \emph{Yaglom (quasi-stationary) limits}
+  (\texttt{m:eq:qsmean}, \texttt{eq:condvar}):
+  \[
+  \lim_{n\to\infty}\EX{Z_n\mid Z_n>0}=\frac{1}{A(p)},\qquad
+  \lim_{n\to\infty}\Var{Z_n\mid Z_n>0}
+  =\frac{1}{A(p)}\Bigl(1+\frac{1}{1-2p}\Bigr)-\frac{1}{A(p)^2}.
+  \]
+\item \emph{Critical power laws} (\S critical endpoint, Ch.~3):
+  $S_n\sim 2/n$, $\PR{T_{\rm extinct}=n}\sim2/n^2$, total progeny tail
+  $\PR{\mathcal T=n}\sim n^{-3/2}$.
+\item \emph{Near-critical asymptotics}
+  (\texttt{sec:nearcrit}, \texttt{eq:nearcrit-profile}):
+  \[
+  A(p)\sim2\varepsilon=2(1-2p),\qquad
+  S_n\simeq\frac{2\varepsilon}{\ee^{\varepsilon n}-1},\qquad
+  \EX{Z_n\mid Z_n>0}\sim\frac{1}{2\varepsilon},\qquad
+  \Var{Z_n\mid Z_n>0}\sim\frac{1}{4\varepsilon^2}.
+  \]
+\item \emph{Koenigs identification} (Ch.~3 \texttt{def1},
+  \texttt{gw:thm:main}): the rescaling $S_n=2w_n$, $r=2p$ turns
+  \texttt{eq:SnIter} into the logistic map
+  $w_{n+1}=rw_n(1-w_n)$, $w_0=\tfrac12$, $0<r<1$, and
+  \[
+  A(p)=2\psi_{2p}\bigl(\tfrac12\bigr),
+  \qquad \psi(f_r(z))=r\psi(z),\ \psi(0)=0,\ \psi'(0)=1,
+  \]
+  with $\psi_r(z)=\lim_{n\to\infty}r^{-n}f_r^{\circ n}(z)$. Theorem
+  \texttt{gw:thm:main}: $\psi$ is hypertranscendental for every $0<r<1$
+  (via Becker--Bergweiler \texttt{thm:bb} and Lemma \texttt{lem:inverse});
+  consequently no elementary formula for $A(p)$ exists through this route.
+\item \emph{Cohort version} (Appendix 2.A, \texttt{m:eq:Snk}): from $k$
+  founders, $S_n^{(k)}=1-u_n^k$; establishment probability
+  $1-\bigl((1-p)/p\bigr)^k$ for $p>\tfrac12$, zero at or below criticality.
+\item \emph{Computation} (Ch.~3): ratio monitor, truncation bound, stopping
+  rule $S_N\le2\delta(1-2p)$, cost $N\approx\varepsilon^{-1}\ln(1+1/\delta)$,
+  and the hybrid estimator switching to $A\approx2-4p$ near criticality.
+\end{itemize}
+
+\paragraph{Location and connections.} Introduced informally in Chapter 1
+\S1.4; formal definition \S2.2.1 (\texttt{m:sec:gw}); analysed in depth in
+Chapter 3 (\texttt{gw:ch:galton-watson}), including the formula search
+(\texttt{sec:search}) and visual Koenigs geometry. Continuous-time
+counterpart constant $A_c$ of M5. Its offspring-pgf fixed point
+$s=\phi(s)$ appears in the first-step section (\texttt{m:eq:extinctionfixedpoint}).
+
+% ---------------------------------------------------------------
+\subsection{M3 --- Poisson process}
+
+\paragraph{Class.} CTMC counting process.
+
+\paragraph{State space.} $\{0,1,2,\ldots\}$, no absorbing state.
+
+\paragraph{Dynamics.} $q_{n,n+1}=\alpha$ for $n\ge0$
+(\texttt{m:eq:poissonrates}).
+
+\paragraph{Parameters.} $\alpha>0$ event rate. Initial $N_0=0$.
+
+\paragraph{Principal results.}
+$\PR{N_t=n}=\ee^{-\alpha t}(\alpha t)^n/n!$ with mean and variance $\alpha t$
+(\texttt{m:eq:poissonlaw}); thinning (keep each event independently with
+probability $\varpi$) gives rate $\varpi\alpha$ --- the basis for simulating
+time-dependent rates.
+
+\paragraph{Location and connections.} \S2.2.2 (\texttt{m:sec:poisson}).
+Building block of M17 (two independent streams) and of the thinning method
+used for M9 and F3-type rates.
+
+% ---------------------------------------------------------------
+\subsection{M4 --- Yule process (standard birth process)}
+
+\paragraph{Class.} CTMC, linear pure birth.
+
+\paragraph{State space.} $\{1,2,\ldots\}$ (no death, no absorption below the
+initial count).
+
+\paragraph{Dynamics.} $q_{n,n+1}=\lambda n$, $n\ge1$
+(\texttt{m:eq:yulerates}).
+
+\paragraph{Parameters.} $\lambda>0$ per-capita birth rate; single founder
+initial condition.
+
+\paragraph{Principal results.} Geometric law with exponential parameter
+(\texttt{m:eq:yulelaw}):
+\[
+\PR{Y_t=n}=\ee^{-\lambda t}\bigl(1-\ee^{-\lambda t}\bigr)^{n-1},\qquad
+\EX{Y_t}=\ee^{\lambda t},\qquad
+\Var{Y_t}=\ee^{\lambda t}\bigl(\ee^{\lambda t}-1\bigr),
+\]
+holding time in state $n$ is $\Exp(\lambda n)$; coefficient of variation
+$\to1$.
+
+\paragraph{Location and connections.} Introduced in Chapter 1 \S1.4 (Yule
+1925); formal treatment \S2.2.2 (\texttt{m:sec:yule}). The $\mu=0$ case of
+M5; the constant-rate base of M10 (inhomogeneous Yule); its tree appears as
+the BEAST Yule prior (Remark \texttt{m:rem:yuleorigin}).
+
+% ---------------------------------------------------------------
+\subsection{M5 --- Linear birth--death process}
+\label{sec:M5}
+
+\paragraph{Class.} CTMC; the running example for the methods of \S2.3.
+
+\paragraph{State space.} $\{0,1,2,\ldots\}$; $0$ absorbing.
+
+\paragraph{Dynamics.}
+\[
+q_{n,n+1}=\lambda n,\qquad q_{n,n-1}=\mu n
+\qquad\text{(\texttt{m:eq:bdrates})}.
+\]
+
+\paragraph{Parameters.} $\lambda$ per-capita birth, $\mu$ per-capita death;
+regime set by $\lambda-\mu$.
+
+\paragraph{Initial conditions.} $X_0=N$.
+
+\paragraph{Principal results.}
+\begin{itemize}
+\item \emph{Master equation} (\texttt{m:eq:bdmaster}):
+  $\dot p_n=\lambda(n-1)p_{n-1}+\mu(n+1)p_{n+1}-(\lambda+\mu)np_n$; pgf PDE
+  (\texttt{m:eq:bdpde})
+  \[
+  \partial_tG=(\lambda z^2-(\lambda+\mu)z+\mu)\,\partial_zG
+  =(\lambda z-\mu)(z-1)\,\partial_zG,\qquad G(z,0)=z^N.
+  \]
+\item \emph{Kendall's solution} (\texttt{m:eq:bdsolution}), $\lambda\ne\mu$:
+  \[
+  G(z,t)=\Bigl[\frac{\mu(1-z)-(\mu-\lambda z)\ee^{-(\lambda-\mu)t}}
+  {\lambda(1-z)-(\mu-\lambda z)\ee^{-(\lambda-\mu)t}}\Bigr]^{N}.
+  \]
+\item \emph{Moments} (\texttt{m:eq:bdmean}, \texttt{m:eq:bdvariance}):
+  $\EX{X_t}=N\ee^{(\lambda-\mu)t}$;
+  $\Var{X_t}=N\frac{\lambda+\mu}{\lambda-\mu}\ee^{(\lambda-\mu)t}
+  (\ee^{(\lambda-\mu)t}-1)$, critical limit $2N\lambda t$.
+\item \emph{Extinction} (\texttt{m:eq:p0t}): $p_0(t)=G(0,t)$ in closed form
+  (both regimes); ultimate extinction probability $(\mu/\lambda)^N$ when
+  $\lambda>\mu$, certain otherwise; at criticality the mean absorption time
+  is infinite.
+\item \emph{Quasi-stationarity} (\texttt{m:def:qsd},
+  \texttt{m:eq:ctsqsmean}): conditional mean limit
+  \[
+  \lim_{t\to\infty}\EX{X_t\mid X_t>0}=\frac{\mu}{\mu-\lambda}=:\frac{1}{A_c},
+  \qquad
+  A_c(p)=\frac{1-2p}{1-p}=\frac{2\varepsilon}{1+\varepsilon},
+  \quad p=\frac{\lambda}{\lambda+\mu},
+  \]
+  i.e.\ the continuous-time analogue of $A(p)$ --- a closed form where M2's
+  $A(p)$ is only a limit (\texttt{m:eq:twoconstants}).
+\item \emph{Embedded chain}: M1 with $q=\lambda/(\lambda+\mu)$
+  (\texttt{m:eq:embedded}); barrier-hitting probabilities
+  (\texttt{m:eq:bdruin}) as in M1 with $\theta=\mu/\lambda$.
+\end{itemize}
+
+\paragraph{Location and connections.} Chapter 1 \S1.4 (informal), \S2.2.2
+(\texttt{m:sec:bd}) with the full solution package in \S2.3.2; the
+$\delta\downarrow0$ limit of M6 (Appendix \texttt{bdc:app:nocatastrophe});
+base process for M8, M9 (marginal), M10 (time change).
+
+% ---------------------------------------------------------------
+\subsection{M6 --- Birth--death--catastrophe (BDC) process}
+\label{sec:M6}
+
+The central model of the thesis, in the catastrophe convention.
+
+\paragraph{Class.} CTMC on the non-negative integers with a second
+absorbing state; equivalently a linear birth--death process killed at a
+load-proportional hazard. Non-explosive (Remark \texttt{bdc:rem:assumptions}).
+
+\paragraph{State space.} $\{0,1,2,\ldots\}\cup\{H\}$: intracellular load,
+with $0$ = internal extinction (clearance) and $H$ = rupture/lysis; both
+absorbing.
+
+\paragraph{Dynamics.} Definition \texttt{m:def:bdc} / \texttt{bdc:def:bdc} /
+\texttt{dist:def:bdc}: each replicative unit independently gives birth at
+rate $\lambda$, dies at rate $\mu$, and triggers catastrophe at rate
+$\delta$; for $n\ge1$
+\[
+q_{n,n+1}=\lambda n,\qquad q_{n,n-1}=\mu n,\qquad q_{n,H}=\delta n
+\qquad\text{(\texttt{bdc:eq:rates})}.
+\]
+\emph{Augmentation --- released-count process} (\texttt{m:eq:bdcrelease},
+\texttt{bdc:eq:release}): with $\tau=\inf\{t:X_t=H\}$,
+\[
+W_t=\begin{cases}0,&t<\tau,\\ X_{\tau-},&t\ge\tau,\end{cases}
+\qquad K:=X_{\tau-}\ \text{(burst size; the left limit is essential)}.
+\]
+The joint process $(X_t,W_t)$ has the four-channel transition list
+\texttt{bdc:eq:joint} (birth, death, catastrophe with $W$ jumping to $n$,
+no event).
+
+\paragraph{Parameters.} $\lambda>0$ birth, $\mu\ge0$ death, $\delta>0$
+catastrophe rates per unit; derived constants $\eta,a,b,A,B,\theta,\kappa,w$
+as in the notation paragraph of \S\ref{sec:scope}. Interpretations: $b$ = probability of internal
+clearance before rupture; $1/a$ = ratio of the geometric burst law.
+Figure working point $(\lambda,\mu,\delta)=(1,0.2,0.05)$; published
+parameter sets (\texttt{dist:tab:twoextremes}): \emph{F.\ tularensis}
+$(0.15,0.01,1.5\times10^{-4})\,\mathrm h^{-1}$, \emph{B.\ anthracis}
+$(0.64,1.64,0.04)\,\mathrm h^{-1}$.
+
+\paragraph{Initial conditions.} $X_0=1$ unless stated; $W_0=0$;
+$I(0)=1$, $D(0)=0$, $\hat I(0)=1$.
+
+\paragraph{Principal results --- fixation functions (Chapter 4).}
+With $I(t)=\PR{X_t\ne H}$, $D(t)=\PR{X_t=0}$,
+$\hat I(t)=I-D=\PR{X_t\notin\{0,H\}}$ (``productive''):
+\[
+\dot I=\mu-(\lambda+\mu+\delta)I+\lambda I^2=\lambda(I-a)(I-b),\qquad I(0)=1
+\]
+(\texttt{bdc:eq:riccati}, \texttt{bdc:eq:riccatifact}), and
+\[
+I(t)=\frac{aB+bAw}{B+Aw},\qquad
+D(t)=\frac{ab(w-1)}{aw-b},\qquad
+\hat I(t)=\frac{(a-b)^2w}{(B+Aw)(aw-b)}
+\]
+(Theorems \texttt{bdc:thm:I}, \texttt{bdc:thm:D}, \texttt{bdc:thm:Ifix});
+all three tend to $b,b,0$.
+
+\paragraph{Principal results --- moments and burst statistics (Chapter 4).}
+\[
+J(t)=\EX{X_t}=\frac{(a-b)^2w}{(B+Aw)^2}=-\frac{\lambda}{\delta}(I-a)(I-b),
+\qquad
+K(t)=\EX{X_t^2}=\frac{2\lambda}{\delta}(\kappa-I)J,
+\]
+\[
+V(t)=\EX{W_t}=(1-I)\Bigl[1+\frac{\lambda}{\delta}(1-I)\Bigr],\qquad
+V_\infty=\frac{aB}{A}=\frac{a(1-b)}{a-1},
+\]
+(Theorems \texttt{bdc:thm:J}--\texttt{bdc:thm:V}); $\Cov(X_t,W_t)=-JV\le0$;
+open moment hierarchy closed by the polynomial property ``for each $p\ge1$
+there is a polynomial $Q_p$ of degree $p+1$ with $\EX{X_t^p}=Q_p(I(t))$''
+(Proposition \texttt{bdc:prop:polynomial}). Defective rupture-time density
+$\varphi(t)=-\dot I=\delta J(t)$ with total mass $1-b$
+(\texttt{bdc:eq:bursttime}); conditional burst moments
+\[
+\EX{K\mid\text{burst}}=\frac{a}{a-1},\qquad
+\Var{K\mid\text{burst}}=\frac{a}{(a-1)^2}
+\]
+(Corollaries \texttt{bdc:cor:burstmean}, \texttt{bdc:cor:burstvar}).
+
+\paragraph{Principal results --- distribution theory (Chapter 5).}
+\begin{itemize}
+\item \emph{Master equations and pgf} (\texttt{dist:eq:kolmogorov},
+  \texttt{dist:eq:catpde}): $\partial_tG=(\lambda z^2-(\lambda+\mu+\delta)z+
+  \mu)\,\partial_zG$ with
+  \[
+  G(z,t)=\frac{a(z-b)-b(z-a)w}{(z-b)-(z-a)w}
+  =\frac{ab(1-w)-z(a-bw)}{(b-aw)-z(1-w)}
+  \qquad\text{(\texttt{dist:eq:gcat})}
+  \]
+  (defective: $G(1,t)=I(t)\le1$).
+\item \emph{Geometric state law at every time} (Theorem
+  \texttt{dist:thm:geometric}): $p_n(t)=p_1(t)P(t)^{n-1}$ for $n\ge1$ with
+  sliding ratio
+  \[
+  P(t)=\frac{1-w}{b-aw},\qquad P(0)=0,\quad P(\infty)=\frac1a .
+  \]
+\item \emph{Quasi-stationary distribution} (Theorem \texttt{dist:thm:qsd}):
+  conditioning on productivity, the limit is geometric,
+  \[
+  q_n=\Bigl(1-\frac1a\Bigr)\Bigl(\frac1a\Bigr)^{n-1}=(a-1)a^{-n},\qquad n\ge1,
+  \]
+  with $\langle X\rangle_{\rm QS}=a/(a-1)$, $\Var_{\rm QS}=a/(a-1)^2$; the
+  QSD decay rate is exactly $\theta=\lambda(a-b)$ (Proposition
+  \texttt{dist:prop:decay}) and the mean productive lifetime is
+  $\EX{T_{\rm prod}}=\lambda^{-1}\log\frac{a}{a-1}$ (Proposition
+  \texttt{dist:prop:lifetime}).
+\item \emph{Burst-size law} (Theorem \texttt{dist:thm:burst}) and its
+  identity with the QSD (Theorem \texttt{dist:thm:identity}):
+  \[
+  \PR{K=k}=\frac{\delta}{\lambda}\,a^{-k}\ (k\ge1),\quad
+  \PR{K=0\ \text{(no burst)}}=b;\qquad
+  \PR{K=k\mid\text{burst}}=(a-1)a^{-k}=q_k .
+  \]
+\item \emph{Burst-time statistics} (Chapter 5 \S6--7): peak of $p_n$ at
+  $t_n=(\log n)/\theta$; at $\mu=0$,
+  $\EX{\tau\mid K=n}=H_n/\theta\simeq(\log n+\gamma)/\theta$ and
+  $\PR{\tau<t\mid K=n}=(1-\ee^{-\theta t})^n\to$ Gumbel
+  (Proposition \texttt{dist:prop:taugivenk}); for $\mu>0$,
+  $\EX{\tau\mid\text{burst}}=\frac{1}{\lambda(1-b)}\log\frac{a-b}{a-1}$
+  (Proposition \texttt{dist:prop:tauburst}); size-biased means
+  $\EX{K\mid\tau=t}=K(t)/J(t)\to(a+1)/(a-1)$ (the ``patient-cell'' limit).
+\end{itemize}
+
+\paragraph{Variants and limits.}
+\begin{itemize}
+\item \emph{Killing convention} (Chapter 4 \texttt{bdc:sec:conventions};
+  Chapter 5 Proposition \texttt{dist:prop:conventions}): catastrophe sends
+  $n\to0$ instead of $n\to H$; burst times and sizes unchanged;
+  $G_{\rm kill}(z,t)=G_{\rm cat}(z,t)+(1-I(t))$, so $p_n$ ($n\ge1$) and all
+  load moments are convention-independent.
+\item \emph{$k$ founders (MOI-$k$)} (\texttt{dist:sec:moi}): $G_k=G^k$;
+  $I_k=I^k$, $D_k=D^k$, $\hat I_k=I^k-D^k$ (not $\hat I^k$);
+  $J_k=kI^{k-1}J$, $K_k=kKI^{k-1}+k(k-1)J^2I^{k-2}$, release kernel
+  $g_k=\delta K_k$; lifetime yield $V_\infty^{(k)}$ in closed form, with
+  $V_\infty^{(k)}=k+\lambda/\delta$ at $\mu=0$; yield sub-extensive in $k$.
+\item \emph{Degenerate limits} (Appendix \texttt{bdc:app:limits}): $\mu=0$
+  gives $b=0$, $a=1+\delta/\lambda$, certain rupture, $V_\infty=1+\lambda/
+  \delta$; $\delta\downarrow0$ ($\lambda>\mu$) recovers M5 with
+  $D(t)\to\frac{\mu}{\lambda}\frac{w-1}{w-\mu/\lambda}$; $\lambda\downarrow0$
+  leaves the two-clock race $\dot I=\mu-(\mu+\delta)I$,
+  $b\to\mu/(\mu+\delta)$.
+\end{itemize}
+
+\paragraph{Location and connections.} Informal rates in Chapter 1 \S1.4;
+Definition \texttt{m:def:bdc} (\S2.2.2) with rate diagram
+\texttt{m:fig:ratediagram}; core theory Chapter 4 (\texttt{bdc:ch:core},
+\S\S2--4 and Appendix A); distribution theory Chapter 5
+(\texttt{dist:ch:distribution-theory}); exported to Chapter 6 as the kernels
+$S=\hat I$, $g=\delta K$ of M20; two-type extension M28; burst law reused in
+M23 and M31. Specialises (dropping immigration and random catastrophe sizes)
+the birth--immigration--catastrophe model of Brockwell, Gani \& Resnick
+(1982). Master table of closed forms: Appendix \texttt{dist:app:formulae}.
+
+% ---------------------------------------------------------------
+\subsection{M7 --- Discrete-generation catastrophe variant}
+
+\paragraph{Class.} Discrete-time variant of M6 used as a cautionary remark.
+
+\paragraph{State space.} Generation-indexed population counts.
+
+\paragraph{Dynamics.} Per generation, each individual independently
+initiates catastrophe with probability $\chi\in(0,1)$; write
+$\widetilde X_i$ for the catastrophe-free population and
+$\mathcal E_n=\sum_{i=0}^{n-1}\widetilde X_i$ for cumulative exposure. Then
+\[
+\PR{\text{no catastrophe before generation }n}
+=\EX{(1-\chi)^{\mathcal E_n}}
+\qquad\text{(\texttt{m:eq:norupture})}.
+\]
+
+\paragraph{Principal results.} Jensen's inequality
+$\EX{(1-\chi)^{\mathcal E_n}}\ge(1-\chi)^{\EX{\mathcal E_n}}$: a mean-field
+hazard substitution \emph{underestimates} the non-catastrophe probability
+(Remark \texttt{m:rem:notmeanfield}).
+
+\paragraph{Location and connections.} \S2.2.2, Remark
+\texttt{m:rem:notmeanfield}. Discrete-time shadow of M6's $\delta n$
+hazard; motivates keeping the full distribution rather than substituting
+means.
+
+% ---------------------------------------------------------------
+\subsection{M8 --- Time-inhomogeneous linear birth--death process}
+
+\paragraph{Class.} CTMC with time-dependent rates (instance of F3).
+
+\paragraph{State space.} $\{0,1,2,\ldots\}$; $0$ absorbing.
+
+\paragraph{Dynamics.} Birth and death rates $\lambda(t),\mu(t)$ (per
+capita, linear in the count, moving in time).
+
+\paragraph{Parameters.} Arbitrary measurable rate schedules.
+
+\paragraph{Initial conditions.} $X_0=n_0$.
+
+\paragraph{Principal results.} Mean (\texttt{m:eq:meanodeinhom}):
+\[
+\EX{X_t\mid X_0=n_0}=n_0\exp\Bigl\{\int_0^t(\lambda(r)-\mu(r))\dd r\Bigr\};
+\]
+backward extinction Riccati for $u(s,T)=\PR{X_T=0\mid X_s=1}$
+(\texttt{m:eq:riccatiext}):
+\[
+-\partial_su=\mu(s)-(\lambda(s)+\mu(s))u+\lambda(s)u^2,\qquad u(T,T)=0,
+\]
+with Kendall's forward-endpoint formula (\texttt{m:eq:inhomextforward})
+\[
+u_{\rm f}(t)=\frac{B(t)}{1+B(t)},\qquad
+B(t)=\int_0^t\mu(s)\exp\Bigl\{\int_0^s(\mu(r)-\lambda(r))\dd r\Bigr\}\dd s .
+\]
+
+\paragraph{Location and connections.} \S2.2.3 (\texttt{m:sec:tibd}). Base
+for the Chapter 9 programme (M10 and the extinction variant of M10); the
+conclusion notes that ``what costs the generating function is not feedback
+as such but continuous bending of a rate'' (Chapter 10). A named special
+case (``subductive proliferation'', $\lambda(t)=\beta\ee^{-\alpha t}+\gamma$,
+constant death) is mentioned in Chapter 8's discussion but not developed.
+
+% ---------------------------------------------------------------
+\subsection{M9 --- Seasonal Lotka--Volterra process}
+
+\paragraph{Class.} Two-population CTMC with externally imposed periodic
+rates (F3 instance).
+
+\paragraph{State space.} $(x,y)$ = (prey, predator) counts,
+$\mathbb Z_{\ge0}^2$.
+
+\paragraph{Dynamics.} (\texttt{m:eq:lvrate}, \texttt{m:eq:lvkernel}):
+\[
+q_{(x,y),(x+1,y)}(t)=b\,\mathcal S^+(t)\,x,\qquad
+q_{(x,y),(x-1,y+1)}(t)=e\,xy,\qquad
+q_{(x,y),(x,y-1)}(t)=d\,y,
+\]
+\[
+\mathcal S^+(t)=\max\{0,1+A\sin(\omega t)\},
+\]
+with a closed season of length $(2/\omega)\arccos(1/A)$ per period when
+$A>1$.
+
+\paragraph{Parameters.} $b$ prey birth, $e$ predation, $d$ predator death,
+$A$ forcing amplitude, $\omega$ frequency (figure parameters
+$A=2$, $\omega=2\pi$, $b=2$, $e=0.005$, $d=2$, $(300,100)$).
+
+\paragraph{Principal results.} Exact marginal on the predator-free axis
+(time-inhomogeneous Yule); mean-field ODE $\dot x=b\mathcal S^+(t)x-exy$,
+$\dot y=exy-dy$ does not close ($\EX{XY}$ enters); simulation by thinning
+against $\mathcal S^+(t)\le1+A$.
+
+\paragraph{Location and connections.} \S2.2.3 (\texttt{m:sec:seasonallv}).
+Worked example of externally forced rates; contrast class for the coupled
+systems F4/M11/M12.
+
+% ---------------------------------------------------------------
+\subsection{M10 --- Logistic speciation model (inhomogeneous Yule)}
+\label{sec:M10}
+
+\paragraph{Class.} Non-homogeneous pure-birth CTMC driven by a
+deterministic logistic environment (F3, coupling type (ii) of F4).
+
+\paragraph{State space.} $S_t\in\{1,2,\ldots\}$ species count;
+deterministic environment $N(t)\in(N_0,K)$.
+
+\paragraph{Dynamics.} Environment ODE and rate law
+(\texttt{m:eq:logisticode}, \texttt{var:eq:logistic}, \texttt{var:eq:rate1}):
+\[
+\dd N/\dd t=\varrho N\Bigl(1-\frac NK\Bigr),\quad N(0)=N_0,\quad
+N(t)=\frac{K\ee^{\varrho t}}{\xi+\ee^{\varrho t}},\quad\xi=\frac K{N_0}-1,
+\]
+\[
+\PR{S_{t+\Delta t}=S_t+1\mid S_t=n}=\beta(t)\,n\,\Delta t+o(\Delta t),
+\qquad
+\beta(t)=\sigma\bigl(K-N(t)\bigr)=\sigma K\frac{\xi}{\xi+\ee^{\varrho t}} .
+\]
+The coupling runs one way: the environment sets the speciation clock.
+
+\paragraph{Parameters.} $\varrho$ growth rate, $K$ capacity, $N_0$ founding
+abundance, $\sigma$ speciation coefficient; cumulative intensity
+$\mathcal B(t)=\int_0^t\beta(u)\dd u=
+\sigma K\{t-\varrho^{-1}\ln(\xi+\ee^{\varrho t})+\varrho^{-1}\ln(\xi+1)\}$.
+
+\paragraph{Initial conditions.} $S_0=1$.
+
+\paragraph{Principal results.} Geometric marginal at every time --- the
+Yule law with $\lambda t$ replaced by $\mathcal B(t)$ (Proposition
+\texttt{var:prop:yule-geom}):
+\[
+\PR{S_t=n}=\ee^{-\mathcal B(t)}\bigl(1-\ee^{-\mathcal B(t)}\bigr)^{n-1},
+\qquad \EX{S_t}=\ee^{\mathcal B(t)};
+\]
+limit law under the logistic rate (Corollary 9.3
+= \texttt{var:cor:logistic-limit}):
+\[
+\mathcal B(\infty)=\frac{\sigma K}{\varrho}\ln\frac K{N_0},\qquad
+\EX{S_\infty}=\Bigl(\frac K{N_0}\Bigr)^{\sigma K/\varrho},
+\]
+with only the dimensionless groups $K/N_0$ and $\sigma K/\varrho$
+surviving; pgf $G(z,t)=z/\{z+(1-z)\ee^{\mathcal B(t)}\}$ via the method of
+characteristics (Appendix \texttt{var:app:pgf}).
+
+\paragraph{Variants.} Alternative rate laws (\texttt{var:eq:altrates}):
+$\beta_2=\sigma(K-N)+\eta$ and $\beta_4=\sigma\,\dd N/\dd t+\eta$ (no limit
+law, $\mathcal B\sim\eta t$); $\beta_3=\sigma\,\dd N/\dd t$ with
+$\mathcal B(\infty)=\sigma(K-N_0)$; $\beta_5=\sigma(K_t-N(t))$ with randomly
+switching capacity --- mixture of geometrics, open. Extinction variant
+(\texttt{var:sec:withextinction}): add constant per-species death $\mu$;
+$\EX{S_t}=\exp\{\mathcal B(t)-\mu t\}$ turns over where $\beta(t)=\mu$ and
+tends to $0$; no limit law.
+
+\paragraph{Location and connections.} Mean-only version in \S2.2.3
+(\texttt{m:sec:logisticspeciation}); full distribution theory Chapter 9
+(\texttt{var:sec:speciation}). Constant-rate limit is M4; positions the
+``push of the past'' debate (recovered only through a moving rate).
+
+% ---------------------------------------------------------------
+\subsection{M11 --- Accumulation with gated release}
+
+\paragraph{Class.} PDMP (F4, coupling type (iii): two-way).
+
+\paragraph{State space.} Continuous $(A_t,R_t)\in\mathbb R_{\ge0}^2$
+(accumulated and transferred amounts) and gate $G_t\in\{0,1\}$.
+
+\paragraph{Dynamics.} Flow between jumps and jump rates
+(\texttt{m:eq:gatedflow}, \texttt{m:eq:gatedjumps}):
+\[
+\dd A_t/\dd t=\rho-G_tcA_t,\qquad \dd R_t/\dd t=G_tcA_t,
+\]
+\[
+\PR{G_{t+\Delta t}=1\mid G_t=0,A_t=a}=\eta a\,\Delta t+o(\Delta t),
+\qquad
+\PR{G_{t+\Delta t}=0\mid G_t=1}=\gamma\,\Delta t+o(\Delta t).
+\]
+
+\paragraph{Parameters.} $\rho$ inflow, $c$ transfer coefficient, $\eta$
+(per amount) opening rate, $\gamma$ closing rate; figure
+$(\rho,c,\eta,\gamma)=(2,4,0.015,1.45)$, $(A_0,R_0,G_0)=(5,0,0)$.
+
+\paragraph{Principal results.} Pathwise balance $A_t+R_t=A_0+R_0+\rho t$;
+first moment unclosed ($\frac{\dd}{\dd t}\EX{A_t}=\rho-c\EX{G_tA_t}$);
+simulation solves a quadratic cumulative hazard
+$\eta(A_tr+\tfrac12\rho r^2)$ against an $\Exp(1)$ variate.
+
+\paragraph{Location and connections.} \S2.2.4 (\texttt{m:sec:gated}).
+Single-cell caricature of intermittent (quasi-bursting) release, cf.\
+Chapter 6's kernels and M25.
+
+% ---------------------------------------------------------------
+\subsection{M12 --- Accumulation with surging gated release}
+
+\paragraph{Class.} PDMP (F4, coupling type (i): autonomous mode chain).
+
+\paragraph{State space.} As M11.
+
+\paragraph{Dynamics.} Same flow; autonomous gate with
+$\PR{G_{t+\Delta t}=1\mid G_t=0}=\nu\Delta t+o(\Delta t)$
+(\texttt{m:eq:surgingjumps}); $G_t$ is an autonomous two-state CTMC.
+
+\paragraph{Parameters.} $\nu$ opening, $\gamma$ closing rates; others as
+M11.
+
+\paragraph{Principal results.} $\frac{\dd}{\dd t}\EX{G_t}=\nu(1-\EX{G_t})-
+\gamma\EX{G_t}$, so $\EX{G_t}\to\nu/(\nu+\gamma)$; balance law of M11
+unchanged; population moments still contain $\EX{G_tA_t}$.
+
+\paragraph{Location and connections.} \S2.2.4 (\texttt{m:sec:surging}).
+Contrast class to M11: autonomy restores some closure but not the joint
+moment.
+
+% ---------------------------------------------------------------
+\subsection{M13 --- Absorption-only process}
+
+\paragraph{Class.} Bivariate CTMC (immigration--death structure).
+
+\paragraph{State space.} $(X_t,Y_t)$ = (inside, outside) a compartment,
+$\mathbb Z_{\ge0}^2$; nothing returns from the compartment.
+
+\paragraph{Dynamics.} (\texttt{m:app:absonly}):
+$\PR{\Delta X=1,\Delta Y=-1\mid Y_t=j}=j\alpha\Delta t$ (absorption), no
+other events.
+
+\paragraph{Parameters.} $\alpha$ per-particle uptake rate.
+
+\paragraph{Initial conditions.} $X_0=0$, $Y_0=N$.
+
+\paragraph{Principal results.} $X_t\sim\operatorname{Binomial}(N,
+1-\ee^{-\alpha t})$; $G(x,y,t)=\{(1-\ee^{-\alpha t})x+\ee^{-\alpha t}y\}^N$
+(\texttt{m:eq:Gabsonly}).
+
+\paragraph{Location and connections.} Appendix 2.B
+(\texttt{m:app:absonly}). Simplest member of the absorption family
+M13--M15, which model transfer from medium into a compartment after a
+rupture.
+
+% ---------------------------------------------------------------
+\subsection{M14 --- Absorption--death process}
+
+\paragraph{Class.} Bivariate CTMC; the worked example of the method of
+characteristics.
+
+\paragraph{State space.} As M13.
+
+\paragraph{Dynamics.} (\texttt{m:sec:mocworked}):
+\[
+\PR{\Delta X=1,\Delta Y=-1\mid Y_t=j}=j\alpha\Delta t,\qquad
+\PR{\Delta X=-1,\Delta Y=0\mid X_t=i}=i\mu\Delta t .
+\]
+
+\paragraph{Parameters.} $\alpha$ uptake, $\mu$ interior death.
+
+\paragraph{Initial conditions.} $X_0=0$, $Y_0=N$.
+
+\paragraph{Principal results.} Forward equations (\texttt{m:eq:FK2});
+pgf PDE $\partial_tG=\mu(1-x)\partial_xG+\alpha(x-y)\partial_yG$,
+$G(x,y,0)=y^N$ (\texttt{m:eq:PDE2}); closed-form solution
+(\texttt{m:eq:Gabsdeath}):
+\[
+G(x,y,t)=\Bigl(1-\tfrac{\mu}{\mu-\alpha}\ee^{-\alpha t}
++\tfrac{\alpha}{\mu-\alpha}\ee^{-\mu t}
++\tfrac{\alpha}{\mu-\alpha}(\ee^{-\alpha t}-\ee^{-\mu t})x
++\ee^{-\alpha t}y\Bigr)^{N},
+\]
+recovered exactly by the characteristic system
+(\texttt{m:eq:ch11}--\texttt{m:eq:ch14}).
+
+\paragraph{Location and connections.} \S2.3.3 (\texttt{m:sec:mocworked}).
+Motivates Appendix 2.B: adding interior birth makes the $x$-characteristic
+Riccati, i.e.\ M15.
+
+% ---------------------------------------------------------------
+\subsection{M15 --- Absorption--birth--death process [thesis result]}
+
+\paragraph{Class.} Bivariate CTMC; the hardest member of the absorption
+family; closed form is a result of this thesis (Proposition
+\texttt{m:prop:Gabd}).
+
+\paragraph{State space.} As M13.
+
+\paragraph{Dynamics.} (\texttt{m:app:absbirthdeath}): uptake
+$\Delta X=1,\Delta Y=-1$ at rate $j\alpha$; interior birth $\Delta X=1$ at
+rate $i\lambda$; interior death $\Delta X=-1$ at rate $i\mu$.
+
+\paragraph{Parameters.} $\alpha$ uptake; $\lambda,\mu$ interior BD rates;
+$b_1=\lambda-\mu$ (net interior growth); $\omega=\alpha/b_1$ (absorption in
+units of net growth).
+
+\paragraph{Initial conditions.} $X_0=0$, $Y_0=N$.
+
+\paragraph{Principal results.} PDE (\texttt{m:eq:PDE3})
+\[
+\partial_tG=\bigl(\mu-(\mu+\lambda)x+\lambda x^2\bigr)\partial_xG
++\alpha(x-y)\partial_yG ,
+\]
+whose $x$-coefficient is exactly the birth--death quadratic of M5 with
+roots $x_+=1$, $x_-=\mu/\lambda$. With
+$W=(x-x_+)/(x-x_-)$ and the series function
+\[
+\Psi(\zeta)=x_++\frac{\alpha}{\lambda}\sum_{n=1}^{\infty}\frac{\zeta^n}{n+\omega},
+\qquad \omega=\frac{\alpha}{\lambda-\mu},
+\]
+the boxed solution (Proposition \texttt{m:prop:Gabd}) is
+\[
+G(x,y,t)=\Bigl\{\ee^{-\alpha t}\bigl[y-\Psi(W)\bigr]
++\Psi\bigl(W\ee^{b_1t}\bigr)\Bigr\}^{N}.
+\]
+Hypergeometric form $\Psi(\zeta)=x_++(x_+-x_-)\{{}_2F_1(1,\omega;\omega+1;
+\zeta)-1\}$; parameter-regular representation via a convolution with the
+interior survival pgf (finite at $\lambda=\mu$, where the boxed form
+degenerates); resonance poles at $\alpha=n(\mu-\lambda)$ cancel to a secular
+factor $t\ee^{-\alpha t}$; coefficient recovery $p_{i,j}(t)
+=\binom Nj\ee^{-\alpha tj}[x^i]h(x,t)^{N-j}$. Verified numerically to
+$\sim10^{-13}$.
+
+\paragraph{Location and connections.} Appendix 2.B
+(\texttt{m:app:absbirthdeath}), supported by the integral identity of
+Appendix 2.C (\texttt{m:prop:hypIden}) and the extraction machinery of
+Appendix 2.D. Connects M5's quadratic, M14's characteristics, and the
+rupture-transfer question of the biology chapters.
+
+% ============================================================================
+\section{Catalogue, part II --- distribution theory and pathogenesis (Chapters 5--8)}
+% ============================================================================
+
+% ---------------------------------------------------------------
+\subsection{M16 --- Chained immediate-transfer process ($\mu=0$)}
+\label{sec:M16}
+
+\paragraph{Class.} Chained sequence of single-cell birth--catastrophe
+CTMCs (M6 at $\mu=0$) coupled by wholesale transfer of the burst into the
+next fresh cell; ``no extracellular phase, no clearance, no re-infection''.
+
+\paragraph{State space.} Per stage: load $n\in\{1,2,\ldots\}$; across
+stages: rupture sizes $r_k$, rupture times $t_k$, inter-rupture intervals
+$T_k$.
+
+\paragraph{Dynamics.} From load $n$, next event is birth w.p.\
+$\lambda/(\lambda+\delta)=\rho$ and catastrophe w.p.\
+$s=\delta/(\lambda+\delta)$, independent of $n$ (the load ``drops out'');
+holding time $\Exp((\lambda+\delta)n)$. Births before catastrophe
+$G\sim\Geom_0(s)$, $\PR{G=g}=s\rho^g$, independent across cells; rupture
+size decomposition (\texttt{dist:eq:rkdecomp})
+\[
+r_k=1+G_1+\cdots+G_k .
+\]
+
+\paragraph{Parameters.} $\lambda,\delta$ ($\mu=0$); $s,\rho$ as above.
+
+\paragraph{Initial conditions.} One cell, one particle, $t_0=0$.
+
+\paragraph{Principal results.} Negative-binomial rupture law
+(\texttt{dist:eq:rklaw}):
+\[
+\PR{r_k=n}=\binom{n+k-2}{k-1}s^k\rho^{\,n-1},\qquad n\ge1,
+\]
+with $\EX{r_k}=1+k\lambda/\delta$, $\Var{r_k}=k\rho/s^2$, pgf
+$\EX{z^{r_k}}=z\{s/(1-\rho z)\}^k$; first rupture from $m$ founders:
+$\PR{t_1>t}=I(t)^m$; inter-rupture Laplace transform in closed
+hypergeometric form (\texttt{dist:eq:ltkhyp}) with mean
+$\EX{T(k)}=\sum_{m\ge0}\rho^m/\{(\lambda+\delta)(k+m)\}$, strictly
+decreasing in $k$. Exact simulation by coin flips and exponential waits;
+verified 28/28 (\texttt{dist:app:verification}). The structure breaks for
+$\mu>0$ (a cell then has two ways to stop); joint laws of $(t_k,r_k)$ at
+$\mu>0$ remain open.
+
+\paragraph{Location and connections.} Chapter 5 \S10
+(\texttt{dist:sec:chained}); reused in Chapter 8
+(\texttt{path:sec:chainedruptures}) as the ``release schedule alone''
+model. Interpolates between single-cell theory (M6) and populations (M19).
+
+% ---------------------------------------------------------------
+\subsection{M17 --- Budding comparator cell}
+
+\paragraph{Class.} Two independent Poisson streams on one cell (CTMC on
+released counts crossed with cell state).
+
+\paragraph{State space.} Cumulative releases $k\in\{0,1,2,\ldots\}$ while
+the cell is alive.
+
+\paragraph{Dynamics.} Release of one particle at rate $p$; cell death at
+rate $d_I$; the streams run until death.
+
+\paragraph{Parameters.} $p$ release rate; $d_I$ infected-cell death rate
+(mean lifetime $1/d_I$).
+
+\paragraph{Initial conditions.} Cell infected at $t=0$.
+
+\paragraph{Principal results.} (\texttt{dist:eq:bud}, \texttt{p:eq:bud-cell}):
+\[
+I_{\rm bud}(t)=\ee^{-d_It},\qquad
+V_{\rm bud}(t)=\frac{p}{d_I}\bigl(1-\ee^{-d_It}\bigr),\qquad
+\PR{K_{\rm bud}=k}=\frac{d_I}{d_I+p}\Bigl(\frac{p}{d_I+p}\Bigr)^{k},
+\]
+geometric on $\{0,1,2,\ldots\}$ (releases before the terminating death).
+
+\paragraph{Location and connections.} Chapter 5 \S11
+(\texttt{dist:sec:budding}); Chapter 6 \S\texttt{p:sec:budding}, where it
+is shown that the BMVR (M18) describes a budding pathogen \emph{exactly};
+matched-mean comparator in M23 and M31. Structural opposite of M6: release
+and death independent vs.\ identical events.
+
+% ---------------------------------------------------------------
+\subsection{M18 --- Basic model of viral replication (BMVR) \quad [D]}
+
+\paragraph{Class.} \textbf{[D]} Deterministic ODE comparator (not Markov).
+
+\paragraph{State variables.} Target cells $T$, infected cells $I$, free
+virions $V$.
+
+\paragraph{Equations.} Three-variable form (\S1.6):
+\[
+\dd T/\dd t=s-\gamma TV,\qquad
+\dd I/\dd t=\gamma TV-d_II,\qquad
+\dd V/\dd t=pI-cV,
+\]
+and the constant-target reduction carried through Chapter 6
+(\texttt{p:eq:bmvr-classical}):
+\[
+\dd I/\dd t=\gamma TV-d_II,\qquad \dd V/\dd t=pI-cV .
+\]
+
+\paragraph{Parameters.} $\gamma$ infection rate, $T$ fixed target density,
+$d_I$ infected-cell death, $p$ release rate, $c$ clearance; basic
+reproduction number $R_0=\gamma Tp/(c\,d_I)$ (\texttt{p:eq:R0classical}).
+
+\paragraph{Role.} The model Chapter 6 replaces: constants $p,d_I$ are
+exchanged for the age-dependent kernels of M20, and the BMVR is recovered
+exactly as the exponential-phase projection (M21). Assumptions challenged
+by the thesis: one-by-one release at constant rate; release and death
+separate independent events (budding).
+
+\paragraph{Location.} Chapter 1 \S1.6; Chapter 6
+\S\texttt{p:sec:classical}.
+
+% ---------------------------------------------------------------
+\subsection{M19 --- Stochastic within-host population process}
+
+\paragraph{Class.} Branching-type CTMC population model (linear rates);
+the ``first-moment-exactness'' model.
+
+\paragraph{State space.} Product of per-cell ages/loads (each an M6
+process) and free-particle count $V_t$.
+
+\paragraph{Dynamics.} Each infection event starts an independent BDC cell
+(M6); each released particle independently infects at rate $\gamma T$ or
+clears at rate $c$; the $I_0$ founding cells have age zero. Infection
+events form a point process with compensator $\gamma T\,V^{\omega}(t)\dd t$
+(Campbell's formula). Gillespie specification (\texttt{p:fig:gillespie}):
+``birth--death--catastrophe cells with impulse releases at burst times,
+exponential clearance, no reinfection''.
+
+\paragraph{Parameters.} $(\lambda,\mu,\delta)$ per cell; $\gamma T$, $c$;
+$I_0$.
+
+\paragraph{Initial conditions.} $I_0$ cells of age zero (assumption A3);
+$V_0$ implicit.
+
+\paragraph{Principal results.} Proposition \texttt{p:prop:first-moment}:
+its expectations satisfy the renewal system M20 \emph{exactly} --- linear
+incidence (A1) is what closes the moment hierarchy; ensemble Gillespie
+means match the renewal means to 1--2\% (62-check verification suite).
+
+\paragraph{Location and connections.} Chapter 6
+\S\texttt{p:sec:renewal}. Stochastic ground truth under M20; nonlinear
+incidence (M27) breaks the exactness.
+
+% ---------------------------------------------------------------
+\subsection{M20 --- Burst-aware renewal system and the $(S,g)$ skeleton
+\quad [D: exact mean equations of M19]}
+
+\paragraph{Class.} Deterministic renewal/Volterra system
+(McKendrick--von Foerster age structure); exact first moments of M19.
+
+\paragraph{Equations.} Definition \texttt{p:def:renewal-system}: with
+incidence $i(t)=\gamma TV(t)$ and the BDC kernels
+$S=\hat I$ (survival) and $g=\delta K$ (release rate),
+\[
+I(t)=I_0\,\hat I(t)+(i*\hat I)(t),
+\qquad
+\dd V/\dd t=I_0\,g(t)+(i*g)(t)-cV(t)
+\qquad\text{(\texttt{p:eq:Icell}, \texttt{p:eq:Vfree})}.
+\]
+General skeleton (\texttt{p:eq:skeleton}), any pair $(S,g)$:
+$I=I_0S+(i*S)$, $V'=I_0g+(i*g)-cV$, with
+$R_0=(\gamma T/c)\int_0^\infty g$ under linear incidence.
+
+\paragraph{Instances of the skeleton} (Table \texttt{p:tab:sg}): standard
+BMVR ($S=\ee^{-d_I\alpha}$, $g=p\ee^{-d_I\alpha}$); eclipse model;
+HCV multiscale (Guedj / Rong--Perelson); absorbing BDC (this chapter);
+MOI-$k$ BDC ($I^k-D^k$, $\delta K_k$); reset catastrophe (M25); two-type /
+GATE (Chapter 7). Exponential kernels reduce it to M18 (checked to
+$5\times10^{-5}$).
+
+\paragraph{Location and connections.} Chapter 6
+\S\texttt{p:sec:renewal}, \S\texttt{p:sec:generality}; kernels imported
+from M6/M15-level theory (Chapters 4--5).
+
+% ---------------------------------------------------------------
+\subsection{M21 --- Effective-parameter projection \quad [D: exact map]}
+
+\paragraph{Class.} \textbf{[D]} Exact map from M20 to constant-parameter
+M18 along exponential phases $i(t)=i_0\ee^{rt}$
+(Theorem \texttt{p:thm:projection}).
+
+\paragraph{Definition.} (\texttt{p:eq:peff}):
+\[
+p_{\rm eff}(r)=\frac{\delta\,\Lap K(r)}{\Lap{\hat I}(r)},
+\qquad
+d_{I,\rm eff}(r)=\frac{1}{\Lap{\hat I}(r)}-r,
+\qquad r>-\theta,
+\]
+returning the characteristic equation $r+c=\gamma T\,\delta\Lap K(r)$
+(\texttt{p:eq:char}).
+
+\paragraph{Ends and properties.} $r=0$: $p_{\rm eff}(0)=V_\infty/\EX{T_{\rm
+prod}}$, $d_{I,\rm eff}(0)=\lambda/\log\frac{a}{a-1}$; $r\to\infty$:
+$p_{\rm eff}\to\delta$, $d_{I,\rm eff}\to\mu+\delta$; old-cell limit
+$p_{\rm eff}(-\theta)\to\delta\EX{X^2}_{\rm QS}$ (Proposition
+\texttt{p:prop:oldcell}); span $p_{\rm eff}(-\theta)/p_{\rm eff}(\infty)
+=\EX{X^2}_{\rm QS}$ (231 at $(1,0,0.1)$); monotonicity via
+$\frac{\dd}{\dd r}\log p_{\rm eff}=\EX{\alpha}_{\pi_{S,r}}-\EX{\alpha}_
+{\pi_{g,r}}$ (numerically supported at 4000 triples). Identifiability
+fails: $(\lambda,\mu,\delta)\mapsto(p_{\rm eff},d_{I,\rm eff})$ is not
+invertible; candidate third observables are the geometric ratio $1/a$, the
+clearance fraction $b$, and the shape of $\delta J$.
+
+\paragraph{Location.} Chapter 6 \S\texttt{p:sec:projection},
+\S\texttt{p:sec:identifiability}; hypergeometric Laplace transforms in
+Appendix \texttt{p:app:transforms}.
+
+% ---------------------------------------------------------------
+\subsection{M22 --- Generation kernel and $R_0$ \quad [D: Euler--Lotka functional]}
+
+\paragraph{Class.} \textbf{[D]} Functional of the release kernel $g$.
+
+\paragraph{Definition.} (\texttt{p:eq:genkernel}):
+\[
+\mathcal A(\alpha)=\gamma T\int_0^\alpha g(u)\ee^{-c(\alpha-u)}\dd u,
+\qquad \Lap{\mathcal A}(r)=\frac{\gamma T\,\Lap g(r)}{r+c},
+\]
+$\Lap{\mathcal A}(r)=1$ the characteristic equation; $\mathcal A/R_0$ the
+generation-time density.
+
+\paragraph{Principal results.} (\texttt{p:eq:R0gen})
+\[
+R_0=\int_0^\infty\mathcal A(\alpha)\dd\alpha
+=\frac{\gamma T\,V_\infty}{c},
+\]
+and Theorem \texttt{p:thm:R0inv}: $R_0$ is unchanged by bursting at fixed
+total output per cell --- the schedule becomes visible only through
+establishment (M23) or a saturating defence (M31).
+
+\paragraph{Location.} Chapter 6 \S\texttt{p:sec:generation-kernel};
+continuum counterpart of the discrete branching mean $m=qV_\infty$ in M23.
+
+% ---------------------------------------------------------------
+\subsection{M23 --- Early-infection establishment branching process (bursting vs budding)}
+
+\paragraph{Class.} Galton--Watson branching process of infected cells;
+offspring distributions in closed form for both mechanisms.
+
+\paragraph{Dynamics.} Each released particle independently infects with
+probability
+\[
+q=\frac{\gamma T}{\gamma T+c}
+\qquad\text{(\texttt{p:eq:q})}
+\]
+or is cleared. Bursting offspring pgf: thinning the M6 burst pgf
+$G_K(z)=b+\frac{\delta}{\lambda}\frac z{a-z}$ at $y=1-q+qz$
+(\texttt{p:eq:Goff}):
+\[
+G_{\rm off}(z)=b+\frac{\delta}{\lambda}\,\frac{y}{a-y},\qquad y=1-q+qz ,
+\]
+with mean $m=qV_\infty$. Budding comparator: geometric offspring on
+$\{0,1,2,\ldots\}$ with the same mean (matched at $p/d_I=V_\infty$).
+
+\paragraph{Parameters.} $q$; the M6-derived $a,b,V_\infty$; flooding
+parameter (Definition \texttt{p:def:L})
+\[
+L:=a(1-b)=a-\frac{\mu}{\lambda},\qquad V_\infty=\frac{L}{a-1}.
+\]
+
+\paragraph{Principal results.} Extinction probabilities for $m>1$
+(\texttt{p:eq:zext}):
+\[
+z_{\rm ext}^{\rm burst}=\frac{a(1-q+qb)-1+q}{q},\qquad
+z_{\rm ext}^{\rm bud}=\frac1m,
+\]
+and the flooding theorem (Theorem \texttt{p:thm:flood},
+\texttt{p:eq:flood}):
+\[
+z_{\rm ext}^{\rm burst}-z_{\rm ext}^{\rm bud}=(L-1)\Bigl(\frac1m-1\Bigr),
+\]
+so bursting establishes more easily than budding iff $L>1$ iff
+$\delta(\lambda+\mu)>\lambda\mu$ (\texttt{p:eq:floodcrit}; convention: holds
+for all $\delta>0$ when $\mu=0$). At $L=1$ the two offspring laws coincide
+exactly (geometric; Proposition \texttt{p:prop:L1}), and
+$\Var_{\rm bud}-\Var_{\rm burst}=2q^2V_\infty(L-1)/(a-1)$
+(\texttt{p:eq:varorder}).
+
+\paragraph{Location and connections.} Chapter 6
+\S\texttt{p:sec:flooding}. Built on M6's burst law; the boundary curve
+$\delta_*=\lambda\mu/(\lambda+\mu)$ in the rate plane; the companion
+invasion-speed comparison (M24): $r_{\rm bud}>r_{\rm burst}$ at matched
+$R_0=2$ via the Laplace-transform order $\Lap g_{\rm burst}(r)\le
+p/(r+d_I)$ for all $r>0$ --- a Pareto trade-off with the extinction
+probability.
+
+% ---------------------------------------------------------------
+\subsection{M24 --- Invasion-speed comparison \quad [D]}
+
+\paragraph{Class.} \textbf{[D]} Deterministic comparison of Malthusian
+growth rates at matched $R_0$; not a process.
+
+\paragraph{Setting.} Budding: eigenvalue relation
+$(r+d_I)(r+c)=\gamma Tp$ (from M18); bursting: the characteristic equation
+of M20/M21, $r+c=\gamma T\,\delta\Lap K(r)$; matched at $R_0=2$,
+$d_I=1/\EX{T_{\rm prod}}$, $p=V_\infty d_I$ ($=p_{\rm eff}(0)$).
+
+\paragraph{Principal results.} Ordering (\texttt{p:eq:rorder}):
+$r_{\rm bud}>r_{\rm burst}$ in all three named BDC regimes (e.g.\ $0.250$
+vs $0.180$ at $(1,0,0.1)$); Proposition \texttt{p:prop:rorder} reduces it
+to the Laplace-transform order
+\[
+\Lap g_{\rm burst}(r)\ \le\ \Lap g_{\rm bud}(r)=\frac{p}{r+d_I}
+\qquad\text{for all } r>0
+\]
+(checked at 1500 triples; the usual stochastic order does \emph{not}
+hold). Mechanism: the generation-time density $\mathcal A/R_0$ sits earlier
+for budding; varying $\delta$ traces a Pareto frontier against the
+extinction probability of M23 (\texttt{p:fig:pareto}).
+
+\paragraph{Location and connections.} Chapter 6
+\S\texttt{p:sec:tradeoff}. Deterministic counterpart of M23: budding wins
+on speed, bursting wins on establishment when $L>1$.
+
+% ---------------------------------------------------------------
+\subsection{M25 --- Reset process (recurrent partial release)}
+
+\paragraph{Class.} Single-cell CTMC with non-absorbing dumps and a separate
+cell-death clock.
+
+\paragraph{State space.} Load $n\in\{0,1,2,\ldots\}$ (may re-accumulate)
+$\times$ cell alive/dead.
+
+\paragraph{Dynamics.} While alive: birth $\lambda n$, death $\mu n$,
+optional immigration $\nu$, and a dump at rate $\delta n$ that releases the
+whole pool and returns the load to zero; cell dies independently at rate
+$d_I$ (\S\texttt{p:sec:reset}).
+
+\paragraph{Parameters.} $\lambda,\mu,\delta,(\nu),d_I$.
+
+\paragraph{Principal results.} Kernels (\texttt{p:eq:reset-kernels}):
+\[
+S(\alpha)=\ee^{-d_I\alpha},\qquad
+g(\alpha)=\delta\,\ee^{-d_I\alpha}\,\EX{X_\alpha^2},
+\]
+effective parameters $p_{\rm eff}(r)=(r+d_I)\Lap g(r)$, $d_{I,\rm eff}
+\equiv d_I$; $R_0$ finite only for $d_I>0$; mature-cell limit
+$p_\infty=\delta\,\EX_\pi[X^2]$ if a stationary law $\pi$ exists
+(\texttt{p:eq:reset-mature}). Intermediate between M17 and M6 on the M20
+skeleton.
+
+\paragraph{Location and connections.} Chapter 6 \S\texttt{p:sec:reset};
+``multi-pulse caricature between full dumping and continuous export''.
+
+% ---------------------------------------------------------------
+\subsection{M26 --- Partial-release stock model \quad [D: mean-field]}
+
+\paragraph{Class.} \textbf{[D]} Deterministic mean-field ODE system;
+boolean thinning of releases (each unit released independently w.p.\
+$\varphi$), event clock $\delta X$.
+
+\paragraph{Equations.} (\texttt{p:eq:partial}), with $Q$ = total
+intracellular stock across productive cells:
+\[
+\dd I/\dd t=\gamma TV-d_II,\qquad
+\dd Q/\dd t=\nu I-\delta\varphi\,\frac{Q^2}{I}-d_IQ,\qquad
+\dd V/\dd t=\delta\varphi\,\frac{Q^2}{I}-cV .
+\]
+
+\paragraph{Principal observation.} With a load-independent clock
+($\lambda(X)=\delta$) the mean export is $\delta\varphi Q$ and partial
+release is invisible in the mean-field equations; it becomes visible when
+the clock is load-dependent, and is always visible in single-cell release
+distributions. Used to map antiviral modes of action
+($\downarrow\lambda$, $\uparrow\mu$, $\downarrow\gamma T$, $\downarrow
+\varphi=1-\epsilon_s$).
+
+\paragraph{Location.} Chapter 6 \S\texttt{p:sec:partial}.
+
+% ---------------------------------------------------------------
+\subsection{M27 --- HIV skeleton variant \quad [specification]}
+
+\paragraph{Class.} Specification on the M20 skeleton; not solved.
+
+\paragraph{Dynamics.} Kernels $S_{\rm HIV}$ (productive-lineage survival)
+and $g_{\rm HIV}$ (productive-sojourn density) with a multi-stage (Erlang,
+$n\approx5$) eclipse delay; intracellular load approximately
+immigration-like ($\bar x'\approx\nu-\mu\bar x$); incidence with Allee
+effect (\texttt{p:eq:allee}):
+\[
+f(V,T)=\gamma TV\cdot\frac{V}{K_A+V}.
+\]
+
+\paragraph{Consequences noted.} $R_0$ remains the large-population
+threshold; establishment additionally governed by $K_A$; the
+first-moment exactness of M19/M20 no longer holds (nonlinear incidence
+breaks moment closure); the independent-branching approximation fails near
+HIV's observed threshold ($\sim$2.3 founder cells, Hataye et al.).
+
+\paragraph{Location.} Chapter 6 \S\texttt{p:sec:hiv}.
+
+% ---------------------------------------------------------------
+\subsection{M28 --- Two-type birth--death--conversion process with global catastrophe}
+\label{sec:M28}
+
+\paragraph{Class.} Two-type continuous-time branching process (triangular:
+type 2 autonomous) with one-way conversion and a single globally absorbing
+killing event.
+
+\paragraph{State space.} $(x,y)\in\mathbb Z_{\ge0}^2$ (type-1 and type-2
+counts) plus the absorbing state $(\Rst,\Rst)$.
+
+\paragraph{Dynamics.} Transition table (\S\texttt{sec:model}):
+\[
+\begin{array}{rcll}
+(x,y)\to(x+1,y) & \text{at rate} & \lambda_1x & \text{(type-1 birth)}\\
+(x,y)\to(x-1,y) & \text{at rate} & \mu_1x & \text{(type-1 death)}\\
+(x,y)\to(x-1,y+1) & \text{at rate} & \nu x & \text{(conversion, one-way)}\\
+(x,y)\to(x,y+1) & \text{at rate} & \lambda_2y & \text{(type-2 birth)}\\
+(x,y)\to(x,y-1) & \text{at rate} & \mu_2y & \text{(type-2 death)}\\
+(x,y)\to(\Rst,\Rst) & \text{at rate} & \delta_1x+\delta_2y
+& \text{(catastrophe, \texttt{eq:catastrophe-rate})}
+\end{array}
+\]
+with $(\Rst,\Rst)$ absorbing.
+
+\paragraph{Parameters.} $\lambda_i,\mu_i$ per-type birth/death; $\nu$
+irreversible conversion; $\delta_1,\delta_2\ge0$ type-specific catastrophe
+rates. Biological mapping (\texttt{tab:bio-mapping}): type 1 = early
+intracellular phenotype, type 2 = adapted phenotype, conversion =
+physiological adaptation, catastrophe = loss of macrophage containment.
+Four labelled regimes (\S7 biology): EQ ($\delta_1=\delta_2$), MAT
+($0<\delta_1<\delta_2$), GATE ($\delta_1=0<\delta_2$, $S'(0)=0$), EARLY
+($\delta_1>\delta_2$).
+
+\paragraph{Initial conditions.} Single type-dependent ancestors:
+$S(t)=\PR_{(1,0)}\{\tau_c>t\}$, $G(t)=\PR_{(0,1)}\{\tau_c>t\}$,
+$S(0)=G(0)=1$.
+
+\paragraph{Principal results.}
+\begin{itemize}
+\item \emph{Feynman--Kac representation} (Proposition
+  \texttt{prop:feynman-kac}): $S,G$ are occupation-time transforms of the
+  catastrophe-free skeleton --- e.g.
+  $S(t)=\EX_{(1,0)}\exp\{-\int_0^t(\delta_1X_s+\delta_2Y_s)\dd s\}$ ---
+  the catastrophe clock being an inhomogeneous Poisson process of rate
+  $\delta_1X_s+\delta_2Y_s$ along skeleton paths.
+\item \emph{Triangular backward system} (\texttt{eq:backward-unscaled}),
+  $S'(0)=-\delta_1$, $G'(0)=-\delta_2$:
+  \[
+  \dot S=\lambda_1S^2-(\lambda_1+\mu_1+\nu+\delta_1)S+\mu_1+\nu G,
+  \qquad
+  \dot G=\lambda_2G^2-(\lambda_2+\mu_2+\delta_2)G+\mu_2 .
+  \]
+\item \emph{Type-2 solution in closed form} (Proposition
+  \texttt{prop:G-solution}): with roots
+  $r_{2,\pm}=\frac{\hat\lambda_2+\hat\mu_2+\hat\delta_2\pm\hat\Delta_2}
+  {2\hat\lambda_2}$, $\hat\Delta_2=\sqrt{(\hat\lambda_2+\hat\mu_2+
+  \hat\delta_2)^2-4\hat\lambda_2\hat\mu_2}$ (hats = rates scaled by
+  $\lambda_1$), $z_2(\hat t)=z_{2,0}\ee^{\hat q_2\hat t}$,
+  \[
+  \widehat G(\hat t)=r_{2,-}-\alpha_2\frac{z_2(\hat t)}{1-z_2(\hat t)}
+  \qquad\Bigl(\alpha_2=\frac{\hat\Delta_2}{\hat\lambda_2},\ \
+  \hat q_2=-\hat\Delta_2\Bigr).
+  \]
+\item \emph{Main theorem} (\texttt{tt:thm:main}; the chapter's headline
+  result): after the shift $X=\widehat S-h$ by the lower root $h$ of
+  $h^2-\hat\kappa_1h+\hat\mu_1+\hat\nu r_{2,-}=0$, the Riccati linearises
+  to a Gauss hypergeometric equation with parameters
+  \[
+  C=1+\frac{\hat\kappa_1-2h}{\hat q_2},\qquad
+  A+B=C-1=\frac{\hat\kappa_1-2h}{\hat q_2},\qquad
+  AB=\frac{\hat\nu\alpha_2}{\hat q_2^2},
+  \]
+  and (basis $U(z)={}_2F_1(A,B;C;z)$, $V(z)=(-z)^{1-C}{}_2F_1(A-C+1,
+  B-C+1;2-C;z)$ on the negative axis, mix fixed by
+  $\Phi'(z_{2,0})/\Phi(z_{2,0})=L=(h-1)/(\hat q_2z_{2,0})$):
+  \[
+  \boxed{\ \widehat S(\hat t)=h-\hat q_2z_2(\hat t)\,
+  \frac{K_UU'(z_2(\hat t))+K_VV'(z_2(\hat t))}
+  {K_UU(z_2(\hat t))+K_VV(z_2(\hat t))}\ }
+  \qquad\text{(\texttt{eq:S-final})}.
+  \]
+\item \emph{Long-time limits} (Corollary \texttt{cor:long-time}):
+  $G\to r_{2,-}$, $S\to h$.
+\item \emph{Boundary degenerations} (\texttt{app:limits}):
+  $\delta_2=0$ gives an elementary Riccati solution with
+  $R_0=(1-s_-)/(1-s_+)$ (Proposition \texttt{prop:delta2-zero});
+  $\lambda_1=0$ linearises the type-1 equation; $\lambda_2=0$ reduces to
+  Bessel functions $J_\rho,Y_\rho$ (Proposition
+  \texttt{prop:lambda2-zero}); $\nu=0$ decouples into two one-type
+  problems; equal rates restrict algebraically to the diagonal.
+\item \emph{Killed (defective) bivariate pgf} (Appendix
+  \texttt{app:catastrophe-pgf}, Proposition
+  \texttt{prop:killed-pgf-backward}):
+  $\mathcal F_i(x,y,t)=\EX_i[x^{X_t}y^{Y_t}\Ind\{\tau_c>t\}]$ satisfies
+  the same backward system (with $\mathcal F_1=x$, $\mathcal F_2=y$ at
+  $t=0$), solved by the same hypergeometric machinery with starting
+  coordinate $z_{2,0}(y)=\frac{y-r_{2,-}}{y-r_{2,+}}$. Derived objects:
+  absorbing-state marker $\mathcal H_i=\mathcal F_i+\rho[1-\mathcal F_i
+  (1,1,t)]$, conditional pgf $\mathcal Q_i=\mathcal F_i/\mathcal F_i(1,1,t)$,
+  flux GF $\mathcal J_i=\delta_1x\,\partial_x\mathcal F_i+\delta_2y\,
+  \partial_y\mathcal F_i$, three conditional count laws, and the ultimate
+  release law $(X_{\rm rel},Y_{\rm rel})=(X_{\tau_c-},Y_{\tau_c-})$ with
+  joint pmf $\PR_i\{X_{\rm rel}=m,Y_{\rm rel}=n\}=\int_0^\infty(\delta_1m+
+  \delta_2n)p^{(i)}_{m,n}(t)\dd t$ ($m+n\ge1$), atom $\sigma_i(\infty)$ at
+  $(0,0)$.
+\item \emph{Antal--Krapivsky recovery} (\texttt{app:AK-recovery}): at
+  $\delta_1=\delta_2=0$ the pgf system reduces equation-by-equation to the
+  Antal--Krapivsky (2011) two-type model under the rate map
+  $\alpha^{\rm AK}_i=\lambda_i$, $\beta^{\rm AK}_i=\mu_i$,
+  $\nu^{\rm AK}=\nu$.
+\end{itemize}
+
+\paragraph{Location and connections.} Chapter 7 (\texttt{tt:ch:two-type}).
+Verified by Gillespie genealogies and RK4 integration against the closed
+form. The one-type catastrophe limit collapses to M6's Riccati structure;
+the GATE regime supplies one of the M20 skeleton instances.
+
+% ---------------------------------------------------------------
+\subsection{M29 --- Replicator--suppressor process}
+\label{sec:M29}
+
+\paragraph{Class.} Nonlinear CTMC (the interaction rate couples the two
+coordinates; \emph{not} a branching process) on a lattice bounded in one
+coordinate; a pure-birth process once the store is spent.
+
+\paragraph{State space.} (\texttt{path:eq:statespace})
+\[
+\mathcal S=\bigl\{(i,j):\ i\in\mathbb N\cup\{0\},\ j\in\{0,\ldots,N\}\bigr\},
+\]
+$X_t$ = intracellular pathogens (replicators), $Q_t$ = remaining granules
+(suppressor); $X_t=0$ absorbing (extinction), $Q_t=0$ absorbing for the
+defence (pure birth thereafter).
+
+\paragraph{Dynamics.} (\texttt{path:eq:rsrates}):
+\[
+\PR{\Delta X=1,\Delta Q=0}= \lambda i\,\Delta t \ \text{(birth)},\qquad
+\PR{\Delta X=-1,\Delta Q=-1}= \varsigma ij\,\Delta t \ \text{(suppression)}
+\]
+plus the no-event term $1-(\lambda i+\varsigma ij)\Delta t$. Suppression
+removes one replicator \emph{and} one granule --- ``that product makes the
+process nonlinear, and it is the only nonlinearity in the model''.
+
+\paragraph{Parameters.} $\lambda$ per-replicator birth; $\varsigma$
+suppression rate per replicator--granule pair; $N$ granule store of a fresh
+cell (no replenishment, Remark \texttt{path:rem:noreplenish}).
+
+\paragraph{Initial conditions.} $X_0=i$ (incident dose), $Q_0=j$
+(typically $j=N$).
+
+\paragraph{Principal results.} Extinction probabilities
+$\pi_{i,j}=\PR(\text{fixation in }X=0\mid(i,j))$ satisfy the embedded
+first-step recursion (\texttt{path:eq:firststep})
+\[
+\pi_{i,j}=\hat\alpha_j\,\pi_{i+1,j}+\hat\beta_j\,\pi_{i-1,j-1},\qquad
+\hat\alpha_j=\frac{\lambda}{\lambda+\varsigma j},\qquad
+\hat\beta_j=\frac{\varsigma j}{\lambda+\varsigma j},
+\]
+with $\pi_{0,j}=1$, $\pi_{i,0}=0$ ($i\ge1$). \emph{Certainty threshold}
+(Proposition \texttt{path:prop:certainty}): $\pi_{i,j}=0$ whenever $i>j$
+--- survival is certain once the cohort exceeds the store. \emph{Diagonal
+law} (Proposition \texttt{path:prop:diagonal}), with $\nu=\lambda/\varsigma$:
+\[
+\pi_{j,j}=\prod_{m=1}^{j}\frac{\varsigma m}{\lambda+\varsigma m}
+=\frac{j!\,\Gamma(\nu+1)}{\Gamma(j+\nu+1)}
+=\binom{j+\nu}{j}^{-1}\ \sim\ \Gamma(\nu+1)\,j^{-\nu},
+\]
+exactly $1/(j+1)$ at $\lambda=\varsigma$; off-diagonal $\pi_{i,j}$ has no
+product form (open). Verified against a $210$-unknown linear solve at
+$N=20$ and 400{,}000-path Gillespie of the embedded chain.
+
+\paragraph{Location and connections.} Chapter 8
+(\texttt{path:def:rs}). Intracellular counterpart of the flooding
+dose-dependence (M23); pairs with M30/M31. The thesis notes the constant
+per-granule-rate idealisation (death rate falls as the store is spent) as
+the weakest link in the Chapter 10 quadrant argument (M38).
+
+% ---------------------------------------------------------------
+\subsection{M30 --- Extracellular ``playing field'' particle model}
+
+\paragraph{Class.} Spatial stochastic individual-based simulation
+(Brownian motion $+$ contact interactions); not formalised as an
+equation-defined Markov process.
+
+\paragraph{State space.} Three agent types in a 3-D extracellular matrix:
+replicative units, target cells (uniform density), killer cells (denser,
+smaller).
+
+\paragraph{Dynamics.} Brownian movement; a killer cell that contacts a
+pathogen eliminates it one-to-one and \emph{is used up}; inside target
+cells the BDC process M6 runs until rupture releases the load. Quadtree
+collision indexing (Appendix \texttt{path:app:quadtree}).
+
+\paragraph{Parameters.} Spatial densities; burst size $r$; casualties
+$\vartheta(r)$; killer prevalence assumed reset between ruptures (Remark
+\texttt{path:rem:reset}), making $\vartheta$ iid across deliveries.
+
+\paragraph{Principal results.} Saturating casualty law and its
+idealisation (\texttt{path:eq:logremoval}, \texttt{path:eq:fixedremoval}):
+\[
+\vartheta(r)\sim\log(r+1),\qquad
+\text{removal}=\min(r,\vartheta)=\begin{cases}r,&r\le\vartheta,\\
+\vartheta,&r>\vartheta.\end{cases}
+\]
+
+\paragraph{Location and connections.} Chapter 8
+\S\texttt{path:sec:playingfield}. Justifies the fixed-removal caricature
+applied in M31.
+
+% ---------------------------------------------------------------
+\subsection{M31 --- Fixed-removal replication-ratio model}
+
+\paragraph{Class.} Output functional over the M6 burst law with threshold
+removal (a ``one-delivery'' offspring model); plus the matched-mean budding
+reversal comparison.
+
+\paragraph{Dynamics.} The release $r$ of one founding bacterium's BDC
+process: $\PR{r=i}=\frac{\delta}{\lambda}a^{-i}$ ($i\ge1$), $\PR{r=0}=b$
+(\texttt{path:eq:burstlaw}); survivors pass through
+$r\mapsto\max(0,r-\vartheta)$.
+
+\paragraph{Parameters.} $\lambda,\mu,\delta$; roots $a,b$; expected yield
+$V_\infty$; removal budget $\vartheta\in\mathbb Z_{\ge0}$; threshold budget
+$\vartheta^*=\log V_\infty/\log a$; flooding parameter
+$L=a(1-b)$; budding match $\sigma=V_\infty/(1+V_\infty)$.
+
+\paragraph{Principal results.} Exact upper tail
+$\PR{r\ge\vartheta}=(1-b)a^{-(\vartheta-1)}$ (\texttt{path:eq:tail});
+\emph{replication ratio} (Proposition \texttt{path:prop:ratio},
+\texttt{path:eq:R0}) --- by memorylessness of the geometric tail,
+\[
+\mathcal R(\vartheta)=\EX{\max(0,r-\vartheta)}=V_\infty\,a^{-\vartheta},
+\]
+with $\mathcal R>1$ iff $\vartheta<\vartheta^*=\log V_\infty/\log a$
+(Corollary \texttt{path:cor:threshold}); $\mathcal R(0)=V_\infty>1$ always,
+so subcriticality exists only because of removal (Corollary
+\texttt{path:cor:whythreshold}); real budgets:
+$\EX{\max(0,r-\vartheta)}=a^{-\lceil\vartheta\rceil}\{V_\infty+
+(\lceil\vartheta\rceil-\vartheta)L\}$. \emph{Reversal} (Proposition
+\texttt{path:prop:reversal}, \texttt{path:eq:reversal}):
+\[
+\mathcal R_{\rm burst}(\vartheta)=V_\infty a^{-\vartheta},\qquad
+\mathcal R_{\rm bud}(\vartheta)=V_\infty\sigma^{\vartheta},
+\]
+and bursting beats matched-mean budding iff $1/a>\sigma$ iff $L<1$ --- the
+exact complement of the flooding theorem M23. Batch-count argument: a
+yield delivered in $n$ instalments retains $\max(0,V_\infty-n\vartheta)$
+against a burster's $\max(0,V_\infty-\vartheta)$ --- concentration wins for
+every $n,\vartheta,L$.
+
+\paragraph{Location and connections.} Chapter 8
+\S\texttt{path:sec:ratio}, \S\texttt{path:sec:reversal}; verified against a
+3000-state embedded-chain solve and Monte Carlo. Bridges M6/M16 to the
+host-level switch narrative; the Chapter 10 open problem asks to reconcile
+$\vartheta^*$ with M38's $p_N^*$.
+
+% ============================================================================
+\section{Catalogue, part III --- non-constant rates (Chapter 9) and conclusion (Chapter 10)}
+% ============================================================================
+
+% ---------------------------------------------------------------
+\subsection{M32 --- Pimentel competition chain}
+
+\paragraph{Class.} Discrete-time Markov chain with path-dependent kernel:
+$A_t$ alone is not Markov; the triple $(A_t,R_{a,t},R_{b,t})$ is.
+
+\paragraph{State space.} $A_t\in\{0,\ldots,N\}$ with $A_t+B_t=N$; $0$ and
+$N$ absorbing; resistances $R_{a,t},R_{b,t}\in\mathbb R_+$.
+
+\paragraph{Dynamics.} Kernel (\texttt{var:eq:kernel}):
+\[
+\PR{A_{t+1}=j\mid A_t=i}=
+\begin{cases}
+q_a=\frac iN(1-p_b), & j=i+1,\\[2pt]
+q_b=(1-\frac iN)(1-p_a), & j=i-1,\\[2pt]
+q_c=\frac iN p_b+(1-\frac iN)p_a, & j=i,
+\end{cases}
+\]
+with blocking probabilities and resistance updates
+(\texttt{var:eq:blockprobs}, \texttt{var:eq:resistupdate}):
+\[
+p_a=\max\{0,1-\tfrac{R_b}{R_a}\},\quad p_b=\max\{0,1-\tfrac{R_a}{R_b}\},
+\quad
+R_{k,t+1}=R_{k,t}+\varepsilon\,\Delta R_{k,t},
+\]
+\[
+\Delta R_{a,t}=\Bigl(\frac{N-A_t}{A_t}\Bigr)^{\alpha},\qquad
+\Delta R_{b,t}=\Bigl(\frac{A_t}{N-A_t}\Bigr)^{\alpha}.
+\]
+
+\paragraph{Parameters.} $N$ enclosure capacity; $\varepsilon$ evolution
+rate (only $\varepsilon/R_0$ matters); $\alpha$ minority-squeeze exponent
+($\alpha=1$ physical; $\alpha>1$ makes criticality visible).
+
+\paragraph{Initial conditions.} $A_0=B_0=N/2$; $R_{a,0}=R_{b,0}=1$.
+
+\paragraph{Principal results.} The moving critical point (equation (9.21)
+= \texttt{var:eq:icrit}):
+\[
+i_c=\begin{cases}
+N\,\dfrac{1-p_a}{2-p_a}, & p_a>0,\ p_b=0,\\[6pt]
+N\,\dfrac{1}{2-p_b}, & p_b>0,\ p_a=0,
+\end{cases}
+\]
+unstable ($q_a>q_b$ iff $i>i_c$) and path-dependent: ``the resistance
+update drags the critical point after the leading population''. Fixation
+probabilities/times not computed (open); simulations show one or two
+reversals then absorption at $\alpha=1$ and order-ten reversals with
+growing swings at large $\alpha$. A spatial version (cellular automaton,
+\S\texttt{var:sec:automaton}) inherits the same local rule.
+
+\paragraph{Location and connections.} Chapter 9 \S3
+(\texttt{var:sec:pimentel}), motivated by Pimentel's fly
+competition-reversal experiment. Recast with a fitness coupling in M33.
+
+% ---------------------------------------------------------------
+\subsection{M33 --- Pimentel$+$ (coupling speciation to competition) \quad [specification]}
+
+\paragraph{Class.} Discrete-time competition chain coupled to two
+continuous-time linear birth--death species counts; specified, never
+simulated.
+
+\paragraph{Dynamics.} Fitness kernel (\texttt{var:eq:fitkernel}):
+\[
+\PR{\Delta A_t=1}=\frac{A_t}{N}\,\frac{f_a}{\bar f},\qquad
+\PR{\Delta A_t=-1}=\Bigl(1-\frac{A_t}{N}\Bigr)\frac{f_b}{\bar f},
+\]
+fitness update with species-count penalty (\texttt{var:eq:fitpenalty}):
+\[
+f_a(t+\Delta t)=f_a(t)+\varepsilon\Bigl(\frac{B_t}{A_t}\Bigr)^{\alpha}
+-\gamma S^{(a)}_t,\qquad
+f_b \text{ symmetric},
+\]
+species counts as birth--death processes (\texttt{var:eq:subspec}):
+\[
+\PR{\Delta S^{(a)}_t=\pm1}=\beta_aS^{(a)}_t\Delta t,\ \ \mu_aS^{(a)}_t
+\Delta t,\qquad
+\beta_a=\Bigl(\frac{A_t}{N}\Bigr)^{\!\zeta}f_a .
+\]
+
+\paragraph{Parameters.} $\varepsilon,\alpha$ as M32; $\mu_a$ per-species
+extinction; $\zeta$ dominance exponent; $\gamma$ cost of carrying excess
+variation.
+
+\paragraph{Role.} Contains both reversal routes at once (minority squeeze
+$+$ winner weakening); the $-\gamma S^{(a)}_t$ penalty is the unrun
+ancestor of M35's per-type cost $-cX_i$. Open: whether the penalty term
+alone can reverse; the regime where $\gamma S^{(a)}_t$ competes with
+accumulated fitness.
+
+\paragraph{Location.} Chapter 9 \S4 (\texttt{var:sec:pimentelplus}).
+
+% ---------------------------------------------------------------
+\subsection{M34 --- Rise, run, ruin, rejuvenation (RRRR)}
+
+\paragraph{Class.} CTMC with state-dependent catastrophe rate plus an
+auxiliary ODE --- the pair $(X_t,V(t))$ is Markov, $X_t$ alone is not.
+The thesis's own classification: ``a birth--death--catastrophe process with
+catastrophe rate $\delta X_t/V(t)$ and an auxiliary ODE for $V$''.
+
+\paragraph{State space.} $X_t\in\mathbb N\cup\{0\}$ (replicative
+agencies); $V(t)\in(0,\infty)$ accumulated potential.
+
+\paragraph{Dynamics.} (\texttt{var:eq:rrrr}, \texttt{var:eq:rrrrV}):
+\[
+\PR{\Delta X_t=1}=\lambda X_t\Delta t \ \text{(proliferation)},\qquad
+\PR{X_{t+\Delta t}=0}=\delta\,\frac{X_t}{V(t)}\Delta t \ \text{(catastrophe)},
+\]
+\[
+\PR{X_{t+\Delta t}=1\mid X_t=0}=\omega\Delta t \ \text{(revival)},\qquad
+\dd V/\dd t=\phi-cX_t .
+\]
+Revival keeps $0$ from being absorbing and makes the process recurrent; as
+$V\downarrow0$ the hazard behaves like $\delta/\{c(t^*-t)\}$, which
+integrates to infinity, so catastrophe arrives almost surely first.
+
+\paragraph{Parameters.} $\phi$ potential inflow; $c$ consumption per
+agency; $\lambda$, $\delta$, $\omega$ (simulation:
+$(\phi,c,\lambda,\delta,\omega)=(4,0.8,0.5,0.25,0.15)$).
+
+\paragraph{Principal results.} Simulation only: a four-movement cycle
+(build, grow, consume, collapse) whose amplitude is fixed by the parameters
+but whose period is random and de-phases across realisations. Open: the
+cycle-period distribution (a first-passage problem for the pair), a
+quasi-stationary law under the scarcity hazard, identifiability ($V$ enters
+only through the ratio).
+
+\paragraph{Location and connections.} Chapter 9 \S5
+(\texttt{var:sec:rrrr}). M6 with the constant hazard $\delta X_t$ replaced
+by $\delta X_t/V(t)$; first half of a matched pair with M35.
+
+% ---------------------------------------------------------------
+\subsection{M35 --- Multiplicative dissipation automaton}
+
+\paragraph{Class.} Stochastic cellular automaton / interacting particle
+system on a torus; ``the chapter's least tractable model''.
+
+\paragraph{State space.} $L\times L$ lattice ($L=256$), Moore
+neighbourhood, periodic boundary; each cell empty or occupied, occupants
+carry a species and nested sub-species label; per extant species $i$:
+potential $V_i$, cells held $N_i$, extant sub-species $X_i\le N_i$. Time in
+sweeps.
+
+\paragraph{Dynamics.} Contest strength of a cell $\zeta$ (sub-species $u$
+of species $i$, \texttt{var:eq:castrength}):
+\[
+w(\zeta)=V_i\,(n_\zeta+1)^{\theta}\,\ee^{-\nu|u|/\kappa_i},
+\qquad \kappa_i=\frac{N_i}{X_i},
+\]
+won with probability $w(\zeta)/(w(\zeta)+w(\zeta'))$; empty ground resists
+with fixed strength $d$ (occupied cell takes a contested empty neighbour
+w.p.\ $1-d$; occupied cells never vacate). Mutation rate per species
+$R^{\rm mut}_i=mV_iN_i$ (\texttt{var:eq:camut}); potential ODE
+(\texttt{var:eq:caode}) $\dd V_i/\dd t=\varphi N_i-cX_i$ floored at zero;
+fragmentation hazard (\texttt{var:eq:cafrag}) $R^{\rm frag}_i=\delta X_i/V_i$
+(plus a deterministic trigger when the ODE update would cross zero), at
+which every sub-species becomes an independent species (potential reset to
+$V_0$).
+
+\paragraph{Parameters.} $L$, $V_0$, $\varphi$, $c$, $m$, $\theta$, $\nu$,
+$d$, $\delta$.
+
+\paragraph{Initial conditions.} One occupied central cell, one species, one
+sub-species, potential $V_0$.
+
+\paragraph{Principal results.} Balance locus (\texttt{var:eq:cabalance})
+$X_i\approx\varphi N_i/c$ where production and dissipation cancel; a
+species can lose potential only if $c>\varphi$; a single-sub-species
+species needs $\ge c/\varphi$ cells to break even (burst filter by area).
+Key structural observation: on the balance locus the hazard becomes
+$\delta X_i/V_i\approx(\delta\varphi/c\bar V)N_i$ --- proportional to area
+--- so the species count is \emph{conjectured} to read as M6's process with
+burst size $X_i$ and effective $\delta$; supported by the founder burst at
+$t=354$ (8689 cells, 964 sub-species) but not derived.
+
+\paragraph{Location and connections.} Chapter 9 \S6
+(\texttt{var:sec:ca}). Deliberate pair to M34 (inflow per cell and
+endogenous; catastrophe divides rather than destroys); realises and
+simulates the penalty mechanism M33 only specified.
+
+% ---------------------------------------------------------------
+\subsection{M36 --- Birth--plague model (two variants)}
+
+\paragraph{Class.} Two-type CTMC with a bilinear infection term
+(density-dependent rates); variant 2 couples an auxiliary vitality ODE into
+the loss rate.
+
+\paragraph{State space.} $(X_t,Y_t)\in\mathbb N^2$: uninfected and
+infected individuals; variant adds $V(t)\in\mathbb R$.
+
+\paragraph{Dynamics.} (\texttt{var:eq:plague}):
+\[
+\PR{\Delta X=1}=\lambda X_t\Delta t,\quad
+\PR{\Delta X=-1,\Delta Y=1}=(\delta+\chi Y_t)X_t\Delta t,\quad
+\PR{\Delta Y=-1}=\mu Y_t\Delta t,
+\]
+the middle channel superposing spontaneous corruption (rate $\delta$ per
+head) and contact infection (rate $\chi$ per pair). Vitality variant
+(\texttt{var:eq:vitality}, \texttt{var:eq:vitalityV}): other channels
+unchanged, plus $\dd V/\dd t=\phi-cX_t$ and corruption slowed to
+$\delta X_t/V(t)$ (by consistency with M34; the source flags an
+alternative $\delta X_t^2/V(t)$ reading as ``author to confirm'').
+
+\paragraph{Parameters.} $\lambda,\delta,\chi,\mu$ (simulation
+$(1,0.1,0.02,10)$); variant $\phi,c$.
+
+\paragraph{Principal results.} Base model simulated only (infection acts
+as a brake, no collapse mechanism); the vitality variant is specified to
+supply the missing amplification and has not been simulated.
+
+\paragraph{Location and connections.} Chapter 9, Appendix 9.A
+(\texttt{var:app:plague}). Complement to M32's coupling idea (loss rate
+driven by a second count rather than a carried potential).
+
+% ---------------------------------------------------------------
+\subsection{M37 --- Public good accumulation}
+
+\paragraph{Class.} CTMC birth--death process whose birth rate is a
+functional of an auxiliary ODE compound (positive feedback); embedded in a
+host-to-host Galton--Watson layer.
+
+\paragraph{State space.} $X_t\in\mathbb N$ (bacteria within one
+macrophage); $P(t)\in\mathbb R$ (public-good concentration).
+
+\paragraph{Dynamics.} (\texttt{var:eq:publicgood}):
+\[
+\dd P/\dd t=gX_t-c,\qquad
+\PR{\Delta X_t=1}=\lambda(t)X_t\Delta t,\quad
+\lambda(t)=\lambda_0+\alpha P(t),\qquad
+\PR{\Delta X_t=-1}=\mu X_t\Delta t .
+\]
+
+\paragraph{Parameters.} $g$ production per bacterium; $c$ clearance;
+$\lambda_0$ base birth; $\alpha$ public-good advantage; $\mu$ death;
+regime of interest $\mu>\lambda_0$ (subcritical alone, supercritical once
+enough good accumulates; while $X_t<c/g$ the good is cleared faster than
+made).
+
+\paragraph{Principal results.} Minimum founding cohort
+(\texttt{var:eq:kstar}):
+\[
+K^*=\inf\Bigl\{K:\ \lim_{t\to\infty}\PR{X_t>0\mid X_0=K}>\tfrac12\Bigr\},
+\]
+computed numerically (steep sigmoid; $K^*$ rises with $\mu-\lambda_0$ and
+sits above $c/g$; at $\mu-\lambda_0=1.2$ no $K\le28$ crossed one half).
+Host-to-host embedding: cells that survive to late time deliver their load
+into two more cells --- a Galton--Watson process (M2 with general
+offspring law), supercritical exactly when within-cell survival exceeds
+one half.
+
+\paragraph{Location and connections.} Chapter 9, Appendix 9.B
+(\texttt{var:app:publicgood}). The feedback run in the favourable
+direction (complement of M34/M36); founding-cohort emphasis matches the
+thesis-wide near-criticality theme.
+
+% ---------------------------------------------------------------
+\subsection{M38 --- Quadrant argument \quad [D: comparison]}
+
+\paragraph{Class.} \textbf{[D]} Comparison of expected net drifts of three
+simple birth--death processes; ``the crudest argument in the thesis''.
+
+\paragraph{Setting.} Environments $i\in\{M,N,E\}$ (macrophage interior,
+neutrophil interior, extracellular), each a linear birth--death process
+with rates $(\beta_i,\mu_i)$; orderings
+\[
+\mu_N>\mu_E>\mu_M,\qquad \beta_M=\beta_E=\beta_N=\beta,\qquad
+\beta_M-\mu_M>\beta_E-\mu_E>\beta_N-\mu_N .
+\]
+
+\paragraph{Dynamics of the comparison.} With phagocyte composition
+$p_M=\#M/(\#M+\#N)$, $p_N=1-p_M$: a pro-phagocytic strategist draws its
+environment at random from the two interiors, an anti-phagocytic one takes
+the extracellular rate with certainty:
+\[
+R_{\rm pro}=p_M(\beta_M-\mu_M)+p_N(\beta_N-\mu_N),\qquad
+R_{\rm anti}=\beta_E-\mu_E .
+\]
+
+\paragraph{Principal result.} Pro-phagocytosis has the larger expected
+drift iff (boxed, \texttt{con:eq:threshold})
+\[
+p_N>p_N^*:=\frac{\mu_E-\mu_M}{\mu_N-\mu_M},
+\]
+the position of the extracellular death rate on the interval from the
+macrophage to the neutrophil rate; the switch is keyed to composition, not
+elapsed time, and is testable by neutrophil depletion/recruitment.
+
+\paragraph{Location and connections.} Chapter 10
+\S\texttt{con:sec:quadrant}. Companion threshold to M31's
+$\vartheta^*=\log V_\infty/\log a$ --- ``reached from a different model
+with different machinery, and the two accounts have not been reconciled''
+(Chapter 10 open problem 1). Weakest stated link: it treats $\mu_M,\mu_N$
+as constants where M29 shows they deplete with the granule store.
+
+% ============================================================================
+\section{Solution methods the thesis builds around}
+% ============================================================================
+
+Not models, but the toolkit the entries above are solved with; recorded
+here for completeness.
+
+\begin{itemize}
+\item \emph{First-step principle} (\texttt{m:prop:firststep}):
+  $h_i=\sum_jP_{ij}h_j$ (discrete) and $h_i=\sum_{j\ne i}\frac{q_{ij}}
+  {q_i}h_j$ (continuous), with absorption-time variants; branching fixed
+  point $s=\phi(s)$ (\texttt{m:eq:extinctionfixedpoint}). Used by M1, M5,
+  M23, M29, M32.
+\item \emph{Probability generating functions}: composition for random sums;
+  bivariate pgfs (\texttt{m:eq:pgfbivariate}); coefficient extraction and
+  the bivariate Cauchy integral (Appendix 2.D). Used by M2, M5, M6,
+  M13--M16, M28.
+\item \emph{Method of characteristics} (\texttt{m:sec:moc}): generic
+  first-order PDE machinery anchoring to an initial surface; the worked
+  example is M14, extended to the Riccati characteristic of M15 and the
+  pgf PDE of M10.
+\item \emph{Riccati root factorisation}: the quadratic
+  $\lambda f^2-(\lambda+\mu+\delta)f+\mu$ with roots $a,b$ (M6); the same
+  structure recurs in M8, M15, M28 (hypergeometric and Bessel reductions).
+\item \emph{Feynman--Kac / occupation-time transforms} (M28), defective
+  (killed) generating functions (M6, M28), time-change of the Yule law
+  (M4 $\to$ M10).
+\item \emph{Simulation}: Gillespie's direct method
+  (\texttt{m:rem:gillespie}) with competing exponential clocks; Poisson
+  thinning for time-dependent rates (M9); embedded-chain truncation solves
+  and Monte Carlo as verification (Chapters 5, 6, 8).
+\end{itemize}
+
+% ============================================================================
+\section{How the models connect}
+% ============================================================================
+
+\begin{itemize}
+\item \textbf{The BDC spine.} M6 (Chapters 2, 4, 5) is the thesis's
+  engine: its roots $a,b$ ``carry every closed form''; its kernels
+  $\hat I$ and $g=\delta K$ drive the population layer M20; its burst law
+  feeds the establishment process M23 and the removal functional M31; its
+  two-type extension is M28; its scarcity-rate deformation is M34 (and,
+  conjecturally, M35).
+\item \textbf{Discrete--continuous pair.} M2 (Galton--Watson, $A(p)$) and
+  M5 (birth--death, $A_c$) pose the same quasi-stationary question in
+  discrete and continuous time; $A_c$ is elementary, $A(p)$ is not, and the
+  Koenigs function explains why (M2).
+\item \textbf{Budding vs bursting.} M17 vs M6 at the cell level; M23
+  (flooding, $L>1$ favours bursting without a budget) and M31 (reversal,
+  $L<1$ favours bursting under threshold removal) are exact complements;
+  M20--M22 show the schedule is invisible to $R_0$ and to mean dynamics.
+\item \textbf{Absorption family.} M13--M15 model post-rupture transfer
+  into fresh compartments; M15's closed form is a thesis result; M16 chains
+  the cells instead.
+\item \textbf{Non-constant rates.} Chapter 9's taxonomy: what costs the
+  generating function is ``continuous bending of a rate''. M10 (moving
+  birth, exact geometric law), M32/M33 (path-dependent kernels), M34--M37
+  (feedback through auxiliary compounds or second counts). The conclusion
+  restates the principle: a process may act on its own circumstances and
+  stay solvable, provided what survives the interaction is a random time
+  or a random count rather than a moving rate.
+\item \textbf{Thresholds.} Three independent thresholds appear:
+  $\vartheta^*=\log V_\infty/\log a$ (M31), $p_N^*$ (M38), $K^*$
+  (M37); reconciling the first two is an open problem of the conclusion.
+\end{itemize}
+
+\vfill
+\begin{center}\small
+Extracted September 2026 from \texttt{full\_draft\_thesis} (stitched working
+draft). Thesis \texttt{label} keys are quoted throughout as stable
+identifiers; all equations are reproduced from the chapter sources.
+\end{center}
+
+\end{document}

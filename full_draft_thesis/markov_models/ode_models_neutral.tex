@@ -1,0 +1,603 @@
+% ============================================================================
+% ode_models_neutral.tex
+%
+% Catalogue of every ODE model (deterministic system) specified or written
+% down in the doctoral thesis on stochastic branching and release processes.
+% Companion to markov_models_neutral.tex (same folder; its model numbers are
+% cross-referenced as M1--M31). Neutral-terminology copy for automated
+% review: biological framing removed, mathematical content retained.
+%
+% Compiled standalone:  pdflatex ode_models_neutral.tex  (run twice)
+% ============================================================================
+
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  urlcolor=blue!60!black,
+  pdftitle={Catalogue of ODE specifications}
+}
+
+% --- House notation ----------------------------------------------------------
+\newcommand{\pr}[1]{\mathbb{P}\!\left(#1\right)}
+\newcommand{\ex}[1]{\mathbb{E}\!\left(#1\right)}
+\newcommand{\mean}[1]{\mathbb{E}\!\left[#1\right]}
+\newcommand{\var}[1]{\operatorname{Var}\!\left(#1\right)}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ddt}[1]{\frac{\dd #1}{\dd t}}
+\newcommand{\dda}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\pddt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\lrb}[1]{\left(#1\right)}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\Ifix}{I_{\mathrm{fix}}}
+\newcommand{\Act}{\mathcal{I}}     % active compartments
+\newcommand{\Free}{\mathcal{V}}    % free particles
+\newcommand{\Xt}{X_t}
+\newcommand{\Wt}{W_t}
+\newcommand{\Bint}{\mathcal{B}}
+\newcommand{\Lap}[1]{\widetilde{#1}}
+\newcommand{\Ac}{A_{\mathrm{c}}}
+
+\newcommand{\source}[1]{\par\noindent{\small\textit{Specified in #1.}}\par\medskip}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{1}
+\allowdisplaybreaks
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{4.2cm}
+{\LARGE\bfseries Catalogue of ODE specifications\par}
+\vspace{10pt}
+{\large Extracted from a doctoral thesis on stochastic branching and release
+processes\par}
+\vspace{1.6cm}
+{\large Neutral-terminology copy for automated review\par}
+\vspace{6pt}
+{September 2026\par}
+\vfill
+{\small Companion to \texttt{markov\_models\_neutral.tex}. Every entry gives
+the thesis location, the equations, parameters, and solutions or thresholds
+stated with them.\par}
+\vspace*{1.2cm}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+% ----------------------------------------------------------------------------
+\chapter*{Scope and conventions}
+\addcontentsline{toc}{chapter}{Scope and conventions}
+% ----------------------------------------------------------------------------
+
+This document lists every deterministic system of ordinary differential
+equations written down in the source thesis, in four classes:
+
+\begin{enumerate}[leftmargin=1.9em,itemsep=0.2em]
+\item \textbf{Standalone population models} specified as deterministic
+systems (D1--D8);
+\item \textbf{Flow components of hybrid ODE--CTMC models} --- the
+deterministic part of a piecewise-deterministic pair whose jump part is
+catalogued in the companion Markov document (D9--D12);
+\item \textbf{Moment and backward ODE systems} derived from the Markov
+models and written down there as equations in their own right (D13--D16);
+\item \textbf{Continuum approximations} replacing a recursion by an ODE
+(D17).
+\end{enumerate}
+
+One boundary case is included with a flag: the renewal system D8 is
+integro-differential rather than purely ODE, but it is the thesis's main
+deterministic population model and reduces to ODE form in its
+exponential-phase projection. Partial derivative equations (generating
+function PDEs, transport equations) are not ODEs and are omitted. Cross-references
+D\,n are internal; M\,n refer to the companion catalogue. Neutral vocabulary
+throughout: \emph{compartment} (founded, active, or cleared), \emph{free
+particles}, \emph{target sites}, \emph{founding rate}.
+
+% ----------------------------------------------------------------------------
+\chapter{Catalogue at a glance}
+% ----------------------------------------------------------------------------
+
+{\small
+\begin{longtable}{@{}p{0.06\textwidth}p{0.46\textwidth}p{0.24\textwidth}p{0.12\textwidth}@{}}
+\toprule
+& System & Variables & Where \\
+\midrule
+\endhead
+\multicolumn{4}{@{}l}{\textit{Standalone deterministic models}}\\
+D1 & Standard population model, three variables & $T,\Act,\Free$ & \S1.5 \\
+D2 & Standard population model, two variables & $\Act,\Free$ & \S1.5; \S6.2.1 \\
+D3 & Mean-field seasonal two-population system & $x,y$ & \S2.2.3.1 \\
+D4 & Logistic environment ODE & $N$ & \S2.2.3.2; \S9.2 \\
+D5 & Gated-release flow system (hybrid flow part) & $A,R$ + gate $G$ & \S2.2.4.1 \\
+D6 & Coupling taxonomy: three vector-field forms & $\mathbf y$ ($,M_t$) & \S2.2.4 \\
+D7 & Partial-release mean-field system & $\Act,Q,\Free$ & \S6.7.2 \\
+D8 & Renewal system (integro-differential; flagged) & $\Act,\Free$ + kernels & \S6.4 \\
+\multicolumn{4}{@{}l}{\textit{Flow components of hybrid models}}\\
+D9 & RRRR potential flow & $V$ & \S9.4.2 \\
+D10 & Multiplicative-dissipation potential flow & $V_i$ & \S9.5.4 \\
+D11 & Vitality flow (birth--conversion variant) & $V$ & \S9.A \\
+D12 & Public-good concentration flow & $P$ & \S9.B \\
+\multicolumn{4}{@{}l}{\textit{Moment and backward ODE systems}}\\
+D13 & Birth--death moment ODEs (+ backward Riccati) & moments; $u$ & \S2.2.3; \S2.3.2 \\
+D14 & Birth--death--catastrophe moment system & $I,J,K,V$ & \S4.4; \S5.2.4 \\
+D15 & Master-equation (forward) infinite systems & $p_j(t)$ & \S2.3.2.1; \S5.3.1 \\
+D16 & Two-type backward Riccati system & $S,G$ & \S7.2.3--7.2.4 \\
+\multicolumn{4}{@{}l}{\textit{Continuum approximation}}\\
+D17 & Continuum ODE for the survival recursion & $S$ & \S3.7 \\
+\bottomrule
+\end{longtable}
+}
+
+% ----------------------------------------------------------------------------
+\chapter{Standalone deterministic models}
+% ----------------------------------------------------------------------------
+
+\section{D1: Standard population model, three variables}
+\source{\S1.5}
+
+\paragraph{Variables.} Unoccupied target sites $T$, active compartments
+$\Act$, free particles $\Free$.
+
+\paragraph{Equations.}
+\begin{equation}
+\ddt{T} = s - \gamma T \Free,
+\qquad
+\ddt{\Act} = \gamma T \Free - d_I\,\Act,
+\qquad
+\ddt{\Free} = p\,\Act - c\,\Free,
+\end{equation}
+with site influx $s$, founding rate $\gamma$ per site--particle pair,
+release rate $p$ per active compartment, removal rate $d_I$, particle
+clearance $c$.
+
+\paragraph{Role.} The thesis carries the target-constant reduction D2; D1
+is its full form, shown for context in the opening chapter.
+
+\section{D2: Standard population model, two variables (target-constant)}
+\source{\S1.5 (reduction); \S6.2.1 as the standard comparator}
+
+\paragraph{Equations.}
+\begin{equation}
+\ddt{\Act}=\gamma T\,\Free-d_{\Act}\,\Act,
+\qquad
+\ddt{\Free}=p\,\Act-c\,\Free,
+\qquad
+R_0=\frac{\gamma T\,p}{c\,d_{\Act}},
+\end{equation}
+with target sites $T$ held fixed (large-site regime: site depletion is not a
+driver of the dynamics).
+
+\paragraph{Status and anchors.} Deterministic; the thesis shows it is the
+exact one-compartment limit of the budding comparator (M15) and a projection
+of the renewal system D8, valid in exponential phase. Every active
+compartment, whatever its age or contents, releases at rate $p$ and is
+removed at rate $d_{\Act}$ --- the two constants that D8 replaces by
+kernels.
+
+\section{D3: Mean-field seasonal two-population system}
+\source{\S2.2.3.1, equation following the seasonal generator}
+
+\paragraph{Equations.} Deterministic comparison system for the two-count
+process M7:
+\begin{equation}
+\dot x=b\,\mathcal S^+(t)\,x-exy,
+\qquad
+\dot y=exy-dy,
+\qquad
+\mathcal S^+(t)=\max\{0,\,1+A\sin(\omega t)\}.
+\end{equation}
+
+\paragraph{Anchors.} For $A>1$ each period $2\pi/\omega$ contains a closed
+season of length $(2/\omega)\arccos(1/A)$. On the axis $y=0$ the exact mean
+of M7 is $x_0\exp\lrb{b\int_0^t\mathcal S^+(s)\dd s}$; in the interior the
+stochastic first moments involve $\ex{xy}$ and do not close, which is why
+the deterministic system is only a comparison. Figure parameters:
+$A=2$, $\omega=2\pi$, $b=2$, $e=0.005$, $d=2$, $(x_0,y_0)=(300,100)$.
+
+\section{D4: Logistic environment ODE}
+\source{\S2.2.3.2; \S9.2 (Chapter 9 notation)}
+
+\paragraph{Equation.}
+\begin{equation}
+\dda{N}{t}=\varrho N\lrb{1-\frac{N}{K}},
+\qquad N(0)=N_0,
+\qquad 0<N_0<K,
+\end{equation}
+with carrying capacity $K$ and growth rate $\varrho$ (Chapter 2 uses $r$,
+$C$).
+
+\paragraph{Solution.}
+\begin{equation}
+N(t)=\frac{K\,\ee^{\varrho t}}{\xi+\ee^{\varrho t}},
+\qquad
+\xi=\frac{K}{N_0}-1 .
+\end{equation}
+
+\paragraph{Role.} Prescribed environment driving the type-count process M8:
+the per-type origination rate is $\beta(t)=\sigma(K-N(t))$; the coupling is
+one-way. The type-count mean obeys
+$\ddt{}\ex{S_t}=\beta(t)\ex{S_t}$ (\S9.2.5), giving
+$\ex{S_t}=\ee^{\Bint(t)}$ with $\Bint(t)=\int_0^t\beta$ and the limit
+$\ex{S_\infty}=(K/N_0)^{\sigma K/\varrho}$.
+
+\section{D5: Gated-release flow system}
+\source{\S2.2.4.1}
+
+\paragraph{Variables.} Accumulated amount $A_t$, transferred amount $R_t$,
+gate $G_t\in\{0,1\}$ (jump part: M9).
+
+\paragraph{Flow (between gate jumps).}
+\begin{equation}
+\dda{A_t}{t}=\rho-G_t\,cA_t,
+\qquad
+\dda{R_t}{t}=G_t\,cA_t,
+\end{equation}
+external input $\rho>0$, transfer rate $c>0$.
+
+\paragraph{Anchors.} Pathwise balance $A_t+R_t=A_0+R_0+\rho t$; both
+components stay non-negative and $R_t$ is non-decreasing. The first moment
+$\dda{}{t}\ex{A_t}=\rho-c\ex{G_tA_t}$ is not closed. With the gate held
+fixed the flows solve exactly: closed, $A$ grows linearly; open, $A\to\rho/c$.
+Illustration parameters: $\rho=2$, $c=4$, $\eta=0.015$, $\gamma=1.45$,
+$(A_0,R_0,G_0)=(5,0,0)$.
+
+\section{D6: Coupling taxonomy: three vector-field forms}
+\source{\S2.2.4}
+
+\paragraph{Specification.} With continuous state $\mathbf y(t)\in\mathbb R^d$
+and discrete mode $M_t$, the thesis writes the three couplings as
+\begin{align}
+&\dda{\mathbf y}{t}=F\bigl(\mathbf y(t),M_t\bigr),
+\qquad M_t\ \text{autonomous}
+&&\text{(case i; M10)},\\
+&\dda{\mathbf y}{t}=F\bigl(\mathbf y(t)\bigr),
+\qquad q_{ij}(t)=q_{ij}\bigl(\mathbf y(t)\bigr)
+&&\text{(case ii; M8)},\\
+&\dda{\mathbf y}{t}=F\bigl(\mathbf y(t),M_t\bigr),
+\qquad q_{ij}=q_{ij}\bigl(\mathbf y(t)\bigr)
+&&\text{(case iii; M9)}.
+\end{align}
+In all three cases the pair is a piecewise-deterministic Markov process;
+in case (iii) generally only the pair is Markov. Case (ii) can be solved
+for $\mathbf y$ first, leaving a time-inhomogeneous chain.
+
+\section{D7: Partial-release mean-field system}
+\source{\S6.7.2}
+
+\paragraph{Variables.} Active compartments $\Act$, total intracompartmental
+stock $Q$ across productive compartments, free particles $\Free$.
+
+\paragraph{Equations.} Release events on the load-dependent clock $\delta X$
+with each unit released independently with probability $\varphi$:
+\begin{equation}
+\ddt{\Act}=\gamma T\,\Free-d_{\Act}\Act,
+\qquad
+\ddt{Q}=\nu\Act-\delta\varphi\,\frac{Q^2}{\Act}-d_{\Act}Q,
+\qquad
+\ddt{\Free}=\delta\varphi\,\frac{Q^2}{\Act}-c\,\Free,
+\end{equation}
+with immigration $\nu$ into newly founded compartments.
+
+\paragraph{Anchors.} With a load-independent clock $\lambda(X)=\delta$
+instead, mean export is $\delta\varphi Q$ and the system collapses to
+stock-and-export dynamics with $\varepsilon_{\rm eff}=\delta\varphi$:
+partial release is invisible in the mean field exactly when the clock is
+load-independent, and visible in single-compartment release-count
+distributions always. Mapping used in the thesis: blocking production
+lowers $\lambda$; enhancing degradation raises $\mu$; blocking founding
+lowers $\gamma T$; blocking secretion reduces $\varphi$.
+
+\section{D8: Renewal system (integro-differential; flagged)}
+\source{Kernels \S6.3; system \S6.4.1; skeleton \S6.4.3}
+
+\paragraph{Specification.} Not an ODE system --- a pair of Volterra-type
+renewal equations --- included because it is the thesis's principal
+deterministic population model and reduces to ODE/algebraic form under
+exponential growth. With incidence $i(t)=\gamma T\Free(t)$ and
+$\Act_0$ initially active compartments of age zero:
+\begin{align}
+\Act(t)&=\Act_0\,\Ifix(t)+\int_0^t i(t-\alpha)\,\Ifix(\alpha)\,\dd\alpha
+=\Act_0\,\Ifix+(i*\Ifix)(t),\\
+\ddt{\Free}(t)
+&=\Act_0\,g(t)+\int_0^t i(t-\alpha)\,g(\alpha)\,\dd\alpha-c\,\Free(t)
+=\Act_0\,g+(i*g)(t)-c\,\Free(t).
+\end{align}
+Kernels from M6: $S(\alpha)=\Ifix(\alpha)$ and $g(\alpha)=\delta K(\alpha)$.
+
+\paragraph{Skeleton and anchors.} Any kernel pair $(S,g)$ induces
+$\Act(t)=\Act_0S(t)+(i*S)(t)$ and
+$\ddt{\Free}=\Act_0g+(i*g)-c\Free$. Under exponential incidence
+$i(t)=i_0\ee^{rt}$ the system reduces to algebraic effective parameters
+$p_{\rm eff}(r)=\Lap{g}(r)/\Lap{S}(r)$ and, for linear incidence,
+$R_0=(\gamma T/c)\int_0^\infty g$; exponential kernels reproduce D2
+exactly. First-moment exactness (Proposition, \S6.4.2) holds because all
+rates are linear.
+
+% ----------------------------------------------------------------------------
+\chapter{Flow components of hybrid ODE--CTMC models}
+% ----------------------------------------------------------------------------
+
+Each entry below is the deterministic flow of a piecewise-deterministic
+pair; the jump process is catalogued as M27, M28, M29 (variant), and M30
+respectively.
+
+\section{D9: RRRR potential flow}
+\source{\S9.4.2}
+
+\paragraph{Equation.}
+\begin{equation}
+\ddt{V}=\phi-c\,X_t ,
+\end{equation}
+potential $V(t)$, inflow $\phi$, consumption $c$ per agency, with $\Xt$ the
+jump process of M27.
+
+\paragraph{Anchors.} $V$ cannot be exhausted: as $V\downarrow0$ with
+$\Xt\ge1$ the catastrophe hazard behaves like
+$\delta/\lrb{c(t^\ast-t)}$, which integrates to infinity, so the catastrophe
+arrives first and $V$ stays positive for all time. Illustration parameters:
+$\phi=4$, $c=0.8$.
+
+\section{D10: Multiplicative-dissipation potential flow}
+\source{\S9.5.4}
+
+\paragraph{Equation.} For each extant type $i$ of the automaton M28:
+\begin{equation}
+\ddt{V_i}=\varphi N_i-c\,X_i ,
+\qquad\text{floored at }0,
+\end{equation}
+with occupied cells $N_i$ (each supplying potential at rate $\varphi$) and
+extant sub-types $X_i$ (each costing $c$).
+
+\paragraph{Anchors (three readings stated in the source).}
+(i) $V_i$ does not appear on the right: a pure accumulator, growing while
+$X_i<\varphi N_i/c$ and falling beyond. (ii) Since $X_i\le N_i$, the most
+negative drift is $N_i(\varphi-c)$: potential can fall at all only if
+$c>\varphi$, the condition under which fragmentation is reachable.
+(iii) A single-sub-type type needs at least $c/\varphi$ cells to break even.
+The flow differs from D9 in exactly two respects: inflow charged per cell
+(endogenous) and outflow charged per type rather than per individual.
+
+\section{D11: Vitality flow (birth--conversion variant)}
+\source{Appendix 9.A}
+
+\paragraph{Equation.} Carried alongside the birth--conversion pair (M29
+variant):
+\begin{equation}
+\ddt{V}=\phi-c\,X_t ,
+\end{equation}
+and the middle jump channel becomes
+$\pr{\Delta X_t=-1,\ \Delta Y_t=1}=\lrb{\delta/V(t)+\chi Y_t}X_t\,\dd t$.
+
+\paragraph{Anchors.} A population that grows large drives $V$ down and
+raises its own loss rate --- the amplification the unvarianted model lacks.
+Same functional form as D9; different jump process. Not simulated.
+
+\section{D12: Public-good concentration flow}
+\source{Appendix 9.B}
+
+\paragraph{Equation.}
+\begin{equation}
+\ddt{P}=g\,X_t-c ,
+\end{equation}
+public-good concentration $P$, production $g$ per unit, constant clearance
+$c$, with the jump process of M30 (birth rate $\lambda(t)=\lambda_0+\alpha P$).
+
+\paragraph{Anchors.} While $X_t<c/g$ the good is cleared faster than it is
+made and $P$ falls, so a small founding cohort may never start the feedback
+loop; the regime of interest is $\mu>\lambda_0$ (subcritical alone,
+supercritical once enough good has accumulated). Illustration parameters:
+$(\lambda_0,\alpha,g,c)=(0.6,0.25,0.15,0.45)$, so $P$ falls whenever
+$X_t<c/g=3$.
+
+% ----------------------------------------------------------------------------
+\chapter{Moment and backward ODE systems}
+% ----------------------------------------------------------------------------
+
+\section{D13: Birth--death moment ODEs, and the backward Riccati equation}
+\source{Mean and second moment: \S2.3.2.2--2.3.2.3; time-inhomogeneous mean
+and backward Riccati: \S2.2.3}
+
+\paragraph{Moment equations.} For the linear birth--death process (M5),
+from the master equation D15:
+\begin{equation}
+\ddt{}\ex{X_t}=(\lambda-\mu)\ex{X_t},
+\qquad
+\ex{X_t}=N\ee^{(\lambda-\mu)t},
+\end{equation}
+\begin{equation}
+\ddt{}\ex{X_t^2}=2(\lambda-\mu)\ex{X_t^2}+(\lambda+\mu)\ex{X_t},
+\qquad
+\var{X_t}=N\,\frac{\lambda+\mu}{\lambda-\mu}\,
+\ee^{(\lambda-\mu)t}\lrb{\ee^{(\lambda-\mu)t}-1}
+\ \ (\lambda\ne\mu),
+\end{equation}
+with $\var{X_t}=2N\lambda t$ at criticality $\lambda=\mu$. The $\varrho$th
+moment equation is driven by the lower moments, so the hierarchy is solved
+recursively; for nonlinear rates it does not close. The continuous-time
+mean also appears in \S1.3 as the definition of the three regimes
+(subcritical, critical, supercritical by the sign of $\lambda-\mu$).
+
+\paragraph{Time-inhomogeneous mean.} For rates $\lambda(t)$, $\mu(t)$:
+$\ex{X_t\mid X_0=n_0}
+=n_0\exp\lrb{\int_0^t(\lambda(r)-\mu(r))\,\dd r}$, still closed by
+linearity.
+
+\paragraph{Backward Riccati equation for extinction.} With
+$u(s,T)=\pr{X_T=0\mid X_s=1}$:
+\begin{equation}
+-\pdd{u}{s}
+=\mu(s)-\bigl(\lambda(s)+\mu(s)\bigr)u+\lambda(s)u^2,
+\qquad
+u(T,T)=0 .
+\end{equation}
+The forward-endpoint probability $u_{\mathrm f}(t)=B(t)/(1+B(t))$ with
+$B(t)=\int_0^t\mu(s)\exp\lrb{\int_0^s(\mu(r)-\lambda(r))\dd r}\dd s$ does
+\emph{not} satisfy this equation with $s$ replaced by $t$; the two time
+endpoints play different roles.
+
+\section{D14: Birth--death--catastrophe moment system}
+\source{Riccati equation and mean: \S4.3, \S5.2.4; moment hierarchy and
+release balance: \S4.4}
+
+\paragraph{Core Riccati equation.} The no-catastrophe probability $I(t)$ of
+M6 obeys the closed scalar ODE
+\begin{equation}
+\ddt{I}=\lambda(I-a)(I-b)
+=\mu-(\lambda+\mu+\delta)I+\lambda I^2,
+\qquad I(0)=1,
+\end{equation}
+with roots $b<1<a$ from
+$\eta=(\lambda+\mu+\delta)/(2\lambda)$,
+$a,b=\eta\pm\sqrt{\eta^2-\mu/\lambda}$. $D(t)$ satisfies the same equation
+with $D(0)=0$.
+
+\paragraph{Moment balance equations.} With $J(t)=\ex{\Xt}$,
+$K(t)=\ex{\Xt^2}$, and $V(t)=\ex{\Wt}$:
+\begin{align}
+\ddt{I}&=-\delta J,
+&\ddt{}\pr{\Xt=H}&=\delta J,\\
+\ddt{J}&=(\lambda-\mu)J-\delta K,
+&\ddt{V}&=\delta K,
+\end{align}
+and the genuinely open continuation
+$\ddt{K}=2(\lambda-\mu)K+(\lambda+\mu)J-\delta\ex{\Xt^3}$.
+The quadratic term $-\delta K$ (and the cubic beyond) is the signature of
+load-proportional catastrophe: a large load is both more costly when
+removed and more likely to be removed.
+
+\paragraph{Closure without truncation.} The hierarchy is not truncated:
+from $J=-I'/\delta$ and the Riccati equation,
+$\ddt{J}=-(\lambda+\mu+\delta)J+2\lambda IJ$, which eliminates $K$ (and,
+by repeated differentiation, all higher moments) in favour of $I$. Closed
+forms at $w=\ee^{\theta t}$:
+$J=\frac{(a-b)^2w}{(B+Aw)^2}$,
+$K=\lrb{1+\tfrac{2\lambda}{\delta}(1-I)}J$,
+$V=(1-I)\lrb{1+\tfrac{\lambda}{\delta}(1-I)}$, and the second release
+moment
+$\ex{\Wt^2}=\frac{2(\lambda-\mu)}{\delta}V-\frac{\lambda+\mu}{\delta}I
+-K+\frac{\lambda+\mu}{\delta}+1$.
+The balance identity $\ddt{J}=(\lambda-\mu)J-\ddt{V}$ also gives
+$\ddt{V}=-\frac{\lambda-\mu}{\delta}\ddt{I}-\ddt{J}$.
+
+\section{D15: Master-equation (forward Kolmogorov) infinite systems}
+\source{General form and birth--death case: \S2.3.2.1; BDC case, both
+rupture conventions: \S5.3.1; absorption-model forward equations: \S2.B}
+
+\paragraph{General form.} For a CTMC with generator $Q$ and state
+probabilities $p_j(t)=\pr{X_t=j}$:
+\begin{equation}
+\ddt{p_j(t)}=\sum_{k\ne j}q_{kj}\,p_k(t)-q_j\,p_j(t),
+\end{equation}
+equivalently $\dda{P}{t}=PQ$; the backward system $\dda{P}{t}=QP$ carries
+the same information and suits functionals of the future.
+
+\paragraph{Birth--death case (M5).}
+\begin{equation}
+\ddt{p_n(t)}=\lambda(n-1)p_{n-1}(t)+\mu(n+1)p_{n+1}(t)-(\lambda+\mu)n\,p_n(t),
+\qquad n\ge0,
+\end{equation}
+an infinite coupled system; multiplying by $z^n$ and summing collapses it
+to the generating-function PDE.
+
+\paragraph{Birth--death--catastrophe case (M6), killing convention.}
+\begin{equation}
+\ddt{p_i}=\lambda(i-1)p_{i-1}+\mu(i+1)p_{i+1}-(\lambda+\mu+\delta)ip_i
+\quad(i>0),
+\qquad
+\ddt{p_0}=\mu p_1+\delta\sum_{j\ge1}jp_j=\mu p_1+\delta J(t).
+\end{equation}
+
+\paragraph{Catastrophe convention (thesis default).} Rupture leaves the
+count altogether; the first equation then holds for all $i\ge0$ with
+$p_{-1}=0$, and
+\begin{equation}
+\ddt{p_0}=\mu p_1 :
+\end{equation}
+internal extinction by death still feeds state $0$, catastrophe does not.
+The generating function is defective, $G(1,t)=I(t)\le1$, under catastrophe
+and $G(1,t)=1$ under killing.
+
+\section{D16: Two-type backward Riccati system}
+\source{\S7.2.3 (first-event derivation), \S7.2.4 (dimensionless form)}
+
+\paragraph{Equations.} For the no-catastrophe probabilities of M22,
+$S(t)=\Prob_{(1,0)}\{\tau_c>t\}$ and $G(t)=\Prob_{(0,1)}\{\tau_c>t\}$:
+\begin{align}
+\frac{\dd S}{\dd t}
+&=\lambda_1S^2-(\lambda_1+\mu_1+\nu+\delta_1)S+\mu_1+\nu G,
+&S(0)&=1,\qquad S'(0)=-\delta_1,\\
+\frac{\dd G}{\dd t}
+&=\lambda_2G^2-(\lambda_2+\mu_2+\delta_2)G+\mu_2,
+&G(0)&=1,\qquad G'(0)=-\delta_2.
+\end{align}
+The system is triangular: $G$ is autonomous, and its solution feeds the
+$S$ equation, which is then reduced by a Riccati linearisation to the Gauss
+hypergeometric equation.
+
+\paragraph{Dimensionless form.} Time in units of $\lambda_1$ (assumed
+positive); scaled rates $\hat\mu_i=\mu_i/\lambda_1$,
+$\hat\nu=\nu/\lambda_1$, $\hat\delta_i=\delta_i/\lambda_1$,
+$\hat\lambda_2=\lambda_2/\lambda_1$:
+\begin{align}
+\widehat S'&=\widehat S^2-\hat\kappa_1\widehat S+\hat\mu_1+\hat\nu\widehat G,
+&\hat\kappa_1&=1+\hat\mu_1+\hat\nu+\hat\delta_1,\\
+\widehat G'&=\hat\lambda_2\widehat G^2-(\hat\lambda_2+\hat\mu_2+\hat\delta_2)\widehat G+\hat\mu_2.
+\end{align}
+The main formula assumes $\hat\lambda_2>0$, $\hat\delta_2>0$,
+$\hat\nu>0$; the boundaries ($\lambda_1=0$, $\hat\lambda_2=0$,
+$\hat\delta_2=0$, $\hat\nu=0$) are treated separately, and the
+zero-catastrophe case recovers the two-type branching equations of Antal
+and Krapivsky.
+
+% ----------------------------------------------------------------------------
+\chapter{Continuum approximation}
+% ----------------------------------------------------------------------------
+
+\section{D17: Continuum ODE for the survival recursion}
+\source{\S3.7 (paragraph ``Continuum ODE'')}
+
+\paragraph{Derivation setting.} The binary Galton--Watson survival
+recursion $S_{n+1}=2pS_n-pS_n^2$ (M2) with $p=\tfrac12-\varepsilon/2$
+(subcritical, $\varepsilon=1-2p>0$ small). Writing
+$S_{n+1}-S_n=-\varepsilon S_n-\tfrac12S_n^2+O(\varepsilon S_n^2)$ and
+treating generation number as continuous for large $n$:
+\begin{equation}
+\frac{\dd S}{\dd n}=-\varepsilon S-\tfrac12 S^2 .
+\end{equation}
+
+\paragraph{Solution.} With $u=1/S$: $u'=\varepsilon u+\tfrac12$, so
+\begin{equation}
+S(n)=\frac{1}{C\,\ee^{\varepsilon n}-\frac{1}{2\varepsilon}},
+\qquad
+S(n)\simeq\frac{2\varepsilon}{\ee^{\varepsilon n}-1}
+\end{equation}
+after matching to the critical decay $S_n\sim2/n$, which fixes
+$C\sim1/(2\varepsilon)$.
+
+\paragraph{Anchors.} Matching $S_n\sim A(p)(2p)^n\sim A\ee^{-\varepsilon n}$
+gives the near-critical amplitude $A(p)\sim2\varepsilon=2(1-2p)$ as
+$p\to\tfrac12^-$, and $1/A(p)\sim1/\lrb{2(1-2p)}$; the crossover generation
+$n\sim1/\varepsilon$ separates the critical regime
+($S\propto1/n$) from the eventual geometric decay.
+
+\end{document}

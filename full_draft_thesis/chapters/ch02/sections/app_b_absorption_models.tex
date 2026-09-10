@@ -75,7 +75,8 @@ with probability $1-\ee^{-\alpha t}$.
 \caption{State probabilities for the single-particle absorption-only model. The
 particle begins outside the compartment ($p_{0,1}$, decaying exponentially at rate
 $\alpha$) and ends inside it ($p_{1,0}$). There is nowhere else for it to go, so
-the two curves sum to one at every time.}
+the two curves sum to one at every time.
+\explorerlink{https://markov.volvox.site/-/adam74aldridge/absorption-only-model}{Simulate}}
 \label{m:fig:abs1}
 \end{figure}
 
@@ -86,6 +87,7 @@ Introducing replication for particles inside the compartment, the factorisation
 \cref{m:eq:indRelPGF} survives but no longer helps: from a single initial particle,
 birth events make infinitely many states reachable, so $G_1$ is an infinite sum.
 The partial differential equation must be solved directly.
+\explorerlink{https://markov.volvox.site/-/adam74aldridge/absorption-birth-death-model}{Simulate}
 
 Birth at per-capita rate $\lambda$ is added to the absorption--death model of
 \cref{m:sec:mocworked}:

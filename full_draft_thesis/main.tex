@@ -39,15 +39,18 @@
 \vspace{4pt}
 {September 2026\par}
 \vfill
-{\small Assembled from the ten chapter folders in \texttt{Full thesis build}.\par
-Chapter appendices remain at the end of each chapter.\par
-References are collected at the end of the document.\par}
 \vspace*{1.2cm}
 \end{titlepage}
 \hypersetup{pageanchor=true}
 
+% Acknowledgements.
+\input{supplementary/acknowledgements}
+
 % Contribution summary (formerly section 5 of the originality report).
 \input{originality_index/summary}
+
+% Supplementary web applications: the two companion sites.
+\input{supplementary/web_applications}
 
 \begingroup
 \setlength{\parskip}{0pt}
@@ -95,6 +98,10 @@ References are collected at the end of the document.\par}
 
 % Detailed originality index (sections 1--4), before the references.
 \input{originality_index/details}
+
+% AI statement and the chapter-by-chapter account, immediately before the
+% references. A \chapter*, like the originality index -- not an appendix.
+\input{supplementary/ai_use}
 
 \clearpage
 \phantomsection
