@@ -1,0 +1,15 @@
+{
+  "figure": "fig04",
+  "chapter_number": "5.4",
+  "label": "dist:fig:qsmeans",
+  "slug": "qs_vs_release_means",
+  "included_from": "sections/05_quasi_stationary.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig04.pdf",
+    "fig04.png"
+  ],
+  "simulation": false
+}

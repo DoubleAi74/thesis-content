@@ -1,0 +1,22 @@
+% Originality-index helpers, using the thesis's standard heading and link styles.
+\usepackage{xltabular}
+\usepackage{refcount}
+
+\definecolor{oisoft}{HTML}{565B62}
+\definecolor{oiaccent}{HTML}{0072B2}
+\definecolor{oirule}{HTML}{D8DDE2}
+\newcolumntype{O}{>{\raggedright\arraybackslash}X}
+\newcommand{\oihead}[1]{\textbf{#1}}
+\newcommand{\oisec}[1]{\section*{#1}}
+\newcommand{\oiref}[2]{%
+  \hyperref[#2]{#1~\ref*{#2}}}
+\newcommand{\oirange}[3]{%
+  \oiref{#1}{#2}--%
+  \hyperref[#3]{\ref*{#3}}}
+% Each chapter ends immediately before the next chapter (or the index).
+% Only the opening page is linked: the computed endpoint is plain text.
+\newcommand{\oichapterpages}[2]{%
+  \pageref{#1}--%
+  \ifnum\getpagerefnumber{#2}>0
+    \number\numexpr\getpagerefnumber{#2}-1\relax
+  \else ??\fi}

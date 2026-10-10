@@ -1,0 +1,111 @@
+\section{The \texorpdfstring{$I$}{I}-economy}
+\label{bdc:sec:economy}
+
+The formulae of the previous section share a curious economy: although the
+process evolves in time, each moment can be written as a function of $I$ alone.
+This is more than a change of variable. It says that the stochastic dynamics
+move along a family of algebraic curves already fixed by the Riccati equation.
+
+On the interval $(b,a)$, the right-hand side of
+\cref{bdc:eq:riccatifact} is negative. Beginning at $I(0)=1$, the function
+$I(t)$ therefore decreases strictly towards $b$, giving a bijection from
+$[0,\infty)$ to $(b,1]$. It may be used as a clock, albeit one which runs
+backwards: once a quantity is known as a function of $I$, its dependence on time
+is determined by the speed
+\[
+\ddt{I}=\lambda(I-a)(I-b).
+\]
+
+The first two load moments suggest that the polynomial structure continues, and
+indeed it does.
+
+\begin{proposition}[Every load moment is a polynomial in $I$]
+\label{bdc:prop:polynomial}
+For each $p\ge1$, there is a polynomial $Q_p$ such that
+\[
+\ex{X_t^p}=Q_p\bigl(I(t)\bigr).
+\]
+It has degree $p+1$, satisfies $Q_p(a)=Q_p(b)=0$, and has leading coefficient
+$(-1)^p p!(\lambda/\delta)^p$.
+\end{proposition}
+
+\begin{proof}
+Write $m_p(t)=\ex{X_t^p}$. Applying the generator associated with
+\cref{bdc:eq:rates} to $x\mapsto x^p$ gives
+\[
+\dot m_p
+=-\delta m_{p+1}
++\bigl(\text{a linear combination of }m_1,\ldots,m_p\bigr).
+\]
+The highest moment comes from catastrophe: $X_t^p$ is replaced by zero at rate
+$\delta X_t$. Solving for $m_{p+1}$ expresses it in terms of $\dot m_p$ and
+lower moments. Along the Riccati trajectory,
+\[
+\frac{\dd}{\dd t}
+=\lambda(I-a)(I-b)\frac{\dd}{\dd I},
+\]
+so, if $m_p=Q_p(I)$,
+\[
+m_{p+1}
+=-\frac{\lambda}{\delta}(I-a)(I-b)Q_p'(I)
++\frac{1}{\delta}
+\bigl(\text{a linear combination of }Q_1,\ldots,Q_p\bigr).
+\]
+By induction, every term contains the factor $(I-a)(I-b)$. The derivative term
+raises the degree from $p+1$ to $p+2$ and multiplies the leading coefficient by
+$-(\lambda/\delta)(p+1)$; the remaining terms have degree at most $p+1$.
+The base case
+\[
+Q_1(I)=J(I)=-\frac{\lambda}{\delta}(I-a)(I-b)
+\]
+has degree two and leading coefficient $-\lambda/\delta$. The stated degree,
+roots and coefficient follow.
+\end{proof}
+
+\FloatBarrier
+
+Each new moment is therefore obtained by the same operation: differentiate the
+previous polynomial along the Riccati flow, then add lower-order terms from
+births and deaths. The cases $p=1$ and $p=2$ are precisely
+\cref{bdc:eq:J,bdc:eq:KI}.
+
+The variance retains this algebraic dependence. Substituting
+\cref{bdc:eq:J,bdc:eq:KI} into \cref{bdc:eq:VarX} gives
+\begin{equation}
+\label{bdc:eq:VarXI}
+\var{X_t}
+=\frac{2\lambda^2}{\delta^2}(I-\kappa)(I-a)(I-b)
+-\Bigl[\frac{\lambda}{\delta}(I-a)(I-b)\Bigr]^2.
+\end{equation}
+This quartic has the common factor $(I-a)(I-b)$; the two roots are generally
+simple, not double. It also vanishes at $I=1$, as it must because $X_0=1$ is
+deterministic. Along the part of the curve that has probabilistic meaning,
+$I\in(b,1]$, the variance is positive for $t>0$ and tends back to zero as
+$I\downarrow b$. Values on the algebraic continuation from $1$ towards $a$ are
+not visited by the process and need not admit a probabilistic interpretation.
+
+The release variance is likewise a polynomial in $I$: substitute
+\cref{bdc:eq:V,bdc:eq:KI} into \cref{bdc:eq:VarW}. Its expanded form is long but
+adds no new structure, so we leave it factored through the quantities already
+defined.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{F4_I_economy.pdf}
+\caption{The mean load $J$, mean release $V$ and second load moment $K$ as
+functions of $I$, for $\lambda=1$, $\mu=0.2$ and $\delta=0.05$. The trajectory
+runs from $I=1$ towards $b$; the symmetric-logarithmic ordinate keeps the three
+scales visible without changing their values.}
+\label{bdc:fig:economy}
+\end{figure}
+
+\Cref{bdc:fig:economy} removes time from the horizontal axis. The curves are
+fixed algebraically, while the Riccati equation determines how quickly they are
+traversed. This representation becomes useful in
+\fwd{population}{Chapter~6}, where the single-cell formulae act as
+age-dependent kernels in a renewal system. Since those kernels are polynomials
+in one monotone coordinate, they can be manipulated analytically. If a
+higher-order kernel is needed, \cref{bdc:prop:polynomial} supplies it by the same
+recursion rather than by a fresh closure argument.
+
+\FloatBarrier

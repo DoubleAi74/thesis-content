@@ -1,0 +1,67 @@
+{
+  "id": "fig_bio_intracellular_map",
+  "title": "Biological reading of the two-type model in one macrophage-associated compartment",
+  "supports_sections": ["5", "5.1"],
+  "type": "schematic",
+  "status": "alternate — not currently included in main.tex; see NOTE_alternate.md",
+  "tool": "TikZ/PGF via pdflatex (TeX Live 2024); Ghostscript 10.05 for PNG; dvisvgm 3.2.2 + libgs for SVG",
+  "numerical_simulation": false,
+  "seed": null,
+  "parameters": "symbolic only",
+  "rates_shown": ["lambda_1", "mu_1", "nu", "lambda_2", "mu_2", "delta_1", "delta_2", "tau_c"],
+  "hazard": "delta_1 * x + delta_2 * y",
+  "absorbing_event": "loss of intracellular containment (tau_c)",
+  "notation_source": "sections/07_biological_application.tex (Table tab:bio-mapping); sections/02_model.tex",
+  "biology_source": "flow_D.pdf — Biphasic Pathogenesis of Yersinia pestis (YCV, F1/Psa/T3SS package)",
+  "intended_placement": "Immediately after Table tab:bio-mapping in sec:biology / 5.1, at width=\\textwidth",
+  "pdf": { "width_pt": 514.15, "height_pt": 295.78, "width_mm": 180.70, "height_mm": 103.95 },
+  "png": { "width_px": 3640, "height_px": 2154, "dpi": 500, "background": "white" },
+  "printed_size_at_textwidth": { "width_in": 6.5, "height_in": 3.74 },
+  "palette": {
+    "type1": "#0072B2",
+    "type2": "#D55E00",
+    "catastrophe": "#9A2820",
+    "ink": "#1A1C1F",
+    "ink_soft": "#565B62",
+    "rule": "#E3E6EA",
+    "type1_body": "#7BA6C6",
+    "type1_edge": "#2E6A92",
+    "type2_body": "#A85A32",
+    "type2_edge": "#74381A",
+    "conversion_mid": "#9A8069",
+    "cytosol": "#F2F0EC",
+    "vacuole_1": "#F7FAFC",
+    "vacuole_2": "#FDF7F2",
+    "outside": "#F6F6F5"
+  },
+  "palette_note": "Rate symbols and event arrows use the canonical manuscript accents (identical to fig01/fig05). Drawn bacterial bodies use lowered-chroma tints of the same two hues; type 1 is deliberately lighter than type 2 so the two states separate in greyscale as well as in hue.",
+  "accessibility": {
+    "colour_blind": "Okabe-Ito blue/vermillion pair; deuteranope- and protanope-safe",
+    "greyscale": "checked with gs -sDEVICE=pnggray; type 1 (light) vs type 2 (dark + halo + surface hairs) remain distinct, and the conversion ramp is still legible via the three transitional rods",
+    "printed_size": "checked at 6.5 in text width; all of X_t, Y_t, lambda_i, mu_i, nu, delta_i, tau_c legible"
+  },
+  "scientific_caveats": [
+    "Type 2 is a coarse-grained latent adapted state, not a claim that every bacterium has completed a molecular programme",
+    "delta_i are effective per-capita associations with containment failure, not proof of active rupture by either type",
+    "delta_1 and delta_2 arrows are drawn with identical weight and both reach the same endpoint, so no regime (EQ / MAT / GATE / EARLY) is privileged",
+    "The type-2 surface cue (halo plus sparse hairlines) is schematic and is not labelled as a demonstrated trigger of release; the T3SS is not depicted as the intracellular survival engine",
+    "The break in the host-cell boundary is restrained; no exploding-cell imagery",
+    "Extracellular aftermath is drawn at reduced opacity and labelled as outside the model"
+  ],
+  "design_departures_from_brief": [
+    "Two vacuolar outlines rather than one, to keep the left-to-right sequence readable; the right-hand one is labelled 'same compartment' so no second compartment type is implied",
+    "The conversion band uses 48 discrete colour strips rather than a true gradient, so the PDF and SVG outputs are identical (PostScript shadings do not survive the DVI->SVG route)",
+    "Bacterial bodies use muted tints while rate symbols keep the canonical accents, preserving continuity with fig01 without making the biology look like a state diagram"
+  ],
+  "files": [
+    "fig_bio_intracellular_map.pdf",
+    "fig_bio_intracellular_map.png",
+    "fig_bio_intracellular_map.svg",
+    "caption.md",
+    "README.md",
+    "NOTE_alternate.md",
+    "meta.json",
+    "src/fig_bio_intracellular_map.tex",
+    "src/build.sh"
+  ]
+}

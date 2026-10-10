@@ -1,0 +1,111 @@
+% --- Chapter appendices, numbered <chapter>.A, .B, ... -----------------------
+\renewcommand{\thesection}{\thechapter.\Alph{section}}
+\setcounter{section}{0}
+
+% Appendix A --- numerical verification record, in the style of \ChPop{}'s
+% verification appendix.  Every value below is quoted from the review that
+% produced it (CH8_polish_review.md, sections 0 and 3); none was re-derived
+% while assembling this chapter.
+
+\section{Numerical verification}
+\label{path:app:verification}
+
+Every quantitative claim in this chapter was checked against independent
+numerics before being stated. The checks were run in \texttt{numpy} with no other numerical library; the
+method in each case was to compute the quantity twice, once from the closed
+form and once from a construction that does not use it, and to compare.
+
+\begin{table}[tbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}p{0.26\textwidth}p{0.42\textwidth}p{0.22\textwidth}@{}}
+\toprule
+Claim & Independent construction & Agreement \\
+\midrule
+Burst law \cref{path:eq:burstlaw}
+  & exact solve of the embedded jump chain on a $3{,}000$-state truncation,
+    cross-checked by Monte Carlo; 6 regimes
+  & $3.3\times10^{-11}$ abs. \\
+Normalisation $\sum_{i\ge1}\frac{\delta}{\lambda}a^{-i}=1-b$
+  & algebraic, then numeric
+  & $1\times10^{-16}$ \\
+$\ex{r}=V_\infty$ \cref{path:eq:Er}
+  & direct summation to tail below $10^{-14}$
+  & $1.3\times10^{-16}$ \\
+Upper tail \cref{path:eq:tail}
+  & partial sums of the burst law
+  & $1\times10^{-16}$ \\
+Partial-sum form \cref{path:eq:Rpartial}
+  & brute-force summation; 7 regimes $\times$ 6 budgets
+  & $1.8\times10^{-14}$ rel. \\
+Intermediate form \cref{path:eq:Rintermediate}
+  & brute-force summation, integer $\vartheta$; 7 regimes
+  & $2.5\times10^{-14}$ rel. \\
+$\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$ \cref{path:eq:R0}
+  & brute-force summation;
+    7 regimes $\times$ 8 budgets $\vartheta\le40$
+  & $3.1\times10^{-15}$ rel. \\
+Real-$\vartheta$ form (\cref{path:rem:integer})
+  & brute-force summation; 6 regimes $\times$ 9 budgets including
+    $0$, $0.5$, $0.8$, $1.5$, $2.3$, $4.7$
+  & $2.1\times10^{-15}$ rel. \\
+Reversal \cref{path:eq:reversal}
+  & brute-force summation of both laws;
+    10 regimes $\times$ 5 budgets, 50 rows
+  & $3.1\times10^{-15}$ and $7.6\times10^{-16}$ rel.; \textbf{0} sign
+    mispredictions \\
+First-step system \cref{path:eq:firststep}
+  & $400{,}000$-path Monte Carlo of the embedded chain
+    \cite{Gillespie1977}; 12 initial states $\times$ 3 values of $\varsigma$
+  & every entry within $\pm2$ s.e. \\
+Diagonal law \cref{path:eq:diagonal}
+  & full linear solve of \cref{path:eq:matrixsystem} at $N=25$;
+    $\varsigma\in\{0.1,0.2,0.3,1.0\}$
+  & $6.1\times10^{-16}$ \\
+\bottomrule
+\end{tabular}
+\caption{The verification record. The burst-law entry is the only one whose
+agreement is limited by anything other than floating-point arithmetic: its
+error is set by the truncation tail, not by the formula. Every other row
+agrees to within a few units in the last place, which is what one expects of
+two algebraically equivalent evaluations rather than of a formula that
+happens to fit.}
+\label{path:tab:verification}
+\end{table}
+
+Three of the rows in \cref{path:tab:verification} deserve a word, because
+what they establish is used rather than merely tallied.
+
+The reversal row is the strongest evidence in the chapter. The sign of
+$\mathcal{R}_{\mathrm{burst}}-\mathcal{R}_{\mathrm{bud}}$ was predicted from
+$L$ alone, by \cref{path:prop:reversal}, and compared against brute-force
+summation of both laws over ten rate regimes and five removal budgets. There
+were no exceptions among the fifty rows. Swept in $\delta$ across the
+boundary at $\lambda=1$, $\mu=0.5$, the sign changes exactly at
+$\delta_{*}=1/3$ to within $10^{-16}$, which is the crossing drawn in
+\cref{path:fig:reversal}.
+
+The first-step row is the only stochastic check. The linear solve of
+\cref{path:eq:matrixsystem} was compared against direct simulation of the
+embedded chain rather than against another algebraic route, because there is
+no second algebraic route off the diagonal. Monotonicity of $\pi_{i,j}$ in
+$i$ and in $j$ is a numerical check, not a claim of
+\cref{path:prop:certainty}: it was verified over the same grids at $N=20$
+and holds everywhere tested.
+
+The intermediate-form row records a scope limit rather than an error. The
+expression \cref{path:eq:Rintermediate} is exact at integer $\vartheta$ and
+is \emph{not} the quantity $\ex{\max(0,r-\vartheta)}$ at non-integer
+$\vartheta$, where its relative error reaches $-14\%$ at
+$(\lambda,\delta,\vartheta)=(0.8,2,0.8)$. That is the reason
+\cref{path:rem:integer} declares $\vartheta$ integral and the reason the
+figures of \cref{path:sec:proliferability} are drawn at integer budgets.
+
+The scripts that regenerate the figures of this chapter sit with the chapter
+source, one directory per figure, each self-contained and runnable on its
+own. The value $\mu=0$ in the lifetime-yield and replication-ratio figures
+was recovered by fitting the original published curve; the verification
+computations above were run separately and are not reproduced here.
+
+\FloatBarrier

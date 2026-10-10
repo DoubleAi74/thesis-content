@@ -1,0 +1,64 @@
+\section{Verification record: chained immediate transfer}
+\label{dist:app:verification}
+
+Every quantitative claim of \cref{dist:sec:chained} and
+\cref{dist:app:chained-transforms} was checked by exact simulation of the
+chained process. Sampling is direct, because the event-type decomposition of
+\cref{dist:sec:key-observation} makes the sequence of event types a sequence
+of independent coin flips and the holding times exponential of known rate.
+This appendix records the suite, its tally, and how to reproduce it.
+
+The suite \texttt{verify\_chained\_transfer.py} samples the chained process
+exactly and checks every quantitative claim across three parameter sets,
+$(\lambda,\delta)\in\{(1,1),\,(1,0.1),\,(2,0.5)\}$: 28 checks, all passing.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.05}
+\footnotesize
+\begin{tabular}{@{}clp{0.44\textwidth}c@{}}
+\toprule
+ID & Name & What is checked & Result \\
+\midrule
+A & Coefficient identity &
+  $\binom{n+k-2}{k-1}$ obeys the recurrence (exact integers) & 1/1 \\
+B & Rupture-size laws &
+  $\pr{r_k=n}$ vs $10^6$ chains, $k=1..4$, SE-unit comparison & 3/3 \\
+C & Moments & $\E{r_k}=1+k\lambda/\delta$, $\var{r_k}=k\rho/s^2$ & 3/3 \\
+D & PGF & $\E{z^{r_k}}=z(s/(1-\rho z))^k$ (SE units) & 3/3 \\
+E & First rupture time & histogram vs $\delta J(t)$ & 3/3 \\
+F & Interval transform &
+  fixed founders $k\in\{1,2,3,5\}$: empirical Laplace transform vs the
+  series and its $\Fhyp$ form & 3/3 \\
+F2 & Interval mixture &
+  chain intervals $T_2,T_3$ (random founders) vs pmf-weighted $\Lap{T}$ & 3/3 \\
+G & Second rupture time & empirical $\E{\ee^{-ut_2}}$ vs $\Lap{t_2}(u)$ & 3/3 \\
+H/H2 & $t_2$ density and mean &
+  exact hypoexponential-mixture density vs histogram
+  (relative $L^2\approx3\%$); exact $\E{t_2}$ & 3/3 \\
+I & Interval means &
+  strictly decreasing; simulation vs the exact series & 3/3 \\
+\midrule
+ & \textbf{Total} & & \textbf{28/28} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The $\Fhyp$ cross-check in test F activates only when \texttt{scipy} is
+available; the series itself, which the simulation is compared against, needs
+only \texttt{numpy}.
+
+\paragraph{Reproduction.} The suite, its report, its metrics and its figures
+are shipped with this chapter's source.
+\begin{verbatim}
+cd verification
+python3 verify_chained_transfer.py
+# writes verify_chained_transfer_report.txt, metrics, figures
+\end{verbatim}
+
+\paragraph{What is not covered.} The suite is confined to $\mu=0$, where the
+event-type decomposition holds. The joint laws of $(t_k,r_k)$ for general
+$\mu>0$, and the joint law of $(t_M,r_M)$ for the full $M$-cell chain, are
+neither derived nor checked here; see \cref{dist:sec:open-problems}. For
+$\mu=0$ the decomposition \cref{dist:eq:rkdecomp} extends the size laws to
+all $M$ at once, since nothing in it depends on where a cell sits in the
+chain.

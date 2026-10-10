@@ -1,0 +1,14 @@
+1516:LaTeX Warning: `!h' float specifier changed to `!ht'.
+1684:Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+1688:Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+2204:Underfull \hbox (badness 10000) in paragraph at lines 549--549
+2383:Overfull \hbox (5.49225pt too wide) in paragraph at lines 1--1
+2500:LaTeX Warning: Reference `p:rem:flood-scope' on page 1 undefined on input line 
+2588:LaTeX Warning: Reference `p:rem:flood-scope' on page 1 undefined on input line 
+2601:LaTeX Warning: Reference `p:fig:spectrum' on page 1 undefined on input line 184
+2605:LaTeX Warning: Reference `p:fig:spectrum' on page 1 undefined on input line 208
+2609:LaTeX Warning: Reference `p:fig:spectrum' on page 1 undefined on input line 208
+2613:LaTeX Warning: Reference `p:fig:spectrum' on page 1 undefined on input line 214
+2618:LaTeX Warning: Reference `p:sec:selfexcite' on page 1 undefined on input line 2
+2830:Overfull \hbox (13.06541pt too wide) in paragraph at lines 19--19
+2846:LaTeX Warning: There were undefined references.

@@ -1,0 +1,135 @@
+\section{The autonomous type-2 probability}
+\label{sec:autonomous}
+
+The second equation in \eqref{eq:backward-scaled} does not depend on $\widehat S$: it is autonomous. This is the small structural fact on which the full calculation rests. We solve it first: factor the right-hand side, introduce a decaying coordinate $z_2$, and write $\widehat G$ as a rational function of $z_2$. That rational time dependence will then drive the type-1 equation.
+
+Constant solutions of \cref{eq:G-scaled} satisfy a quadratic equation. Setting
+\begin{equation}
+\label{eq:Delta2}
+\hat\Delta_2=
+\sqrt{(\hat\lambda_2+\hat\mu_2+\hat\delta_2)^2
+-4\hat\lambda_2\hat\mu_2},
+\end{equation}
+the two roots are
+\begin{equation}
+\label{eq:type2-roots}
+r_{2,\pm}
+=\frac{\hat\lambda_2+\hat\mu_2+\hat\delta_2
+\pm\hat\Delta_2}{2\hat\lambda_2}.
+\end{equation}
+They satisfy
+\[
+r_{2,-}+r_{2,+}
+=\frac{\hat\lambda_2+\hat\mu_2+\hat\delta_2}{\hat\lambda_2},
+\qquad
+r_{2,-}r_{2,+}=\frac{\hat\mu_2}{\hat\lambda_2},
+\]
+and therefore the right-hand side factors as
+\begin{equation}
+\label{eq:G-factored}
+\widehat G'
+=\hat\lambda_2(\widehat G-r_{2,-})(\widehat G-r_{2,+}).
+\end{equation}
+
+There is also a probabilistic ordering among these equilibria. The quadratic is non-negative at zero and equals $-\hat\delta_2<0$ at one, while its leading coefficient is positive. Therefore
+\begin{equation*}
+0\leq r_{2,-}<1<r_{2,+}.
+\end{equation*}
+Note that a long-time probability must lie in $[0,1]$, so only the lower root $r_{2,-}$ can be an admissible attractor; the upper root lies outside that interval.
+\Cref{fig:type2-phase} makes this geometry and the subsequent relaxation explicit.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig06_type2_phase/fig06.pdf}
+  \caption{Geometry of the autonomous type-2 probability.
+  (a)~Right-hand side $f(G)=\lambda_2(G-r_{2,-})(G-r_{2,+})$, with $0\le r_{2,-}<1<r_{2,+}$ so only $r_{2,-}$ is an admissible long-time probability.
+  (b)~Phase line: $r_{2,-}$ attracting, $r_{2,+}$ repelling; $G(0)=1$ is drawn into $r_{2,-}$.
+  (c)~Relaxation of $G(t)$ from $1$ toward $r_{2,-}$.
+  Parameters: $\lambda_2=0.9$, $\mu_2=0.35$, $\delta_2=0.20$.}
+  \label{fig:type2-phase}
+\end{figure}
+
+We shall use the root gap and its associated decay rate repeatedly. Define
+\begin{equation}
+\label{eq:type2-alpha-q}
+\alpha_2=r_{2,+}-r_{2,-}
+=\frac{\hat\Delta_2}{\hat\lambda_2},
+\qquad
+\hat q_2=-\hat\lambda_2\alpha_2=-\hat\Delta_2.
+\end{equation}
+Thus $\alpha_2>0$ and $\hat q_2<0$.
+
+\begin{proposition}[Exact type-2 probability]
+\label{prop:G-solution}
+Let
+\begin{equation}
+\label{eq:type2-z}
+z_{2,0}=\frac{r_{2,-}-1}{r_{2,+}-1}<0,
+\qquad
+z_2(\hat t)=z_{2,0}\e^{\hat q_2\hat t}.
+\end{equation}
+Then the solution of \cref{eq:G-scaled} with $\widehat G(0)=1$ is
+\begin{equation}
+\label{eq:G-solution}
+\widehat G(\hat t)
+=r_{2,-}-\alpha_2\frac{z_2(\hat t)}{1-z_2(\hat t)}.
+\end{equation}
+In physical time, with $\hat t=\lambda_1t$ and the scaled rates of \cref{eq:scaled-rates},
+\begin{equation*}
+G(t)
+=r_{2,-}-\alpha_2\frac{z_2(\lambda_1t)}{1-z_2(\lambda_1t)}.
+\end{equation*}
+\end{proposition}
+
+\begin{proof}
+Separate \cref{eq:G-factored} and use partial fractions:
+\[
+\frac{\dd\widehat G}
+{(\widehat G-r_{2,-})(\widehat G-r_{2,+})}
+=\hat\lambda_2\,\dd\hat t.
+\]
+After integration,
+\[
+\log\!\left(
+\frac{\widehat G-r_{2,-}}{\widehat G-r_{2,+}}
+\right)
+=-\hat\lambda_2\alpha_2\hat t+\text{constant}.
+\]
+The left-hand ratio is the natural coordinate produced by separation of variables. The initial condition makes it equal to $z_{2,0}$ at zero, so it equals $z_2(\hat t)$ at time $\hat t$. Solving the resulting linear fractional equation for $\widehat G$ gives \cref{eq:G-solution}.
+\end{proof}
+
+Thus $z_2$ is simply that separated ratio, started from $\widehat G(0)=1$ and decaying exponentially toward zero as $\widehat G$ approaches $r_{2,-}$. Three immediate checks are
+\begin{equation*}
+\widehat G(0)=1,
+\qquad
+\widehat G'(0)=-\hat\delta_2,
+\qquad
+\widehat G(\hat t)\longrightarrow r_{2,-}
+\quad(\hat t\to\infty).
+\end{equation*}
+The last limit has a direct meaning. Starting from one type-2 individual, $r_{2,-}$ is the probability that catastrophe is avoided forever. It can be positive because the lineage may die out ordinarily before it triggers anything.
+
+An expanded form may be useful for direct implementation:
+\begin{equation*}
+\widehat G(\hat t)=
+\frac{r_{2,-}(r_{2,+}-1)
++r_{2,+}(1-r_{2,-})
+\e^{-\hat\lambda_2(r_{2,+}-r_{2,-})\hat t}}
+{(r_{2,+}-1)
++(1-r_{2,-})
+\e^{-\hat\lambda_2(r_{2,+}-r_{2,-})\hat t}}.
+\end{equation*}
+In physical time the same expression is $G(t)=\widehat G(\lambda_1t)$. The compact coordinate $z_2$ is the better choice for the driven equation: it is always negative, moves monotonically toward zero, and carries all of the time dependence of $\widehat G$ in a rational way (\cref{fig:G-and-z2}). With $\widehat G$ known, the type-1 equation is now a forced Riccati equation in $\widehat S$. In the next section we substitute this $G$ and use $z_2$ as the independent variable.
+
+\FloatBarrier
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig07_G_and_z2/fig07.pdf}
+  \caption{(a)~$G(t)$ from $1$ toward $r_{2,-}$.
+  (b)~Coordinate $z_2(\lambda_1t)$ increasing from $z_{2,0}<0$ toward $0$.
+  (c)~Linear-fractional map $G=r_{2,-}-\alpha_2 z_2/(1-z_2)$.
+  Parameters: $\lambda_1=1$, $\lambda_2=0.85$, $\mu_2=0.40$, $\delta_2=0.18$.}
+  \label{fig:G-and-z2}
+\end{figure}
+

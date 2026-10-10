@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="26.08.0">
+ link to page 153  link to page 210  link to page 168  link to page 170  link to page 226  link to page 181  link to page 194  link to page 206  link to page 92  link to page 153  link to page 62  link to page 233  link to page 271  link to page 271 <page number="4" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="0" size="37" family="ZVHUPH+LMSans10" color="#1a1b1f"/>
+	<fontspec id="1" size="16" family="CGNFQX+LMRoman12" color="#565b62"/>
+	<fontspec id="2" size="19" family="ZVHUPH+LMSans10" color="#0072b2"/>
+	<fontspec id="3" size="19" family="ZVHUPH+LMSans10" color="#1a1b1f"/>
+	<fontspec id="4" size="13" family="CGUSFB+LMSans9" color="#0072b2"/>
+	<fontspec id="5" size="16" family="OVLUKG+LMRoman10" color="#1a1b1f"/>
+	<fontspec id="6" size="16" family="SFPOVC+LMMathItalic10" color="#1a1b1f"/>
+	<fontspec id="7" size="16" family="GKVTWD+LMRoman10" color="#1a1b1f"/>
+	<fontspec id="8" size="13" family="HHPAHK+LMRoman9" color="#0072b2"/>
+	<fontspec id="9" size="13" family="SRAXOG+LMRoman9" color="#565b62"/>
+	<fontspec id="10" size="13" family="HHPAHK+LMRoman9" color="#565b62"/>
+	<fontspec id="11" size="13" family="LWUOPY+LMRoman9" color="#0072b2"/>
+	<fontspec id="12" size="13" family="SRAXOG+LMRoman9" color="#0072b2"/>
+	<fontspec id="13" size="16" family="OVLUKG+LMRoman10" color="#000000"/>
+<text top="108" left="108" width="434" height="33" font="0"><b>Contributions at a glance</b></text>
+<text top="148" left="108" width="677" height="22" font="1">Exact stochastic results linking replication inside a cell, infection establishment and species</text>
+<text top="169" left="108" width="102" height="22" font="1">diversification.</text>
+<text top="253" left="123" width="21" height="17" font="2"><b>01</b></text>
+<text top="253" left="157" width="223" height="17" font="3"><b>When does bursting help?</b></text>
+<text top="281" left="123" width="57" height="12" font="4"><a href="main.html#153">Chapter 6</a></text>
+<text top="281" left="202" width="57" height="12" font="4"><a href="main.html#210">Chapter 8</a></text>
+<text top="303" left="122" width="436" height="21" font="5">At matched mean lifetime output, one dimensionless parameter</text>
+<text top="308" left="564" width="11" height="16" font="6"><i>L</i></text>
+<text top="303" left="580" width="169" height="21" font="5">determines how bursting</text>
+<text top="323" left="123" width="243" height="21" font="5">compares with continuous budding.</text>
+<text top="350" left="123" width="129" height="21" font="7"><b>Linear clearance</b></text>
+<text top="350" left="322" width="305" height="21" font="5">Bursting lowers extinction risk exactly when</text>
+<text top="355" left="633" width="27" height="16" font="6"><i>L &gt;</i></text>
+<text top="350" left="664" width="55" height="21" font="5">1 (when</text>
+<text top="370" left="322" width="179" height="21" font="5">establishment is possible).</text>
+<text top="390" left="123" width="176" height="21" font="7"><b>Finite immune budget</b></text>
+<text top="390" left="322" width="358" height="21" font="5">Bursting leaves more surviving output exactly when</text>
+<text top="395" left="685" width="27" height="16" font="6"><i>L &lt;</i></text>
+<text top="390" left="717" width="43" height="21" font="5">1 (one</text>
+<text top="410" left="322" width="231" height="21" font="5">delivery; positive integer budget).</text>
+<text top="437" left="122" width="291" height="21" font="5">The extinction-probability gap is exact; at</text>
+<text top="442" left="419" width="11" height="16" font="6"><i>L</i></text>
+<text top="437" left="434" width="304" height="21" font="5">= 1, the full offspring distributions coincide.</text>
+<text top="463" left="122" width="59" height="18" font="8"><a href="main.html#168"><b>Thm 6.8</b></a></text>
+<text top="463" left="188" width="7" height="18" font="9">/</text>
+<text top="463" left="202" width="60" height="18" font="8"><a href="main.html#170"><b>Prop 6.9</b></a></text>
+<text top="463" left="269" width="7" height="18" font="9">/</text>
+<text top="463" left="283" width="68" height="18" font="8"><a href="main.html#226"><b>Prop 8.12</b></a></text>
+<text top="517" left="108" width="21" height="17" font="2"><b>02</b></text>
+<text top="517" left="142" width="367" height="17" font="3"><b>An exact solution for two interacting types</b></text>
+<text top="545" left="108" width="57" height="12" font="4"><a href="main.html#181">Chapter 7</a></text>
+<text top="565" left="108" width="660" height="21" font="5">For two types with one-way conversion, each type can trigger a catastrophe that ends the whole</text>
+<text top="585" left="108" width="238" height="21" font="5">process. Two closed forms give the</text>
+<text top="585" left="352" width="399" height="21" font="7"><b>probability of avoiding catastrophe up to any time</b></text>
+<text top="585" left="756" width="25" height="21" font="5">and</text>
+<text top="605" left="108" width="22" height="21" font="5">the</text>
+<text top="605" left="135" width="468" height="21" font="7"><b>joint generating function of both counts before catastrophe</b></text>
+<text top="605" left="603" width="4" height="21" font="5">.</text>
+<text top="631" left="107" width="59" height="18" font="8"><a href="main.html#194"><b>Thm 7.4</b></a></text>
+<text top="631" left="173" width="7" height="18" font="9">/</text>
+<text top="631" left="187" width="57" height="18" font="8"><a href="main.html#206"><b>Eq. 7.50</b></a></text>
+<text top="700" left="108" width="21" height="17" font="2"><b>03</b></text>
+<text top="700" left="142" width="146" height="17" font="3"><b>One bursting cell</b></text>
+<text top="728" left="108" width="99" height="12" font="4"><a href="main.html#92">Chapters 4 and 5</a></text>
+<text top="749" left="108" width="237" height="21" font="5">Expresses load moments using one</text>
+<text top="769" left="108" width="323" height="21" font="5">no-catastrophe probability and tracks release at</text>
+<text top="788" left="108" width="321" height="21" font="5">finite time. Derives burst timing, explains why</text>
+<text top="808" left="108" width="318" height="21" font="5">the burst-size and quasi-stationary laws agree,</text>
+<text top="828" left="108" width="323" height="21" font="5">and extends the calculation to several founders</text>
+<text top="848" left="108" width="242" height="21" font="5">and successive cell-to-cell transfers.</text>
+<text top="700" left="462" width="21" height="17" font="2"><b>04</b></text>
+<text top="700" left="496" width="192" height="17" font="3"><b>From cells to infection</b></text>
+<text top="728" left="462" width="57" height="12" font="4"><a href="main.html#153">Chapter 6</a></text>
+<text top="749" left="461" width="323" height="21" font="5">An age-structured infection model with survival</text>
+<text top="769" left="462" width="275" height="21" font="5">and release kernels derived from the cell</text>
+<text top="788" left="462" width="294" height="21" font="5">process. It shows why fitted constant rates</text>
+<text top="808" left="462" width="291" height="21" font="5">depend on the growth phase, and why one</text>
+<text top="828" left="462" width="293" height="21" font="5">exponential phase cannot identify all three</text>
+<text top="848" left="462" width="125" height="21" font="5">intracellular rates.</text>
+<text top="902" left="108" width="21" height="17" font="2"><b>05</b></text>
+<text top="902" left="142" width="269" height="17" font="3"><b>A branching constant explained</b></text>
+<text top="930" left="108" width="57" height="12" font="4"><a href="main.html#62">Chapter 3</a></text>
+<text top="950" left="108" width="215" height="21" font="5">Kolmogorov’s survival constant</text>
+<text top="955" left="328" width="12" height="16" font="6"><i>A</i></text>
+<text top="950" left="340" width="6" height="21" font="5">(</text>
+<text top="955" left="346" width="8" height="16" font="6"><i>p</i></text>
+<text top="950" left="354" width="68" height="21" font="5">) is linked</text>
+<text top="970" left="108" width="284" height="21" font="5">to the logistic map’s Koenigs function. A</text>
+<text top="990" left="108" width="263" height="21" font="5">hypertranscendence proof rules out an</text>
+<text top="1010" left="108" width="292" height="21" font="5">elementary formula for that function in its</text>
+<text top="1030" left="108" width="317" height="21" font="5">spatial argument; the closed-form question for</text>
+<text top="1054" left="108" width="12" height="16" font="6"><i>A</i></text>
+<text top="1050" left="120" width="6" height="21" font="5">(</text>
+<text top="1054" left="126" width="8" height="16" font="6"><i>p</i></text>
+<text top="1050" left="134" width="107" height="21" font="5">) remains open.</text>
+<text top="902" left="462" width="21" height="17" font="2"><b>06</b></text>
+<text top="902" left="496" width="266" height="17" font="3"><b>Evolution under changing rates</b></text>
+<text top="930" left="462" width="57" height="12" font="4"><a href="main.html#233">Chapter 9</a></text>
+<text top="950" left="461" width="255" height="21" font="5">A speciation model driven by unused</text>
+<text top="970" left="462" width="315" height="21" font="5">population capacity yields an explicit limiting</text>
+<text top="990" left="462" width="291" height="21" font="5">species-count distribution and variance. A</text>
+<text top="1010" left="462" width="323" height="21" font="5">moving critical point is derived for the Pimentel</text>
+<text top="1030" left="462" width="259" height="21" font="5">resistance model, locating reversals of</text>
+<text top="1050" left="462" width="158" height="21" font="5">competitive advantage.</text>
+<text top="1106" left="107" width="96" height="18" font="10"><b>What is new?</b></text>
+<text top="1106" left="209" width="557" height="18" font="9">The originality index singles out four statements: the extinction-gap identity, coincidence of</text>
+<text top="1124" left="108" width="677" height="18" font="9">offspring laws, two-type no-catastrophe probability and joint generating function. These and the extensions above</text>
+<text top="1141" left="108" width="372" height="18" font="9">build on established methods. Full claims, sources and scope:</text>
+<text top="1141" left="486" width="147" height="18" font="11"><a href="main.html#271"><i>Originality of the results</i></a></text>
+<text top="1141" left="634" width="20" height="18" font="9"><a href="main.html#271">, </a>p.</text>
+<text top="1141" left="656" width="21" height="18" font="12"><a href="main.html#271">270</a></text>
+<text top="1141" left="677" width="4" height="18" font="9"><a href="main.html#271">.</a></text>
+<text top="1182" left="442" width="8" height="22" font="13">3</text>
+</page>
+<outline>
+<item page="2">Acknowledgements</item>
+<item page="3">Contributions at a glance</item>
+<item page="4">Contributions at a glance (new version)</item>
+<item page="5">Supplementary web applications</item>
+<item page="12">Introduction</item>
+<outline>
+<item page="12">Bubonic plague</item>
+<item page="13">Stochastic modelling</item>
+<item page="13">Branching</item>
+<item page="15">Early phase Y. pestis infection</item>
+<item page="18">HIV and the basic model of viral replication</item>
+<item page="20">Pathogenic release strategies</item>
+<item page="21">Research questions</item>
+<item page="22">How the content is divided amongst the chapters</item>
+</outline>
+<item page="26">Mathematical introduction</item>
+<outline>
+<item page="26">Overview</item>
+<item page="27">Markov chains</item>
+<outline>
+<item page="27">Discrete-time Markov chains</item>
+<item page="30">Continuous-time Markov chains</item>
+<item page="34">Time-inhomogeneous processes</item>
+<item page="38">Coupled ODE–CTMC systems</item>
+</outline>
+<item page="41">Methods for Markov chains</item>
+<outline>
+<item page="41">Discrete-time methods</item>
+<item page="43">Continuous-time methods</item>
+<item page="48">The method of characteristics</item>
+</outline>
+</outline>
+<item page="62">Galton–Watson branching and the constant A(p)</item>
+<outline>
+<item page="62">Introduction</item>
+<item page="64">Survival probability and extinction</item>
+<item page="66">Limiting Conditional Mean E(Zn|Zn&gt;0) = 1/A(p)</item>
+<outline>
+<item page="68">The limiting conditional variance</item>
+</outline>
+<item page="69">An infinite-product representation of A(p)</item>
+<outline>
+<item page="70">Convergence of the product</item>
+</outline>
+<item page="71">The logistic map and Koenigs representation</item>
+<outline>
+<item page="71">The identity A(p) = 2 psi_2p(1/2)</item>
+<item page="72">The closed-form question</item>
+</outline>
+<item page="73">The critical endpoint: extinction and expected lifetime</item>
+<outline>
+<item page="74">Expected lifetime</item>
+</outline>
+<item page="76">Near-critical behaviour of A(p)</item>
+<item page="77">Practical determination of 1/A(p) near criticality</item>
+<outline>
+<item page="77">Direct numerical approximation</item>
+<item page="78">Product/asymptotic hybrid near criticality</item>
+</outline>
+<item page="79">The linearising coordinate in the complex plane</item>
+<outline>
+<item page="79">Basin geometry and orbit capture</item>
+<item page="80">The Koenigs coordinate and the constant A(p)</item>
+<item page="81">Leaving the real branching slice</item>
+<item page="84">Beyond the attracting window</item>
+</outline>
+<item page="84">Conclusion</item>
+</outline>
+<item page="92">The birth–death–catastrophe process</item>
+<outline>
+<item page="92">Introduction</item>
+<item page="94">The process</item>
+<outline>
+<item page="94">Sample paths</item>
+<item page="96">The released count and the joint process</item>
+<item page="96">Two conventions for rupture</item>
+<item page="97">Notation</item>
+</outline>
+<item page="97">The Riccati equation and its two roots</item>
+<outline>
+<item page="97">First-step decomposition</item>
+<item page="98">The two roots</item>
+<item page="99">Solving for I(t)</item>
+<item page="100">The same equation again: internal extinction</item>
+<item page="100">The non-fixation probability</item>
+<item page="101">Several founders</item>
+</outline>
+<item page="102">Moments</item>
+<outline>
+<item page="103">The mean load</item>
+<item page="103">The second moment</item>
+<item page="104">The mean release</item>
+<item page="105">Load and release together</item>
+<item page="106">Variances</item>
+<item page="106">The pair (Xt,Wt)</item>
+</outline>
+<item page="107">The I-economy</item>
+<item page="108">Burst size and burst time</item>
+<outline>
+<item page="109">Conditioning on rupture</item>
+<item page="109">The burst time</item>
+<item page="110">The conditional mean and its plateau</item>
+</outline>
+<item page="111">Summary of results</item>
+<item page="113">Conclusion</item>
+<outline>
+<item page="113">Completing the single-cell theory</item>
+<item page="113">Embedding the cell in a population</item>
+</outline>
+</outline>
+<item page="117">The birth–death–catastrophe process: distribution theory, quasi-stationarity, and burst statistics</item>
+<outline>
+<item page="117">Introduction</item>
+<outline>
+<item page="118">Standing assumptions</item>
+<item page="118">Contributions</item>
+<item page="119">What this chapter exports</item>
+</outline>
+<item page="119">The process, its roots, and its closed forms</item>
+<outline>
+<item page="119">Canonical notation</item>
+<item page="119">The process and its release counter</item>
+<item page="120">Roots and the workhorse identity</item>
+<item page="121">The closed forms</item>
+</outline>
+<item page="122">The generating function</item>
+<outline>
+<item page="123">From the master equations to a PDE</item>
+<item page="123">Solving by characteristics</item>
+<item page="124">Several founders</item>
+<item page="124">The two conventions differ by a function of time</item>
+</outline>
+<item page="124">The load is geometric at every time</item>
+<outline>
+<item page="125">The sliding ratio</item>
+<item page="125">Normalisation: the sum is Ifix</item>
+</outline>
+<item page="127">The quasi-stationary distribution</item>
+<outline>
+<item page="127">Conditioning on survival</item>
+<item page="127">The limit is geometric</item>
+<item page="128">The decay rate, and what it validates</item>
+<item page="129">Mean productive lifetime</item>
+</outline>
+<item page="130">Burst size, and why it is the quasi-stationary law</item>
+<outline>
+<item page="130">The burst-size law</item>
+<item page="131">Why the two laws agree</item>
+<item page="132">Size-biasing and the size of a late burst</item>
+</outline>
+<item page="134">Burst time</item>
+<outline>
+<item page="134">The marginal law, and its defect</item>
+<item page="134">Burst time given burst size, without death</item>
+<item page="136">The mean burst time when death is possible</item>
+</outline>
+<item page="137">Conditional burst means</item>
+<outline>
+<item page="137">The overall expected burst size</item>
+<item page="137">The apparent circularity</item>
+</outline>
+<item page="138">Several founders</item>
+<outline>
+<item page="139">Fixation functions for k founders</item>
+<item page="139">Moments and the release kernel</item>
+<item page="140">Lifetime yield</item>
+</outline>
+<item page="141">Chained immediate transfer</item>
+<outline>
+<item page="142">The key observation: event types ignore the load</item>
+<item page="142">Rupture-size laws</item>
+<item page="143">Rupture times</item>
+<item page="143">Where the structure breaks</item>
+</outline>
+<item page="143">Bursting against budding</item>
+<item page="145">Discussion</item>
+<outline>
+<item page="146">Single-cell assay predictions for lytic systems</item>
+<item page="146">The same theory at two extremes</item>
+<item page="147">What the two probes showed</item>
+<item page="147">Open problems</item>
+<item page="148">What comes next</item>
+</outline>
+</outline>
+<item page="153">Burst-aware within-host dynamics</item>
+<outline>
+<item page="153">Introduction</item>
+<outline>
+<item page="154">Standing assumptions</item>
+</outline>
+<item page="155">The standard model and the cell it describes exactly</item>
+<outline>
+<item page="155">The standard model</item>
+<item page="155">The budding cell is described exactly</item>
+<item page="156">Bursting, and why no constant repairs it</item>
+</outline>
+<item page="157">The intracellular process and its two kernels</item>
+<outline>
+<item page="157">The process</item>
+<item page="157">The two kernels</item>
+<item page="157">Three regimes, used throughout</item>
+</outline>
+<item page="158">Burst-aware renewal dynamics</item>
+<outline>
+<item page="158">The renewal system</item>
+<item page="159">The equations are exact in the mean</item>
+<item page="160">One skeleton, many mechanisms</item>
+<item page="160">Relation to existing multiscale models</item>
+<item page="161">Numerical verification</item>
+</outline>
+<item page="162">The standard model is a projection</item>
+<outline>
+<item page="162">Exponential-phase equivalence</item>
+<item page="162">The ends of the map</item>
+<item page="163">Monotonicity, and the size of the effect</item>
+<item page="164">Threshold and growth rate as functionals of one kernel</item>
+<item page="165">What the projection loses</item>
+<item page="166">Identifiability: a negative result</item>
+</outline>
+<item page="167">Bursting versus budding: the flooding parameter L</item>
+<outline>
+<item page="168">The offspring of one infected cell</item>
+<item page="168">Extinction, and the flooding advantage</item>
+<item page="170">The boundary L=1: a coincidence of laws</item>
+<item page="171">The price: invasion speed</item>
+<item page="172">The trade-off</item>
+</outline>
+<item page="173">The reach of the construction</item>
+<outline>
+<item page="173">Recurrent release: the reset process</item>
+<item page="174">Partial release, and antiviral mode of action</item>
+<item page="174">Beyond birth–death–catastrophe: HIV</item>
+<item page="175">Where the reach stops</item>
+</outline>
+<item page="175">Discussion</item>
+<outline>
+<item page="175">Consequences for fitting practice</item>
+<item page="176">Limitations</item>
+<item page="177">Open problems</item>
+<item page="177">Connections forward</item>
+</outline>
+</outline>
+<item page="181">Type-specific catastrophe rates</item>
+<outline>
+<item page="181">Introduction</item>
+<item page="183">Model, assumptions, and backward equations</item>
+<outline>
+<item page="183">The two-type process</item>
+<item page="183">Occupation-time representation</item>
+<item page="184">First-event calculation</item>
+<item page="187">Dimensionless form</item>
+</outline>
+<item page="187">The autonomous type-2 probability</item>
+<item page="189">Hypergeometric reduction and main result</item>
+<outline>
+<item page="189">Selecting the stable constant part</item>
+<item page="191">Linearising the Riccati equation</item>
+<item page="192">The closed formula</item>
+<item page="196">Mathematical interpretation</item>
+</outline>
+<item page="196">Intracellular application: comparing catastrophe-rate regimes</item>
+<outline>
+<item page="196">Intracellular mapping and scope</item>
+<item page="198">Four catastrophe-rate regimes</item>
+<item page="198">Exact comparison and limits of inference</item>
+</outline>
+<item page="199">Conclusion</item>
+</outline>
+<item page="210">Bursting and budding pathogenesis</item>
+<outline>
+<item page="210">Introduction</item>
+<outline>
+<item page="210">Three candidate advantages</item>
+</outline>
+<item page="212">Why the release schedule alone cannot matter</item>
+<outline>
+<item page="212">Successive birth–death–catastrophe</item>
+</outline>
+<item page="214">Intracellular depletion: replicator and suppressor</item>
+<outline>
+<item page="214">The granule store</item>
+<item page="214">The replicator–suppressor process</item>
+<item page="216">First-step analysis</item>
+<item page="218">The survival maps</item>
+</outline>
+<item page="220">Extracellular depletion: fixed removal</item>
+<outline>
+<item page="220">The playing field</item>
+<item page="222">The replication ratio</item>
+<item page="223">Analysis of proliferability</item>
+</outline>
+<item page="225">Bursting and budding: where the advantage lives</item>
+<outline>
+<item page="225">What is settled, and what was left open</item>
+<item page="226">The reversal</item>
+<item page="227">Placement on the spectrum</item>
+<item page="228">Y. pestis</item>
+</outline>
+<item page="229">Discussion</item>
+<outline>
+<item page="229">Limitations</item>
+<item page="229">Open problems</item>
+<item page="230">Connections forward</item>
+</outline>
+</outline>
+<item page="233">Models with non-constant rates</item>
+<outline>
+<item page="233">Introduction</item>
+<outline>
+<item page="234">Notation</item>
+</outline>
+<item page="236">Logistic speciation</item>
+<outline>
+<item page="236">Variation, and what suppresses it</item>
+<item page="236">The push of the past</item>
+<item page="236">The model</item>
+<item page="237">The marginal law</item>
+<item page="238">The mean, directly</item>
+<item page="238">The limit law</item>
+<item page="239">The other rate laws</item>
+<item page="240">What extinction does</item>
+</outline>
+<item page="242">Competitive reversal: the Pimentel model</item>
+<outline>
+<item page="242">The experiment</item>
+<item page="243">The model</item>
+<item page="244">Results</item>
+<item page="245">The moving critical point</item>
+<item page="246">A spatial version</item>
+<item page="247">Coupling speciation to competition</item>
+</outline>
+<item page="249">Rise, run, ruin, rejuvenation</item>
+<outline>
+<item page="249">The cycle the model is for</item>
+<item page="249">The model</item>
+<item page="250">What the simulations show</item>
+</outline>
+<item page="251">Speciation as catastrophe</item>
+<outline>
+<item page="251">The same hazard, with the inflow made endogenous</item>
+<item page="252">State</item>
+<item page="252">Competition</item>
+<item page="253">Mutation and the potential</item>
+<item page="254">Fragmentation</item>
+<item page="255">What the simulations show</item>
+</outline>
+</outline>
+<item page="262">Conclusion</item>
+<outline>
+<item page="262">Contributions, chapter by chapter</item>
+<item page="265">The four questions, answered</item>
+<outline>
+<item page="265">Why Y. pestis switches phase</item>
+<item page="265">Whether bursting pays</item>
+<item page="266">An intracellular replacement for the standard model</item>
+<item page="266">Rates that move</item>
+</outline>
+<item page="266">The quadrant argument</item>
+<outline>
+<item page="266">Three environments, one ordering</item>
+<item page="267">Where the two strategies cross</item>
+<item page="268">What the threshold says</item>
+</outline>
+<item page="269">Limitations and open problems</item>
+<item page="270">Closing</item>
+</outline>
+<item page="271">Originality of the results</item>
+<item page="274">Statement on the use of generative AI</item>
+<item page="276">References</item>
+</outline>
+</pdf2xml>

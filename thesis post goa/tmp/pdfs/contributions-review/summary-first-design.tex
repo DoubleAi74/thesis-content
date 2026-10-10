@@ -1,0 +1,132 @@
+% A single-page alternative to summary.tex. Keep all styling local so that
+% the original summary and the rest of the thesis retain their formatting.
+\clearpage
+\phantomsection
+\label{oi:summary-redesigned}
+\addcontentsline{toc}{chapter}{Contributions at a glance (new version)}
+\markboth{CONTRIBUTIONS AT A GLANCE}{CONTRIBUTIONS AT A GLANCE}
+\thispagestyle{plain}
+\begingroup
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\color{ink}
+\hypersetup{linkcolor=oiaccent}
+\definecolor{oipanel}{HTML}{EFF6FA}
+\newcommand{\oimapchapter}[2]{%
+  {\sffamily\fontsize{9}{11}\selectfont\color{oisoft}%
+   \hyperref[#1]{#2}}}
+\newcommand{\oimaptitle}[2]{%
+  {\sffamily\fontsize{12.5}{15}\selectfont\bfseries
+   \textcolor{oiaccent}{#1}\hspace{0.65em}#2\par}}
+\newcommand{\oimapcard}[4]{%
+  \begin{minipage}[t]{0.477\linewidth}
+    {\color{oirule}\rule{\linewidth}{0.5pt}\par}
+    \vspace{5pt}
+    \oimaptitle{#1}{#2}
+    \vspace{3pt}
+    #3\par
+    \vspace{5pt}
+    {\fontsize{10.5}{13.3}\selectfont\raggedright #4\par}
+  \end{minipage}}
+
+{\sffamily\fontsize{25}{29}\selectfont\bfseries
+ Contributions at a glance\par}
+\vspace{7pt}
+{\fontsize{11}{14}\selectfont\color{oisoft}
+ Exact stochastic results linking replication inside a cell, infection
+ establishment and species diversification.\par}
+\vspace{9pt}
+{\color{oiaccent}\rule{\linewidth}{1pt}\par}
+\vspace{11pt}
+
+% Lead contribution. The two comparisons have different observables;
+% name each explicitly, and retain the supercritical/positive-budget scope.
+\setlength{\fboxsep}{10pt}
+\colorbox{oipanel}{%
+  \begin{minipage}{\dimexpr\linewidth-2\fboxsep\relax}
+    \oimaptitle{01}{When does bursting help?}
+    \vspace{3pt}
+    \oimapchapter{p:ch:one-cell-to-population}{Chapter~\ref*{p:ch:one-cell-to-population}}
+    \quad\oimapchapter{path:ch:pathogenesis}{Chapter~\ref*{path:ch:pathogenesis}}\par
+    \vspace{6pt}
+    {\fontsize{10.5}{13.3}\selectfont\raggedright
+    At matched mean lifetime output, one dimensionless parameter $L$
+    determines how bursting compares with continuous budding.\par
+    \vspace{6pt}
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{0.28\linewidth}O@{}}
+      Linear clearance &
+      Bursting lowers extinction risk exactly when $L>1$
+      (when establishment is possible). \\[4pt]
+      Finite immune budget &
+      Bursting leaves more surviving output exactly when $L<1$
+      (one delivery; positive integer budget). \\
+    \end{tabularx}\par
+    \vspace{6pt}
+    The extinction-probability gap is exact; at $L=1$, the full offspring
+    distributions coincide.\par}
+    \vspace{5pt}
+    {\fontsize{9}{11}\selectfont
+    \oiref{Thm}{p:thm:flood}\enspace\textcolor{oisoft}{/}\enspace
+    \oiref{Prop}{p:prop:L1}\enspace\textcolor{oisoft}{/}\enspace
+    \oiref{Prop}{path:prop:reversal}\par}
+  \end{minipage}%
+}\par
+\vspace{13pt}
+
+\oimaptitle{02}{An exact solution for two interacting types}
+\vspace{3pt}
+\oimapchapter{tt:ch:two-type}{Chapter~\ref*{tt:ch:two-type}}\par
+\vspace{5pt}
+{\fontsize{10.5}{13.3}\selectfont\raggedright
+For two types with one-way conversion, each type can trigger a catastrophe
+that ends the whole process. Two closed forms give the
+\textbf{probability of avoiding catastrophe up to any time} and the
+\textbf{joint generating function of both counts before catastrophe}.\par}
+\vspace{5pt}
+{\fontsize{9}{11}\selectfont
+\oiref{Thm}{tt:thm:main}\enspace\textcolor{oisoft}{/}\enspace
+\oiref{Eq.}{eq:pgf-F1-solution}\par}
+\vspace{11pt}
+
+\oimapcard{03}{One bursting cell}
+  {\oimapchapter{bdc:ch:core}{Chapters~\ref*{bdc:ch:core} and~\ref*{dist:ch:distribution-theory}}}
+  {Expresses load moments using one no-catastrophe probability and tracks
+   release at finite time. Derives burst timing, explains why the burst-size and
+   quasi-stationary laws agree, and extends the calculation to several
+   founders and successive cell-to-cell transfers.}%
+\hfill
+\oimapcard{04}{From cells to infection}
+  {\oimapchapter{p:ch:one-cell-to-population}{Chapter~\ref*{p:ch:one-cell-to-population}}}
+  {An age-structured infection model with survival and release kernels
+   derived from the cell process. It shows why fitted constant rates
+   depend on the growth phase, and why one exponential phase cannot
+   identify all three intracellular rates.}
+\par\vspace{12pt}
+
+\oimapcard{05}{A branching constant explained}
+  {\oimapchapter{gw:ch:galton-watson}{Chapter~\ref*{gw:ch:galton-watson}}}
+  {Kolmogorov's survival constant $A(p)$ is linked to the logistic map's
+   Koenigs function. A hypertranscendence proof rules out an elementary
+   formula for that function in its spatial argument; the closed-form
+   question for $A(p)$ remains open.}%
+\hfill
+\oimapcard{06}{Evolution under changing rates}
+  {\oimapchapter{var:ch:rates}{Chapter~\ref*{var:ch:rates}}}
+  {A speciation model driven by unused population capacity yields an
+   explicit limiting species-count distribution and variance. A moving
+   critical point is derived for the Pimentel resistance model, locating
+   reversals of competitive advantage.}
+\par
+
+\vfill
+{\color{oirule}\rule{\linewidth}{0.5pt}\par}
+\vspace{6pt}
+{\fontsize{9}{11.5}\selectfont\color{oisoft}\raggedright
+\textbf{What is new?} The originality index singles out four statements:
+the extinction-gap identity, coincidence of offspring laws, two-type
+no-catastrophe probability and joint generating function. These and the
+extensions above build on established methods. Full claims, sources and
+scope: \hyperref[oi:details]{\textit{Originality of the results}},
+p.\,\pageref{oi:details}.\par}
+\endgroup
+\clearpage

@@ -1,0 +1,195 @@
+\section{Checks, limits, and the earlier branching model}
+\label{app:limits}
+
+This appendix records checks and degenerate cases omitted from the main text. We return to the probability first, then to several parameter limits, because a special-function expression is of limited use if its boundaries are unclear. Some limits are smooth inside \cref{eq:S-final}; others are better solved before the hypergeometric coordinate is introduced.
+
+\subsection{Initial and infinite-time behaviour}
+
+At $\hat t=0$, the Wronskian construction in \cref{eq:K-coefficients,eq:Phi-linear-combination} forces the logarithmic derivative in \cref{eq:S-final} to equal $L$. Consequently $\widehat S(0)=1$. Differentiation of the backward equations then gives the scaled initial slopes
+\begin{equation*}
+\widehat S'(0)=-\hat\delta_1,
+\qquad
+\widehat G'(0)=-\hat\delta_2,
+\end{equation*}
+in agreement with \cref{eq:initial-slopes}.
+
+As $\hat t$ grows, $z_2(\hat t)$ tends to zero and $\widehat G$ tends to $r_{2,-}$. The occupation-time representation shows that both probabilities are monotone and hence have limits. Passing to the limit in the type-1 equation with $\widehat S'\to0$ forces $\widehat S$ to a root of \cref{eq:h-quadratic}. The upper root exceeds one, while the physical solution is bounded by one, so the long-time value must be the lower root $h$. Hence we obtain a useful corollary.
+
+\begin{corollary}[Avoiding catastrophe forever]
+\label{cor:long-time}
+Under the assumptions of \cref{tt:thm:main},
+\begin{equation*}
+\lim_{t\to\infty}G(t)=r_{2,-},
+\qquad
+\lim_{t\to\infty}S(t)=h.
+\end{equation*}
+These are the probabilities that catastrophe never occurs from one initial individual of the corresponding type.
+\end{corollary}
+
+A birth process can avoid catastrophe forever with positive probability for an ordinary reason: a lineage may die out before accumulating enough exposure to trigger the absorbing event.
+
+\subsection{Equal catastrophe rates}
+
+If $\delta_1=\delta_2=\delta$, then $\hat\delta_1=\hat\delta_2$. The derivation is unchanged. The common rate enters the type-2 roots through $\hat\delta_2$ and the type-1 stable root through $\hat\kappa_1$. Thus the unequal-rate result restricts algebraically to the shared-rate model on the diagonal
+\begin{equation}
+\label{eq:equal-catastrophe-diagonal}
+\delta_1=\delta_2.
+\end{equation}
+We do not know of a separate published closed form for the equal-rate case against which a term-by-term expansion could be checked. What can be verified is consistency: under \cref{eq:equal-catastrophe-diagonal} the governing equations and every derived parameter reduce as expected.
+
+\subsection{Type 2 cannot trigger catastrophe}
+\label{sec:delta2-zero}
+
+Now take $\delta_2=0$. Starting from one type-2 individual, neither birth nor ordinary death creates catastrophe, and type 2 has no route back to type 1. Therefore
+\begin{equation*}
+G(t)\equiv1.
+\end{equation*}
+This is why the root coordinate of \cref{sec:autonomous} degenerates: the autonomous probability has stopped moving.
+
+In scaled time, the first equation becomes
+\begin{equation}
+\label{eq:S-delta2-zero-ode}
+\widehat S'
+=\widehat S^2-\hat\kappa_1\widehat S
++\hat\mu_1+\hat\nu.
+\end{equation}
+Let
+\begin{equation*}
+s_{\pm}=
+\frac{\hat\kappa_1\pm
+\sqrt{\hat\kappa_1^2-4(\hat\mu_1+\hat\nu)}}{2}.
+\end{equation*}
+If $\delta_1>0$, then $s_-<1<s_+$ and the roots are distinct. Define
+\begin{equation}
+\label{eq:R0}
+R_0=\frac{1-s_-}{1-s_+}.
+\end{equation}
+Separation of \cref{eq:S-delta2-zero-ode} gives
+\begin{proposition}[Elementary type-2-zero boundary]
+\label{prop:delta2-zero}
+For $\delta_2=0$ and $\delta_1>0$,
+\begin{equation*}
+\widehat S(\hat t)=
+\frac{s_--R_0\e^{-(s_+-s_-)\hat t}s_+}
+{1-R_0\e^{-(s_+-s_-)\hat t}}.
+\end{equation*}
+In physical time,
+\begin{equation*}
+S(t)=
+\frac{s_--R_0\e^{-(s_+-s_-)\lambda_1t}s_+}
+{1-R_0\e^{-(s_+-s_-)\lambda_1t}}.
+\end{equation*}
+\end{proposition}
+
+One corner of the same family deserves a separate remark. If $\delta_1=\delta_2=0$, catastrophe is impossible, so
+\begin{equation}
+\label{eq:no-catastrophe-trivial}
+S(t)=G(t)=1.
+\end{equation}
+Here $1-s_+$ may vanish in \cref{eq:R0}: the probability itself is regular, but that particular parametrisation is not.
+
+\subsection{No type-1 births}
+\label{sec:lambda1-zero}
+
+The scaling in \eqref{eq:lambda1-positive} excludes $\lambda_1=0$, although the original process does not. At this boundary the type-1 equation is no longer Riccati. It is linear:
+\[
+S'=-(\mu_1+\nu+\delta_1)S+\mu_1+\nu G.
+\]
+An integrating factor therefore gives the exact unscaled solution
+\begin{equation}
+\label{eq:S-lambda1-zero}
+S(t)=\e^{-(\mu_1+\nu+\delta_1)t}
+\left[1+\int_0^t \e^{(\mu_1+\nu+\delta_1)s}
+\bigl(\mu_1+\nu G(s)\bigr)\,\dd s\right].
+\end{equation}
+Here $G$ is the elementary solution of \cref{eq:G-unscaled}; it has the root form of \cref{prop:G-solution} with unscaled type-2 rates when $\lambda_2,\delta_2>0$, and the corresponding linear or constant boundary form otherwise. Thus the absence of type-1 births is an exactly solvable degeneration, not a singularity of the probability model.
+
+\subsection{No type-2 births}
+\label{sec:lambda2-zero}
+
+There is another coordinate boundary when $\lambda_2=0$. Assume here that $\lambda_1>0$, $\hat\nu>0$, and $\hat\delta_2>0$; the zero-conversion and zero catastrophe-rate cases are already elementary. Define
+\begin{equation*}
+k=\hat\mu_2+\hat\delta_2,
+\qquad
+g_\infty=\frac{\hat\mu_2}{k},
+\qquad
+a=\hat\nu(1-g_\infty)
+=\frac{\hat\nu\hat\delta_2}{k}.
+\end{equation*}
+Then
+\begin{equation}
+\label{eq:G-lambda2-zero}
+\widehat G(\hat t)
+=g_\infty+(1-g_\infty)\e^{-k\hat t}.
+\end{equation}
+In physical time, $G(t)=g_\infty+(1-g_\infty)\e^{-k\lambda_1t}$.
+Let $h_0$ be the lower root of
+\begin{equation*}
+h_0^2-\hat\kappa_1h_0+\hat\mu_1+\hat\nu g_\infty=0,
+\end{equation*}
+and put
+\begin{equation*}
+d_0=\hat\kappa_1-2h_0,
+\qquad
+\rho=\frac{d_0}{k},
+\qquad
+w(\hat t)=w_0\e^{-k\hat t/2},
+\qquad
+w_0=\frac{2\sqrt a}{k}.
+\end{equation*}
+Primes in the next display mean differentiation with respect to $w$. With
+\begin{equation}
+\label{eq:bessel-initial-data}
+M=\frac{2-\hat\kappa_1}{kw_0},
+\qquad
+\begin{aligned}
+c_J&=\mathrm Y_\rho'(w_0)-M\mathrm Y_\rho(w_0),\\
+c_Y&=M\mathrm J_\rho(w_0)-\mathrm J_\rho'(w_0),
+\end{aligned}
+\end{equation}
+define
+\begin{equation*}
+\Theta(w)=c_J\mathrm J_\rho(w)+c_Y\mathrm Y_\rho(w),
+\end{equation*}
+where $\mathrm J_\rho$ and $\mathrm Y_\rho$ are the Bessel functions of the first and second kinds.
+
+\begin{proposition}[Zero type-2 birth boundary]
+\label{prop:lambda2-zero}
+Under the assumptions of this subsection,
+\begin{equation}
+\label{eq:S-lambda2-zero}
+\widehat S(\hat t)
+=\frac{\hat\kappa_1}{2}
++\frac{k}{2}w(\hat t)
+\frac{\Theta'(w(\hat t))}{\Theta(w(\hat t))}
+\end{equation}
+solves the type-1 backward equation with $\widehat S(0)=1$. In physical time,
+\begin{equation*}
+S(t)
+=\frac{\hat\kappa_1}{2}
++\frac{k}{2}w(\lambda_1t)
+\frac{\Theta'(w(\lambda_1t))}{\Theta(w(\lambda_1t))}.
+\end{equation*}
+Moreover $\widehat S(\hat t)\to h_0$ and $\widehat G(\hat t)\to g_\infty$, so $S(t)\to h_0$ and $G(t)\to g_\infty$.
+\end{proposition}
+
+\begin{proof}
+Equation \eqref{eq:G-lambda2-zero} follows from the now-linear type-2 equation. Write $\widehat S=h_0+X$ and use $X=-Z'/Z$. The type-1 equation becomes
+\[
+Z''+d_0Z'+a\e^{-k\hat t}Z=0.
+\]
+Set $Z=\e^{-d_0\hat t/2}\Theta(w)$. The equation for $\Theta$ is
+\[
+w^2\Theta''+w\Theta'+(w^2-\rho^2)\Theta=0,
+\]
+which is Bessel's equation. Returning through the substitution gives \cref{eq:S-lambda2-zero}. The coefficients in \cref{eq:bessel-initial-data} enforce $\Theta'(w_0)/\Theta(w_0)=M$; their denominator-free form is valid because the Bessel Wronskian gives $\Theta(w_0)=2/(\pi w_0)$. Finally the bounded probability branch contains the small-$w$ behaviour $w^{-\rho}$ and hence tends to the lower root $h_0$. The other local behaviour would tend to $\hat\kappa_1-h_0>1$.
+\end{proof}
+
+\subsection{No conversion}
+
+When $\nu=0$, the two types do not communicate. Each no-catastrophe probability solves its own one-type Riccati equation. The type-2 solution is already \cref{eq:G-solution}. For type 1, the same root construction applies to
+\[
+\widehat S'=\widehat S^2
+-(1+\hat\mu_1+\hat\delta_1)\widehat S+\hat\mu_1.
+\]
+The hypergeometric equation is unnecessary in this case. The boundary can be obtained by continuity from the central formula along non-degenerate parameter paths, but the direct scalar solution is clearer and numerically safer.

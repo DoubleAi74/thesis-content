@@ -1,0 +1,157 @@
+\section{Burst size and burst time}
+\label{bdc:sec:burst}
+
+The moments just derived already tell us something about the rupture event
+itself. There are two quantities of interest: the burst size
+$\Kb=X_{\tau-}$, which is the load carried out of the cell, and the burst time
+$\tau$. Neither is a marginal moment of $X_t$ alone, but both can be reached
+from the functions now in hand.
+
+\subsection{Conditioning on rupture}
+\label{bdc:sec:conditioning}
+
+The mean release $V(t)$ includes paths which have died internally and will never
+release anything. To obtain the mean load released by cells which have ruptured
+by time $t$, split the expectation according to the event $\{\tau\le t\}$:
+\[
+\ex{W_t}
+=\ex{W_t\mid\tau>t}\,I(t)
++\ex{W_t\mid\tau\le t}\,[1-I(t)].
+\]
+The first conditional expectation is zero because $W_t=0$ before rupture.
+Hence
+\[
+\ex{W_t\mid\tau\le t}=\frac{V(t)}{1-I(t)}.
+\]
+Letting $t\to\infty$ conditions on eventual rupture, irrespective of when it
+occurs.
+
+\begin{corollary}[The mean burst size]
+\label{bdc:cor:burstmean}
+Conditional on eventual rupture,
+\begin{equation}
+\label{bdc:eq:burstmean}
+\ex{\Kb\mid\text{burst}}
+=\lim_{t\to\infty}\frac{V(t)}{1-I(t)}
+=\frac{V_\infty}{1-b}
+=\frac{\lambda-\mu}{\delta}+\frac{1}{1-b}
+=\frac{a}{a-1}.
+\end{equation}
+When $\mu=0$, every realisation eventually ruptures and this conditional mean
+equals $V_\infty$.
+\end{corollary}
+
+The second moment follows in the same way. As $t\to\infty$, we have $I\to b$
+and $K\to0$, so \cref{bdc:eq:Wsq} gives
+\[
+\ex{W_\infty^2}
+=\frac{2(\lambda-\mu)}{\delta}V_\infty
++\frac{\lambda+\mu}{\delta}(1-b)+1.
+\]
+Dividing by the rupture probability $1-b$, subtracting the square of
+\cref{bdc:eq:burstmean}, and using \cref{bdc:eq:identities} yields the variance.
+
+\begin{corollary}[The first two moments of the burst law]
+\label{bdc:cor:burstvar}
+Conditional on rupture, the burst size satisfies
+\begin{equation}
+\label{bdc:eq:burstvar}
+\ex{\Kb\mid\text{burst}}=\frac{a}{a-1},
+\qquad
+\var{\Kb\mid\text{burst}}=\frac{a}{(a-1)^2},
+\end{equation}
+for every $\mu\ge0$.
+\end{corollary}
+
+These coincide with the first two moments of a geometric distribution on
+$\{1,2,\ldots\}$ with ratio $1/a$, or success probability $(a-1)/a$.
+The agreement points towards the geometric law, but two moments do not identify
+a distribution. \fwd{singlecell}{Chapter~5} derives the full burst-size law and
+shows that the indication is correct.
+
+The no-death case gives a convenient check. With $\mu=0$, we have
+$b=0$, $I(\infty)=0$, $K(\infty)=0$ and
+$V_\infty=1+\lambda/\delta$. Equation~\cref{bdc:eq:Wsq} then gives
+\[
+\ex{W_t^2}\Big|_{t\to\infty}
+=\frac{2\lambda}{\delta}
+\Bigl(1+\frac{\lambda}{\delta}\Bigr)
++\frac{\lambda}{\delta}+1
+=\frac{2\lambda^2}{\delta^2}+\frac{3\lambda}{\delta}+1.
+\]
+This is $(2-s)/s^2$ for
+$s=\delta/(\lambda+\delta)=(a-1)/a$, the second moment of that geometric law.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{F4_burst_size_preview.pdf}
+\caption{The burst-size law in the no-death case:
+$\pr{\Kb=k}=(\delta/\lambda)a^{-k}$, a geometric law on
+$\{1,2,\ldots\}$ with ratio $1/a$. Here
+$\lambda=1$, $\mu=0$, $\delta=0.1$ and $a=1.1$.}
+\label{bdc:fig:burstsize}
+\end{figure}
+
+\Cref{bdc:fig:burstsize} previews the distribution in the case $\mu=0$, when
+every path bursts and no conditioning mass is lost to internal extinction.
+
+\subsection{The burst time}
+\label{bdc:sec:bursttime}
+
+The distribution of $\tau$ is contained in $I$:
+\[
+\pr{\tau\le t}=\pr{X_t=H}=1-I(t).
+\]
+Its density on finite times is therefore
+\begin{equation}
+\label{bdc:eq:bursttime}
+\varphi(t)=-\ddt{I}=\delta J(t).
+\end{equation}
+The identity has a simple reading. Since any unit can trigger rupture, the
+instantaneous rupture density is proportional to the current mean load.
+
+When $\mu>0$, this density is defective:
+\[
+\int_0^\infty\varphi(t)\,\dd t
+=1-\lim_{t\to\infty}I(t)
+=1-b<1.
+\]
+The missing mass $b$ belongs to cells which die internally and consequently
+have $\tau=\infty$. Only in the no-death case is $\varphi$ a proper density on
+$[0,\infty)$. The full law of $\tau$, and its joint law with $\Kb$, are derived
+in \fwd{singlecell}{Chapter~5}.
+
+\subsection{The conditional mean and its plateau}
+\label{bdc:sec:plateau}
+
+There is a companion to the mean burst-size calculation. Although the
+unconditional load $J(t)$ tends to zero, the mean among cells which are still
+productive,
+\[
+\frac{J(t)}{\Ifix(t)},
+\]
+approaches the finite value $a/(a-1)$. This is the same value as the conditional
+mean burst size in \cref{bdc:eq:burstmean}. The coincidence is suggestive:
+late-rupturing cells release the load they carry, and the conditional load itself
+is approaching a plateau. It is not, by itself, proof that the two limiting
+distributions agree. That stronger statement belongs to the quasi-stationary
+analysis \cite{yaglom1947certain,Meleard2012}; \fwd{singlecell}{Chapter~5}
+establishes it by deriving the limiting conditional law.
+
+\Cref{bdc:fig:condmean} separates the no-death and death cases. Without death,
+conditioning on non-catastrophe is the same as conditioning on productivity.
+With death, an intact cell may already be empty, and the two normalisations no
+longer agree.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{F4_conditional_mean.pdf}
+\caption{Conditional mean loads. (a) For $\mu=0$, $\lambda=1$ and
+$\delta=0.1$, $J(t)/I(t)$ and $V(t)$ tend to
+$1+\lambda/\delta=11$. (b) For $\lambda=1$, $\mu=0.2$ and $\delta=0.05$,
+$J(t)/\Ifix(t)$ approaches $a/(a-1)$, whereas $J(t)/I(t)$ tends to zero
+because non-catastrophe also includes cells that died internally.}
+\label{bdc:fig:condmean}
+\end{figure}
+
+\FloatBarrier

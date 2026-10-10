@@ -1,0 +1,96 @@
+\section{Branching}
+
+Branching is one of the most fundamental patterns of behaviour observable in
+living systems. It is a basic means for the ordered structures of living
+entities to expand indefinitely in response to resource supply. Dividing one
+individual into two allows biomass, and hence dissipative potential, to
+increase without paying the cost required to increase agent complexity. At the
+most basic level, replication of DNA molecules makes up the foundational
+component of all biological life: the maintenance and development of
+information, held up and carried forward against all odds of decay.
+
+Understanding branching from a mathematical perspective has been a topic of
+probability theory since the end of the nineteenth century. Darwin's cousin
+Francis Galton sought to understand the persistence of family names over
+generations, and for this, with Henry Watson, he employed what would come to be
+known as the Galton--Watson process \cite{watson1875probability}. It is a
+discrete-time stochastic process in which individuals either die or leave some
+number of offspring at each generation, fate being dictated by defined
+probabilities. In the binary case used throughout this thesis, each individual
+present either replicates with probability $p$ or dies with the remaining
+likelihood, so that the number $Z$ of offspring left by one individual has mean
+\[
+\mean{Z} = 2p + 0\,(1-p) = 2p .
+\]
+
+It wasn't until the 1920s that continuous time models of branching were
+developed. In 1924, George Udny Yule published a paper in response to a book on
+evolution. The book was called ``Age and area'' \cite{Willis1922}, and sought to understand the
+relationship between the number of species in a living genus and the area over
+which it spans. The paper \cite{yule1925ii} introduced what would become known
+as the Yule process. This was the first continuous time model of branching.
+Individuals only replicate, and do so with some probability during an interval
+of time:
+$$\pr{\xx_{t + \Delta t}  = \xt + 1 \;\; | \;\; \xt} = \lambda \xt \Delta t + o(\Delta t).$$
+As the interval is taken in the limit, $\Delta t\to 0$, the probability that
+more than one replication takes place becomes infinitesimal. The fact that any
+of the $\xt$ present individuals can reproduce is encoded by the
+proportionality of the birth rate $\lambda \xt$.
+
+This model, applied equally well to bacterial replication as to the emergence
+of species, is also known as the standard birth process. Introducing death
+events, we get the standard birth--death process:
+
+$$\pr{\xx_{t + \Delta t}  = \xt + 1 \;\; | \;\; \xt} = \lambda \xt \Delta t + o(\Delta t)$$
+$$\pr{\xx_{t + \Delta t}  = \xt - 1 \;\; | \;\; \xt} = \mu \xt \Delta t + o(\Delta t),$$
+
+\noindent
+which now has a universally accessible absorbing state at $0$ representing
+extinction.
+
+\subsubsection*{Criticality}
+
+One of the most important aspects of branching processes is their net
+replacement, which asks whether an individual replaces itself on average. In
+discrete time this is the expected number of offspring produced by a single
+individual over its lifetime, $\mean{Z}=2p$, and the process is called
+\textbf{supercritical}, \textbf{critical} or \textbf{subcritical} according as
+$2p$ exceeds, equals or falls below $1$. In continuous time the same question
+is asked of the mean population size, which obeys
+$$\ddt{\mean{\xt}} = (\lambda - \mu) \mean{\xt},$$
+so that the three regimes are set instead by the sign of the net replication
+rate $\lambda-\mu$. The two conditions say the same thing in the two settings,
+and the distinction between them is one of arithmetic rather than of substance.
+The three regimes behave quite differently. Some supercritical realisations die
+out and the rest rise towards infinity in an increasingly predictable
+exponential fashion. Every subcritical realisation is destined to fixate at
+$0$. So is every critical one --- but the expected time it takes to do so is
+infinite, so that a single realisation may last a very long time without ever
+fixating.
+
+\subsubsection*{Catastrophes}
+
+Much of the work presented in this thesis surrounds our analysis of a further
+modification to this birth--death process. An additional ``catastrophe event''
+is introduced, whereby a sudden transition can take place from any non-zero
+count either to $0$ or to a separate ruptured state $H$, as per choice of
+convention:
+
+$$\pr{\xx_{t + \Delta t}  = \xt + 1 \;\; | \;\; \xt} = \lambda \xt \Delta t + o(\Delta t)$$
+$$\pr{\xx_{t + \Delta t}  = \xt - 1 \;\; | \;\; \xt} = \mu \xt \Delta t + o(\Delta t)$$
+$$\pr{\xx_{t + \Delta t}  = H \;\; | \;\; \xt} = \delta \xt \Delta t + o(\Delta t).$$
+
+\noindent
+Like birth and death, the catastrophe can be initiated by any of the individual
+units, and so occurs at a rate proportional to the population size. In our case
+this is to represent the possibility of any resident bacterium within a white
+blood cell triggering a bursting event in which the walls of the macrophage
+disintegrate and the pathogenic contents are simultaneously released.
+
+The birth--death--catastrophe process is the spine of this thesis.
+\Mextref{bdc:ch:core}{Chapter~4} and
+\mextref{dist:ch:distribution-theory}{Chapter~5} solve the single cell;
+\mextref{p:ch:one-cell-to-population}{Chapter~6} carries it up to a population
+of cells; \mextref{tt:ch:two-type}{Chapter~7} solves a two-type version of it;
+and \mextref{path:ch:pathogenesis}{Chapter~8} asks what the burst is worth
+against a defence that can be used up.

@@ -1,0 +1,15 @@
+{
+  "figure": "fig09",
+  "chapter_number": "5.9",
+  "label": "dist:fig:bursttime",
+  "slug": "burst_time_density",
+  "included_from": "sections/07_burst_time.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig09.pdf",
+    "fig09.png"
+  ],
+  "simulation": false
+}

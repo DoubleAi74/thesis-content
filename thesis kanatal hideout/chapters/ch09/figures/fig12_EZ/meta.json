@@ -1,0 +1,15 @@
+{
+  "id": "fig12_EZ",
+  "simulation": false,
+  "parameters": {
+    "lambda1": 1.0,
+    "mu1": 0.2,
+    "lambda2": 1.0,
+    "mu2": 0.9
+  },
+  "derived": {
+    "EZ_delta_to_0": 1.5999825002242156,
+    "delta1_unit_crossing": 0.06122230576441104,
+    "EZ_at_0.2": 0.6135692291995318
+  }
+}

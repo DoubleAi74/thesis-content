@@ -1,0 +1,190 @@
+\section{Burst time}
+\label{dist:sec:burst-time}
+
+Knowing what a burst is makes it possible to say when one happens. The
+marginal law of the rupture time is a one-line consequence of the survival
+function derived in \ChCore, and is taken first. The conditional law is the interesting
+one, and it runs the other way from \cref{dist:sec:size-bias}: there the burst
+size was conditioned on the burst time, here the burst time on the burst size,
+which is what an experiment measures when it records both. By
+\cref{dist:thm:identity} that size is a draw from the law at the endpoint of
+$P$, the last of the three readings of that endpoint promised in
+\cref{dist:sec:geometric}.
+
+\subsection{The marginal law, and its defect}
+\label{dist:sec:burst-time-marginal}
+
+Since $I(t)=\pr{\tau>t}$, the density of the burst time is
+\begin{equation}
+\varphi(t):=-I'(t)=\delta J(t),
+\label{dist:eq:phi}
+\end{equation}
+using $I'=-\delta J$ from \cref{dist:sec:moments-recap}: the rupture flux at
+time $t$ is the catastrophe rate times the expected load. The density is
+\emph{defective}, because $I(t)\to b$ rather than $0$:
+\begin{equation}
+\int_0^\infty\varphi(t)\,\dd t=1-b,
+\label{dist:eq:phidefect}
+\end{equation}
+the remaining mass $b$ sitting at $\tau=\infty$ --- the realisations that
+clear internally without ever bursting. Conditioned on eventual burst the
+density is $\varphi(t)/(1-b)$. \Cref{dist:fig:bursttime} shows both, with the
+missing mass marked.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.66\textwidth]{fig09_burst_time_density/fig09}
+\caption{Defective burst-time density $\varphi(t)=\delta J(t)$ and its
+conditional counterpart $\varphi(t)/(1-b)$. For
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$ the finite-time density has total mass
+$1-b$ and the remaining mass $b=0.1884$ lies at $\tau=\infty$; for
+$(1,0,0.1)$, $b=0$ and the two densities coincide. The gap between the curves
+is the whole content of the defect.}
+\label{dist:fig:bursttime}
+\end{figure}
+
+\subsection{Burst time given burst size, without death}
+\label{dist:sec:tau-given-k}
+
+When $\mu=0$ the conditional law of $\tau$ given $\Kb$ is completely
+explicit. Write $\theta=\lambda+\delta$ for the rate combination governing
+this case --- it is $\lambda(a-b)$ at $b=0$ --- and $H_n=\sum_{j=1}^n1/j$ for
+the $n$th harmonic number. Fixing $n$ and reading $p_n(t)$ as a function of
+$t$, the state probability rises from zero, peaks, and decays; differentiating
+$\log p_n$ places the maximum at
+\begin{equation}
+t_n=\frac{\log n}{\theta},
+\label{dist:eq:tn}
+\end{equation}
+so a burst of size $n$ is most likely to have occurred after about
+$(\log n)/\theta$ of growth. The exact conditional mean is a harmonic number.
+
+\begin{proposition}[Conditional rupture time, $\mu=0$]
+\label{dist:prop:taugivenk}
+With $\mu=0$ and $\theta=\lambda+\delta$,
+\begin{equation}
+\E{\tau\mid\Kb=n}=\frac{1}{\theta}\sum_{k=1}^{n}\frac{1}{k}
+=\frac{H_n}{\theta},
+\qquad n\ge1.
+\label{dist:eq:taugivenk}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+When $\mu=0$ the state probabilities \cref{dist:eq:stateprob} reduce, with
+$r=\lambda/\delta$ and $s=\theta t$, to
+\[
+p_n(t)=\ee^{-\theta t}\lrb{\frac{1-\ee^{-\theta t}}{1+1/r}}^{n-1},
+\]
+and the burst-size law \cref{dist:eq:burstlaw} to
+$\pr{\Kb=n}=(1/r)\bigl(r/(r+1)\bigr)^n$. Writing
+\[
+L_1(n)=\int_0^\infty \ee^{-s}(1-\ee^{-s})^{n-1}\,\dd s,\qquad
+L_2(n)=\int_0^\infty s\,\ee^{-s}(1-\ee^{-s})^{n-1}\,\dd s,
+\]
+the substitution $s=\theta t$ gives
+$\E{\tau\mid\Kb=n}=L_2(n)/(\theta L_1(n))$. The first integral is
+$L_1(n)=1/n$, by the substitution $u=1-\ee^{-s}$. For the second, split off
+one factor of $(1-\ee^{-s})$ to write
+$L_2(n+1)=L_2(n)-\int_0^\infty s\ee^{-2s}(1-\ee^{-s})^{n-1}\dd s$, and
+integrate by parts in the remaining integral; the result is the recurrence
+\[
+(n+1)L_2(n+1)=nL_2(n)+\frac{1}{n+1},\qquad L_2(1)=1,
+\]
+whose solution is $L_2(n)=H_n/n$. The quotient is
+\cref{dist:eq:taugivenk}.
+\end{proof}
+
+For large $n$ the harmonic sum gives
+\begin{equation}
+\E{\tau\mid\Kb=n}\simeq\frac{\log n+\gamma}{\theta}\qquad(n\gg1),
+\label{dist:eq:taugivenkasymp}
+\end{equation}
+with $\gamma=0.5772\ldots$ Euler's constant: conditional rupture time grows
+logarithmically with burst size, so a burst ten times larger is late by a
+fixed increment rather than by a factor. \Cref{dist:fig:taugivenk} sets the
+exact means against that approximation and against a budding comparator, whose
+conditional mean is linear in $n$.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.66\textwidth]{fig10_tau_given_k/fig10}
+\caption{Conditional mean rupture time given burst size $n$ when $\mu=0$,
+with $\lambda=1$, $\delta=0.1$ and hence $\theta=1.1$. Exact harmonic means
+$\theta^{-1}H_n$ from \cref{dist:eq:taugivenk} are shown with the large-$n$
+approximation $\theta^{-1}(\log n+\gamma)$ and the linear budding comparator
+$(n+1)/(d_{\Icell}+p)$ at $d_{\Icell}+p=8$. The two grow at different orders:
+logarithmically for bursting, linearly for budding.}
+\label{dist:fig:taugivenk}
+\end{figure}
+
+The full conditional law has an equally clean form. The density of $\tau$ at
+$t$ given $\Kb=n$ is proportional to $p_n(t)$, so
+\begin{equation}
+\pr{\tau<t\mid\Kb=n}
+=\frac{\delta n\int_0^t p_n(u)\,\dd u}{\pr{\Kb=n}}
+=(1-\ee^{-\theta t})^n,
+\label{dist:eq:condcdf}
+\end{equation}
+which is the distribution function of the maximum of $n$ independent
+exponentials of rate $\theta$. Centring at $t_n$ and scaling by $1/\theta$,
+with $T=\theta(t-t_n)$,
+\begin{equation}
+\pr{\tau<t\mid\Kb=n}\simeq\exp\lrb{-n\ee^{-\theta t}}
+=\exp\lrb{-\ee^{-T}}\qquad(n\gg1):
+\label{dist:eq:gumbel}
+\end{equation}
+the conditioned rupture time converges to the standard Gumbel law. Burst
+sizes select burst times from a travelling window of width of order
+$1/\theta$ around $(\log n)/\theta$, and the window does not widen as $n$
+grows.
+
+
+\subsection{The mean burst time when death is possible}
+\label{dist:sec:tau-burst-mu-pos}
+
+When $\mu>0$ the burst time has no finite mean, because the mass $b$ at
+$\tau=\infty$ makes the integral diverge. Conditioned on bursting it is
+finite and explicit.
+
+\begin{proposition}[Mean burst time conditioned on bursting]
+\label{dist:prop:tauburst}
+For $\mu>0$,
+\begin{equation}
+\E{\tau\mid\text{burst}}
+=\frac{1}{\lambda(1-b)}\log\frac{a-b}{a-1}.
+\label{dist:eq:tauburst}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The density of $\tau$ on the bursting realisations is $\varphi=\delta J$, with
+total mass $1-b$, so
+$\E{\tau\mid\text{burst}}=(1-b)^{-1}\int_0^\infty t\,\varphi(t)\,\dd t$.
+Since $\varphi=-(I-b)'$, integrating by parts on $[0,T]$ gives
+\[
+\int_0^T t\,\varphi(t)\,\dd t
+=-T\bigl(I(T)-b\bigr)+\int_0^T\bigl(I(t)-b\bigr)\,\dd t,
+\]
+and the boundary term vanishes as $T\to\infty$ because
+$I(T)-b=B(a-b)/(B+Aw)$, read off \cref{dist:eq:idihat}, decays like
+$\ee^{-\theta T}$. With $\dd t=\dd w/(\theta w)$ and
+$1/[w(B+Aw)]=B^{-1}\bigl(1/w-A/(B+Aw)\bigr)$,
+\[
+\int_0^\infty\bigl(I(t)-b\bigr)\,\dd t
+=\frac{B(a-b)}{\theta}\int_1^\infty\frac{\dd w}{w(B+Aw)}
+=\frac{1}{\lambda}\log\frac{a-b}{a-1},
+\]
+and dividing by $1-b$ gives \cref{dist:eq:tauburst}.
+\end{proof}
+
+This is not the mean productive lifetime
+$\E{T_{\rm prod}}=\lambda^{-1}\log\frac{a}{a-1}$ of
+\cref{dist:prop:lifetime}, and the distinction should be kept visible:
+$\E{\tau\mid\text{burst}}$ averages the rupture time over the cells that
+burst, while $\E{T_{\rm prod}}$ averages the time spent productive over
+\emph{all} cells, the internally cleared ones included with their shorter
+productive spans. When $\mu=0$ the two coincide, both reducing to
+$\lambda^{-1}\log(1+\lambda/\delta)$; that coincidence supports less than it
+appears to, and \cref{dist:sec:cond-means} shows what goes wrong when it is
+leaned on.

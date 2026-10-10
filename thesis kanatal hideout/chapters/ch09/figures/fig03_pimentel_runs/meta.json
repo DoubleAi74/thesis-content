@@ -1,0 +1,18 @@
+{
+  "id": "fig03_pimentel_runs",
+  "simulation": true,
+  "parameters": {
+    "N": 100,
+    "alpha": 1.0,
+    "epsilon": 10.0,
+    "steps_cap": 800
+  },
+  "seeds": [
+    19,
+    3
+  ],
+  "absorption_times": [
+    759,
+    562
+  ]
+}

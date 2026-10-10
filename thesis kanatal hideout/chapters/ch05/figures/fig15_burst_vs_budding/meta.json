@@ -1,0 +1,15 @@
+{
+  "figure": "fig15",
+  "chapter_number": "5.15",
+  "label": "dist:fig:budding",
+  "slug": "burst_vs_budding",
+  "included_from": "sections/11_bursting_budding.tex",
+  "generator": "src/generate.py",
+  "kind": "matplotlib",
+  "style": "figures/_style/style_rc.py",
+  "outputs": [
+    "fig15.pdf",
+    "fig15.png"
+  ],
+  "simulation": false
+}

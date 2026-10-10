@@ -1,0 +1,74 @@
+% Appendix B --- public good accumulation, reduced to a bare specification.
+% Was \S1.6 of the body.  Cut: the framing from the intracellular literature,
+% the macrophage schematic, the discussion of what the feedback does, the
+% remarks on the two-offspring assumption, and the open questions.  One figure
+% retained.
+
+\section{Public good accumulation}
+\label{var:app:publicgood}
+
+This model runs the chapter's feedback in the favourable direction: a larger
+population makes more of a good that raises its own birth rate. It is
+recorded here as a specification, together with the one quantity computed
+from it.
+
+Let $X_t$ count \yp{} within one macrophage and $P(t)$ the concentration of
+public good in it. The good is produced in proportion to the bacterial count
+and cleared at a constant rate, and its presence raises the replication rate:
+\begin{align}
+\ddt{P}&=g\,X_t-c,\notag\\
+\pr{\Delta X_t=1\mid X_t}&=\lambda(t)\,X_t\,\Delta t+o(\Delta t),
+\qquad
+\lambda(t)=\lambda_0+\alpha P(t),
+\label{var:eq:publicgood}\\
+\pr{\Delta X_t=-1\mid X_t}&=\mu\,X_t\,\Delta t+o(\Delta t),\notag
+\end{align}
+with $g$ the production rate per bacterium, $c$ the clearance rate,
+$\lambda_0$ the base birth rate, $\alpha$ the public-good advantage and $\mu$
+the death rate, into which the effect of the host cell's toxic products is
+folded.
+
+What stops the feedback being unconditional is the clearance term $-c$. While
+$X_t<c/g$ the good is cleared faster than it is made and $P$ falls, so a
+small founding cohort may never start the loop at all. The regime worth
+attention is therefore $\mu>\lambda_0$, where the process is subcritical on
+its own and turns supercritical only once enough public good has accumulated,
+and where survival is not a matter of luck alone but of initial numbers.
+
+\paragraph{The minimum founding cohort.} Suppose the process embedded in a
+host-to-host sequence: if the infection within a macrophage survives to late
+time the cell dies and delivers its load into two more cells, and if not, the
+lineage ends. This is a Galton--Watson process, supercritical exactly when
+the probability of within-cell survival exceeds one half, and the quantity
+wanted is the smallest founding cohort achieving that:
+\begin{equation}
+K^\ast=\inf\left\{K:\ \lim_{t\to\infty}\pr{X_t>0\mid X_0=K}>\tfrac12\right\}.
+\label{var:eq:kstar}
+\end{equation}
+In the regime $\mu>\lambda_0$ the limit is zero for every $K$ once the public
+good is removed, so $K^\ast$ is finite only on account of it and measures
+exactly what the public good is worth: the number of bacteria that must
+arrive together for the mechanism to pay for itself. A general offspring law
+with mean $m$ would replace the one-half by $1/m$, which moves $K^\ast$
+without changing what it measures.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{fig14_kstar/fig14}
+\caption{$K^\ast$ computed at
+$(\lambda_0,\alpha,g,c)=(0.6,0.25,0.15,0.45)$, so that $P$ falls whenever
+$X_t<c/g=3$, from $600$ paths per point. The survival probability as a
+function of $K$ is a steep sigmoid through one half, and $K^\ast$ itself
+rises with the excess death rate $\mu-\lambda_0$. The dashed line in
+panel~(b) is $c/g$: $K^\ast$ sits above it, as it must, because a founding
+cohort smaller than the clearance threshold cannot start the loop. At
+$\mu-\lambda_0=1.2$ no $K\le28$ crossed one half, which is a statement about
+the parameter point rather than a failure of the definition. This is one
+parameter slice and a numerical estimate, not a closed form: unlike
+\cref{path:cor:threshold}, which is a statement about a budget, $K^\ast$ is
+defined by a limit of a survival probability and there is no reason to expect
+it in closed form.}
+\label{var:fig:kstar}
+\end{figure}
+
+\FloatBarrier

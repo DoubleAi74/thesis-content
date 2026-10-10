@@ -1,0 +1,215 @@
+\section{The process, its roots, and its closed forms}
+\label{dist:sec:recap}
+
+The birth--death--catastrophe (BDC) process was defined and solved in
+\ChCore. Four things are needed from it here: the notation, the process and
+its release counter, the roots, and the identity relating them.
+\Cref{dist:app:formulae} collects the closed forms.
+
+\subsection{Canonical notation}
+\label{dist:sec:notation-tab}
+
+\Cref{dist:tab:notation} fixes the notation, taken unchanged from \ChCore.
+Every symbol appearing in more than one section is listed; those local to a
+single derivation are introduced where they occur.
+
+\begin{table}[tbp]
+\centering
+\renewcommand{\arraystretch}{1.05}
+\footnotesize
+\begin{tabular}{@{}llp{0.40\textwidth}@{}}
+\toprule
+Symbol & Meaning & Notes \\
+\midrule
+$\lambda,\mu,\delta$ & birth, death, catastrophe rates & per capita \\
+$\Xt$ & intracellular load & a CTMC on $\{0,1,2,\ldots\}\cup\{H\}$ \\
+$H$ & absorbing rupture state & \\
+$\Wt$ & released count from one cell & $0$ until the burst \\
+$\tau$ & burst time & possibly $\infty$ \\
+$\Kb$ & burst size & never bare $K$, since $K(t)=\E{\Xt^2}$ \\
+$G(z,t)$ & probability generating function (PGF) of the load & defective under catastrophe \\
+$G_k$ & PGF from $k$ founders & $=G^k$ \\
+$p_n(t)$ & $\pr{\Xt=n}$ & \\
+$P(t)$, $\sigma$ & geometric ratio of the load; the clock $\sigma=P(t)$ & slides from $0$ to $1/a$ \\
+$\xi$, $s$ & characteristic coordinate and parameter & $t=-\xi$; \cref{dist:sec:pgf}. In \cref{dist:sec:chained}, $s=\delta/(\lambda+\delta)$ \\
+$I(t)$, $D(t)$ & no burst by $t$; cleared internally, no burst & $D=p_0(t)$ \\
+$\Ifix(t)$ & $\pr{\Xt\notin\{0,H\}}=I-D$ & productive infection \\
+$J(t),K(t)$ & $\E{\Xt}$, $\E{\Xt^2}$ & \\
+$V(t)$ & $\E{\Wt}$ & cumulative mean release \\
+$\varphi(t)$ & density of $\tau$ & defective, mass $1-b$ \\
+$a,b$ & characteristic roots & $b<1<a$ \\
+$A,B,\theta$ & $a-1$, $1-b$, $\lambda(a-b)$ & $AB=\delta/\lambda$ \\
+$\kappa$, $w$ & $1+\delta/(2\lambda)$; \ $\ee^{\theta t}$ & in $K(t)$; the recurring exponential \\
+$q_n,\nu$ & quasi-stationary law & $\nu$ when read as a vector \\
+$\vartheta$, $\mathcal Q$ & decay rate; killed subgenerator & $\vartheta=\theta$; \cref{dist:prop:decay} \\
+$T_{\rm prod}$, $H_n$ & productive lifetime; harmonic number $\sum_{j\le n}1/j$ & \\
+$g_k(t)$ & release flux from $k$ founders & $=\delta K_k(t)$ \\
+$r_k,t_k,T_k$ & size, time and interval of the $k$th rupture & \cref{dist:sec:chained} \\
+$\rho$ & $\lambda/(\lambda+\delta)=1-s$ & \cref{dist:sec:chained} \\
+$d_{\Icell},p$ & budding death and release rates & \cref{dist:sec:budding} \\
+$\Fhyp$ & Gauss hypergeometric function & \\
+\bottomrule
+\end{tabular}
+\caption{Canonical notation for this chapter.}
+\label{dist:tab:notation}
+\end{table}
+
+\subsection{The process and its release counter}
+\label{dist:sec:process}
+
+The object throughout is one cell holding one intracellular population.
+
+\begin{definition}[Birth--death--catastrophe process]
+\label{dist:def:bdc}
+The load $\Xt$ is a continuous-time Markov chain on
+$\{0,1,2,\ldots\}\cup\{H\}$ which, from any state $n\ge1$, jumps
+\begin{align*}
+n &\to n+1 &&\text{at rate } \lambda n \quad\text{(birth)},\\
+n &\to n-1 &&\text{at rate } \mu n \quad\text{(death)},\\
+n &\to H &&\text{at rate } \delta n \quad\text{(catastrophe)}.
+\end{align*}
+Both $0$ and $H$ are absorbing: the population either clears itself
+internally, or the cell ruptures. Unless stated otherwise $X_0=1$.
+\end{definition}
+
+The classical treatments
+\cite{brockwell1982birth,karlin1982linear,di2008note} allow immigration and
+distributed catastrophe sizes; this specialisation is the one with the
+closed-form family we need. Rupture is what matters, so the release count runs
+alongside the load: with $\tau$ the catastrophe time,
+\begin{equation}
+\Wt = \begin{cases}
+0, & t<\tau,\\
+X_{\tau^-}, & t\ge\tau,
+\end{cases}
+\label{dist:eq:wdef}
+\end{equation}
+so that at rupture the whole pre-burst load is dumped and then held.
+\Cref{dist:fig:joint} shows one path of the pair; every single-cell release
+quantity below is a functional of $(\Xt,\Wt)$.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.66\textwidth]{fig01_joint_process/fig01}
+\caption{A representative path of the joint process $(\Xt,\Wt)$. The
+intracellular load follows a birth--death path until rupture at time $\tau$,
+when $\Xt$ enters the absorbing state $H$. At the same instant the released
+count jumps from zero to the pre-rupture load $X_{\tau^-}$ and remains there.
+The two axes share a time origin: nothing leaves the cell before $\tau$, and
+everything leaves at $\tau$.}
+\label{dist:fig:joint}
+\end{figure}
+
+\subsection{Roots and the workhorse identity}
+\label{dist:sec:roots}
+
+Write
+\begin{equation}
+\eta=\frac{\lambda+\mu+\delta}{2\lambda},\qquad
+a=\eta+\sqrt{\eta^2-\tfrac{\mu}{\lambda}},\qquad
+b=\eta-\sqrt{\eta^2-\tfrac{\mu}{\lambda}},
+\label{dist:eq:roots}
+\end{equation}
+the two roots of $\lambda f^2-(\lambda+\mu+\delta)f+\mu$, and set
+\begin{equation}
+A:=a-1>0,\qquad B:=1-b>0,\qquad \theta:=\lambda(a-b)
+=\sqrt{(\lambda+\mu+\delta)^2-4\lambda\mu}.
+\label{dist:eq:abtheta}
+\end{equation}
+Vieta's relations give $ab=\mu/\lambda$ and
+$a+b=(\lambda+\mu+\delta)/\lambda$, and the identity doing most of the
+algebraic work below is
+\begin{equation}
+AB=(a-1)(1-b)=(a+b)-ab-1=\frac{\delta}{\lambda},
+\qquad A+B=a-b.
+\label{dist:eq:ab}
+\end{equation}
+That $b<1<a$ follows immediately from
+$\lambda(1-a)(1-b)=\lambda(1-(a+b)+ab)=-\delta<0$, which places $1$ strictly
+between the roots.
+
+\fwd{twotype}{\ChTwoTypecap} solves a Riccati equation of exactly this
+shape under unrelated names: roots that straddle one, a root gap playing the
+part of $a-b$, and the same factorisation. \Cref{dist:sec:next} records the
+correspondence rather than acting on it.
+
+\subsection{The closed forms}
+\label{dist:sec:moments-recap}
+
+There are three absorbing-behaviour probabilities, not two.
+\begin{definition}[Fixation functions]
+\label{dist:def:fixation}
+\begin{equation}
+I(t)=\pr{\text{no burst by }t},\qquad
+D(t)=\pr{\text{internal extinction by }t,\ \text{no burst}},
+\label{dist:eq:idefs}
+\end{equation}
+\begin{equation}
+\Ifix(t)=\pr{\Xt\notin\{0,H\}}=I(t)-D(t),
+\label{dist:eq:ifixdef}
+\end{equation}
+the last being the probability that the cell is still productively infected.
+\end{definition}
+
+The first two satisfy the same Riccati equation,
+\begin{equation}
+\ddt{I}=\lambda(I-a)(I-b)=\mu-(\lambda+\mu+\delta)I+\lambda I^2,
+\label{dist:eq:riccati}
+\end{equation}
+differently initialised ($I(0)=1$, $D(0)=0$); its branching term $I^2$ comes
+from the two independent daughter lineages that a birth of the founder
+creates.
+Separating variables, with $w:=\ee^{\theta t}\ge1$, gives the triplet
+\begin{equation}
+\boxed{I(t)=\frac{aB+bAw}{B+Aw},\qquad
+D(t)=\frac{ab\,(w-1)}{aw-b},\qquad
+\Ifix(t)=\frac{(a-b)^2\,w}{(B+Aw)(aw-b)},}
+\label{dist:eq:idihat}
+\end{equation}
+with $I(\infty)=D(\infty)=b$, $\Ifix(\infty)=0$, $\Ifix(0)=1$ and
+$\Ifix'(0)=-(\mu+\delta)$: at founding the productive state is lost only by
+the death or the catastrophe of the single founder. \Cref{dist:cor:sum}
+confirms the third formula independently.
+
+The remaining closed forms are derived in \ChCore. The hazard of bursting is
+$\delta$ times the current load, so $I'=-\delta J$, and
+\begin{align}
+J(t)&=\E{\Xt}=-\frac1\delta\ddt{I}=\frac{(a-b)^2w}{(B+Aw)^2}
+=-\frac{\lambda}{\delta}(I-a)(I-b),
+\label{dist:eq:j}\\
+K(t)&=\E{\Xt^2}=\Bigl[1+\tfrac{2\lambda}{\delta}(1-I)\Bigr]J
+=\frac{2\lambda}{\delta}(\kappa-I)J,\qquad \kappa=1+\frac{\delta}{2\lambda},
+\label{dist:eq:k}\\
+V(t)&=\E{\Wt},\qquad V'(t)=\delta K(t),\qquad
+V(t)=(1-I)\Bigl[1+\tfrac{\lambda}{\delta}(1-I)\Bigr],
+\label{dist:eq:v}\\
+V_\infty&=\frac{a(1-b)}{a-1}=\frac{aB}{A},
+\qquad
+\E{\Kb\mid\text{burst}}=\frac{V_\infty}{1-b}=\frac{a}{a-1}.
+\label{dist:eq:vinf}
+\end{align}
+One small point carries large consequences.
+$V_\infty=\E{\Kb\ind\{\text{burst}\}}$ \emph{includes} the realisations that
+cleared internally and released nothing, a mass $b$ at $0$, whereas the
+conditional mean removes them; \cref{dist:sec:cond-means} takes the
+distinction apart.
+
+The assay predictions of \cref{dist:sec:discussion} need the second moment of
+the release as well. \ChCorecap{} obtains it from the moment hierarchy,
+eliminating $\E{\Xt^3}$ through the equation for $K$:
+\begin{equation}
+\boxed{\E{\Wt^2}
+=\frac{2(\lambda-\mu)}{\delta}V
+-\frac{\lambda+\mu}{\delta}I
+-K
++\frac{\lambda+\mu}{\delta}
++1,}
+\label{dist:eq:ew2}
+\end{equation}
+with $\var{\Wt}=\E{\Wt^2}-V^2$. At $\mu=0$ and $t\to\infty$ it reduces to
+$2\lambda^2/\delta^2+3\lambda/\delta+1$, the second moment of the geometric
+burst-size law of \cref{dist:sec:burst-law} at success probability
+$s=\delta/(\lambda+\delta)$.
+
+Every formula above is a moment, and every one is quoted rather than derived
+here. What produces them has not been written down yet.

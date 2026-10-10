@@ -1,0 +1,150 @@
+\section{Conditional burst means}
+\label{dist:sec:cond-means}
+
+Three different averages of the burst size appear in this chapter. They differ
+by factors of nearly two and a half, and they are easy to confuse, because in
+ordinary usage all three are written $\E{\Kb\mid\cdot}$. This section
+separates them and quantifies the difference; the results are collected in
+\cref{dist:tab:threemeans} and plotted in \cref{dist:fig:threemeans}, and
+\ChPop{} draws on all three.
+
+\subsection{The overall expected burst size}
+\label{dist:sec:overall-mean}
+
+Whether a catastrophe has occurred by $t$ is recorded by the truth of
+$\Wt>0$, the minimum burst size being $1$; that event has probability
+$1-I(t)$. Decomposing $\E{\Wt}$ on it, and using
+$\E{\Wt\mid\Wt=0}=0$,
+\begin{equation}
+\E{\Wt\mid\Wt > 0} = \frac{V(t)}{1-I(t)}.
+\label{dist:eq:voveri}
+\end{equation}
+This is the mean burst size given that a burst has happened by $t$. The
+expected size of an arbitrarily generated burst is its late-time value,
+\begin{equation}
+\E{\Kb}=\lim_{t\to\infty}\frac{V(t)}{1-I(t)}
+=\frac{V_\infty}{1-b}
+=\frac{\lambda-\mu}{\delta}+\frac{1}{1-b}
+=\frac{a}{a-1},
+\label{dist:eq:meank}
+\end{equation}
+the last two forms from \cref{dist:eq:vinf}. The distinction from $V_\infty$
+itself matters: $V_\infty$ averages in the realisations that cleared
+internally and released nothing, so it is \emph{not} the mean burst size
+unless $\mu=0$.
+
+\subsection{The apparent circularity}
+\label{dist:sec:circularity}
+
+What is the expected burst size of a cell that has \emph{not yet} burst?
+Decomposing $\E{\Kb}$ on the event $\{\tau>t\}$,
+\begin{align}
+\E{\Kb} &= \E{\Kb\mid \tau > t}\pr{\tau > t}
++ \E{\Kb\mid \tau < t}\pr{\tau<t}\nonumber\\
+&= \E{\Kb\mid\tau > t}\, I(t) + \frac{V(t)}{1 - I(t)}\lrb{1 - I(t)},
+\label{dist:eq:kdecomp}
+\end{align}
+so that
+\begin{equation}
+\E{\Kb\mid \tau > t} = \frac{\E{\Kb} - V(t)}{I(t)}
+=\frac{V_\infty/(1-b) - V(t)}{I(t)}.
+\label{dist:eq:kcond}
+\end{equation}
+Letting $t\to\infty$ in \cref{dist:eq:kcond} appears to give
+\[
+\lim_{t\to\infty}\E{\Kb\mid \tau > t}
+=\frac{V_\infty/(1-b)-V_\infty}{b},
+\]
+which after a little algebra returns $\E{\Kb}$ itself. That cannot be right.
+Conditioning on $\tau>t$ as $t\to\infty$ selects the realisations that never
+burst at all, and their burst size is zero, not typical.
+
+The resolution is that \cref{dist:eq:kcond} mixes two conditionings. Its
+numerator $\E{\Kb}-V(t)$ is the contribution to the burst size from
+realisations that burst \emph{after} $t$; its denominator $I(t)$ is the
+probability of not having burst by $t$, which includes the mass $b$ of
+realisations that never will and whose burst size is zero. Written
+consistently,
+\begin{equation}
+\E{\Kb\,\ind\{\text{burst}\}\mid\tau>t}
+=\frac{V_\infty-V(t)}{I(t)}
+\xrightarrow[t\to\infty]{}\frac{V_\infty-V_\infty}{b}=0,
+\label{dist:eq:consistent}
+\end{equation}
+which is correct and unmysterious. The genuinely interesting limit conditions
+on eventual burst as well:
+\begin{equation}
+\E{\Kb\mid \tau>t,\ \text{burst eventually}}
+=\frac{V_\infty-V(t)}{I(t)-b},
+\label{dist:eq:patient}
+\end{equation}
+of the form $0/0$ as $t\to\infty$. By l'H\^opital's rule, with $V'=\delta K$
+and $I'=-\delta J$,
+\begin{equation}
+\lim_{t\to\infty}\E{\Kb\mid \tau>t,\ \text{burst eventually}}
+=\lim_{t\to\infty}\frac{K(t)}{J(t)}
+=\frac{\langle X^2\rangle_{\rm QS}}{\langle X\rangle_{\rm QS}}
+=1+\frac{2\lambda}{\delta}(1-b),
+\label{dist:eq:latemean}
+\end{equation}
+in agreement with \cref{dist:eq:latelimit}: the eventual burst size of a very
+patient cell is the size-biased quasi-stationary mean.
+
+No interchange of limits is needed to reach it. The defect cancels in the
+ratio, so $K/J$ is at every time the ratio of the second conditional moment to
+the first, and by \cref{dist:eq:condgeom} that conditional law is geometric
+with ratio $P(t)$; hence
+\begin{equation}
+\frac{K(t)}{J(t)}=\frac{1+P(t)}{1-P(t)},
+\label{dist:eq:kjP}
+\end{equation}
+an identity holding at every $t$, not only in the limit.
+\Cref{dist:eq:latemean} is the value of \cref{dist:eq:kjP} at the endpoint
+$P=1/a$, and the only limit taken anywhere in the argument is
+$P(t)\uparrow1/a$ from \cref{dist:thm:geometric}.
+
+\begin{table}[tbp]
+\centering
+\renewcommand{\arraystretch}{1.35}
+\small
+\begin{tabular}{@{}llc@{}}
+\toprule
+Quantity & Definition & At $(1,0.2,0.05)$ \\
+\midrule
+$V_\infty$ & $\E{\Kb\ind\{\text{burst}\}}$; includes non-bursters at $0$ & $13.99$ \\
+$\E{\Kb\mid\text{burst}}$ & conditioned on eventual rupture; $=a/(a-1)$ & $17.23$ \\
+$\lim_t\E{\Kb\mid\tau>t,\,\text{burst}}$ & size-biased quasi-stationary mean; $=(a{+}1)/(a{-}1)$ & $33.46$ \\
+\bottomrule
+\end{tabular}
+\caption{Three means, three conditionings. The first two differ by the factor
+$1-b$, the probability of eventual rupture; the second and third by the
+size-biasing factor $(a+1)/a$ of \cref{dist:sec:size-bias}.}
+\label{dist:tab:threemeans}
+\end{table}
+
+\begin{remark}[Where the circularity was]
+\label{dist:rem:circularity}
+The circularity was never in the mathematics; it was in the conditioning.
+Each of the three quantities in \cref{dist:tab:threemeans} is a correct
+answer to a different question, and only the middle one is what is usually
+meant by ``the mean burst size''. An assay that observes a cell because it
+ruptured measures the second; an assay that observes cells still infected at
+a late time and waits measures the third.
+\end{remark}
+
+Three means, and with them the cell founded by one particle is completely
+described. The two sections that follow ask how much of that survives when the
+founder is not alone, and when the cell is not.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.72\textwidth]{fig11_three_burst_means/N4a_4_three_burst_means}
+\caption{Three distinct averages at $(\lambda,\mu,\delta)=(1,0.2,0.05)$,
+drawn as trajectories. The unconditional mean release $V(t)$ approaches
+$V_\infty=13.99$ and includes cells that never burst; the burst mean
+$V_\infty/(1-b)=a/(a-1)=17.23$ is the horizontal line; conditioning on a
+very late eventual burst approaches the size-biased limit
+$(a+1)/(a-1)=33.46$. Keeping the conditioning explicit removes the apparent
+circularity.}
+\label{dist:fig:threemeans}
+\end{figure}

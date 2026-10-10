@@ -1,0 +1,28 @@
+% Shared presentation for the two integrated originality-index fragments.
+\usepackage{xltabular}
+\usepackage{refcount}
+
+\definecolor{oisoft}{HTML}{565B62}
+\definecolor{oiaccent}{HTML}{0072B2}
+\definecolor{oirule}{HTML}{D8DDE2}
+\newcolumntype{O}{>{\raggedright\arraybackslash}X}
+\newcommand{\oihead}[1]{\textcolor{oisoft}{\footnotesize\bfseries\MakeUppercase{#1}}}
+\newcommand{\oisec}[1]{%
+  \par\Needspace{5\baselineskip}%
+  \addvspace{0.7\baselineskip}%
+  \noindent{\oihead{#1}}\par
+  \nobreak\vspace{-0.15\baselineskip}%
+  {\color{oirule}\rule{\linewidth}{0.5pt}}\par
+  \nobreak\vspace{0.1\baselineskip}}
+\newcommand{\oiref}[2]{%
+  \hyperref[#2]{\textcolor{oiaccent}{\textbf{#1~\ref*{#2}}}}}
+\newcommand{\oirange}[3]{%
+  \oiref{#1}{#2}--%
+  \hyperref[#3]{\textcolor{oiaccent}{\textbf{\ref*{#3}}}}}
+% Each chapter ends immediately before the next chapter (or the index).
+% Only the opening page is linked: the computed endpoint is plain text.
+\newcommand{\oichapterpages}[2]{%
+  \pageref{#1}--%
+  \ifnum\getpagerefnumber{#2}>0
+    \number\numexpr\getpagerefnumber{#2}-1\relax
+  \else ??\fi}

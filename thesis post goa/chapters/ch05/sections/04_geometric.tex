@@ -1,0 +1,145 @@
+\section{The load is geometric at every time}
+\label{dist:sec:geometric}
+
+The generating function \cref{dist:eq:gcat} is a ratio of two linear
+functions of $z$, and that fact alone decides the shape of the whole
+distribution. Extracting the coefficients returns not an unstructured sequence
+but a geometric law, at every time, with a ratio that moves. Naming that ratio
+is the single most useful thing this chapter does, because every result after
+this section is a statement about where it goes.
+
+Coefficients come out of a PGF by repeated differentiation at the origin,
+$p_n=\frac{1}{n!}\partial_z^nG|_{z=0}$; the construction is given in
+\mextref{m:app:extract}{the coefficient-extraction appendix of \ChM} at
+\mextref{m:eq:stateProb}{the state-probability formula there}. Applied to
+\cref{dist:eq:gcat}, the derivatives close on themselves,
+\begin{equation}
+\pdd{^n G}{z^n}
+= n!\,(a-b)^2 w\,
+\frac{(1-w)^{n-1}}{\bigl(b-aw-(1-w)z\bigr)^{n+1}},
+\label{dist:eq:dnG}
+\end{equation}
+so that setting $z=0$ and dividing by $n!$ gives, for $n\ge1$,
+\begin{equation}
+p_n(t)=\lrb{\frac{a-b}{b-aw}}^{2}w
+\lrb{\frac{1-w}{b-aw}}^{n-1}.
+\label{dist:eq:stateprob}
+\end{equation}
+The empty state is the only one that sees the convention. Under catastrophe
+$p_0=G(0,t)=ab(1-w)/(b-aw)$, the probability of reaching $0$ by the death of
+every individual; under killing it carries the extra $1-I(t)$ of
+\cref{dist:prop:conventions}, and nothing else changes.
+
+\subsection{The sliding ratio}
+\label{dist:sec:sliding}
+
+There is more structure in \cref{dist:eq:stateprob} than it first shows. The
+entire dependence on $n$ sits in one factor. Write
+\begin{equation}
+P(t):=\frac{1-w}{b-aw},
+\qquad w=\ee^{\theta t},
+\label{dist:eq:pdef}
+\end{equation}
+and the state probabilities become $p_n(t)=p_1(t)P(t)^{n-1}$.
+
+\begin{theorem}[The load is geometric at every time]
+\label{dist:thm:geometric}
+For every $t>0$, conditional on the load being non-zero, $\Xt$ is
+geometrically distributed on $\{1,2,\ldots\}$ with ratio $P(t)$:
+\begin{equation}
+p_n(t)=p_1(t)\,P(t)^{n-1},\qquad n\ge1.
+\label{dist:eq:geometric}
+\end{equation}
+The ratio increases monotonically in $t$, from
+\begin{equation}
+P(0)=0 \qquad\text{to}\qquad P(\infty)=\frac1a .
+\label{dist:eq:plimits}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Equation \cref{dist:eq:geometric} is \cref{dist:eq:stateprob} read with the
+$n$-dependent factor named. For the limits, $w=1$ at $t=0$ gives $P(0)=0$,
+and $w\to\infty$ gives $P\to1/a$; monotonicity follows from
+$P'(t)=\lambda(a-b)^2w/(b-aw)^2>0$, since $b-aw$ never vanishes for $t\ge0$.
+\end{proof}
+
+What $P$ is, is worth saying plainly. It is the price in probability of one
+more particle: $p_{n+1}/p_n=P(t)$ for every $n\ge1$, so each additional unit
+of load is the same factor less likely than the one below it, whatever that
+load happens to be. At founding $P=0$ and the cell holds its single particle
+with certainty. Thereafter $P$ rises, the geometric flattens, and the mean
+load conditional on non-fixation, $1/(1-P)$, rises with it --- from $1$ at
+founding towards $a/(a-1)$. That the rise never reverses is what
+\cref{dist:thm:geometric} establishes, and it is what makes the endpoint well
+defined: a cell that has survived longer is spread over more states, never
+fewer.
+
+So the transient laws form a one-parameter family of geometrics sliding
+towards a fixed limit, and $P$ is the only thing in them that moves.
+\Cref{dist:fig:slide} shows the slide: on a logarithmic scale each law is a
+straight line, and the lines rotate onto a limiting slope rather than
+deforming. The limit $1/a$ is where the next three sections live ---
+\cref{dist:sec:qsd} takes it, \cref{dist:sec:burst-size} integrates against
+it, \cref{dist:sec:burst-time} conditions on it.
+\Cref{dist:fig:readings} is that sentence drawn.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.91\textwidth]{fig02_three_readings/fig02}
+\caption{One endpoint, three readings. The ratio $P(t)$ of
+\cref{dist:thm:geometric} slides from $0$ at founding to $1/a$, and each of
+the next three sections applies a different operation to that endpoint:
+\cref{dist:sec:qsd} takes it as the quasi-stationary ratio,
+\cref{dist:sec:burst-size} integrates the rupture hazard against it, and
+\cref{dist:sec:burst-time} conditions the rupture time on the size it
+produces. The first two return the same law, differing only by the
+eventual-burst probability $1-b$; that coincidence is
+\cref{dist:thm:identity}.}
+\label{dist:fig:readings}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.82\textwidth]{fig03_geometric_slide/fig03}
+\caption{State probabilities $p_n(t)$ at successive times for
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$. On the logarithmic vertical scale each
+geometric law is a straight line whose ratio $P(t)$ increases towards $1/a$;
+the inset shows that approach directly. The curves fall in $n$ and rise in
+$t$: the load spreads as $P$ slides.}
+\label{dist:fig:slide}
+\end{figure}
+
+\subsection{Normalisation: the sum is \texorpdfstring{$\Ifix$}{Ifix}}
+\label{dist:sec:sum-ihat}
+
+One consequence is immediate, and it checks the closed forms of
+\cref{dist:sec:recap} against a derivation that shares nothing with them.
+
+\begin{corollary}[The positive states carry the non-fixation probability]
+\label{dist:cor:sum}
+For every $t\ge0$,
+\begin{equation}
+\sum_{n\ge1}p_n(t)
+=\frac{(a-b)^2 w}{\lrb{B+Aw}\lrb{aw-b}}
+=\Ifix(t).
+\label{dist:eq:pnsum}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+By \cref{dist:thm:geometric} the sum is the geometric series
+$p_1(t)/(1-P(t))$. Now
+\[
+1-P(t)=\frac{b-aw-1+w}{b-aw}
+=\frac{-(1-b)-(a-1)w}{b-aw}
+=\frac{B+Aw}{aw-b},
+\]
+and dividing $p_1(t)=(a-b)^2w/(b-aw)^2$ by this gives the middle expression,
+which is the closed form for $\Ifix$ in \cref{dist:eq:idihat}.
+\end{proof}
+
+The sum of the positive state probabilities is exactly the probability of
+being neither ruptured nor extinct. \ChCorecap{} reached the same $\Ifix$ by
+decomposing absorption rather than by summing a distribution; that two such
+different routes agree is a check on both.

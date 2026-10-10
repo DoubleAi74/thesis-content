@@ -1,0 +1,36 @@
+Contributions at a glance
+
+Bursting versus budding                                                                                Ch. 6, 8
+At matched mean output, bursting lowers extinction risk in the supercritical regime under linear
+clearance exactly when L > 1; offspring laws coincide at L = 1. With a positive integer removal budget
+on one delivery, bursting leaves more surviving output exactly when L < 1.
+
+An exact two-type solution                                                                               Ch. 7
+Closed forms for the no-catastrophe probability and joint generating function, with one-way conversion
+between types and type-specific catastrophe rates.
+
+The statistics of one bursting cell                                                                   Chs. 4, 5
+A unified calculation of load and release moments, burst timing and the burst-size/quasi-stationary
+identity, extended to several founders and successive cell-to-cell transfers.
+
+From cells to infection dynamics                                                                         Ch. 6
+An age-structured model derived from single-cell laws. Fitted rates depend on the growth phase; one
+exponential phase cannot identify all three intracellular rates.
+
+Kolmogorov’s constant and the logistic map                                                               Ch. 3
+Identifies A(p) through the Koenigs function and proves that function hypertranscendental in its spatial
+argument. The closed-form question for A(p) remains open.
+
+Evolution under changing rates                                                                           Ch. 9
+A limiting species-count law and variance under capacity-dependent speciation, and an explicit moving
+critical point for competitive reversal in the Pimentel model.
+
+
+Original statements, extensions and their published foundations are distinguished in Originality of the results,
+p. 269.
+
+
+
+
+                                                       3
+

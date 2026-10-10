@@ -1,0 +1,121 @@
+{
+  "figure": "fig_bio_regimes",
+  "slug": "bio_regimes",
+  "method": "closed_form_S_plus_RK4_unscaled_backward_ODEs_for_qS_and_validation",
+  "seed_parameters": {
+    "lambda1": 1.0,
+    "mu1": 0.45,
+    "nu": 0.35,
+    "lambda2": 0.85,
+    "mu2": 0.4,
+    "c": 0.3,
+    "regimes": {
+      "EQ": {
+        "delta1": 0.15,
+        "delta2": 0.15
+      },
+      "MAT": {
+        "delta1": 0.05,
+        "delta2": 0.25
+      },
+      "GATE": {
+        "delta1": 0.0,
+        "delta2": 0.3
+      },
+      "EARLY": {
+        "delta1": 0.25,
+        "delta2": 0.05
+      }
+    }
+  },
+  "final_parameters": {
+    "lambda1": 1.0,
+    "mu1": 0.45,
+    "nu": 0.35,
+    "lambda2": 0.85,
+    "mu2": 0.4,
+    "c": 0.3,
+    "regimes": {
+      "EQ": {
+        "delta1": 0.15,
+        "delta2": 0.15
+      },
+      "MAT": {
+        "delta1": 0.05,
+        "delta2": 0.25
+      },
+      "GATE": {
+        "delta1": 0.0,
+        "delta2": 0.3
+      },
+      "EARLY": {
+        "delta1": 0.25,
+        "delta2": 0.05
+      }
+    }
+  },
+  "adjustment_reason": "none; seed parameters retained after pilot inspection",
+  "t_max": 12.0,
+  "validation": {
+    "method": "fixed-step RK4 of unscaled triangular ODEs vs closed form; t\u2208[0,12.0], 2401 points, substep\u22480.003",
+    "regimes": [
+      {
+        "regime": "EQ",
+        "delta1": 0.15,
+        "delta2": 0.15,
+        "branch": "hypergeometric",
+        "max_abs_S": 9.43689570931383e-15,
+        "max_abs_G": 5.662137425588298e-15,
+        "S_prime_0_ode": -0.14999999999999974,
+        "expected_S_prime_0": -0.15,
+        "h": 0.3651922510116917,
+        "r2_minus": 0.3678843122108922
+      },
+      {
+        "regime": "MAT",
+        "delta1": 0.05,
+        "delta2": 0.25,
+        "branch": "hypergeometric",
+        "max_abs_S": 1.0103029524088925e-14,
+        "max_abs_G": 1.6264767310758543e-14,
+        "S_prime_0_ode": -0.04999999999999988,
+        "expected_S_prime_0": -0.05,
+        "h": 0.3855275781883907,
+        "r2_minus": 0.3274128745849057
+      },
+      {
+        "regime": "GATE",
+        "delta1": 0.0,
+        "delta2": 0.3,
+        "branch": "hypergeometric",
+        "max_abs_S": 1.2989609388114332e-14,
+        "max_abs_G": 2.4424906541753444e-14,
+        "S_prime_0_ode": 1.6653345369377348e-16,
+        "expected_S_prime_0": -0.0,
+        "h": 0.3989070108067957,
+        "r2_minus": 0.3111594748040547
+      },
+      {
+        "regime": "EARLY",
+        "delta1": 0.25,
+        "delta2": 0.05,
+        "branch": "hypergeometric",
+        "max_abs_S": 2.1649348980190553e-14,
+        "max_abs_G": 3.2751579226442118e-15,
+        "S_prime_0_ode": -0.2499999999999999,
+        "expected_S_prime_0": -0.25,
+        "h": 0.3532497870449205,
+        "r2_minus": 0.42679043255658655
+      }
+    ],
+    "max_abs_error_S": 2.1649348980190553e-14,
+    "max_abs_error_G": 2.4424906541753444e-14,
+    "q_S_source": "ODE right-hand side S' along RK4 path; q_S=-S'/S",
+    "note_normalisation": "\u03b41+\u03b42=c is an illustrative normalisation of per-capita coefficients, not matched realised catastrophe rate \u03b41 Xt + \u03b42 Yt",
+    "note_GATE": "GATE is an idealised boundary of the maturation-associated family; under \u03b41+\u03b42=c both coefficients differ from MAT \u2014 not a one-parameter reduction"
+  },
+  "outputs": [
+    "fig_bio_regimes.png",
+    "fig_bio_regimes.pdf"
+  ]
+}

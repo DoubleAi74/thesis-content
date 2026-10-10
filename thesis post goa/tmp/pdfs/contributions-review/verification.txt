@@ -1,0 +1,1 @@
+PDF: 281 pages. Original summary: physical page 3. New summary: physical page 4 (printed 3). Original wording preserved. Chapter and index destinations shifted by exactly one page. All new page links resolved. No layout overflow on the inserted page. Pre-existing undefined references and unrelated overflow warnings remain unchanged.

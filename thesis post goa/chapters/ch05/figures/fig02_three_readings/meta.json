@@ -1,0 +1,14 @@
+{
+  "figure": "fig02",
+  "chapter_number": "5.2",
+  "label": "dist:fig:readings",
+  "slug": "three_readings",
+  "included_from": "sections/04_geometric.tex",
+  "generator": "src/fig02.tex",
+  "kind": "tikz",
+  "style": "figures/_style/tikz_style.tex",
+  "outputs": [
+    "fig02.pdf"
+  ],
+  "simulation": false
+}

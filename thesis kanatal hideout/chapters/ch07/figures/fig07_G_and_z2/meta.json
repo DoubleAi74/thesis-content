@@ -1,0 +1,49 @@
+{
+  "figure": "fig07_G_and_z2",
+  "parameters": {
+    "lambda1": 1.0,
+    "lambda2": 0.85,
+    "mu2": 0.4,
+    "delta2": 0.18
+  },
+  "scaled_parameters": {
+    "hat_lambda2": 0.85,
+    "hat_mu2": 0.4,
+    "hat_delta2": 0.18
+  },
+  "derived": {
+    "hat_Delta2": 0.8275868534480231,
+    "r2_minus": 0.3543606744423393,
+    "r2_plus": 1.3279922667341313,
+    "alpha2": 0.973631592291792,
+    "hat_q2": -0.8275868534480232,
+    "z2_0": -1.9684589883364914,
+    "G_at_tmax": 0.3543684596732706,
+    "z2_at_tmax": -7.996138626443715e-06,
+    "G_gap_at_tmax": 7.785230931256493e-06
+  },
+  "validation": {
+    "max_abs_closed_form_vs_rk4": 2.4424906541753444e-15,
+    "integration_method": "fixed-step classical RK4 on the unscaled physical-time ODE",
+    "rk4_step": 0.001,
+    "plotted_time_interval": [
+      0.0,
+      15.0
+    ],
+    "time_axis": "physical t; internal closed form evaluated at hat_t=lambda1*t",
+    "checks": {
+      "G0_equals_1": true,
+      "G_strictly_decreasing": true,
+      "z2_negative": true,
+      "z2_strictly_increasing_to_zero": true,
+      "hat_q2_equals_minus_hat_Delta2": true
+    }
+  },
+  "software": {
+    "python": "3.14.3",
+    "numpy": "2.4.2",
+    "matplotlib": "3.10.8"
+  },
+  "random_seed": null,
+  "ai_generated_content": false
+}

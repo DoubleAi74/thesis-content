@@ -1,0 +1,253 @@
+Originality of the results
+
+1. Statements not found in the literature as written
+The method behind each is published; these are original statements obtained by specialising it,
+not a new theory of branching. Each was searched against the chapter bibliographies and the
+wider literature, then challenged adversarially.
+
+Where        The statement                                                    Nearest published
+                                                                              work
+Thm 6.8      The flooding identity. At matched lifetime yield the             Pearson, Krapivsky and
+p. 167       extinction probabilities of bursting and budding differ by       Perelson (2011) find
+             exactly ∆zext = (L − 1)(1/m − 1), so bursting favours            pburst
+                                                                                v    ≤ pcont
+                                                                                        v    — bursting
+             establishment precisely when L > 1, equivalently when            always favoured — from a
+             1/δ < 1/λ + 1/µ.                                                 fixed burst size, with no
+                                                                              parameter that can
+                                                                              reverse the order.
+Prop 6.9     Coincidence of the offspring laws. At L = 1 the bursting         Pearson’s geometric
+p. 169       and budding offspring distributions coincide, not merely their   comparator; Karlin and
+             extinction probabilities: the burst generating function          Tavaré’s geometric killing
+             collapses to the geometric (1 − ϱ)/(1 − ϱz). The variance gap    position. Neither yields a
+             2q 2 V∞ (L − 1)/(a − 1) changes sign with L − 1.                 coincidence of laws.
+Thm 7.4      Exact finite-time survival under two-type killing. A             Antal and Krapivsky
+p. 193       closed form for the no-catastrophe probability of the            (2011) apply the same
+             triangular two-type birth–death process with type-specific       Gauss reduction to
+             catastrophe rate δ1 X + δ2 Y , as a Wronskian mixture of a       terminal counts without
+             real-axis 2 F1 pair.                                             killing. Setting δ = 0 here
+                                                                              forces S ≡ G ≡ 1 and
+                                                                              does not return their
+                                                                              generating functions.
+Eq. 7.50     The killed bivariate generating function. The defective Antal and Krapivsky
+p. 205       PGF under the same killing, by the same Wronskian mixture. (2011), eqs. (25)–(29),
+             This is the object for which δi = 0 does recover           recovered here as the
+             Antal–Krapivsky, and it is what makes the previous entry a δi → 0 limit.
+             different observable rather than a reparametrisation.
+
+
+
+
+                                                269
+2. Extensions: an ancestor, and what is added to it
+Ordered by chapter. In each case a published result is the ancestor; the thesis changes the
+process, the object, the hypotheses, or the biological reading.
+
+Where          The increment                                                        Ancestor
+§ 2.2.4.1      Gated release in which the opening intensity ηAt depends on Davis’s
+p. 38          the accumulated load, rather than switching autonomously. piecewise-deterministic
+                                                                           Markov processes;
+                                                                           autonomous on–off
+                                                                           queues.
+Thm 3.5        A(p) = 2ψ2p (1/2) identifies Kolmogorov’s constant with the          Kolmogorov (1938) for
+p. 85          Koenigs linearising function of the logistic map, and that           A(p) itself; Koenigs
+               function is hypertranscendental — so it admits no                    (1884); Becker and
+               elementary closed form.                                              Bergweiler (1995) for
+                                                                                    hypertranscendence.
+Thms 4.13–     The released count Wt carried as a second coordinate: its            Karlin and Tavaré’s
+4.14           mean, second moment and variance at finite time, as                  killing position is the
+pp. 103–105    functions of I(t).                                                   eventual geometric, not a
+                                                                                    time-dependent release
+                                                                                    coordinate.
+Prop 4.17      Every load moment is a polynomial Qp (I) of degree p + 1             The moments themselves
+p. 106         with roots a, b and leading coefficient (−1)p p! (λ/δ)p — one        sit inside the 1982
+               economy organising the whole moment hierarchy.                       generating function; the
+                                                                                    organisation is what is
+                                                                                    added.
+Thm 5.10       Burst size equals the quasi-stationary law, proved by                Karlin and Tavaré give
+p. 130         size-biasing: the weight k makes the burst-time integrand a          the killing-position law
+               perfect differential, which telescopes to the endpoint.              and the quasi-stationary
+               Remark 5.11 gives a sufficient criterion for it; necessity is left   law separately, in different
+               open.                                                                lemmas.
+Props 5.12–    Burst timing: at µ = 0 the time to a burst of size n is              Classical Yule maxima,
+5.13           harmonic in n with a Gumbel limit; with death, a closed              not previously written as
+pp. 134–135    mean conditional on bursting.                                        a law for a lytic single-cell
+                                                                                    assay.
+§ 5.9–5.10     Multi-founder kernels gk with sub-extensive yield k + λ/δ; a The branching property is
+pp. 137, 140   chained immediate-transfer process with negative-binomial    classical; the yield
+               rupture sizes and interval Laplace transforms.               identity, and the failure of
+                                                                            the naive free sum, are
+                                                                            the additions.
+Def 6.1,       An age-structured within-host system driven by closed-form Nelson, Gilchrist, Coombs,
+Eq. 6.11       birth–death–catastrophe kernels, with no free production   Hyman and Perelson
+pp. 157–159    kernel left to fit.                                        (2004), who leave the
+                                                                          age-dependent kernel P (a)
+                                                                          free.
+Thm 6.3        A projection of the exponential phase onto an effective pair Euler–Lotka renewal
+p. 161         (peff , dI,eff ), with closed endpoints — so a fitted burst rate is theory; Wallinga and
+               a property of the phase, not of the cell.                           Lipsitch on generation
+                                                                                   intervals.
+§ 6.5.6        A concrete three-to-two identifiability obstruction: (λ, µ, δ) is Miao, Xia, Perelson and
+p. 165         not recoverable from population data alone.                       Wu (2011) on structural
+                                                                                 non-identifiability.
+
+
+                                                     270
+Where         The increment                                                    Ancestor
+
+Prop 7.2      A Feynman–Kac representation for the joint two-type              Standard first-step
+p. 183        occupation hazard, with a mesh-limit argument for the            decomposition for one
+              pathwise exponential weight.                                     type; the joint two-type
+                                                                               object is the increment.
+Prop 7.9      At λ2 = 0 the solution is built on ordinary Bessel functions     Antal and Krapivsky’s
+p. 202        Jρ , Yρ , a different boundary of the parameter space.           bi-critical case uses
+                                                                               modified Bessel functions,
+                                                                               from a different equation.
+Def 8.1,      A replicator–suppressor process in which suppressors are         Pilyugin and Antia (2000)
+Prop 8.3      consumed one-to-one and never replenished. The escape wall       limit clearance by
+pp. 214–216   i > j is then rate-independent: a counting argument, no rates    handling time: an engaged
+              enter.                                                           effector is occupied, then
+                                                                               returns to the free pool.
+                                                                               Their threshold therefore
+                                                                               depends on the rates.
+Prop 8.7,     Under an integer removal budget ϑ, the surviving fraction is Geometric stop-loss is
+Cor 8.8       R(ϑ) = V∞ a−ϑ with threshold ϑ∗ = log V∞ / log a.            actuarial folklore; not
+pp. 223–223                                                                found for a catastrophe
+                                                                           process under an integer
+                                                                           immune budget.
+Prop 8.12     Under threshold removal the flooding criterion reverses:      Yuan and Allen (2011)
+p. 225        bursting now wins exactly when L < 1. The same                find the ranking of
+              dimensionless group orders the comparison in both directions. budding and bursting to
+                                                                            depend on whether the
+                                                                            immune response is
+                                                                            activated, by a different
+                                                                            mechanism.
+Cor 9.3       A two-layer clock: speciation intensity tracks unused            Kendall (1948)
+p. 237        individual capacity through a separate logistic abundance        time-dependent Yule;
+              layer, not the species count. The limit law is geometric, with   diversity-dependent
+              a variance not previously recorded.                              models act on species
+                                                                               number.
+Eq. 9.21      A closed form for the moving unstable critical point of the      Pimentel (1965) supplies
+p. 244        Pimentel resistance chain: a reversal is that point crossing     the chain; no antecedent
+              the leading population.                                          was identified for the
+                                                                               critical point.
+
+
+
+3. Inherited, and cited as such
+Naming these is what makes the two sections above legible as increments. Karlin and Tavaré
+(1982) supply the killed birth–death process itself: the linear-fractional generating function, the
+closed forms I(t), D(t), J(t), K(t), the roots a, b, the geometric occupancy and the geometric
+killing position. Brockwell, Gani and Resnick (1982) is the more general neighbour,
+admitting immigration and random catastrophe sizes. Kolmogorov (1938) and Yaglom
+(1947) give the constant A(p), the critical decay Sn ∼ 2/n and the conditioned limit law; Pakes
+(2026) is the current word on whether that constant admits an explicit form. Kendall (1948)
+gives the linear birth–death generating function reused throughout, and the time-dependent
+Yule process of Chapter 9. Antal and Krapivsky (2011) give the triangular two-type process
+and its Gauss reduction. Perelson (1996), Nowak and Bangham (1996) and McLean
+(1993) give constant-rate viral replication; Pearson, Krapivsky and Perelson (2011) give
+
+                                                 271
+the invariance of R0 under matched lifetime yield and the establishment comparison; Komarova
+(2007) gives flooding as a biological idea, and Yuan and Allen (2011) a published ranking
+switch under an immune term. Nelson et al. (2004) give the age-structured system; Miao et
+al. (2011) non-identifiability; Pilyugin and Antia (2000) finite nonspecific killers. Nee, May
+and Harvey (1994) give the push of the past, against a large diversity-dependent literature.
+Ke, Chen and Yang (2013) give the temperature- and pH-dependent account of the Y. pestis
+switch.
+
+
+4. Scope of the claims
+“Not found” is not a proof of absence. Where the evidence was thin the claim was weakened
+rather than strengthened, and every statement in Section 1 of this index has a published ancestor
+supplying the method — so each is written as an original identity obtained by specialising a
+known technique. Three things are deliberately not claimed: the killed birth–death process and
+its closed forms, which are Karlin and Tavaré’s; the constant A(p), which is Kolmogorov’s; and
+the comparison of bursting with budding as a question, which is Pearson’s and Komarova’s.
+What is claimed is the calculus built on the first, the Koenigs dictionary for the second, and the
+criterion L that settles the third in both directions.
+
+
+
+
+                                               272
+Statement on the use of
+generative AI
+
+I have made extensive use of generative AI and agentic coding tools in producing this thesis,
+and it is better to be forthcoming and candid about that than to leave it implicit. We live in a
+rapidly changing digital landscape that is increasingly challenging preconceptions, and it falls
+to our generation to help define the standard for how AI is taught and integrated into higher
+education. To that end, I give a summary below of how I used AI in the writing of this thesis,
+with a chapter-by-chapter account following it.
+   Where AI produced mathematics, prose or code, I have checked it and I take full responsibility
+for the content of this thesis.
+
+
+Account of generative AI use
+The following is a short description of how generative AI was used to assist the production of
+each chapter.
+
+Chapter 1. There was a full introduction in the pre-AI draft of 2024. After the other nine
+chapters had all been fully redrafted, Claude was used quite simply to modify the existing
+introduction to reflect the changes in presentation of the new chapters.
+
+Chapter 2. Chapter 2 was partially taken from the pre-AI draft, and partially added to with
+agent tools. All of the MOC content and much of the branching process definition was in the
+original. But the Markov Chains section was largely generated.
+
+Chapter 3. The Koenigs result was initially determined by ChatGPT in January 2026. At
+that time, LLMs were not quite good enough to write sufficient quality prose for the thesis, so I
+wrote up the whole content of this chapter myself. Later, in July 2026, AI was more capable
+and I used Claude to rework the existing content into a better flow, and also used Codex to
+build the fractal generation web tool.
+
+Chapter 4. The original chapter was re-worked in a style pass. The same content from the
+pre-AI draft was presented more coherently with a small addition of the Dt variable.
+
+Chapter 5. The old BDC extension chapter was divided into what are now Chapters 5 and 6.
+Chapter 5 is largely the same story as Chapter 4, in that the same content was re-structured
+and presented better.
+
+
+
+
+                                              273
+Chapter 6. This chapter extends the old “BDC extension” chapter, whose content was
+clearly unresolved. Among the key additions are the BMVR-style bursting equations, and the
+L parameter flooding analysis. Practically all of this additional content has been generated
+autonomously with LLMs. And for this chapter more than any other, the same can be said of
+the LATEX write-up.
+
+Chapter 7. The crux of this chapter was present in the pre-AI draft. I had previously shown
+that the two-type BDC system can be solved with the specified method. I had merely neglected
+to actually write down the final solution explicitly. There was some complication to that task,
+but Claude did it effortlessly, and restructured my prose along the way.
+
+Chapter 8.     The existing content was restructured and styled with LLM passes.
+
+Chapter 9.     Content was trimmed and rearranged into a variable time model collection.
+
+Chapter 10. The quadrant argument was written by me, apart from its figure; everything
+else in the chapter was generated automatically.
+   I have used Claude Code (Pro), Grok Build (SuperGrok), Codex (Plus), and Zcode (GLM
+Coding Lite). Claude and Codex are the most capable models; Grok and Zcode are cheaper and
+faster, but still reliable alternatives for more mechanical tasks. The originality index was fully
+researched, verified, and written up by Grok and Claude.
+   The multiplicative dissipation cellular automaton (CA) in Chapter 9 was agentically coded
+end-to-end. But other substantial programs were written by me. Among these is the agent-based
+simulation shown in Chapter 1 (made with p5.js).
+   There is also the burst suppression simulator and the Pimentel CA. Both of these were fully
+implemented in C++ using SFML (Simple and Fast Multimedia Library), then later ported to
+JavaScript and given a new user interface.
+   Overall, I can say that AI has been remarkably helpful in producing a final result greatly
+superior to the pre-AI draft. And that generally, LLMs and coding agents have been really
+enjoyable to use and have recently become surprisingly capable.
+   If you would like to know more about how I have been using AI, please feel free to get in
+touch, and I would be happy to talk about it with you.
+
+
+
+
+                                               274
+

@@ -1,0 +1,128 @@
+% Stitched working draft of the thesis.
+% Compile from this directory:  latexmk -pdf main.tex
+%
+% Chapter sources are copies under chapters/chXX/. Original chapter
+% folders are not modified. Appendices stay at the end of each chapter.
+% References are pooled at the end of this file.
+
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{preamble}
+\input{originality_index/setup}
+
+% #1 = chapter directory name (ch01, ...); #2 = file to subimport
+\newcommand{\stitchchapter}[2]{%
+  \clearpage
+  \graphicspath{{chapters/#1/}{chapters/#1/figures/}{chapters/#1/pictures/}}%
+  \begingroup
+  \input{macros/#1}%
+  \subimport{chapters/#1/}{#2}%
+  \endgroup
+  \FloatBarrier
+}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{4mm}
+{\LARGE\bfseries Branching and catastrophe,\par}
+\vspace{0.22em}
+{\LARGE\bfseries from the cell to the species\par}
+\vspace{0.9em}
+{\color{accent}\rule{2.15cm}{0.65pt}\par}
+\vspace{0.75em}
+{\large\color{soft}Intracellular replication of \textit{Yersinia pestis},\par}
+\vspace{0.22em}
+{\large\color{soft}and species divergence under time-varying rates\par}
+\vspace*{16mm}
+\includegraphics[width=44mm]{supplementary/figures/Leeds_Crest.png}\par
+\vspace*{15mm}
+{\Large\textcolor{blue}{Adam Aldridge}\par}
+\vspace*{1ex}
+{\hypersetup{urlcolor=blue}%
+{\large\href{http://eps.leeds.ac.uk/maths}{Department of Applied Mathematics}\par}%
+\vspace*{1ex}
+{\large\href{http://www.leeds.ac.uk}{The University of Leeds}\par}}
+\vspace*{22mm}
+{\large Submitted in accordance with the requirements for the degree of Doctor of Philosophy\par}
+\vspace*{2ex}
+{\large October 2026\par}
+\vfill
+\end{titlepage}
+\hypersetup{pageanchor=true}
+% Front matter in roman numerals. The title page stays unnumbered.
+% Arabic page 1 begins at Chapter 1.
+\pagenumbering{roman}
+
+% Acknowledgements.
+\input{supplementary/acknowledgements}
+
+% Abstract, then the two front-matter pages, then the contents.
+\input{supplementary/abstract}
+
+% Contributions at a glance.
+\input{originality_index/summary_redesigned}
+
+% Supplementary web applications: the two companion sites.
+\input{supplementary/web_applications}
+
+\begingroup
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\clearpage
+\pagenumbering{arabic}
+
+% Chapter 1 -- Introduction (article source, wrapped)
+\stitchchapter{ch01}{chapter.tex}
+
+% Chapter 2 -- Mathematical introduction (thesis-ready)
+\stitchchapter{ch02}{chapter.tex}
+
+% Chapter 3 -- Galton--Watson / A(p) (from chapterB.tex)
+\stitchchapter{ch03}{chapter.tex}
+
+% Chapter 4 -- Birth--death--catastrophe process
+\stitchchapter{ch04}{chapter.tex}
+
+% Chapter 5 -- Distribution theory, quasi-stationarity, burst statistics
+\stitchchapter{ch05}{chapter.tex}
+
+% Chapter 6 -- Within-host / bursting
+\stitchchapter{ch06}{chapter.tex}
+
+% Chapter 7 -- Two-type catastrophe rates (article source, wrapped)
+\stitchchapter{ch07}{chapter.tex}
+
+% Chapter 8 -- Bursting and budding pathogenesis
+\stitchchapter{ch08}{chapter.tex}
+
+% Chapter 9 -- Models with non-constant rates
+\stitchchapter{ch09}{chapter.tex}
+
+% Chapter 10 -- Conclusion
+\stitchchapter{ch10}{chapter.tex}
+
+% Detailed originality index (sections 1--4), before the references.
+\input{originality_index/details}
+
+% AI statement and the chapter-by-chapter account, immediately before the
+% references. A \chapter*, like the originality index -- not an appendix.
+\input{supplementary/ai_use}
+
+% Path of fire, the page that followed the acknowledgements in the 2024 draft.
+\clearpage
+\input{supplementary/path_of_fire}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\begingroup
+\small
+\bibliographystyle{unsrt}
+\bibliography{references}
+\endgroup
+
+\end{document}

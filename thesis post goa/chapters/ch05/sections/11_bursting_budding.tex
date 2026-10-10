@@ -1,0 +1,100 @@
+\section{Bursting against budding}
+\label{dist:sec:budding}
+
+This chapter opened by objecting to the constant drip. It can now say
+precisely what that objection amounts to, and at the level where it was made:
+one cell.
+
+The comparator is the budding cell of the constant-rate models. In its
+simplest stochastic form a budding infected cell experiences two
+\emph{independent} event types --- release of one infectious particle at rate
+$p$, and death of the cell at rate $d_{\Icell}$ --- and the two continue until
+the cell dies. Its survival and mean release are
+\begin{equation}
+I_{\rm bud}(t)=\ee^{-d_{\Icell}t},\qquad
+V_{\rm bud}(t)=\frac{p}{d_{\Icell}}\lrb{1-\ee^{-d_{\Icell}t}},
+\label{dist:eq:bud}
+\end{equation}
+the same one-cell limit the Basic Model of Viral Replication reaches at the
+population level. The release count of a budding cell is geometric on
+$\{0,1,2,\ldots\}$:
+\begin{equation}
+\pr{\Kb_{\rm bud}=k}=\frac{d_{\Icell}}{d_{\Icell}+p}
+\lrb{\frac{p}{d_{\Icell}+p}}^k,\qquad k=0,1,2,\ldots,
+\label{dist:eq:budgeom}
+\end{equation}
+since each successive event is a release with probability
+$p/(d_{\Icell}+p)$ and the terminating death with probability
+$d_{\Icell}/(d_{\Icell}+p)$.
+
+The structural contrast with bursting is exact: in budding, release and death
+are independent events, and a cell may release many particles and then die
+with nothing left to release; in bursting, release and death are the
+\emph{same} event, and whatever has accumulated is released at once. That
+difference is why a bursting cell's release law is a statement about its
+accumulated load, and why \cref{dist:sec:burst-size} has no budding analogue:
+a cell that releases continuously holds nothing to be quasi-stationary about.
+\Cref{dist:tab:budburst} sets the two descriptions side by side for the
+$\mu=0$ bursting case.
+
+\begin{table}[tbp]
+\centering
+\renewcommand{\arraystretch}{1.35}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & budding & bursting ($\mu=0$) \\
+\midrule
+$\ddt{I}$ & $-d_{\Icell} I$ & $-(\lambda+\delta)I+\lambda I^2$ \\
+$I(t)$ & $\ee^{-d_{\Icell}t}$ & $\dfrac{\lambda+\delta}{\lambda+\delta\,\ee^{(\lambda+\delta)t}}$ \\
+mean cell lifetime & $1/d_{\Icell}$ & $\dfrac{1}{\lambda}\log\lrb{1+\dfrac{\lambda}{\delta}}$ \\
+$V(t)$ & $\dfrac{p}{d_{\Icell}}(1-I)$ & $\dfrac{\lambda}{\delta}+1-\dfrac{2\lambda+\delta}{\delta}I+\dfrac{\lambda}{\delta}I^2$ \\
+release law & geometric on $\{0,1,\ldots\}$, \cref{dist:eq:budgeom} & geometric on $\{1,2,\ldots\}$, $\pr{\Kb=k}=\frac{\delta}{\lambda}a^{-k}$ \\
+\bottomrule
+\end{tabular}
+\caption{Single-cell budding and bursting compared, $\mu=0$ for bursting.
+Budding parameters: release rate $p$ and infected-cell death rate
+$d_{\Icell}$. Bursting parameters: division rate $\lambda$ and rupture rate
+$\delta$ per intracellular particle; $a=(\lambda+\delta)/\lambda$ here.}
+\label{dist:tab:budburst}
+\end{table}
+
+Two rows of the table carry the comparison. The mean cell lifetime of a
+bursting cell grows only logarithmically with $\lambda/\delta$ while its mean
+release grows linearly; budding offers no such coupling, its lifetime and its
+release being controlled by separate parameters. And the release laws, both
+geometric, differ in their support: budding can release nothing at all from a
+cell that died early, while bursting never releases nothing from a cell that
+ruptured. A trade-off along an axis of this kind is a familiar theme in the
+evolution of virulence \cite{gilchrist2006evolution}.
+
+Matching the means does not repair the difference. \Cref{dist:fig:budding}
+sets the two release laws against each other with the budding mean tuned to
+the BDC conditional mean $V_\infty/(1-b)=17.23$: the budding law still holds
+probability $0.055$ of releasing nothing. Matching one moment matches neither
+the support nor the tails. That is the concrete form of the objection this
+chapter opened with: a fitted constant-rate model can reproduce the average
+yield of a lytic cell and still be wrong about the quantity that decides
+whether a small inoculum establishes at all.
+
+The comparison is deliberately confined to one cell. What happens when these
+descriptions are embedded in a population, where the timing of release governs
+establishment and invasion speed, belongs to \ChPop; the pathogenesis-level
+comparison belongs to
+\fwd{path}{\ChPath}. All three
+chapters return to this contrast, and answer different questions with it.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.92\textwidth]{fig15_burst_vs_budding/N4a_3_burst_vs_budding_pmf}
+\caption{Release-count laws for the BDC process at
+$(\lambda,\mu,\delta)=(1,0.2,0.05)$ and a budding comparator whose mean
+$p/d_{\Icell}$ is matched to the BDC conditional mean
+$V_\infty/(1-b)=17.23$. Panel~(a): the BDC law conditioned on bursting is
+geometric on $\{1,2,\ldots\}$, whereas the budding law is geometric on
+$\{0,1,2,\ldots\}$ and retains probability $0.055$ of zero release.
+Panel~(b): survival functions $\pr{\Kb\ge k}$ and
+$\pr{\Kb_{\rm bud}\ge k}$. Matching the means matches neither the support
+nor the tails.}
+\label{dist:fig:budding}
+\end{figure}

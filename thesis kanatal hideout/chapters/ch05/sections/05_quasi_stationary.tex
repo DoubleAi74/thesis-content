@@ -1,0 +1,265 @@
+\section{The quasi-stationary distribution}
+\label{dist:sec:qsd}
+
+The BDC process is absorbed in the end, either at the rupture state $H$ or by
+death at $0$; the theory of what a process looks like before that happens is
+quasi-stationarity \cite{van2011quasi}. A realisation which has, by chance,
+not yet reached fixation has had to hold a middle course. Fly too low and
+depletion to zero becomes more and more probable; fly high, a population
+booming in number, and the catastrophe clock has all the more to ring
+against. What survives hovers, on Daedalus's instruction exactly: neither so
+low that the spray soaks the wings, nor so high that the sun reaches them.
+
+A rogue process still going in defiance of the odds is described by the
+quasi-stationary distribution: a set of limiting conditional probabilities,
+each qualified by non-fixation. The general definition, the Yaglom limit and
+the classical existence theory are in
+\mextref{m:def:qsd}{the quasi-stationarity definition in \ChM} and
+\mextref{m:sec:condmeans}{its treatment of conditional means}, resting on the
+classification of birth--death
+processes \cite{karlin1957classification}. Here the limit is quoted from
+nowhere: it is read off \cref{dist:thm:geometric} by letting $P$ reach its
+endpoint.
+
+\subsection{Conditioning on survival}
+\label{dist:sec:conditioning}
+
+Let $F(t)$ be the probability of fixation by time $t$, whether by death or by
+collapse. The decomposition of \cref{dist:sec:moments-recap} settles it
+immediately: a realisation is fixed by $t$ precisely when it is not
+productively infected, so
+\begin{equation}
+F(t)=1-\Ifix(t)=1-I(t)+D(t),
+\label{dist:eq:fixprob}
+\end{equation}
+which reduces to $1-I(t)$ when $\mu=0$. Conditional state probabilities
+decompose as
+\[
+\pr{\Xt=i}=\pr{\Xt=i\mid\text{fixation}}F(t)
++\pr{\Xt=i\mid\text{non-fixation}}\lrb{1-F(t)},
+\]
+and for $i\notin\{0,H\}$ the process has not been absorbed, so the first term
+vanishes and
+\begin{equation}
+\pr{\Xt=i\mid \text{non-fixation}}
+=\frac{p_i(t)}{1-F(t)}=\frac{p_i(t)}{\Ifix(t)}.
+\label{dist:eq:condp}
+\end{equation}
+The quasi-stationary distribution is the limiting form of these:
+\begin{equation}
+q_i:=\lim_{t\to\infty}\pr{\Xt=i\mid\Xt\notin\{0,H\}}
+=\lim_{t\to\infty}\frac{p_i(t)}{\Ifix(t)},\qquad i\ge1.
+\label{dist:eq:qsddef}
+\end{equation}
+
+\subsection{The limit is geometric}
+\label{dist:sec:qsd-geometric}
+
+\begin{theorem}[Quasi-stationary distribution of the BDC process]
+\label{dist:thm:qsd}
+For all $\mu\ge0$ the quasi-stationary distribution exists and is geometric
+on $\{1,2,\ldots\}$ with ratio $1/a$:
+\begin{equation}
+q_n=\Bigl(1-\frac{1}{a}\Bigr)\Bigl(\frac{1}{a}\Bigr)^{n-1}
+=(a-1)\,a^{-n},\qquad n\ge1.
+\label{dist:eq:qsd}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By \cref{dist:eq:condp} and \cref{dist:cor:sum}, the conditional law at time
+$t$ is
+\begin{equation}
+\pr{\Xt=n\mid\Xt\notin\{0,H\}}
+=\frac{p_n(t)}{\sum_{m\ge1}p_m(t)}
+=\lrb{1-P(t)}P(t)^{n-1},
+\label{dist:eq:condgeom}
+\end{equation}
+for every $t$: no limit has been taken, and the conditional law is already
+geometric. By \cref{dist:thm:geometric}, $P(t)\uparrow1/a$, so each
+coordinate converges and the limit is \cref{dist:eq:qsd}.
+\end{proof}
+
+The theorem is a corollary of \cref{dist:thm:geometric} in substance as well
+as in proof: the quasi-stationary law is not a new object but the endpoint of
+a family that was geometric all along. Its moments follow immediately:
+\begin{equation}
+\langle X\rangle_{\rm QS}=\frac{a}{a-1}=\frac{a}{A},
+\qquad
+\langle X^2\rangle_{\rm QS}=\frac{a(a+1)}{(a-1)^2},
+\qquad
+\var{X}_{\rm QS}=\frac{a}{(a-1)^2}=\frac{a}{A^2}.
+\label{dist:eq:qsmoments}
+\end{equation}
+The quasi-stationary mean is exactly the conditional mean burst size
+$\E{\Kb\mid\text{burst}}$ of \cref{dist:eq:vinf}, and at $\mu=0$ both also
+equal $V_\infty$. Once $\mu>0$ it is $V_\infty$ that falls away from the other
+two: at $(1,0.2,0.05)$ it is $13.99$ against
+$\langle X\rangle_{\rm QS}=17.23$, because $V_\infty$ averages in the cells
+that cleared internally and released nothing. \Cref{dist:fig:qsmeans} traces
+all three across $\mu$. That the first two agree is not a coincidence of first
+moments: \cref{dist:sec:burst-size} shows the entire burst-size distribution
+\emph{is} the quasi-stationary distribution.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.68\textwidth]{fig04_qs_vs_release_means/fig04}
+\caption{Quasi-stationary and release means across internal death rates at
+$\lambda=1$ and $\delta=0.05$. The quasi-stationary mean
+$\langle X\rangle_{\rm QS}=a/(a-1)$ is identically the conditional burst mean
+$V_\infty/(1-b)$. At $\mu=0$, $b=0$ and both also equal $V_\infty$; once
+$\mu>0$, internally cleared cells contribute zero release and place
+$V_\infty$ strictly below the other two; the arrow marks that gap,
+$b\langle X\rangle_{\rm QS}=3.25$, at the working point. In the $\mu=0$ case the conditional
+mean and the cumulative release share a limit,
+$\lim_t J(t)/I(t)=\lim_t V(t)=1+\lambda/\delta$, which diverges as $\delta$
+shrinks.}
+\label{dist:fig:qsmeans}
+\end{figure}
+
+\subsection{The decay rate, and what it validates}
+\label{dist:sec:decay-rate}
+
+Quasi-stationarity has a spectral reading, and carrying it out closes a
+question left open in \ChM. Restricting the generator to the positive states
+gives the killed subgenerator $\mathcal Q$, with
+$\mathcal Q_{i,i+1}=\lambda i$, $\mathcal Q_{i,i-1}=\mu i$ for $i\ge2$, and
+$\mathcal Q_{i,i}=-(\lambda+\mu+\delta)i$; its missing row mass is the
+instantaneous absorption rate, $\delta i$ for $i\ge2$ and $\mu+\delta$ for
+$i=1$. Writing $T_{\rm fix}$ for the first of internal extinction and rupture
+and summing the positive-state forward equations,
+\begin{equation}
+\ddt{}\pr{T_{\rm fix}>t}
+= -\mu\pr{\Xt=1} - \sum_{i\ge1}\delta i\,\pr{\Xt=i},
+\label{dist:eq:survivalloss}
+\end{equation}
+all probabilities on the right understood before absorption. Ordinary death
+drains survival mass from state $1$ only; catastrophe drains it from every
+positive state.
+
+\begin{proposition}[Quasi-stationary decay rate]
+\label{dist:prop:decay}
+If $\nu$ is a quasi-stationary distribution on the positive states and the
+sums below are finite, then for some $\vartheta>0$
+\begin{equation}
+\nu\mathcal Q=-\vartheta\nu,
+\qquad
+\mathbb P_\nu\{T_{\rm fix}>t\}=\ee^{-\vartheta t},
+\qquad
+\vartheta=\mu\nu_1+\sum_{i\ge1}\delta i\,\nu_i .
+\label{dist:eq:decayrate}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Quasi-stationarity writes the unnormalised positive-state law at time $t$ as
+$\alpha(t)\nu$; the semigroup property forces
+$\alpha(s+t)=\alpha(s)\alpha(t)$, and right-continuity gives
+$\alpha(t)=\ee^{-\vartheta t}$. Differentiating at zero yields the
+left-eigenvector relation, and summing its coordinates against
+\cref{dist:eq:survivalloss} identifies the decay rate.
+\end{proof}
+
+The state-dependence matters. Were the catastrophe rate a constant,
+independent of the load, its clock would run independently of the
+birth--death process, the killed semigroup would factorise into that clock's
+exponential times its birth--death counterpart, and the extra clock would
+shift the decay rate by that constant while leaving the conditional law
+untouched. A rate proportional to the load weights paths by their accumulated
+exposure and generally changes the quasi-stationary law itself. It is
+therefore no formality that a quasi-stationary distribution survives
+conditioning on \emph{neither} extinction nor rupture; \ChM{} leaves that
+open, and \cref{dist:thm:qsd} settles it in closed form.
+
+Substituting that law, $\nu_n=(a-1)a^{-n}$, into \cref{dist:eq:decayrate}
+gives a check on everything together. Using $\nu_1=(a-1)/a$,
+$\sum_i i\nu_i=a/(a-1)$, and then $\mu=\lambda ab$ and
+$\delta=\lambda(a-1)(1-b)$ from \cref{dist:eq:ab},
+\begin{equation}
+\vartheta=\mu\frac{a-1}{a}+\delta\frac{a}{a-1}
+=\lambda ab\,\frac{a-1}{a}+\lambda(a-1)(1-b)\,\frac{a}{a-1}
+=\lambda b(a-1)+\lambda a(1-b)=\lambda(a-b)=\theta .
+\label{dist:eq:decaycheck}
+\end{equation}
+The eigenvalue of the killed subgenerator is the time constant that has
+appeared in every formula since \cref{dist:eq:abtheta}. One line validates the
+quasi-stationary law, the decay-rate formula and $AB=\delta/\lambda$ together.
+
+\subsection{Mean productive lifetime}
+\label{dist:sec:lifetime}
+
+One integral of $\Ifix$ is a result in its own right, and is also the first
+item of the consignment named in \cref{dist:sec:exports}. The expected
+duration of productive infection is
+\begin{equation}
+\E{T_{\rm prod}}=\int_0^\infty\Ifix(t)\,\dd t,
+\label{dist:eq:tprodint}
+\end{equation}
+since $\Ifix(t)=\pr{T_{\rm prod}>t}$.
+
+\begin{proposition}[Mean productive lifetime]
+\label{dist:prop:lifetime}
+\begin{equation}
+\E{T_{\rm prod}}
+=\frac{1}{\lambda}\log\!\Bigl(\frac{a}{a-1}\Bigr)
+=\frac{1}{\lambda}\log\langle X\rangle_{\rm QS}.
+\label{dist:eq:tprod}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Write $\Ifix=(I-b)-(D-b)$. From \cref{dist:eq:idihat},
+\[
+I(t)-b=\frac{B(a-b)}{B+Aw},
+\qquad
+D(t)-b=-\frac{b(a-b)}{aw-b},
+\]
+so that, with $w=\ee^{\theta t}$ and $\dd t=\dd w/(\theta w)$,
+\[
+\int_0^\infty\Ifix\,\dd t
+=\frac{a-b}{\theta}\int_1^\infty
+\lrb{\frac{B}{w(B+Aw)}+\frac{b}{w(aw-b)}}\,\dd w.
+\]
+By partial fractions $\frac{B}{w(B+Aw)}=\frac{1}{w}-\frac{A}{B+Aw}$ and
+$\frac{b}{w(aw-b)}=-\frac{1}{w}+\frac{a}{aw-b}$, hence
+\begin{align*}
+\int_1^\infty\frac{B\,\dd w}{w(B+Aw)}
+&=\Bigl[\log\frac{w}{B+Aw}\Bigr]_1^\infty
+=\log\frac{a-b}{a-1},\\
+\int_1^\infty\frac{b\,\dd w}{w(aw-b)}
+&=\Bigl[\log\frac{aw-b}{w}\Bigr]_1^\infty
+=\log\frac{a}{a-b}.
+\end{align*}
+Summing, and using $\theta=\lambda(a-b)$,
+\[
+\int_0^\infty\Ifix\,\dd t
+=\frac{a-b}{\lambda(a-b)}
+\lrb{\log\frac{a-b}{a-1}+\log\frac{a}{a-b}}
+=\frac{1}{\lambda}\log\frac{a}{a-1}.\qedhere
+\]
+\end{proof}
+
+When $\mu=0$ this is $\lambda^{-1}\log(1+\lambda/\delta)$. The form of the
+answer interprets itself. Here $\log\langle X\rangle_{\rm QS}/\lambda$ is the
+time that exponential growth at rate $\lambda$ would take to reach the
+quasi-stationary level --- the productive lifetime is precisely the time
+needed to climb to the height at which the process can hover.
+\Cref{dist:fig:lifetime} maps it across the rate plane; at the working
+parameters $\E{T_{\rm prod}}=2.847$, implying a matched
+constant-rate death rate $d_{\Icell}=0.351$.
+
+That is the cell while it lasts. What it releases when it stops is a separate
+question, and the law answering it has already appeared in this section.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.92\textwidth]{fig05_productive_lifetime/fig05}
+\caption{Mean productive lifetime
+$\E{T_{\rm prod}}=\lambda^{-1}\log\bigl(a/(a-1)\bigr)$. (a) Its dependence on
+$\mu\in[0,1]$ and $\delta\in[0.005,1]$ at $\lambda=1$; contours give lifetime
+values and the star marks the working point. (b) The productive-survival
+curve $\Ifix(t)$ at $(\lambda,\mu,\delta)=(1,0.2,0.05)$, with its integral
+$\E{T_{\rm prod}}=2.847$ shaded. The matched classical death rate for \ChPop{}
+is $d_{\Icell}=1/\E{T_{\rm prod}}=0.351$.}
+\label{dist:fig:lifetime}
+\end{figure}

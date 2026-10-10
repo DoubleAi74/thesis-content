@@ -1,0 +1,32 @@
+{
+  "figure": "fig06_type2_phase",
+  "description": "Autonomous type-2 roots, phase line, and relaxation G(t).",
+  "parameters": {
+    "lambda1": 1.0,
+    "lambda2": 0.9,
+    "mu2": 0.35,
+    "delta2": 0.2
+  },
+  "derived": {
+    "Delta2": 0.917877987534291,
+    "r_2_minus": 0.2956233402587272,
+    "r_2_plus": 1.3154877708523838,
+    "alpha2_root_gap": 1.0198644305936566,
+    "q2_decay_rate": -0.917877987534291,
+    "z2_0": -2.2326591545472283
+  },
+  "root_ordering_ok": true,
+  "validation": {
+    "method": "fixed-step RK4 of unscaled dG/dt=f(G)",
+    "dt": 0.001,
+    "t_max": 12.0,
+    "max_abs_error_closed_vs_rk4": 1.2212453270876722e-15
+  },
+  "tools": {
+    "python": "Python 3.14.3",
+    "numpy": "2.4.2",
+    "matplotlib": "3.10.8"
+  },
+  "seed": null,
+  "ai_used": false
+}

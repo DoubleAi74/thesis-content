@@ -1,0 +1,168 @@
+\section{The generating function}
+\label{dist:sec:pgf}
+
+Everything in this chapter is read off one object. The PGF of the load,
+\begin{equation}
+G(z,t)=\sum_{n\ge0}p_n(t)z^n,\qquad p_n(t)=\pr{\Xt=n},
+\label{dist:eq:gdef}
+\end{equation}
+packs the entire state distribution into a single function of two variables
+and satisfies a first-order partial differential equation that can be solved
+exactly. We derive that equation, solve it, and record what the two rupture
+conventions do to the answer.
+
+One feature of the catastrophe convention should be named before it is used.
+Ruptured realisations are absorbed into the separate state $H$ and no longer
+contribute to the count, so $G(1,t)=I(t)\le1$: the PGF is \emph{defective},
+and its mass decays as cells burst. Under killing the rupture transition lands
+in state $0$ and is counted, so $G(1,t)=1$ for all $t$.
+
+\subsection{From the master equations to a PDE}
+\label{dist:sec:masterpde}
+
+The forward Kolmogorov equations for the killing convention are
+\begin{equation}
+\ddt{p_i} = \lambda (i-1) p_{i-1} + \mu (i+1) p_{i+1}
+- (\lambda + \mu + \delta)ip_i \quad (i>0),
+\qquad
+\ddt{p_0} = \mu p_1 + \delta\sum_{j\ge1} jp_j.
+\label{dist:eq:kolmogorov}
+\end{equation}
+The summation collects every rupture transition --- from any positive state a
+collapse to $0$ can occur --- and is itself the mean $\E{\Xt}=J(t)$.
+Under catastrophe that term is absent, since rupture leaves the count
+altogether; the first equation then holds for all $i\ge0$ with $p_{-1}=0$, and
+at $i=0$ reads
+\begin{equation}
+\ddt{p_0}=\mu p_1,
+\label{dist:eq:kolmogorovcat}
+\end{equation}
+internal extinction by death still feeding state $0$.
+
+Multiply the $i$th equation by $z^i$ and sum over $i$. Shifting indices in the
+three sums and using
+$\sum_{i\ge1}ip_iz^{i-1}=\pdd{}{z}\sum_{i\ge1}p_iz^{i}=\pdd{G}{z}$ collapses
+the infinite system into one equation. Under killing,
+\begin{equation}
+\pdd{G}{t} = \delta J(t) +
+\bigl(\lambda z^2 - (\lambda + \mu + \delta)z + \mu\bigr)\pdd{G}{z},
+\label{dist:eq:killpde}
+\end{equation}
+and dropping the inhomogeneous term --- no rupture flux enters any state of
+the count under catastrophe --- leaves
+\begin{equation}
+\pdd{G}{t} =
+\bigl(\lambda z^2 - (\lambda + \mu + \delta)z + \mu\bigr)\pdd{G}{z}.
+\label{dist:eq:catpde}
+\end{equation}
+
+\subsection{Solving by characteristics}
+\label{dist:sec:characteristics}
+
+\Cref{dist:eq:catpde} is first order and linear, so it reduces to a family of
+ordinary differential equations along characteristic curves. The generic
+construction --- the change of variables $(z,t)\to(s,\xi)$, the admissible
+initial curves, and the transport equations
+$\dda{G}{\xi}=0$ and $\dda{t}{\xi}=-1$ --- is set out in
+\mextref{m:sec:moc}{the method of characteristics in \ChM},
+with the generic system at
+\mextref{m:eq:genericcharacteristics}{the generic characteristic equations};
+we take it from
+there and record only what is specific to this process. With the initial curve
+$z(s,0)=s$, $t(s,0)=0$, transport gives $t=-\xi$ and $G$ constant on curves of
+fixed $s$, so that the initial condition $G(z,0)=z$ --- a single founder,
+$p_1(0)=1$ --- fixes $G(s,\xi)=s$.
+
+That leaves one equation, and it is the one that is not generic:
+\begin{equation}
+\dda{z}{\xi} = \lambda z^2 - (\lambda + \mu + \delta)z + \mu.
+\label{dist:eq:zchar}
+\end{equation}
+This is the Riccati equation \cref{dist:eq:riccati} of the no-rupture
+probability, in a different variable and with a different initial condition:
+$I(0)=1$ there, $z(s,0)=s$ here. Its solution therefore reproduces the
+formula for $I$ with $s$ wherever a $1$ stood,
+\begin{equation}
+z = \frac{a(s-b) - b(s-a)\ee^{\theta\xi}}{(s-b) - (s-a)\ee^{\theta\xi}},
+\label{dist:eq:zsolve}
+\end{equation}
+now in $\xi$ rather than $t$. Since $G(z,t)=s(z,t)$, one step finishes the
+calculation: rearrange for $s$ and put $-t$ for $\xi$. The map is an
+involution --- $s$ and $z$ exchange places and nothing else moves --- so
+\begin{equation}
+s = \frac{a(z-b) - b(z-a)w}{(z-b) - (z-a)w},
+\qquad w=\ee^{\theta t},
+\label{dist:eq:sinv}
+\end{equation}
+and the generating function of the single-founder process is
+\begin{equation}
+G(z,t) = \frac{a(z-b) - b(z-a)w}{(z-b) - (z-a)w}
+= \frac{ab(1-w) - z(a-bw)}{(b-aw) - z(1-w)}.
+\label{dist:eq:gcat}
+\end{equation}
+The second form is the one to differentiate: its $z$-dependence is one linear
+factor over another, so repeated $\partial_z$ returns a power over a power,
+and \cref{dist:sec:geometric} reads the state probabilities off it.
+
+\subsection{Several founders}
+\label{dist:sec:pgf-k-founders}
+
+The solution extends to any initial load by the branching property. If the
+cell begins with $k$ independent founders, the $k$ lineages evolve
+independently until the shared catastrophe clock rings and the total count is
+their sum, so the PGF is the $k$th power of the single-founder one:
+\begin{equation}
+G_k(z,t) = \bigl(G(z,t)\bigr)^k .
+\label{dist:eq:gk}
+\end{equation}
+Under catastrophe this is defective, with $G_k(1,t)=I(t)^k$; under killing it
+remains proper. \Cref{dist:eq:gk} is what
+\cref{dist:sec:moi,dist:sec:chained} are built on, and it is where the
+independence assumption of \cref{dist:sec:assumptions} does its work.
+
+\subsection{The two conventions differ by a function of time}
+\label{dist:sec:conventions}
+
+The killing convention needs no second derivation. Its PDE
+\cref{dist:eq:killpde} carries the inhomogeneous term $\delta J(t)$, which is
+$-\ddt{I}$; along a characteristic that term integrates to $I$ alone, with no
+$z$ in it. The conclusion is exact and immediate.
+
+\begin{proposition}[The two rupture conventions]
+\label{dist:prop:conventions}
+For every $z$ and every $t$,
+\begin{equation}
+G_{\rm kill}(z,t)=G_{\rm cat}(z,t)+\bigl(1-I(t)\bigr).
+\label{dist:eq:conventions}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Along the characteristics of \cref{dist:sec:characteristics} the killing
+system differs from the catastrophe system in its first equation alone, which
+becomes $\dda{G}{\xi}=-\delta J(-\xi)=\dda{}{\xi}I(-\xi)$, since
+$\dd t=-\dd\xi$ and $I'=-\delta J$. Hence $G(s,\xi)=-I(-\xi)+\phi(s)$, and
+$G(s,0)=s$ with $I(0)=1$ fixes $\phi(s)=1+s$, so $G(s,\xi)=1-I(-\xi)+s$. The
+remaining characteristic equation is \cref{dist:eq:zchar} unchanged, giving
+\cref{dist:eq:sinv} again; substituting yields
+\begin{equation}
+G_{\rm kill}(z,t)=1-I(t)+\frac{ab(1-w)-z(a-bw)}{(b-aw)-z(1-w)},
+\label{dist:eq:gkill}
+\end{equation}
+which is \cref{dist:eq:gcat} plus $1-I(t)$.
+\end{proof}
+
+Three consequences follow in a line each. The state probabilities agree,
+$p_n^{\rm kill}=p_n^{\rm cat}$ for every $n\ge1$. The difference is confined
+to the empty state, $p_0^{\rm kill}=p_0^{\rm cat}+(1-I)$. Every moment of
+$\Xt$ restricted to $n\ge1$ is therefore convention-independent, so nothing in
+the rest of this chapter would change had killing been chosen instead. One
+reason to prefer catastrophe nonetheless survives the equivalence: it keeps
+$G(1,t)=I(t)$, so that the defect of the generating function is itself the
+biological observable, the probability that the cell has not yet ruptured.
+That is why the convention was chosen, and why the parallel track need not be
+carried further.
+
+With the convention settled, the generating function can be read for what it
+contains. Extracting its coefficients is mechanical; what comes out of them is
+not.

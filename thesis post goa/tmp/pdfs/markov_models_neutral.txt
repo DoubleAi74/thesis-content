@@ -1,0 +1,1048 @@
+           Catalogue of Markov model specifications
+     Extracted from a doctoral thesis on stochastic branching and release processes
+
+
+
+                        Neutral-terminology copy for automated review
+                                           September 2026
+
+
+
+
+Every entry gives the thesis location, state space, transition rates, parameters and attached conventions.
+                       Rates are transcribed verbatim from the chapter sources.
+Contents
+
+Scope and conventions                                                                            2
+
+1 Catalogue at a glance                                                                          3
+
+2 Foundational processes (thesis Chapter 2)                                                       5
+  2.1 M1: Simple random walk . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        5
+  2.2 M2: Galton–Watson branching process (general and binary) . . . . . . . . . . . .            5
+  2.3 M3: Poisson process . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     6
+  2.4 M4: Yule process . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    6
+  2.5 M5: Linear birth–death process, and time-inhomogeneous rates . . . . . . . . . .            6
+  2.6 M6: The birth–death–catastrophe (BDC) process . . . . . . . . . . . . . . . . . .           7
+  2.7 M7: Seasonal two-population process . . . . . . . . . . . . . . . . . . . . . . . . .       8
+  2.8 M8: Logistic-environment type-count process . . . . . . . . . . . . . . . . . . . .         8
+  2.9 M9: Accumulation with gated release (coupled ODE–CTMC, two-way) . . . . . .                 9
+  2.10 M10: Accumulation with surging gated release (mode-driven) . . . . . . . . . . .           9
+  2.11 M11: Absorption-only model . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      10
+  2.12 M12: Absorption–death model . . . . . . . . . . . . . . . . . . . . . . . . . . . .       10
+  2.13 M13: Absorption–birth–death model . . . . . . . . . . . . . . . . . . . . . . . . .       10
+  2.14 M14: Chained immediate transfer (µ = 0 birth–catastrophe chain) . . . . . . . .           11
+  2.15 M15: Budding comparator compartment . . . . . . . . . . . . . . . . . . . . . . .         11
+
+3 The population layer (thesis Chapter 6)                                                        12
+  3.1 M16: Standard two-variable population model (deterministic projection) . . . . .           12
+  3.2 M17: Kernel-driven renewal system . . . . . . . . . . . . . . . . . . . . . . . . . .      12
+  3.3 M18: Branching approximation of the early phase; the flooding parameter . . . .            13
+  3.4 M19: Reset process (recurrent release) . . . . . . . . . . . . . . . . . . . . . . . .     13
+  3.5 M20: Partial release (boolean thinning) . . . . . . . . . . . . . . . . . . . . . . .      14
+  3.6 M21: Budding-kernel extension with sigmoid incidence . . . . . . . . . . . . . . .         14
+
+4 Two-type extension (thesis Chapter 7)                                               15
+  4.1 M22: Two-type birth–death–conversion with type-specific catastrophe rates . . . 15
+
+5 Depletion models (thesis Chapter 8)                                                      17
+  5.1 M23: Replicator–suppressor process . . . . . . . . . . . . . . . . . . . . . . . . . 17
+  5.2 M24: Fixed-removal extension of the chained process . . . . . . . . . . . . . . . . 17
+
+6 Models with non-constant rates (thesis Chapters 9–10)                                          19
+  6.1 M25: Competitive-reversal chain (evolving resistance) . . . . . . . . . . . . . . .        19
+  6.2 M26: Fitness-coupled type-origination variant . . . . . . . . . . . . . . . . . . . .      19
+  6.3 M27: Rise–run–ruin–rejuvenation (RRRR) . . . . . . . . . . . . . . . . . . . . . .         20
+  6.4 M28: Multiplicative-dissipation automaton . . . . . . . . . . . . . . . . . . . . .        20
+  6.5 M29: Birth–conversion model, and the vitality-coupled variant . . . . . . . . . .          21
+
+
+                                                1
+6.6   M30: Public-good accumulation process . . . . . . . . . . . . . . . . . . . . . . . 22
+6.7   M31: Three-environment birth–death ordering . . . . . . . . . . . . . . . . . . . 22
+
+
+
+
+                                            2
+Scope and conventions
+
+This document lists every stochastic model in the source thesis whose law is specified: a state
+space plus a transition mechanism (transition matrix, generator, jump rates, or transition kernel).
+Deterministic population equations are included only where the thesis derives them as exact
+projections of a stochastic model, and the entry says so. Derived results are quoted only where
+they are part of the model’s working apparatus (characteristic roots, regime boundaries, working
+parameter points).
+   Time is continuous and chains are time homogeneous unless an entry says otherwise; o(∆t)
+terms are suppressed. Per-capita rates multiply the relevant count to give total rates. Model
+numbers M1–M31 are used for cross-reference. Sections are cited by thesis chapter and section
+number only.
+
+
+
+
+                                                3
+Chapter 1
+
+Catalogue at a glance
+
+      Model                                         State space                          Where
+M1    Simple random walk                            Z (discrete time)                    §2.2.1.1
+M2    Galton–Watson process (general; binary        {0, 1, 2, . . .} (discrete time)     §2.2.1.2;
+      case)                                                                              Ch. 3
+M3    Poisson process                               {0, 1, 2, . . .}                     §2.2.2.2
+M4    Yule process                                  {1, 2, . . .}                        §2.2.2.3
+M5    Linear birth–death process (incl. time-       {0, 1, 2, . . .}                     §2.2.2.4;
+      inhomogeneous rates)                                                               §2.2.3
+M6    Birth–death–catastrophe process               {0, 1, 2, . . .} ∪ {H}               §2.2.2.5;
+                                                                                         §4.2; §5.2.2
+M7    Seasonal two-population process               {0, 1, . . .}2                       §2.2.3.1
+M8    Logistic-environment type-count process       {1, 2, . . .}, driven by an ODE      §2.2.3.2;
+                                                                                         §9.2
+M9    Gated release (coupled ODE–CTMC)              [0, ∞)2 × {0, 1}                     §2.2.4.1
+M10   Surging gated release                         [0, ∞)2 × {0, 1}                     §2.2.4.2
+M11   Absorption-only model                         {0, . . . , N } pairs                §2.B.1
+M12   Absorption–death model                        compartment pairs                    §2.3.3.2
+M13   Absorption–birth–death model                  compartment pairs                    §2.B.2
+M14   Chained immediate transfer (µ = 0 birth–      one load per compartment, M          §5.10;
+      catastrophe chain)                            compartments                         §8.2.1
+M15   Budding comparator compartment                two independent event streams        §5.11;
+                                                                                         §6.2.2
+M16   Standard two-variable population model        (I, V) ODEs                          §1.5; §6.2.1
+      (deterministic projection)
+M17   Kernel-driven renewal system                  age-structured means                 §6.3–6.4
+M18   Branching approximation of the early          offspring counts                     §6.6
+      phase; flooding parameter L
+M19   Reset process (recurrent release)             {0, 1, 2, . . .} + compartment re-   §6.7.1
+                                                    moval
+M20   Partial release (boolean thinning)            mean-field stock system              §6.7.2
+M21   Budding-kernel extension with sigmoid in-     kernel pair + incidence              §6.7.3
+      cidence
+M22   Two-type birth–death–conversion with          Z2≥0 ∪ {(R, R)}                      §7.2
+      type-specific catastrophe
+M23   Replicator–suppressor process                 {0, . . .} × {0, . . . , N }         §8.3.2
+M24   Fixed-removal extension of the chained        release sizes + budget               §8.4
+      process
+M25   Competitive-reversal chain (evolving resis-   {0, . . . , N } + resistances        §9.3.2
+      tance)
+M26   Fitness-coupled type-origination variant      populations + fitness + type         §9.3.6
+                                                    counts
+
+
+                                                4
+      Model                                          State space                      Where
+M27   Rise–run–ruin–rejuvenation (RRRR)              count + potential (Xt , V (t))   §9.4.2
+M28   Multiplicative-dissipation automaton           L × L lattice + potentials       §9.5
+M29   Birth–conversion model (incl. vitality vari-   {0, 1, . . .}2                   §9.A
+      ant)
+M30   Public-good accumulation process               count + good concentration       §9.B
+M31   Three-environment birth–death ordering         three birth–death processes      §10.3.1
+
+
+
+
+                                                 5
+Chapter 2
+
+Foundational processes (thesis
+Chapter 2)
+
+2.1      M1: Simple random walk
+Specified in §2.2.1.1.
+
+
+State space.      Z, discrete time.
+
+Transitions.      Fix q ∈ (0, 1):
+
+                                      Pi,i+1 = q,       Pi,i−1 = 1 − q.                      (2.1)
+
+Moments and law. E(X    n
+                             ) = X0 + n(2q − 1), Var(Xn ) = 4nq(1 − q); for deterministic X0 ,
+P(Xn = X0 + 2r − n) = nr q r (1 − q)n−r , r = 0, 1, . . . , n.
+
+Anchors. The embedded jump chain of M5 has q = λ/(λ + µ). With absorbing barriers 0 and
+M , the hitting probability of M before 0 is hi = (1 − θi )/(1 − θM ) with θ = (1 − q)/q, reducing
+to i/M at q = 12 .
+
+
+2.2      M2: Galton–Watson branching process (general and binary)
+Specified in §2.2.1.2; developed throughout thesis Chapter 3.
+
+
+State space.      {0, 1, 2, . . .}, discrete time.
+
+Transitions.      With offspring law P(L = k) = pk and mean m = E(L), from Z0 = 1:
+                                                         Zn
+                                                         X
+                                               Zn+1 =          Li ,                          (2.2)
+                                                         i=1
+                                                                                           
+the Li independent copies of L. Under the probability generating function ϕ(z) = E z L the
+generational PGFs compose: ϕn+1 = ϕn ◦ ϕ, ϕ0 (z) = z.
+
+
+
+
+                                                     6
+Binary case used throughout the thesis.
+
+                          p2 = p,       p0 = 1 − p,        pk = 0 (k ∈
+                                                                     / {0, 2}),               (2.3)
+
+with m = 2p, E(Zn ) = (2p)n , ϕ(z) = pz 2 + (1 − p), and the survival recursion
+
+                                    Sn+1 = 2pSn − pSn2 ,        S0 = 1,                       (2.4)
+
+where Sn = P(Zn > 0). For 0 < p ≤ 12 survival decays to zero; for p > 12 it decreases to the fixed
+point (2p − 1)/p.
+
+Chapter 3 apparatus. For 0 < p < 12 the constant A(p) is defined as the limit of Sn /(2p)n
+(existence via a convergent infinite product; degenerate endpoint A(0) = 12 ); the population
+conditioned on survival settles to a quasi-stationary law with mean 1/A(p); near criticality
+A(p) ∼ 2(1 − 2p); rescaling the survival recursion to the logistic map identifies A(p) with a value
+of the associated Koenigs linearising function.
+
+
+2.3      M3: Poisson process
+Specified in §2.2.2.2.
+
+
+State space.      {0, 1, 2, . . .}; sole non-zero transition rate
+
+                                         qn,n+1 = α,        n ≥ 0.                            (2.5)
+
+Law. From N0 = 0: P(Nt = n) = e−αt (αt)n /n!, with E(Nt ) = Var(Nt ) = αt. Thinning with
+retention probability ϖ gives a Poisson process of rate ϖα.
+
+
+2.4      M4: Yule process
+Specified in §2.2.2.3.
+
+
+State space.      {1, 2, . . .} from a single founder; sole non-zero transition rate
+
+                                        qn,n+1 = λn,         n ≥ 1.                           (2.6)
+
+                                       n−1                                     
+Law. P(Yt = n) = e−λt 1 − e−λt        , E(Yt ) = eλt , Var(Yt ) = eλt eλt − 1 ; from k founders,
+the sum of k independent one-founder processes (negative binomial).
+
+
+2.5      M5: Linear birth–death process, and time-inhomogeneous
+         rates
+Specified in §2.2.2.4; §2.2.3 paragraph “Linear birth–death rates”.
+
+
+State space.      {0, 1, 2, . . .}; state 0 absorbing. Non-zero rates out of n ≥ 1:
+
+                                     qn,n+1 = λn,         qn,n−1 = µn.                        (2.7)
+
+µ = 0 recovers the Yule process (M4).
+
+
+                                                      7
+Anchors. From X0 = N the mean is N e(λ−µ)t . Extinction is certain for one founder when
+λ ≤ µ and has probability µ/λ when λ > µ; from N founders, (µ/λ)N . The embedded chain is
+M1 with q = λ/(λ + µ).
+
+Time-inhomogeneous
+        R              variant.
+                                  Per-capita rates λ(t), µ(t). The mean closes: E(Xt | X0 = n0 ) =
+           t
+n0 exp 0 (λ(r) − µ(r)) dr . The backward extinction probability u(s, T ) = P(XT = 0 | Xs = 1)
+satisfies the backward Riccati equation
+                         ∂u
+                            = µ(s) − λ(s) + µ(s) u + λ(s)u2 ,
+                                                
+                     −                                                u(T, T ) = 0,                   (2.8)
+                         ∂s
+                                                                                      Rt           Rs
+whereas the forward-endpoint probability is uf (t) = B(t)/(1+B(t)) with B(t) =         0 µ(s) exp ( 0 (µ(r) − λ(r)) dr) d
+the two endpoints must not be conflated.
+
+
+2.6     M6: The birth–death–catastrophe (BDC) process
+Specified in Definition in §2.2.2.5; restated in §4.2; canonical restatement and notation in §5.2.1–5.2.2.
+Conventions: §4.2.3–4.2.4. Variant: several founders, §5.9..
+
+
+State space. {0, 1, 2, . . .} ∪ {H}: the load within a compartment while it remains intact, with
+H a distinct absorbing rupture state. Both 0 and H are absorbing.
+
+Transitions. Each unit independently gives birth at rate λ, dies at rate µ, and triggers
+catastrophe (rupture) at rate δ. For n ≥ 1 the non-zero transition rates are
+
+                            qn,n+1 = λn,        qn,n−1 = µn,      qn,H = δn,                          (2.9)
+
+and, in first-step form,
+
+          P(∆Xt = 1, ∆Wt = 0 | Xt = n) = λn ∆t + o(∆t)                                (birth)
+        P(∆Xt = −1, ∆Wt = 0 | Xt = n) = µn ∆t + o(∆t)                                 (death)       (2.10)
+      P(Xt+∆t = H, Wt+∆t = n | Xt = n) = δn ∆t + o(∆t)                                (catastrophe)
+          P(∆Xt = 0, ∆Wt = 0 | Xt = n) = 1 − (λ + µ + δ)n ∆t + o(∆t)                  (no event).
+
+Default initial condition: Xt = 1 (working point (λ, µ, δ) = (1, 0.2, 0.05) in the Chapter 4 figures).
+
+Release counter.         With τ = inf{t : Xt = H} the catastrophe time,
+                                        (
+                                           0,       t < τ,
+                                 Wt =                          K := Xτ −                            (2.11)
+                                           Xτ − ,   t ≥ τ,
+
+is the released count and K the release size at rupture. The left limit is essential.
+
+Two conventions for rupture (§4.2.3). Sending rupture to 0 instead of H is killing; sending
+it to H is catastrophe (the thesis’s convention). Killing makes internal extinction and rupture
+indistinguishable; with H separate one may distinguish the internal-extinction probability D,
+the rupture probability 1 − I, and the productive probability Ifix = I − D.
+
+Numerical-load convention (§4.2.4). Wherever Xt appears arithmetically, H 7→ 0; K
+(release size) is unrelated to K(t) = E Xt2 (second moment).
+
+
+                                                      8
+Characteristic roots and fixation functions (§5.2). With η = (λ + µ + δ)/(2λ),
+                                  q                              q
+                         a=η+         η 2 − µλ ,         b=η−        η 2 − µλ ,   b < 1 < a,                     (2.12)
+                                                   p
+A := a−1, B := 1−b, θ := λ(a−b) =                      (λ + µ + δ)2 − 4λµ, and AB = δ/λ. The no-catastrophe
+and internal-extinction probabilities
+
+I(t) = P(no catastrophe by t) ,              D(t) = P(internal extinction by t, no catastrophe) ,
+                                                                                           Ifix (t) = I(t)−D(t
+                                                                                        (2.13)
+both satisfy the Riccati equation dI
+                                  dt = λ(I − a)(I − b) = µ − (λ + µ + δ)I + λI 2 , differently
+                                                                    ab(w−1)          (a−b) w                     2
+initialised (I(0) = 1, D(0) = 0), with closed forms I = aB+bAw
+                                                         B+Aw , D = aw−b , Ifix = (B+Aw)(aw−b)
+at w = eθt . b is the probability of clearing internally without ever rupturing. Anchors used
+later: V∞ = E(Wt (∞)) = a(1−b)       aB
+                             a−1 = A , E(K | catastrophe) = a/(a − 1), and the mean productive
+lifetime E[Tprod ] = λ−1 log a−1 .
+                              a
+
+
+
+Several founders (§5.9). From founding multiplicity k, the fixation functions become
+I(α)k − D(α)k with release kernel gk (α) = δKk (α); families founded independently factor until
+the first catastrophe, which stops all lineages at once.
+
+Provenance note. The classical treatments cited in §5.2.2 allow immigration and distributed
+catastrophe sizes; the thesis specialises to the constant-rate, unit-catastrophe case above. A
+state-dependent
+            catastrophe is not a mean-fieldP hazard: P(no catastrophe before generation n) =
+          E
+E (1 − χ) n over cumulative exposure En = i<n X     e i , and Jensen’s inequality forbids replacing
+En by its mean (§2.2.2.5, Remark).
+
+
+2.7      M7: Seasonal two-population process
+Specified in §2.2.3.1.
+
+
+State space.       {0, 1, . . .}2 : counts Xt , Yt of two interacting populations.
+
+Transitions.       Time-inhomogeneous generator
+
+      q(x,y),(x+1,y) (t) = bS + (t) x,       q(x,y),(x−1,y+1) (t) = exy,          q(x,y),(x,y−1) (t) = dy,       (2.14)
+
+with seasonal multiplier S + (t) = max{0, 1 + A sin(ωt)} (clipped because a rate cannot be
+negative). For A > 1 each period 2π/ω contains a closed season of length (2/ω) arccos(1/A).
+On the axis y = 0 the X population is a time-inhomogeneous Yule process; in the interior
+the first moments involve E(Xt Yt ) and do not close. The deterministic comparison system is
+ẋ = bS + (t)x − exy, ẏ = exy − dy. Exact paths are simulated by thinning against S + (t) ≤ 1 + A.
+
+
+2.8      M8: Logistic-environment type-count process
+Specified in §2.2.3.2; full distribution in §9.2.
+
+                                                                                                                    
+                                                                                            N
+Driving environment. Total abundance N (t) follows the logistic ODE dN       dt = ϱN 1 − K
+(Chapter 9 notation; Chapter 2 uses r, C), with solution N (t) = Keϱt /(ξ + eϱt ), ξ = K/N0 − 1.
+
+
+
+
+                                                             9
+State space and transitions.              St ∈ {1, 2, . . .}, S0 = 1, no removal; a pure birth process with
+time-dependent per-capita rate
+                                                                                ξ
+                         qs,s+1 (t) = β(t) s,    β(t) = σ K − N (t) = σK              .              (2.15)
+                                                                              ξ + eϱt
+Exactly a Yule process under a deterministic time change; one-way coupling (the type count
+does not feed back on N ).
+
+Law. With B(t) = 0t β, the marginal law is geometric, P(St = n) = e−B(t) (1 − e−B(t) )n−1 for
+                           R
+
+n ≥ 1 (§9.2.4); E(St ) = eB(t) converges to the finite limit (K/N0 )σK/ϱ (Chapter 2: (C/N0 )σC/r ),
+                    K
+and B(∞) = σK  ϱ ln N0 , so S∞ is a proper geometric limit.
+
+
+Related numerical variant (§2.2.3.2). A logistic-environment birth–death comparison with
+origination βbd (t) = σN ′ (t) and constant per-type removal ε is used for figure-level comparison
+only.
+
+
+2.9      M9: Accumulation with gated release (coupled ODE–CTMC,
+         two-way)
+Specified in §2.2.4.1.
+
+
+State space. (At , Rt , Gt ) ∈ [0, ∞) × [0, ∞) × {0, 1}: accumulated amount, transferred amount,
+gate. A piecewise-deterministic Markov process.
+
+Flow (between gate jumps).
+                            dAt                              dRt
+                                 = ρ − Gt cAt ,                  = Gt cAt ,                          (2.16)
+                             dt                               dt
+with external input ρ > 0 and transfer rate c > 0.
+
+Jumps.      The gate opens at a state-dependent rate and closes at a constant one:
+  P(Gt+∆t = 1 | Gt = 0, At = a) = ηa ∆t + o(∆t),       P(Gt+∆t = 0 | Gt = 1) = γ ∆t + o(∆t).
+                                                                                            (2.17)
+                                                           d
+Pathwise balance: At + Rt = A0 + R0 + ρt. The moment dt      E(At ) = ρ − cE(Gt At ) is not closed.
+Illustration parameters: ρ = 2, c = 4, η = 0.015, γ = 1.45, (A0 , R0 , G0 ) = (5, 0, 0).
+
+
+2.10       M10: Accumulation with surging gated release (mode-
+           driven)
+Specified in §2.2.4.2.
+
+
+Specification.      The flow and closing rate of M9 are retained; opening is autonomous,
+                                   P(Gt+∆t = 1 | Gt = 0) = ν ∆t + o(∆t),                             (2.18)
+so Gt is an autonomous two-state CTMC. The gate mean closes: E(Gt ) → ν/(ν + γ); the balance
+law is unchanged. Illustration parameters: as M9 with ν = 0.3.
+Context. §2.2.4 also states the three-way taxonomy of couplings (chain switching the vector
+field; prescribed trajectory driving the rates; two-way) with joint generator (Lf )(y, i) = F (y, i) ·
+∇y f + j̸=i qij (y)[f (y, j) − f (y, i)]; M9 is the two-way case and M10 the first case.
+         P
+
+
+                                                       10
+2.11      M11: Absorption-only model
+Specified in Appendix 2.B, §2.B.1.
+
+
+Setting. One compartment drawing particles from a surrounding medium; Xt particles inside,
+Yt outside; X0 = 0, Y0 = N .
+
+Transitions.
+                    P(∆X = 1, ∆Y = −1 | Yt = j) = jα ∆t             (absorption)              (2.19)
+and no event otherwise. Particles are neither created nor destroyed (pi,j (t) = 0 unless i + j = N ).
+
+Law.    Xt ∼ Binomial(N, 1 − e−αt ); single-particle PGF G1 = (1 − e−αt )x + e−αt y.
+
+
+2.12      M12: Absorption–death model
+Specified in §2.3.3.2 worked example.
+
+
+Transitions.     To the absorption channel of M11 add interior death:
+
+               P(∆X = 1, ∆Y = −1 | Yt = j) = jα ∆t,                       (absorption)
+               P(∆X = −1, ∆Y = 0 | Xt = i) = iµ ∆t,                       (death)
+
+with X0 = 0, Y0 = N . Single-particle state probabilities: p0,1 (t) = e−αt , p1,0 (t) = µ−α
+                                                                                         α
+                                                                                            (e−αt −
+e−µt ), p0,0 = 1 − p0,1 − p1,0 ; the N -particle PGF is the N th power of the single-particle one.
+Generator-level PDE: ∂G                  ∂G           ∂G
+                         ∂t = µ(1 − x) ∂x + α(x − y) ∂y .
+
+
+2.13      M13: Absorption–birth–death model
+Specified in Appendix 2.B, §2.B.2–2.B.3; closed form in §2.B.2 Proposition.
+
+
+Transitions.     Absorption as M11/M12 plus interior birth:
+
+               P(∆X = 1, ∆Y = −1 | Yt = j) = jα ∆t,                       (absorption)
+                 P(∆X = 1, ∆Y = 0 | Xt = i) = iλ ∆t,                      (birth)
+               P(∆X = −1, ∆Y = 0 | Xt = i) = iµ ∆t,                       (death)
+
+with X0 = 0, Y0 = N .
+
+Closed form. With x+ = 1, x− = µ/λ, b1 = λ − µ, ω = α/b1 , W = (x − x+ )/(x − x− ) and
+                    ζn
+Ψ(ζ) = x+ + αλ n≥1 n+ω = x+ + (x+ − x− ) (2 F1 (1, ω; ω + 1; ζ) − 1),
+              P
+
+                                        n                             oN
+                          G(x, y, t) = e−αt y − Ψ(W ) + Ψ W eb1 t
+                                                        
+                                                                              .               (2.20)
+
+The parameter-regular convolution representation is g(x, y, t) = e−αt y + αe−αt 0t eαv F (x, v) dv
+                                                                                    R
+
+with F the interior birth–death PGF, and G = g N . Resonance at α = n(µ − λ), n = 1, 2, . . .;
+the generating function stays regular there.
+
+
+
+
+                                                  11
+2.14      M14: Chained immediate transfer (µ = 0 birth–catastrophe
+          chain)
+Specified in §5.10; described as “successive birth–death–catastrophe” in §8.2.1.
+
+
+Specification. M compartments, all empty but one holding a single particle. Each runs the
+µ = 0 BDC process (M6 with µ = 0, so only births λn and catastrophe δn); on rupture the entire
+released load passes immediately and wholesale into a fresh compartment, founding the next
+process with that load as initial census. No extracellular phase, no clearance, no re-founding; all
+M ruptures occur almost surely.
+
+Anchors. With s = δ/(λ+δ) and ρ = λ/(λ+δ) = 1−s: event types ignore the load (birth with
+probability ρ, catastrophe with probability s), the births before catastrophe in a compartment
+founded with any load are G ∼ Geom0 (s), and the kth release size is rk = 1 + G1 + · · · + Gk with
+                                                          !
+                                            n + k − 2 k n−1
+                             P(rk = n) =              s ρ   ,                  n ≥ 1.             (2.21)
+                                              k−1
+
+The case µ > 0 is recorded as open.
+
+
+2.15      M15: Budding comparator compartment
+Specified in §5.11; restated §6.2.2.
+
+
+Specification. A budding compartment experiences two independent Poisson event streams:
+release of one particle at rate p and removal of the compartment at rate dI , continuing until
+removal.
+
+Anchors.
+                                                                        p           
+                          Sbud (α) = e−dI α ,       Vbud (α) =             1 − e−dI α ,           (2.22)
+                                                                       dI
+and the total number released is geometric on {0, 1, 2, . . .}:
+                                                              k
+                                       dI              p
+                                                
+                       P(Kbud = k) =                               ,       k = 0, 1, 2, . . . .   (2.23)
+                                     dI + p         dI + p
+
+Structural contrast with rupture-based release (M6): here release and removal are independent
+events; in M6 they are the same event.
+
+
+
+
+                                                     12
+Chapter 3
+
+The population layer (thesis Chapter
+6)
+
+3.1      M16: Standard two-variable population model (determinis-
+         tic projection)
+Specified in §6.2.1; three-variable version in §1.5.
+
+
+Specification (fixed target count).                 Active compartments I and free particles V obey
+                      dI                              dV                              γT p
+                         = γT V − dI I,                  = p I − c V,          R0 =        ,       (3.1)
+                      dt                              dt                              c dI
+with target sites T fixed, founding rate γ, particle clearance c, release rate p, removal rate dI .
+Deterministic; the thesis shows it is the exact one-compartment limit of M15 and a projection of
+the renewal system M17, not a Markov model itself. §1.5 gives the full three-variable version
+dT               dI                 dV
+ dt = s − γT V , dt = γT V − dI I, dt = pI − cV .
+
+
+3.2      M17: Kernel-driven renewal system
+Specified in Kernels §6.3; system and exactness §6.4.1–6.4.2; skeleton §6.4.3.
+
+
+Intracompartment layer.            The load inside a compartment of age α follows M6. Two kernels:
+                                          (a − b)2 eθα
+              S(α) := Ifix (α) =                             ,          g(α) := δK(α) = V ′ (α),   (3.2)
+                                      (B + Aeθα ) (aeθα − b)
+the survival kernel (probability still productive at age α) and the release kernel (expected release
+flux at age α); g is explicit because a rupture fires at rate δXα and releases Xα , giving δE Xα2 dα.
+                                                                                                 
+
+
+Population system.          With incidence i(t) = γT V(t) and I0 initially active compartments of
+age zero:
+                                      Z t
+               I(t) = I0 Ifix (t) +         i(t − α) Ifix (α) dα = I0 Ifix + (i ∗ Ifix )(t),       (3.3)
+                                        0
+                                  Z t
+             dV
+                (t) = I0 g(t) +         i(t − α) g(α) dα − c V(t) = I0 g + (i ∗ g)(t) − c V(t).    (3.4)
+             dt                    0
+
+These are the first moments exactly of the stochastic process in which each founding event starts
+an independent BDC compartment and each particle founds at rate γT or clears at rate c (linear
+incidence is what closes the hierarchy).
+
+                                                          13
+Skeleton.     Any kernel pair (S, g) induces
+
+                                                      dV
+                 I(t) = I0 S(t) + (i ∗ S)(t),            = I0 g(t) + (i ∗ g)(t) − c V(t),         (3.5)
+                                                      dt
+
+                                                and, for linear incidence, R0 = (γT /c) 0∞ g.
+                                                                                                 R
+with effective parameters peff (r) = ge(r)/S(r)
+                                           e
+Standing assumptions (A1)–(A5): constant T ; continuum convention (particles not consumed
+on founding); synchronous zero-age founding cohort at t = 0; independent compartments, single
+founding; no spatial structure.
+
+
+3.3      M18: Branching approximation of the early phase; the
+         flooding parameter
+Specified in §6.6.1–6.6.2.
+
+
+Specification. Each released particle independently founds a new compartment at rate γT or
+is cleared at rate c, hence founds with probability
+                                                       γT
+                                              q=             .                                    (3.6)
+                                                      γT + c
+
+The offspring of one active compartment is the release size K (M6) thinned by q: offspring PGF
+
+                                              δ y
+                             Goff (z) = b +         ,            y = 1 − q + qz,                  (3.7)
+                                              λ a−y
+
+including the mass b of compartments that never rupture. Mean m = qV∞ (≈ R0 when γT ≪ c).
+The comparator (M15) is matched at equal total output p/dI = V∞ ; its thinned offspring law is
+geometric with the same mean.
+
+Flooding parameter and criterion.
+                                                µ                               L
+                        L := a(1 − b) = a −       ,        so that      V∞ =       .              (3.8)
+                                                λ                              a−1
+                                                                                                    
+                                                              rupture    bud = (L − 1)          1
+For m > 1 the establishment extinction probabilities satisfy zext     − zext                    m −1     ,
+so one-shot release is advantageous if and only if
+                                                                     1  1  1
+                              δ(λ + µ) > λµ            ⇐⇒              < +                        (3.9)
+                                                                     δ  λ µ
+
+(with the condition holding for all δ > 0 when µ = 0).
+
+
+3.4      M19: Reset process (recurrent release)
+Specified in §6.7.1.
+
+
+Specification. While the compartment is alive, the load undergoes birth at rate λn, death at
+rate µn, optional immigration at rate ν, and a dump that resets: at rate δn the whole pool is
+released and the load returns to zero, after which it may re-accumulate; the compartment is
+removed at a separate, load-independent rate dI . Dumps do not absorb.
+
+
+
+                                                      14
+Kernels and anchors.
+                                       h    i
+  S(α) = e−dI α ,      g(α) = δ e−dI α E Xα2 ,        peff (r) = (r + dI ) ge(r),       dI,eff ≡ dI , (3.10)
+
+with E Xα2 computed for the non-absorbing reset process. R0 = (γT /c) 0∞ g is finite only for
+                                                                                  R
+
+dI > 0; in the mature-compartment limit, p∞ = δ Eπ [X 2 ] for stationary law π.
+
+
+3.5        M20: Partial release (boolean thinning)
+Specified in §6.7.2.
+
+
+Specification. Release events fire on the load-dependent clock δX and remove each unit
+independently with probability φ (the default); at mean-field level, with Q the total intracom-
+partmental stock across productive compartments,
+
+           dI                    dQ           Q2                      dV      Q2
+              = γT V − dI I,        = νI − δφ    − dI Q,                 = δφ    − c V.              (3.11)
+           dt                    dt           I                       dt      I
+With a load-independent clock λ(X) = δ instead, mean export is δφQ and the equations collapse
+to stock-and-export dynamics with εeff = δφ: partial release is invisible in the mean field exactly
+when the clock is load-independent; in single-compartment release-count distributions it is always
+visible.
+
+
+3.6        M21: Budding-kernel extension with sigmoid incidence
+Specified in §6.7.3.
+
+
+Specification. A non-catastrophe application: the mean load follows an immigration-like
+x̄′ ≈ ν − µx̄. The skeleton of M17 carries the application on a different kernel pair (Sb , gb ) —
+probability of still being in a productive lineage, and density of productive sojourn times — with
+a multi-stage delay (near-zero release for small α, then rising and falling) supplying the eclipse;
+the effective-parameter map carries over verbatim. Near the observed establishment threshold
+the data favour a sigmoid incidence:
+                                                           V
+                                    f (V, T ) = γT V ·          ,                                    (3.12)
+                                                         KA + V
+under which the first-moment exactness of M17 no longer holds.
+
+
+
+
+                                                 15
+Chapter 4
+
+Two-type extension (thesis Chapter
+7)
+
+4.1      M22: Two-type birth–death–conversion with type-specific
+         catastrophe rates
+Specified in §7.2.1 (definition and rate list), §7.2.2 (occupation-time representation), §7.2.4 (dimensionless
+form).
+
+
+State space.       (x, y) ∈ Z2≥0 before absorption; a single global absorbing state (R, R).
+
+Transitions. Type 1 gives birth at rate λ1 , dies at rate µ1 , and converts irreversibly to type
+2 at rate ν; type 2 gives birth at rate λ2 and dies at rate µ2 ; all rates non-negative. Before
+absorption, the non-zero transition rates from (x, y) are
+                           (x, y) −→ (x + 1, y)                     at rate   λ1 x,
+                           (x, y) −→ (x − 1, y)                     at rate   µ1 x,
+                           (x, y) −→ (x − 1, y + 1)                 at rate   νx,
+                                                                                                                       (4.1)
+                           (x, y) −→ (x, y + 1)                     at rate   λ2 y,
+                           (x, y) −→ (x, y − 1)                     at rate   µ2 y,
+                           (x, y) −→ (R, R)                         at rate   δ1 x + δ2 y,
+the last being the catastrophe: one unit contributes a type-specific rate, and the first trigger
+absorbs the whole process. One reading assigns the types to two internal states of a unit within
+a compartment, catastrophe representing irreversible loss of containment.
+
+Object of study. S(t) = P(1,0) {τc > t} and G(t) = P(0,1) {τc > t}: no-catastrophe probabilities,
+not population-survival probabilities. They admit the occupation-time representation
+                       Z t                                                         Z t                       
+ S(t) = E(1,0) exp −           (δ1 Xs + δ2 Ys ) ds        ,        G(t) = E(0,1) exp −           (δ1 Xs + δ2 Ys ) ds     ,
+                          0                                                                  0
+                                                                                                                       (4.2)
+and satisfy the triangular backward system
+          dS
+             = λ1 S 2 − (λ1 + µ1 + ν + δ1 )S + µ1 + νG,                         S(0) = 1, S ′ (0) = −δ1 ,              (4.3)
+          dt
+          dG
+             = λ2 G2 − (λ2 + µ2 + δ2 )G + µ2 ,                                  G(0) = 1, G′ (0) = −δ2 .               (4.4)
+          dt
+Dimensionless form: time in units of λ1 ; rates µ̂i = µi /λ1 , ν̂ = ν/λ1 , δ̂i = δi /λ1 , λ̂2 = λ2 /λ1 .
+The main formula assumes λ̂2 > 0, δ̂2 > 0, ν̂ > 0; the zero-birth and zero-catastrophe boundaries
+
+                                                              16
+are treated separately, and with the appropriate initial data the zero-catastrophe case recovers
+the two-type branching equations of Antal and Krapivsky. §7.5 compares four catastrophe-rate
+regimes (per-type constant, type-2 only, and mixtures) exactly.
+
+
+
+
+                                              17
+Chapter 5
+
+Depletion models (thesis Chapter 8)
+
+5.1      M23: Replicator–suppressor process
+Specified in §8.3.2 (definition); first-step analysis §8.3.3; fates §8.3.4.
+
+
+Setting. A compartment contains a replicating population and a finite store of suppressor
+units; suppressors are consumed one-for-one as they act, and the store is never replenished.
+
+State space. S = {(i, j) : i ∈ N ∪ {0}, j ∈ {0, . . . , N }}: Xt replicating units in the compart-
+ment, Qt remaining suppressor units (store size N fixed at founding).
+
+Transitions.      For (i, j) ∈ S:
+
+      P(∆Xt = 1, ∆Qt = 0 | Xt = i, Qt = j) = λi ∆t + o(∆t)                         (birth),       (5.1)
+  P(∆Xt = −1, ∆Qt = −1 | Xt = i, Qt = j) = ςij ∆t + o(∆t)                          (suppression), (5.2)
+      P(∆Xt = 0, ∆Qt = 0 | Xt = i, Qt = j) = 1 − (λi + ςij) ∆t + o(∆t) (no event).                (5.3)
+
+The product ςij is the only nonlinearity. The column Xt = 0 is extinction; the row Qt = 0 is
+a spent store, from which the process is a pure birth process and survival is certain. Interest
+centres on P(survival) = 1 − limt→∞ P(Xt = 0); survival is certain whenever the founding cohort
+outnumbers the store (i > j), and in the contested region 1 ≤ i ≤ j the survival map πi,j is
+computed by first-step analysis.
+
+
+5.2      M24: Fixed-removal extension of the chained process
+Specified in §8.4.1–8.4.2; assumptions in §8.4.1 Remarks.
+
+
+Specification. The chained-rupture picture (M14’s complete transfer, or dispersal to new
+compartments) is extended by one assumption: after each release event, a fixed count of units is
+removed. The removal rule is
+                                         (
+                                             r, r ≤ ϑ,
+                            removal =                        that is, min(r, ϑ),                  (5.4)
+                                             ϑ, r > ϑ,
+
+with r the release size and ϑ the fixed removal budget (an idealisation of a saturating casualty
+law ϑ(r) ∼ log(r + 1)). Under the framing used for the calculation, each surviving released unit
+founds a new compartment.
+
+
+                                                      18
+Assumptions. Remover-agent prevalence resets between release events (steady state, uniform
+distribution — this makes ϑ the same at every delivery and the independence exact); the
+release-size distribution is that of M6 including internal-death outcomes (E(r) = V∞ ).
+
+Quantity of interest. The expected replication ratio
+                                                              
+                   R(ϑ) = E(max(0, r − ϑ)) = E(r | r ≥ ϑ) − ϑ P(r ≥ ϑ) ,                (5.5)
+
+the expected number of newly founded compartments created by one founding event. Deliberately
+not the R0 of M17–M18; the relation is stated in §8.5.1.
+
+
+
+
+                                             19
+Chapter 6
+
+Models with non-constant rates
+(thesis Chapters 9–10)
+
+6.1      M25: Competitive-reversal chain (evolving resistance)
+Specified in §9.3.2; critical point §9.3.4.
+
+
+State space. At ∈ {0, 1, . . . , N } in discrete time, two populations with At + Bt = N ; i = 0
+and i = N absorbing. The triple (At , Ra,t , Rb,t ) is Markov; At alone is not.
+
+Transition kernel. For 0 < i < N :
+                                               i
+                                         
+                                         
+                                         qa = (1 − pb ),                    j = i + 1,
+                                              N
+                                         
+                                         
+                                         
+                                         
+                                         q = 1 − i (1 − p ),
+                                         
+                                                   
+                                                                             j = i − 1,
+                                         
+                                           b                a
+                  P(At+1 = j | At = i) =           N                                             (6.1)
+                                               i          i
+                                                           
+                                         
+                                         
+                                         qc = p b + 1 −      pa ,           j = i,
+                                              N           N
+                                         
+                                         
+                                         
+                                         
+                                         
+                                         0                                  otherwise.
+
+Blocking capacities
+                                         Rb                                  Ra
+                                                                               
+                         pa = max 0, 1 −            ,        pb = max 0, 1 −          ,           (6.2)
+                                         Ra                                  Rb
+so at most one of pa , pb is non-zero. Resistances are driven up when the population is in a
+minority:
+                                                 N − At α                             At     α
+                                                                                             
+Rk,t+1 = Rk,t + ε ∆Rk,t ,         ∆Ra,t = max 0,          ,     ∆Rb,t = max 0,                   ,
+                                                   At                              N − At
+                                                                                            (6.3)
+with Ra,0 = Rb,0 = 1 without loss (only ε/R0 matters). The critical state qa = qb is ic = N 1−p
+                                                                                            2−pa
+                                                                                                a
+
+                1
+(pa > 0) or N 2−pb (pb > 0), and is unstable; it is a function of the path, not the parameters
+alone.
+
+
+6.2      M26: Fitness-coupled type-origination variant
+Specified in §9.3.6; recorded as specified but never simulated.
+
+
+
+
+                                                        20
+Specification. The kernel of M25 recast with fitness in place of resistance, a type count carried
+alongside and acting back on fitness:
+                                             At fa                                     At       fb
+                                                                                           
+                        P(∆At = 1) =               ,     P(∆At = −1) = 1 −                         ,                 (6.4)
+                                             N f¯                                      N        f¯
+with f¯ the mean fitness across the domain; fitness updates
+                               Bt α                                                  At α
+                                                                                               
+                                        (a)                                                   (b)
+      fa (t + ∆t) = fa (t) + ε      − γSt ,                 fb (t + ∆t) = fb (t) + ε      − γSt ,                    (6.5)
+                               At                                                    Bt
+and per-population type counts evolving as birth–death processes with constant removal µa and
+dominance-and-fitness origination
+                                                                                 At ζ
+                                                                                
+                                       (a)               (a)
+                             P       ∆St = 1       = βa St ∆t,        βa =            fa .                           (6.6)
+                                                                                 N
+The penalty −γS is the endogenous weakening of the leader; ζ controls how firmly dominance
+must be established before variation is released.
+
+
+6.3      M27: Rise–run–ruin–rejuvenation (RRRR)
+Specified in §9.4.2.
+
+
+State space. Xt ∈ {0, 1, 2, . . .} replicating agencies with an auxiliary real potential V (t); the
+pair (Xt , V (t)) is Markov, Xt alone is not. Described in the source as “a birth–death–catastrophe
+process with catastrophe rate δXt /V (t) and an auxiliary ODE for V ”.
+
+Specification.         Potential flows in and is consumed:
+                                                    dV
+                                                       = ϕ − c Xt .                                                  (6.7)
+                                                    dt
+Given V , the count moves by
+        P(∆Xt = 1 | Xt ) = λXt ∆t + o(∆t)                                                              (proliferation),
+                              Xt
+      P(Xt+∆t = 0 | Xt ) = δ       ∆t + o(∆t)                                                          (catastrophe),
+                             V (t)
+   P(Xt+∆t = 1 | Xt = 0) = ω ∆t + o(∆t)                                                                (revival),    (6.8)
+                                          Xt
+                                                          
+         P(Xt+∆t = Xt ) = 1 − λXt + δ          + ω1{Xt = 0} ∆t + o(∆t)                                 (no event).
+                                         V (t)
+Catastrophe is driven by per-capita scarcity; revival keeps 0 from absorbing, making the process
+recurrent. V stays positive for all time (the hazard diverges as V ↓ 0). Illustration parameters:
+ϕ = 4, c = 0.8, λ = 0.5, δ = 0.25, ω = 0.15.
+
+
+6.4      M28: Multiplicative-dissipation automaton
+Specified in §9.5 (state, competition, mutation and potential, fragmentation).
+
+
+State space. An L × L lattice (L = 256; Moore neighbourhood, periodic boundary, torus),
+each cell empty or occupied. Every occupied cell carries a type and, within it, a sub-type. For
+each extant type i: accumulated potential Vi (real), occupied cells Ni , extant sub-types Xi ≤ Ni .
+Continuous updates (potential, mutation) advance in chunks between discrete contests (one
+attempt per site per sweep).
+
+                                                          21
+Competition.       A cell ζ carrying sub-type u of type i has strength
+                                                                             Ni
+                          w(ζ) = Vi × (nζ + 1)θ × e−ν|u|/κi ,         κi =      ,                    (6.9)
+                                                                             Xi
+with nζ matching neighbours at the contest level and |u| the area of u; the contest goes to
+ζ with probability w(ζ)/(w(ζ) + w(ζ ′ )). Between sub-types of one type the potential cancels;
+                                                                      VA (nA +1)θ
+between distinct types the rarity factor is omitted, P(A wins) = V (n +1) θ +V (n +1)θ . Contests
+                                                                  A A         B   B
+against empty ground: fixed strength d, an occupied cell takes a contested empty neighbour
+with probability 1 − d, empty ground never invades.
+
+Mutation and potential. Sub-types arise within a type at type-wide rate Rimut = m Vi Ni
+(per-cell rate mVi ). Each occupied cell supplies potential at rate φ and each extant sub-type
+costs c:
+                                dVi
+                                     = φNi − c Xi ,  floored at 0,                       (6.10)
+                                 dt
+so potential can fall at all only if c > φ.
+
+Fragmentation. When a type carries too many sub-types it fragments: every sub-type
+becomes an independent type at once (nothing dies; the interaction law changes). Two triggers,
+tested in order: deterministically if the potential update would take Vi to zero or below; otherwise
+with hazard
+                                                       Xi
+                                            Rifrag = δ    ,                                   (6.11)
+                                                       Vi
+M27’s catastrophe rate with the count of individuals replaced by the count of types. No revival
+term is needed: the catastrophe restarts the process.
+
+
+6.5     M29: Birth–conversion model, and the vitality-coupled vari-
+        ant
+Specified in Appendix 9.A; simulated but not analysed.
+
+
+State space.     Xt unconverted individuals, Yt converted.
+
+Transitions.
+
+         P(∆Xt = 1, ∆Yt = 0 | Xt , Yt ) = λXt ∆t + o(∆t)                            (birth),        (6.12)
+                                                       
+       P(∆Xt = −1, ∆Yt = 1 | Xt , Yt ) = δ + χYt Xt ∆t + o(∆t)                      (conversion),   (6.13)
+       P(∆Xt = 0, ∆Yt = −1 | Xt , Yt ) = µYt ∆t + o(∆t)                             (clearance).    (6.14)
+
+δ is the spontaneous-conversion rate (linear in Xt ) and χ the contact-conversion coefficient (bilin-
+ear Xt Yt ); the two mechanisms superpose in one channel. Illustration parameters: (λ, δ, χ, µ) =
+(1, 0.1, 0.02, 10).
+
+Vitality-coupled variant. Carry V (t) with dV
+                                           dt = ϕ − c Xt and replace the middle channel by
+
+                                                               δ
+                                                                      
+                P(∆Xt = −1, ∆Yt = 1 | Xt , Yt ) =                  + χYt Xt ∆t + o(∆t),             (6.15)
+                                                             V (t)
+
+the other channels unchanged; a population that grows large drives V down and raises its own
+loss rate. Not simulated.
+
+                                                  22
+6.6      M30: Public-good accumulation process
+Specified in Appendix 9.B.
+
+
+State space.      Xt units within one compartment and P (t) the public-good concentration.
+
+Specification.
+                               dP
+                                    = g Xt − c,
+                               dt
+                   P(∆Xt = 1 | Xt ) = λ(t) Xt ∆t + o(∆t),       λ(t) = λ0 + αP (t),           (6.16)
+                 P(∆Xt = −1 | Xt ) = µ Xt ∆t + o(∆t),
+
+with production rate g per unit, clearance c, base birth rate λ0 , public-good advantage α, death
+rate µ. The regime of interest is µ > λ0 : subcritical alone, supercritical once enough good has
+accumulated.
+
+Embedded Galton–Watson reading. In a compartment-to-compartment sequence the
+process is a Galton–Watson process, supercritical exactly when limt→∞ P(Xt > 0 | X0 = K) > 12 ;
+the minimum founding cohort is
+                                                                          
+                             ∗
+                         K = inf K :         lim P(Xt > 0 | X0 = K) > 21       .              (6.17)
+                                            t→∞
+
+Illustration parameters: (λ0 , α, g, c) = (0.6, 0.25, 0.15, 0.45), so P falls whenever Xt < c/g = 3.
+
+
+6.7      M31: Three-environment birth–death ordering
+Specified in §10.3.1.
+
+
+Specification. Replication in each of three environments indexed i ∈ {1, 2, 3} in increasing
+order of hostility — treated as a simple birth–death process (M5) with rates (βi , µi ) — with
+
+                             µ3 > µ2 > µ1      and     β1 = β2 = β3 = β,                      (6.18)
+
+so the net rates order as β − µ1 > β − µ2 > β − µ3 . A consistency argument, not a derivation:
+the ordering is inferred from the strategy it is meant to explain. (The surrounding discussion
+notes that with a depletable suppressor store, as in M23, the µi are in reality declining functions
+of the cohort’s history.)
+
+
+
+
+                                                  23
+

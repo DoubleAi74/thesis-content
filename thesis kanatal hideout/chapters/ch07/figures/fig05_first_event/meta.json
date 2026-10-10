@@ -1,0 +1,38 @@
+{
+  "figure": "fig05",
+  "slug": "first_event",
+  "title": "First-event contribution map for the backward equations",
+  "kind": "symbolic schematic (vector diagram)",
+  "supports_section": "sections/02_model.tex — First-event calculation",
+  "method": "TikZ (standalone) compiled with pdflatex; rasterised to PNG with Ghostscript",
+  "ai_image_generation": false,
+  "parameters": "symbolic only — no numeric parameter values",
+  "symbols_used": ["lambda_1", "mu_1", "nu", "delta_1", "lambda_2", "mu_2", "delta_2", "S(t)", "G(t)"],
+  "seed": null,
+  "numerical_agreement": "not applicable (no integration or simulation)",
+  "outputs": {
+    "pdf": "fig05.pdf",
+    "png": "fig05.png",
+    "png_pixels": [4377, 3906],
+    "png_dpi": 600,
+    "png_background": "opaque white"
+  },
+  "reproduces": {
+    "type1_ode": "dS/dt = lambda_1 S^2 - (lambda_1 + mu_1 + nu + delta_1) S + mu_1 + nu G",
+    "type2_ode": "dG/dt = lambda_2 G^2 - (lambda_2 + mu_2 + delta_2) G + mu_2"
+  },
+  "palette": {
+    "type1_S": "#0072B2",
+    "type2_G": "#D55E00",
+    "catastrophe_error": "#9a2820",
+    "certain_survival": "#2e7d32",
+    "ink": "#1a1c1f",
+    "soft_ink": "#565b62"
+  },
+  "tools": {
+    "pdflatex": "pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024)",
+    "ghostscript": "10.05.1",
+    "tikz_libraries": ["positioning", "calc", "arrows.meta", "shapes.geometric", "backgrounds"],
+    "fonts": "lmodern (Latin Modern)"
+  }
+}

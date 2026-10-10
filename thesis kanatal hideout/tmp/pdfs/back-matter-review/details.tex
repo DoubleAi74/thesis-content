@@ -1,0 +1,253 @@
+% Detailed originality index: sections 1--4 of originality.tex.
+% The source report and its standalone PDF are retained as a record.
+% In main.tex this follows Chapter 10 and precedes the pooled references.
+\chapter*{Originality of the results}
+\phantomsection
+\label{oi:details}
+\addcontentsline{toc}{chapter}{Originality of the results}
+\markboth{ORIGINALITY OF THE RESULTS}{ORIGINALITY OF THE RESULTS}
+\begingroup
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.25\baselineskip}
+\setlength{\tabcolsep}{4.5pt}
+
+\oisec{1. Statements not found in the literature as written}
+\phantomsection\label{oi:statements}
+
+{\footnotesize\noindent
+The method behind each is published; these are original \emph{statements} obtained by
+specialising it, not a new theory of branching. Each was searched against the chapter
+bibliographies and the wider literature, then challenged adversarially.\par}
+
+\vspace{0.35\baselineskip}
+{\footnotesize
+\begin{xltabular}{\linewidth}{@{}>{\raggedright\arraybackslash}p{20mm}O>{\raggedright\arraybackslash}p{40mm}@{}}
+\toprule
+\oihead{Where} & \oihead{The statement} & \oihead{Nearest published work} \\
+\midrule
+\endfirsthead
+\toprule
+\oihead{Where} & \oihead{The statement} & \oihead{Nearest published work} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+\oiref{Thm}{p:thm:flood}\newline p.\,\pageref{p:thm:flood} &
+\textbf{The flooding identity.} At matched lifetime yield the extinction probabilities of
+bursting and budding differ by exactly $\Delta z_{\mathrm{ext}}=(L-1)(1/m-1)$, so bursting
+favours establishment precisely when $L>1$, equivalently when $1/\delta<1/\lambda+1/\mu$. &
+Pearson, Krapivsky and Perelson (2011) find $p_v^{\mathrm{burst}}\le p_v^{\mathrm{cont}}$ ---
+bursting always favoured --- from a fixed burst size, with no parameter that can reverse the
+order. \\
+\addlinespace[3pt]
+
+\oiref{Prop}{p:prop:L1}\newline p.\,\pageref{p:prop:L1} &
+\textbf{Coincidence of the offspring laws.} At $L=1$ the bursting and budding offspring
+\emph{distributions} coincide, not merely their extinction probabilities: the burst
+generating function collapses to the geometric $(1-\varrho)/(1-\varrho z)$. The variance
+gap $2q^{2}V_\infty(L-1)/(a-1)$ changes sign with $L-1$. &
+Pearson's geometric comparator; Karlin and Tavar\'e's geometric killing position. Neither
+yields a coincidence of laws. \\
+\addlinespace[3pt]
+
+\oiref{Thm}{tt:thm:main}\newline p.\,\pageref{tt:thm:main} &
+\textbf{Exact finite-time survival under two-type killing.} A closed form for the
+no-catastrophe probability of the triangular two-type birth--death process with
+type-specific catastrophe rate $\delta_1X+\delta_2Y$, as a Wronskian mixture of a
+real-axis ${}_2F_1$ pair. &
+Antal and Krapivsky (2011) apply the same Gauss reduction to terminal counts without
+killing. Setting $\delta=0$ here forces $S\equiv G\equiv1$ and does \emph{not} return
+their generating functions. \\
+\addlinespace[3pt]
+
+\oiref{Eq.}{eq:pgf-F1-solution}\newline p.\,\pageref{eq:pgf-F1-solution} &
+\textbf{The killed bivariate generating function.} The defective PGF under the same
+killing, by the same Wronskian mixture. This is the object for which $\delta_i=0$
+\emph{does} recover Antal--Krapivsky, and it is what makes the previous entry a different
+observable rather than a reparametrisation. &
+Antal and Krapivsky (2011), eqs.\ (25)--(29), recovered here as the $\delta_i\to0$ limit. \\
+\end{xltabular}\par}
+
+% =====================================================================
+\clearpage
+\oisec{2. Extensions: an ancestor, and what is added to it}
+
+{\footnotesize\noindent
+Ordered by chapter. In each case a published result is the ancestor; the thesis changes
+the process, the object, the hypotheses, or the biological reading.\par}
+
+\vspace{0.35\baselineskip}
+{\footnotesize
+\begin{xltabular}{\linewidth}{@{}>{\raggedright\arraybackslash}p{20mm}O>{\raggedright\arraybackslash}p{40mm}@{}}
+\toprule
+\oihead{Where} & \oihead{The increment} & \oihead{Ancestor} \\
+\midrule
+\endfirsthead
+\toprule
+\oihead{Where} & \oihead{The increment} & \oihead{Ancestor} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+\oiref{\S}{m:sec:gated}\newline p.\,\pageref{m:sec:gated} &
+Gated release in which the opening intensity $\eta A_t$ depends on the accumulated load,
+rather than switching autonomously. &
+Davis's piecewise-deterministic Markov processes; autonomous on--off queues. \\
+\addlinespace[3pt]
+
+\oiref{Thm}{gw:thm:main}\newline p.\,\pageref{gw:thm:main} &
+$A(p)=2\psi_{2p}(1/2)$ identifies Kolmogorov's constant with the Koenigs linearising
+function of the logistic map, and that function is hypertranscendental --- so it admits no
+elementary closed form. &
+Kolmogorov (1938) for $A(p)$ itself; Koenigs (1884); Becker and Bergweiler (1995) for
+hypertranscendence. \\
+\addlinespace[3pt]
+
+\oirange{Thms}{bdc:thm:V}{bdc:thm:Wsq}\newline pp.\,\pageref{bdc:thm:V}--\pageref{bdc:thm:Wsq} &
+The released count $W_t$ carried as a second coordinate: its mean, second moment and
+variance at \emph{finite} time, as functions of $I(t)$. &
+Karlin and Tavar\'e's killing position is the \emph{eventual} geometric, not a
+time-dependent release coordinate. \\
+\addlinespace[3pt]
+
+\oiref{Prop}{bdc:prop:polynomial}\newline p.\,\pageref{bdc:prop:polynomial} &
+Every load moment is a polynomial $Q_p(I)$ of degree $p+1$ with roots $a,b$ and leading
+coefficient $(-1)^p p!\,(\lambda/\delta)^p$ --- one economy organising the whole moment
+hierarchy. &
+The moments themselves sit inside the 1982 generating function; the organisation is what
+is added. \\
+\addlinespace[3pt]
+
+\oiref{Thm}{dist:thm:identity}\newline p.\,\pageref{dist:thm:identity} &
+Burst size equals the quasi-stationary law, proved by size-biasing: the weight $k$ makes
+the burst-time integrand a perfect differential, which telescopes to the endpoint.
+Remark~\ref{dist:rem:criterion} gives a \emph{sufficient} criterion for it; necessity is left open. &
+Karlin and Tavar\'e give the killing-position law and the quasi-stationary law separately,
+in different lemmas. \\
+\addlinespace[3pt]
+
+\oirange{Props}{dist:prop:taugivenk}{dist:prop:tauburst}\newline pp.\,\pageref{dist:prop:taugivenk}--\pageref{dist:prop:tauburst} &
+Burst timing: at $\mu=0$ the time to a burst of size $n$ is harmonic in $n$ with a Gumbel
+limit; with death, a closed mean conditional on bursting. &
+Classical Yule maxima, not previously written as a law for a lytic single-cell assay. \\
+\addlinespace[3pt]
+
+\oirange{\S}{dist:sec:moi}{dist:sec:chained}\newline pp.\,\pageref{dist:sec:moi}, \pageref{dist:sec:chained} &
+Multi-founder kernels $g_k$ with sub-extensive yield $k+\lambda/\delta$; a chained
+immediate-transfer process with negative-binomial rupture sizes and interval Laplace
+transforms. &
+The branching property is classical; the yield identity, and the failure of the naive free
+sum, are the additions. \\
+\addlinespace[3pt]
+
+\oiref{Def}{p:def:renewal-system}, \oiref{Eq.}{p:eq:skeleton}\newline pp.\,\pageref{p:def:renewal-system}--\pageref{p:eq:skeleton} &
+An age-structured within-host system driven by \emph{closed-form} birth--death--catastrophe
+kernels, with no free production kernel left to fit. &
+Nelson, Gilchrist, Coombs, Hyman and Perelson (2004), who leave the age-dependent kernel
+$P(a)$ free. \\
+\addlinespace[3pt]
+
+\oiref{Thm}{p:thm:projection}\newline p.\,\pageref{p:thm:projection} &
+A projection of the exponential phase onto an effective pair
+$(p_{\mathrm{eff}},d_{I,\mathrm{eff}})$, with closed endpoints --- so a fitted burst rate
+is a property of the phase, not of the cell. &
+Euler--Lotka renewal theory; Wallinga and Lipsitch on generation intervals. \\
+\addlinespace[3pt]
+
+\oiref{\S}{p:sec:identifiability}\newline p.\,\pageref{p:sec:identifiability} &
+A concrete three-to-two identifiability obstruction: $(\lambda,\mu,\delta)$ is not
+recoverable from population data alone. &
+Miao, Xia, Perelson and Wu (2011) on structural non-identifiability. \\
+\addlinespace[3pt]
+
+\oiref{Prop}{prop:feynman-kac}\newline p.\,\pageref{prop:feynman-kac} &
+A Feynman--Kac representation for the joint two-type occupation hazard, with a mesh-limit
+argument for the pathwise exponential weight. &
+Standard first-step decomposition for one type; the joint two-type object is the increment. \\
+\addlinespace[3pt]
+
+\oiref{Prop}{prop:lambda2-zero}\newline p.\,\pageref{prop:lambda2-zero} &
+At $\lambda_2=0$ the solution is built on \emph{ordinary} Bessel functions
+$J_\rho,Y_\rho$, a different boundary of the parameter space. &
+Antal and Krapivsky's bi-critical case uses \emph{modified} Bessel functions, from a
+different equation. \\
+\addlinespace[3pt]
+
+\oiref{Def}{path:def:rs}, \oiref{Prop}{path:prop:certainty}\newline pp.\,\pageref{path:def:rs}--\pageref{path:prop:certainty} &
+A replicator--suppressor process in which suppressors are consumed one-to-one and never
+replenished. The escape wall $i>j$ is then rate-\emph{independent}: a counting argument, no
+rates enter. &
+Pilyugin and Antia (2000) limit clearance by \emph{handling time}: an engaged effector is
+occupied, then returns to the free pool. Their threshold therefore depends on the rates. \\
+\addlinespace[3pt]
+
+\oiref{Prop}{path:prop:ratio}, \oiref{Cor}{path:cor:threshold}\newline pp.\,\pageref{path:prop:ratio}--\pageref{path:cor:threshold} &
+Under an integer removal budget $\vartheta$, the surviving fraction is
+$\mathcal{R}(\vartheta)=V_\infty a^{-\vartheta}$ with threshold
+$\vartheta^\ast=\log V_\infty/\log a$. &
+Geometric stop-loss is actuarial folklore; not found for a catastrophe process under an
+integer immune budget. \\
+\addlinespace[3pt]
+
+\oiref{Prop}{path:prop:reversal}\newline p.\,\pageref{path:prop:reversal} &
+Under threshold removal the flooding criterion \emph{reverses}: bursting now wins exactly
+when $L<1$. The same dimensionless group orders the comparison in both directions. &
+Yuan and Allen (2011) find the ranking of budding and bursting to depend on whether the immune
+response is activated, by a different mechanism. \\
+\addlinespace[3pt]
+
+\oiref{Cor}{var:cor:logistic-limit}\newline p.\,\pageref{var:cor:logistic-limit} &
+A two-layer clock: speciation intensity tracks unused \emph{individual} capacity through a
+separate logistic abundance layer, not the species count. The limit law is geometric, with
+a variance not previously recorded. &
+Kendall (1948) time-dependent Yule; diversity-dependent models act on species number. \\
+\addlinespace[3pt]
+
+\oiref{Eq.}{var:eq:icrit}\newline p.\,\pageref{var:eq:icrit} &
+A closed form for the moving unstable critical point of the Pimentel resistance chain: a
+reversal is that point crossing the leading population. &
+Pimentel (1965) supplies the chain; no antecedent was identified for the critical point. \\
+\end{xltabular}\par}
+
+% =====================================================================
+\oisec{3. Inherited, and cited as such}
+
+{\footnotesize\noindent
+Naming these is what makes the two sections above legible as increments.
+\textbf{Karlin and Tavar\'e (1982)} supply the killed birth--death process itself: the
+linear-fractional generating function, the closed forms $I(t)$, $D(t)$, $J(t)$, $K(t)$, the
+roots $a,b$, the geometric occupancy and the geometric killing position. \textbf{Brockwell,
+Gani and Resnick (1982)} is the more general neighbour, admitting immigration and random
+catastrophe sizes. \textbf{Kolmogorov (1938)} and \textbf{Yaglom (1947)} give the constant
+$A(p)$, the critical decay $S_n\sim2/n$ and the conditioned limit law; \textbf{Pakes (2026)}
+is the current word on whether that constant admits an explicit form.
+\textbf{Kendall (1948)} gives the linear birth--death generating function reused throughout,
+and the time-dependent Yule process of Chapter~9. \textbf{Antal and Krapivsky (2011)} give
+the triangular two-type process and its Gauss reduction. \textbf{Perelson (1996)}, \textbf{Nowak
+and Bangham (1996)} and \textbf{McLean (1993)} give constant-rate viral replication;
+\textbf{Pearson, Krapivsky and Perelson (2011)} give the invariance of $R_0$ under matched
+lifetime yield and the establishment comparison; \textbf{Komarova (2007)} gives flooding as a
+biological idea, and \textbf{Yuan and Allen (2011)} a published ranking switch under an immune
+term. \textbf{Nelson et al.\ (2004)} give the age-structured system; \textbf{Miao et al.\
+(2011)} non-identifiability; \textbf{Pilyugin and Antia (2000)} finite nonspecific killers.
+\textbf{Nee, May and Harvey (1994)} give the push of the past, against a large
+diversity-dependent literature. \textbf{Ke, Chen and Yang (2013)} give the temperature- and
+pH-dependent account of the \yp{} switch.\par}
+
+% =====================================================================
+\oisec{4. Scope of the claims}
+
+{\footnotesize\noindent
+``Not found'' is not a proof of absence. Where the evidence was thin the claim was weakened
+rather than strengthened, and every statement in \hyperref[oi:statements]{Section~1 of this index} has a published ancestor supplying
+the method --- so each is written as an original identity obtained by specialising a known
+technique. Three things are deliberately \emph{not} claimed: the killed birth--death process
+and its closed forms, which are Karlin and Tavar\'e's; the constant $A(p)$, which is
+Kolmogorov's; and the comparison of bursting with budding as a question, which is Pearson's
+and Komarova's. What is claimed is the calculus built on the first, the Koenigs dictionary
+for the second, and the criterion $L$ that settles the third in both directions.\par}
+
+
+\endgroup

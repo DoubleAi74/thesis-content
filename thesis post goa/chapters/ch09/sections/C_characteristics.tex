@@ -1,0 +1,94 @@
+% Appendix C --- generating function of the inhomogeneous Yule process.
+% Moved from the body of \S2 so that section can keep the proposition, the
+% mean integral and the limit law, which are the new content.
+
+\section{The inhomogeneous Yule generating function}
+\label{var:app:pgf}
+
+The proof of \cref{var:prop:yule-geom} is the standard generating-function
+computation for a pure birth process, with $\beta t$ replaced by
+$\Bint(t)$. It is recorded here rather than in the body, because the
+method of characteristics is \ChM{}'s and is not being rebuilt.
+
+\subsection{The generating function}
+\label{var:sec:pgf}
+
+The forward Kolmogorov equation for this system is that of the pure birth
+process with the rate carrying a $t$; writing $p_n(t)=\pr{S_t=n}$ and
+expanding over a vanishing interval gives
+\begin{equation}
+\ddt{p_n}=\beta(t)(n-1)p_{n-1}-\beta(t)n\,p_n,
+\label{var:eq:fke}
+\end{equation}
+an instance of \cref{m:eq:inhomogkolmogorov}. Multiplying by $z^n$ and
+summing turns it into a first-order partial differential equation for
+$G(z,t)=\sum_{n\ge1}p_n(t)z^n$,
+\begin{equation}
+\pddt{G}=\beta(t)\,z(z-1)\,\pdd{G}{z},
+\label{var:eq:pgfpde}
+\end{equation}
+and despite the time dependence this still yields to the method of
+characteristics, \cref{m:sec:moc}. Introduce characteristic variables
+$(s,\tau)$ with
+\begin{equation}
+z(s,\tau=0)=s,\qquad t(s,\tau=0)=0,
+\label{var:eq:charics}
+\end{equation}
+along which
+\begin{equation}
+\dda{G}{\tau}=0,
+\qquad
+\dda{t}{\tau}=-1,
+\qquad
+\dda{z}{\tau}=\beta(t)\,z(z-1).
+\label{var:eq:chareqs}
+\end{equation}
+The first says $G$ is a function of $s$ alone and the second gives $t=-\tau$.
+With a single founding species $G(z,0)=z$, so on the initial curve $G=s$,
+and therefore $G=s$ everywhere: the whole problem is to express $s$ in terms
+of $z$ and $t$.
+
+The third characteristic equation separates. Using $\dd\tau=-\dd t$ on the
+right,
+\begin{equation}
+\int\frac{\dd z}{z(z-1)}=\int\beta(-\tau)\,\dd\tau=-\int\beta(t)\,\dd t,
+\label{var:eq:charsep}
+\end{equation}
+and since the left side integrates to $\ln\bigl((z-1)/z\bigr)$ this is
+\[
+\ln\lrb{\frac{z-1}{z}}=-\Bint(t)+\text{const}.
+\]
+The initial conditions \cref{var:eq:charics} fix the constant as
+$\ln\bigl((s-1)/s\bigr)$, because $\Bint(0)=0$. Hence
+$(z-1)/z=\bigl((s-1)/s\bigr)\ee^{-\Bint(t)}$, which rearranges to
+\[
+s=\lrb{1-\frac{z-1}{z}\,\ee^{\Bint(t)}}^{-1},
+\]
+and so
+\begin{equation}
+G(z,t)=\frac{z}{z+(1-z)\,\ee^{\Bint(t)}}.
+\label{var:eq:pgf}
+\end{equation}
+Differentiating with respect to $z$ and setting $z=1$ returns
+$\ex{S_t}=\ee^{\Bint(t)}$, which is \cref{var:eq:meanode} again by a
+different route.
+
+\subsection{The distribution}
+\label{var:sec:distribution}
+
+Write $p=\ee^{-\Bint(t)}$ and divide numerator and denominator of
+\cref{var:eq:pgf} by $\ee^{\Bint(t)}$:
+\begin{equation}
+G(z,t)=\frac{pz}{1-(1-p)z},
+\label{var:eq:geompgf}
+\end{equation}
+which is the \pgf{} of a geometric law on $\{1,2,\dots\}$ with success
+parameter $p$. That is \cref{var:eq:geomlaw}, and it completes the proof of
+\cref{var:prop:yule-geom}. Repeated differentiation of \cref{var:eq:pgf},
+which was the route originally taken, gives $\partial_z^{\,n}G
+=n!\,\ee^{\Bint}(\ee^{\Bint}-1)^{n-1}
+(z(1-\ee^{\Bint})+\ee^{\Bint})^{-(n+1)}$, and the inversion formula
+$\pr{S_t=n}=(n!)^{-1}\partial_z^{\,n}G|_{z=0}$ of \cref{m:eq:pgfdef} returns
+the same law.
+
+\FloatBarrier

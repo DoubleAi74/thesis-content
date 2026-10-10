@@ -1,0 +1,74 @@
+\section{Quadrant argument}
+
+
+
+To begin  understanding YP's particular invasion strategy, we can start by painting a schematic picture of the circumstances it comes up against in the body. For some reason YP has evolved to at first grow intracellularly, then transition to primary extracellular replication. Let us simplify
+ the case of intracellular replication to being within either macrophages or neutrophils only (ignoring for simplicity the presence of dendritic cells, eosinophils, basophils and mast cells. Though these are no doubt also relevant in reality). We can make the simple assumption that the within-neutrophil environment is more hostile to YP than that of Macrophages. 
+
+Macrophages are the run of the mill, generalist leukocyte whereas neutrophils are more specialist killers. As I understand it, it is mainly neutrophils that are recruited and released on mass in response to recognition of such a bacterial infection as YP.  
+
+If we took YP replication to be a simple BD process, this assumption would be reflected in the death rate within neutrophils being higher than that within macrophages. There is the complication discussed previously where killing within leukocytes has something to do with granules (neutrophils
+ have more of these). This producing the aforementioned non-autonomous effects. But here, it seems sufficient to gloss over this underlying reality to take the death rate as merely fixed. 
+
+So $\mu_N > \mu_M$. What about $\mu_E$, the extracellular death rate. I want to put forward the supposition that this is somewhere in between the two. That the situation outside of cells is relatively more hostile than within macrophages, and relatively less than within neutrophils. 
+The argument for this assumption is that if there was no advantage to being within macrophages, it seems unlikely that YP would have evolved to exploit their intracellular environment at all. And, if there was an advantage to being within neutrophils (over the extracellular environment), it begs the question why phagocytosis would
+ be resisted when a swarm of these hosts presents itself. Hence, let us proceed with the assumption 
+$$\mu_N > \mu_E > \mu_M$$
+
+with each of the three environments exhibiting standard birth-death dynamics with equal birth rate,
+$$\beta_N = \beta _E = \beta_M.$$
+This itself is an assumption that begs some justification. There may be variation among these replication rates; in reality, differing supply of nutrients and energy within cells may cause faster generational production. But for the present argument, it seems best to take them as equal so as not to introduce unnecessary complication. And anyway, the distinction of key importance is the overall effective replication rates, $\beta_i - \mu_i$. 
+
+
+\vspace{10pt}
+\hrule
+\vspace{10pt}
+
+\noindent
+\textbf{Aside:}  There are other explanations for why YP might initially favour macrophage absorption. Especially, the possibility that macrophages are merely used as a transport mechanism for YP to get to the Lymph nodes which probably have a greater supply of food.\par
+It is also possible that the initial pro-phagocytosis phase is a lingering hangover from the time the bacteria lives within a flea. 
+For now, we will ignore these genuine possibilities to explore the argument that there might be a more fundamental strategic advantage. 
+
+\vspace{10pt}
+\hrule
+\vspace{10pt}
+
+\noindent
+Following pathogen recognition, the body recruits neutrophils and delivers them to the site of infection. In a simplified framework, we can model this by there being a stepwise increase in neutrophils at a defined time, $t_N$, following the onset of infection. In reality, the fact that YP ``hides'' within macrophages could act to delay the onset of neutrophils. This would manifest in our model at $t_N$ changing according to the bacteria choice of strategy. But this detail can be ignored for the present argument, because whether it is advantageous for YP to be absorbed or not does not here depend on the time at which the neutrophils arrive. 
+
+
+The bacteria to gain the best proliferative advantage will need to maximise its effective replication rate, $\beta_i - \mu_i$. Its evolutionary process has been able to select for whether to accept or resist phagocytosis at stages of the infection, but we will take it that the bacteria can not discriminate between absorption by macrophages and neutrophils. 
+
+
+Because  $\mu_N > \mu_E > \mu_M$ and $\beta_N = \beta _E = \beta_M$, it follows that
+$$\beta_M -  \mu_M > \beta_E -  \mu_E >  \beta_N - \mu_N.$$
+Macrophages offer the best replicative opportunity. But because we assume YP can not differentiate between macrophages and neurtophils, the expected replicative rate for each strategy will depend on the probability that absorption is executed by a macrophage over a neutrophil. In the case of a pro-phagocytosis strategy, let us take the probability of macrophage absorption as $p_M$; $p_N$ for neutrophils. If we also assume that one of these outcomes is certain, it follows that $p_M = 1 - p_N$. These probabilities resulting from the ratio between neutrophils and macrophages present, 
+$$p_M = \frac{\# M}{ \#N + \#M}, \quad p_N = \frac{\# N}{ \#N + \#M}.$$
+with $p_N$ increasing at time $t_N$. \par
+The mean effective replication rates for each strategy will hence be as follows:
+
+\begin{itemize}
+\item \textbf{Pro-phagocytosis}: $R_{\text{pro}} = p_M(\beta_M -  \mu_M) + p_N (\beta_N - \mu_N)$
+\item \textbf{Anti-phagocytosis}: $ R_{\text{anti}}  = \beta_E -  \mu_E $ 
+\end{itemize}
+And with some rearrangement, the former becomes
+$$ R_{\text{pro}} =(1-p_N)(\beta_M -  \mu_M) + p_N (\beta_N - \mu_N)$$
+$$R_{\text{pro}} =p_N \lrbs{ (\beta_N - \mu_N)  - (\beta_M -  \mu_M)}  +     (\beta_M -  \mu_M).$$
+
+\noindent
+Pro-phagocytosis will cease to be a favourable strategy when 
+
+$$R_{\text{anti}} > R_{\text{pro}}$$ 
+
+\noindent
+which occurs when the proportion of neutrophils, $p_N$, increases beyond a threshold: 
+
+$$p_N > \frac{ (\beta_M -  \mu_M)  -  (\beta_E -  \mu_E) }{   (\beta_N - \mu_N)    -   (\beta_M -  \mu_M) } .$$
+
+\noindent
+Noting that $\beta_N = \beta _E = \beta_M$, this becomes
+
+$$p_N > \frac{  \mu_E - \mu_M }{    \mu_M - \mu_N} .$$
+
+\noindent
+Given this threshold is crossed with the onset of the neutrophil influx at time $t_N$, an argument would be satisfied for why YP has evolved to switch between the two strategies.

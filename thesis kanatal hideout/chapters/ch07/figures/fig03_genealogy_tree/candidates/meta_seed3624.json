@@ -1,0 +1,30 @@
+{
+  "catastrophe_time": 7.849391,
+  "parameters": {
+    "delta1": 0.05,
+    "delta2": 0.08,
+    "lambda1": 1.0,
+    "lambda2": 0.9,
+    "mu1": 0.55,
+    "mu2": 0.5,
+    "nu": 0.4
+  },
+  "seed": 3624,
+  "statistics": {
+    "alive_at_horizon": 0,
+    "births": 59,
+    "catastrophe_time": 7.849391,
+    "conversions": 6,
+    "deaths": 32,
+    "horizon": 9.0,
+    "killed_by_catastrophe": 28,
+    "leaves": 60,
+    "max_depth": 20,
+    "seed": 3624,
+    "segments": 125,
+    "type1_branch_length": 28.778368,
+    "type1_segments": 51,
+    "type2_branch_length": 37.929145,
+    "type2_segments": 74
+  }
+}

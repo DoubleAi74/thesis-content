@@ -1,0 +1,14 @@
+{
+  "figure": "fig01",
+  "chapter_number": "5.1",
+  "label": "dist:fig:joint",
+  "slug": "joint_process",
+  "included_from": "sections/02_recap.tex",
+  "generator": "src/fig01.tex",
+  "kind": "tikz",
+  "style": "figures/_style/tikz_style.tex",
+  "outputs": [
+    "fig01.pdf"
+  ],
+  "simulation": false
+}

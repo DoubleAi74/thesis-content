@@ -1,0 +1,66 @@
+% A concise alternative to summary.tex, using the thesis's chapter heading,
+% serif typography and ordinary cross-reference colours.
+\chapter*{Contributions at a glance}
+\phantomsection
+\label{oi:summary-redesigned}
+\addcontentsline{toc}{chapter}{Contributions at a glance (new version)}
+\markboth{CONTRIBUTIONS AT A GLANCE}{CONTRIBUTIONS AT A GLANCE}
+\begingroup
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\newcommand{\oimapchapter}[2]{\hyperref[#1]{#2}}
+\newcommand{\oimapentry}[3]{%
+  \begin{minipage}{\linewidth}
+    \textbf{#1}\hfill{\small #2}\par
+    \vspace{3pt}
+    {\small\raggedright #3\par}
+  \end{minipage}\par\vspace{13pt}}
+
+\oimapentry{Bursting versus budding}
+  {\oimapchapter{p:ch:one-cell-to-population}{Ch.~\ref*{p:ch:one-cell-to-population}},
+   \oimapchapter{path:ch:pathogenesis}{\ref*{path:ch:pathogenesis}}}
+  {At matched mean output, bursting lowers extinction risk in the
+   supercritical regime under linear clearance exactly when $L>1$;
+   offspring laws coincide at $L=1$. With a positive integer removal
+   budget on one delivery, bursting leaves more surviving output
+   exactly when $L<1$.}
+
+\oimapentry{An exact two-type solution}
+  {\oimapchapter{tt:ch:two-type}{Ch.~\ref*{tt:ch:two-type}}}
+  {Closed forms for the no-catastrophe probability and joint generating
+   function, with one-way conversion between types and type-specific
+   catastrophe rates.}
+
+\oimapentry{The statistics of one bursting cell}
+  {\oimapchapter{bdc:ch:core}{Chs.~\ref*{bdc:ch:core}},
+   \oimapchapter{dist:ch:distribution-theory}{\ref*{dist:ch:distribution-theory}}}
+  {Load and release moments, burst timing, and the equality of burst-size
+   and quasi-stationary laws, with extensions to several founders and
+   successive cell-to-cell transfers.}
+
+\oimapentry{From cells to infection dynamics}
+  {\oimapchapter{p:ch:one-cell-to-population}{Ch.~\ref*{p:ch:one-cell-to-population}}}
+  {An age-structured model derived from single-cell laws. Fitted rates
+   depend on the growth phase; one exponential phase cannot identify
+   all three intracellular rates.}
+
+\oimapentry{Kolmogorov's constant and the logistic map}
+  {\oimapchapter{gw:ch:galton-watson}{Ch.~\ref*{gw:ch:galton-watson}}}
+  {Identifies $A(p)$ through the Koenigs function and proves that
+   function hypertranscendental in its spatial argument. The closed-form
+   question for $A(p)$ remains open.}
+
+\oimapentry{Evolution under changing rates}
+  {\oimapchapter{var:ch:rates}{Ch.~\ref*{var:ch:rates}}}
+  {A limiting species-count law and variance under capacity-dependent
+   speciation, and an explicit moving critical point for competitive
+   reversal in the Pimentel model.}
+
+{\color{oirule}\rule{\linewidth}{0.5pt}\par}
+\vspace{6pt}
+{\footnotesize\color{oisoft}
+Original statements, extensions and their published foundations are
+distinguished in \hyperref[oi:details]{\textit{Originality of the results}},
+p.\,\pageref{oi:details}.\par}
+\endgroup
+\clearpage
